@@ -1,0 +1,106 @@
+"""Sidebar controls and app configuration models."""
+
+import datetime
+from dataclasses import dataclass
+from typing import Tuple
+
+import streamlit as st
+
+
+@dataclass(frozen=True)
+class SidebarSettings:
+    universe: str
+    vol_thresh: float
+    rsi_range: Tuple[int, int]
+    dist_thresh: float
+    min_mkt_cap: int
+    use_cache: bool
+
+
+@dataclass(frozen=True)
+class ChartOptions:
+    show_sma: bool
+    show_ema: bool
+    show_bb: bool
+    show_rsi: bool
+    show_macd: bool
+    show_vwap: bool
+
+
+def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSettings, ChartOptions]:
+    with st.sidebar:
+        # Interactive Brand Section
+        if st.button("⚡ ALPHASCANNER PRO\nTerminal Workspace", key="sidebar_brand_btn", use_container_width=True, help="Click to refresh terminal state"):
+            st.session_state.run_scan = False
+            st.rerun()
+
+        st.divider()
+
+        with st.expander("🎯 Filter Parameters", expanded=True):
+            universe = st.selectbox(
+                "Scanner Universe",
+                ["Nifty 500", "Total Market (Cap Focused)"],
+                index=0,
+                help="Use Nifty 500 for the core scanner, or Total Market when you want market-cap screening.",
+            )
+            vol_thresh = st.slider("Min Volume Ratio (×avg)", 1.0, 5.0, 1.5, 0.1)
+            rsi_range = st.slider("RSI Range", 0, 100, (60, 78))
+            dist_thresh = st.slider("Breakout Distance (%)", 0.5, 5.0, 1.5, 0.1)
+            min_mkt_cap = 5000
+            if universe == "Total Market (Cap Focused)":
+                min_mkt_cap = st.number_input(
+                    "Min Market Cap (Cr)",
+                    0,
+                    1000000,
+                    5000,
+                    500,
+                    help="Applied only for the Total Market scanner.",
+                )
+
+        st.divider()
+
+        with st.expander("📊 Chart Overlays", expanded=False):
+            chart_options = ChartOptions(
+                show_sma=st.checkbox("SMA 50 / 200", value=True),
+                show_ema=st.checkbox("EMA 20", value=True),
+                show_bb=st.checkbox("Bollinger Bands", value=True),
+                show_rsi=st.checkbox("RSI Panel", value=True),
+                show_macd=st.checkbox("MACD Panel", value=True),
+                show_vwap=st.checkbox("VWAP", value=False),
+            )
+
+        st.divider()
+        cache_choice = st.radio("Data Source", ["🔄 Fresh Scan", "⏱ Use Cache (12h)"], index=0)
+        use_cache = cache_choice == "⏱ Use Cache (12h)"
+        action_label = "Load Cached Scan" if use_cache else "Run Fresh Scan"
+        action_help = "Load the latest cached scan result" if use_cache else "Run a fresh market scan"
+
+        st.divider()
+        st.caption(f"Action: {action_label}")
+        if st.button(action_label, use_container_width=True, help=action_help, key="primary_scan_action"):
+            st.session_state.run_scan = True
+            if not use_cache:
+                st.session_state.results = None
+
+        st.divider()
+        with st.expander("🧠 Cache Info", expanded=False):
+            st.caption(f"Last scan: {st.session_state.last_scan_time or 'Never'}")
+            st.caption(f"Source: {st.session_state.scan_source or 'None'}")
+            if st.button("🗑 Clear Chart Cache"):
+                load_ticker_history.clear()
+                st.session_state.ticker_cache_refreshed_at = datetime.datetime.now()
+                st.success("Cleared!")
+            if st.button("🗑 Clear Backtest Cache"):
+                run_backtest_cached.clear()
+                st.session_state.backtest_cache_refreshed_at = datetime.datetime.now()
+                st.success("Cleared!")
+
+    settings = SidebarSettings(
+        universe=universe,
+        vol_thresh=vol_thresh,
+        rsi_range=rsi_range,
+        dist_thresh=dist_thresh,
+        min_mkt_cap=min_mkt_cap,
+        use_cache=use_cache,
+    )
+    return settings, chart_options

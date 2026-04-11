@@ -1,0 +1,64 @@
+2026-04-10 00:11:20,314 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-10 00:11:20,560 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-10 00:11:20,564 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-10 00:11:21,741 - AlphaScanner - INFO - Successfully fetched 5 indices
+2026-04-10 15:29:54,681 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-10 15:29:54,956 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-10 15:29:54,964 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-10 15:29:56,339 - AlphaScanner - INFO - Successfully fetched 8 indices
+2026-04-10 20:07:12,742 INFO Failed to create TzCache, reason: Cannot read and write in TzCache folder: '/home/kumar/.cache/py-yfinance'. TzCache will not be used. Tip: You can direct cache to use a different location with 'set_tz_cache_location(mylocation)'
+2026-04-10 20:07:12,743 INFO Failed to create CookieCache, reason: Cannot read and write in CookieCache folder: '/home/kumar/.cache/py-yfinance'. CookieCache will not be used. Tip: You can direct cache to use a different location with 'set_tz_cache_location(mylocation)'
+2026-04-10 20:07:12,745 ERROR Failed to get ticker '^NSEI' reason: Failed to perform, curl: (6) Could not resolve host: guce.yahoo.com. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-10 20:07:12,752 ERROR 
+1 Failed download:
+2026-04-10 20:07:12,752 ERROR ['^NSEI']: DNSError('Failed to perform, curl: (6) Could not resolve host: guce.yahoo.com. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.')
+2026-04-10 20:07:12,758 ERROR Failed to get ticker '^NSEBANK' reason: Failed to perform, curl: (6) Could not resolve host: guce.yahoo.com. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-10 20:07:12,767 ERROR 
+1 Failed download:
+2026-04-10 20:07:12,768 ERROR ['^NSEBANK']: DNSError('Failed to perform, curl: (6) Could not resolve host: guce.yahoo.com. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.')
+2026-04-10 20:07:12,772 ERROR Failed to get ticker '^BSESN' reason: Failed to perform, curl: (6) Could not resolve host: guce.yahoo.com. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-10 20:07:12,782 ERROR 
+1 Failed download:
+2026-04-10 20:07:12,782 ERROR ['^BSESN']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:07:12,788 ERROR Failed to get ticker '^GSPC' reason: Failed to perform, curl: (6) Could not resolve host: guce.yahoo.com. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-10 20:07:12,797 ERROR 
+1 Failed download:
+2026-04-10 20:07:12,797 ERROR ['^GSPC']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:07:12,801 ERROR Failed to get ticker '^IXIC' reason: Failed to perform, curl: (6) Could not resolve host: guce.yahoo.com. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-10 20:07:12,811 ERROR 
+1 Failed download:
+2026-04-10 20:07:12,811 ERROR ['^IXIC']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:07:12,815 ERROR Failed to get ticker '^DJI' reason: Failed to perform, curl: (6) Could not resolve host: guce.yahoo.com. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-10 20:07:12,824 ERROR 
+1 Failed download:
+2026-04-10 20:07:12,824 ERROR ['^DJI']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:07:12,844 ERROR FII/DII Fetch Error: HTTPSConnectionPool(host='www.nseindia.com', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7f26327028e0>: Failed to resolve 'www.nseindia.com' ([Errno -2] Name or service not known)"))
+2026-04-10 20:07:12,850 ERROR Failed to get ticker '^NSEI' reason: Failed to perform, curl: (6) Could not resolve host: guce.yahoo.com. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.
+2026-04-10 20:07:12,861 ERROR 
+1 Failed download:
+2026-04-10 20:07:12,861 ERROR ['^NSEI']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:39:53,789 ERROR Error in ONGC.NS: 'NoneType' object is not subscriptable
+2026-04-10 20:40:13,341 ERROR 
+1 Failed download:
+2026-04-10 20:40:13,341 ERROR ['^NSEI']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:40:13,359 ERROR 
+1 Failed download:
+2026-04-10 20:40:13,359 ERROR ['^NSEBANK']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:40:13,374 ERROR 
+1 Failed download:
+2026-04-10 20:40:13,374 ERROR ['^BSESN']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:40:13,388 ERROR 
+1 Failed download:
+2026-04-10 20:40:13,389 ERROR ['^GSPC']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:40:13,404 ERROR 
+1 Failed download:
+2026-04-10 20:40:13,404 ERROR ['^IXIC']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:40:13,421 ERROR 
+1 Failed download:
+2026-04-10 20:40:13,421 ERROR ['^DJI']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 20:40:13,435 ERROR FII/DII Fetch Error: HTTPSConnectionPool(host='www.nseindia.com', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x7fc1dbcf67c0>: Failed to resolve 'www.nseindia.com' ([Errno -3] Temporary failure in name resolution)"))
+2026-04-10 20:40:13,457 ERROR 
+1 Failed download:
+2026-04-10 20:40:13,457 ERROR ['^NSEI']: TypeError("'NoneType' object is not subscriptable")
+2026-04-10 22:35:55,638 WARNING Failed to fetch Nifty Total Market: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-10 22:44:34,345 WARNING Failed to fetch Nifty Total Market: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv

@@ -1,0 +1,45 @@
+2026-04-09 21:49:32,181 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-09 21:49:32,414 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-09 21:49:32,416 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-09 21:49:33,618 - AlphaScanner - INFO - Successfully fetched 8 indices
+2026-04-09 21:49:33,632 - AlphaScanner - INFO - Creating deployment configuration
+2026-04-09 21:49:33,632 - AlphaScanner - INFO - Deployment configuration files created successfully
+2026-04-09 21:50:09,066 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-09 21:50:09,304 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-09 21:50:09,307 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-09 21:50:10,745 - AlphaScanner - INFO - Successfully fetched 8 indices
+2026-04-09 21:54:41,552 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-09 21:54:41,818 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-09 21:54:41,821 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-09 21:54:43,253 - AlphaScanner - INFO - Successfully fetched 8 indices
+2026-04-09 21:56:23,056 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-09 21:56:23,334 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-09 21:56:23,339 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-09 21:56:24,765 - AlphaScanner - INFO - Successfully fetched 8 indices
+2026-04-09 21:56:24,799 - AlphaScanner - INFO - Validating environment
+2026-04-09 21:56:24,801 - AlphaScanner - ERROR - Environment validation failed: ['Application name not configured']
+2026-04-09 21:58:08,421 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-09 21:58:08,737 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-09 21:58:08,741 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-09 21:58:10,073 - AlphaScanner - INFO - Successfully fetched 8 indices
+2026-04-09 21:58:10,094 - AlphaScanner - INFO - Validating environment
+2026-04-09 21:58:10,094 - AlphaScanner - INFO - Environment validation passed
+2026-04-09 22:01:00,697 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-09 22:01:00,933 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-09 22:01:00,936 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-09 22:01:02,383 - AlphaScanner - INFO - Successfully fetched 8 indices
+2026-04-09 22:05:04,570 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-09 22:05:05,089 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-09 22:05:05,103 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-09 22:05:06,142 - AlphaScanner - INFO - Successfully fetched 8 indices
+2026-04-09 22:05:06,175 - AlphaScanner - INFO - Validating environment
+2026-04-09 22:05:06,175 - AlphaScanner - INFO - Environment validation passed
+2026-04-09 22:05:06,176 - AlphaScanner - INFO - Starting Stocks Trader Pro
+2026-04-09 23:56:51,181 - AlphaScanner - INFO - Fetching FII/DII data
+2026-04-09 23:56:51,407 - AlphaScanner - WARNING - All FII/DII endpoints failed, using fallback data
+2026-04-09 23:56:51,410 - AlphaScanner - INFO - Fetching indices performance data
+2026-04-09 23:56:52,938 - AlphaScanner - INFO - Successfully fetched 8 indices
+2026-04-09 23:56:52,956 - AlphaScanner - INFO - Validating environment
+2026-04-09 23:56:52,956 - AlphaScanner - INFO - Environment validation passed
+2026-04-09 23:56:52,957 - AlphaScanner - INFO - Starting Stocks Trader Pro
+2026-04-09 23:56:52,957 - AlphaScanner - INFO - Cache cleanup thread started
