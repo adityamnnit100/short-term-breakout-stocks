@@ -51,9 +51,9 @@ def _render_status_banner(
     for s in trending:
         score = sector_scores.get(s, 5.0)
         color = "#00ffaa" if score >= 8 else ("#ffca28" if score >= 5 else "#ff5252")
-        pills += f'<span class="mini-tag" style="background:rgba(255,255,255,0.05); color:{color}; border:1px solid {color}44; margin-top:4px;">{s} ({score})</span>'
+        pills += f'<span class="mini-tag" style="background:rgba(0,0,0,0.3); color:{color}; border:1px solid {color}66; margin-top:4px; display:inline-block;">{s} ({score})</span>'
 
-    sector_section = f'<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05);"><div class="status-label" style="margin-bottom:6px;">🔥 Outperforming Sectors (vs Nifty)</div><div style="display:flex; flex-wrap:wrap; gap:6px;">{pills if pills else "No trending sectors detected"}</div></div>'
+    sector_section = f'<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05);"><div class="status-label" style="margin-bottom:6px; color:#94a3b8;">🔥 Outperforming Sectors (vs Nifty)</div><div style="display:flex; flex-wrap:wrap; gap:6px;">{pills if pills else "No trending sectors detected"}</div></div>'
 
     st.markdown(
         f'<div class="glass-card" style="margin: 8px 0 18px;">'

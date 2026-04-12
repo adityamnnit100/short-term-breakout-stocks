@@ -14,14 +14,14 @@ except ImportError:
 def get_sentiment(text: str):
     """Perform basic sentiment analysis on article titles."""
     if not HAS_TEXTBLOB:
-        return "NEUTRAL", "rgba(255, 255, 255, 0.05)", "#8899bb"
+        return "NEUTRAL", "rgba(255, 255, 255, 0.05)", "#94a3b8"
     analysis = TextBlob(text)
     score = analysis.sentiment.polarity
     if score > 0.1:
         return "BULLISH", "rgba(0, 230, 118, 0.15)", "#00e676"
     elif score < -0.1:
         return "BEARISH", "rgba(255, 82, 82, 0.15)", "#ff5252"
-    return "NEUTRAL", "rgba(255, 255, 255, 0.05)", "#8899bb"
+    return "NEUTRAL", "rgba(255, 255, 255, 0.05)", "#94a3b8"
 
 
 @st.cache_data(ttl=900, show_spinner=False)
@@ -79,8 +79,8 @@ def render_tab() -> None:
         sentiment, bg, color = get_sentiment(title)
 
         st.markdown(f"""
-            <div style="background: rgba(255, 255, 255, 0.05); padding: 1.2rem; border-radius: 12px; border-left: 4px solid #00e5ff; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <div style="font-size: 0.8rem; color: #8899bb; margin-bottom: 0.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div class="glass-card" style="padding: 1.2rem; border-left: 4px solid #00e5ff; margin-bottom: 1rem;">
+                <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
                     <span>{publisher} • <span style="color: {color}; background: {bg}; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem;">{sentiment}</span></span>
                     <span>{date_str}</span>
                 </div>
