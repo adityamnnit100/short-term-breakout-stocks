@@ -31,10 +31,25 @@ apply_plotly_theme()
 # Custom CSS for modern metrics and Top Pick cards
 st.markdown("""
 <style>
+    /* Global Theme Overrides for Visibility */
+    .stApp {
+        background-color: #0f172a; /* Force dark background */
+        color: #f1f5f9; /* Explicitly set light text */
+    }
+
+    /* Global Visibility & Backgrounds */
+    .glass-card {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 20px;
+        border-radius: 16px;
+        color: #f1f5f9; /* Explicitly set light text for dark background */
+    }
+
     /* Metric Box Styling */
     [data-testid="stMetric"] {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         padding: 15px;
         border-radius: 12px;
         transition: all 0.3s ease;
@@ -69,7 +84,7 @@ st.markdown("""
     .top-pick-symbol {
         font-weight: 800;
         font-size: 1.1rem;
-        color: #ffffff;
+        color: #f8fafc;
     }
     .top-pick-price {
         color: #00ffaa;
@@ -92,11 +107,13 @@ st.markdown("""
 
     /* Trade Setup Workspace Styling */
     .terminal-panel {
-        background: rgba(10, 20, 35, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(10, 20, 35, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 16px;
         padding: 20px;
+        color: #f1f5f9;
         height: 100%;
+        overflow-x: auto; /* Enable horizontal scroll for children */
     }
     .terminal-head {
         display: flex;
@@ -107,7 +124,7 @@ st.markdown("""
     .terminal-title {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #ffffff;
+        color: #f8fafc;
     }
     .terminal-subtitle {
         font-size: 0.8rem;
@@ -164,7 +181,7 @@ st.markdown("""
         margin-bottom: 15px;
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .trade-ticker { font-size: 1.8rem; font-weight: 800; color: #ffffff; }
+    .trade-ticker { font-size: 1.8rem; font-weight: 800; color: #f8fafc; }
     .trade-subtitle { font-size: 0.9rem; color: #8899bb; margin-bottom: 15px; }
 
     .strength-bar-wrap { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
@@ -179,10 +196,11 @@ st.markdown("""
     }
     .metric-card {
         flex: 1;
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(30, 41, 59, 0.7);
         border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 12px;
         border-radius: 12px;
+        color: #f1f5f9;
     }
     .status-grid {
         display: grid;
@@ -190,35 +208,84 @@ st.markdown("""
         gap: 10px;
         margin-top: 10px;
     }
-    .status-label { font-size: 0.7rem; color: #8899bb; }
-    .status-value { font-size: 0.9rem; font-weight: bold; color: #ffffff; }
+    .status-label { font-size: 0.75rem; color: #94a3b8; }
+    .status-value { font-size: 0.9rem; font-weight: bold; color: #f8fafc; }
+    .metric-value { color: #f8fafc; }
+    .metric-delta.neutral { color: #94a3b8; }
+    .panel-title { color: #f8fafc; font-weight: 700; }
+    .trade-ticker { color: #f8fafc; }
+
+    /* Metrics Label visibility */
+    [data-testid="stMetricLabel"] p {
+        color: #94a3b8 !important;
+    }
 
     /* Mobile Responsiveness Overrides */
     @media (max-width: 768px) {
+        .glass-card { padding: 12px; }
         .level-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
         .metric-row {
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
         .status-grid {
             grid-template-columns: repeat(2, 1fr);
         }
         .trade-ticker {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
         }
         .terminal-panel {
             padding: 15px;
+            margin-bottom: 15px;
+            overflow-x: auto; /* Allow the panel to scroll horizontally */
+        }
+        /* Force Charts to fill screen height on mobile */
+        [data-testid="stPlotlyChart"] {
+            height: 70vh !important;
+            min-height: 400px;
+        }
+        /* Prevent column squashing in the Signal Blotter */
+        [data-testid="stDataFrame"] {
+            min-width: 1000px; /* Force minimum width to trigger horizontal scroll */
         }
         .terminal-head {
             flex-direction: column;
             gap: 10px;
+        }
+        /* Adjust components for small screens */
+        [data-testid="stMetricValue"] {
+            font-size: 1.4rem !important;
+        }
+        .stTabs [data-baseweb="tab"] {
+            padding: 8px 12px;
         }
     }
 </style>
 """, unsafe_allow_html=True)
 
 sidebar_settings, chart_options = render_sidebar(load_ticker_history, run_backtest_cached)
+
+# Apply 'Compact Mode' styles if enabled in Settings
+if st.session_state.get('compact_mode', False):
+    st.markdown("""
+    <style>
+        .glass-card, .terminal-panel, .trade-card { padding: 10px !important; border-radius: 8px !important; }
+        .metric-card, [data-testid="stMetric"] { padding: 6px !important; }
+        .panel-title, .terminal-title { font-size: 1rem !important; }
+        .metric-value { font-size: 1rem !important; }
+        .trade-ticker { font-size: 1.2rem !important; }
+        .status-grid, .level-grid { gap: 4px !important; }
+        .status-label, .level-label { font-size: 0.6rem !important; }
+        .status-value, .level-value { font-size: 0.75rem !important; }
+        .stTabs [data-baseweb="tab"] { padding: 4px 8px !important; font-size: 0.75rem !important; }
+        .top-pick-card { padding: 8px !important; margin-bottom: 6px !important; }
+        [data-testid="stMetricLabel"] p { font-size: 0.7rem !important; }
+    </style>
+    """, unsafe_allow_html=True)
 
 # Module Status Indicator
 with st.sidebar:
