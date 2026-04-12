@@ -33,17 +33,23 @@ def render_tab(load_ticker_history) -> None:
             change = (latest_price - previous_close) / previous_close * 100
             watchlist_rows.append(
                 {
-                    "Ticker": ticker,
-                    "Price": f"₹{latest_price:,.2f}",
-                    "Change %": f"{change:+.2f}%",
-                    "High": f"₹{float(history['High'].iloc[-1]):,.2f}",
-                    "Low": f"₹{float(history['Low'].iloc[-1]):,.2f}",
-                    "Volume": f"{int(history['Volume'].iloc[-1]):,}",
+                    "ticker": ticker,
+                    "price": latest_price,
+                    "change_pct": change,
+                    "high": float(history['High'].iloc[-1]),
+                    "low": float(history['Low'].iloc[-1]),
+                    "volume": int(history['Volume'].iloc[-1]),
                 }
             )
 
     if watchlist_rows:
-        st.dataframe(pd.DataFrame(watchlist_rows), use_container_width=True, hide_index=True)
+        df = pd.DataFrame(watchlist_rows)
+        st.dataframe(df, use_container_width=True, hide_index=True, column_config={
+            "ticker": "Ticker",
+            "price": st.column_config.NumberColumn("Price", format="₹%.2f"),
+            "change_pct": st.column_config.NumberColumn("Change %", format="%.2f%%"),
+            "volume": st.column_config.NumberColumn("Volume", format="%d"),
+        })
 
     remove_symbol = st.selectbox("Remove from watchlist", ["–"] + watchlist, key="wl_rem")
     if remove_symbol != "–" and st.button("❌ Remove", key="wl_rem_btn"):

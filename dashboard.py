@@ -89,10 +89,147 @@ st.markdown("""
         font-size: 0.75rem;
         margin-right: 5px;
     }
+
+    /* Trade Setup Workspace Styling */
+    .terminal-panel {
+        background: rgba(10, 20, 35, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 20px;
+        height: 100%;
+    }
+    .terminal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+    .terminal-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #ffffff;
+    }
+    .terminal-subtitle {
+        font-size: 0.8rem;
+        color: #8899bb;
+    }
+    .terminal-badge {
+        background: rgba(0, 229, 255, 0.1);
+        color: #00e5ff;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
+
+    /* Signal Pills */
+    .signal-pill {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    .sp-yes { background: rgba(0, 230, 118, 0.15); color: #00e676; border: 1px solid rgba(0, 230, 118, 0.3); }
+    .sp-no { background: rgba(255, 82, 82, 0.1); color: #ff5252; border: 1px solid rgba(255, 82, 82, 0.2); }
+
+    /* Level Grid */
+    .level-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .level-box {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .level-label { font-size: 0.7rem; color: #8899bb; margin-bottom: 4px; }
+    .level-value { font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .level-entry { color: #00e5ff; }
+    .level-sl { color: #ff5252; }
+    .level-tp1 { color: #ffca28; }
+    .level-tp2 { color: #00e676; }
+
+    /* Trade Card */
+    .trade-card {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .trade-ticker { font-size: 1.8rem; font-weight: 800; color: #ffffff; }
+    .trade-subtitle { font-size: 0.9rem; color: #8899bb; margin-bottom: 15px; }
+
+    .strength-bar-wrap { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+    .strength-bar { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+
+    /* Metric Row and Scanner Status Styling */
+    .metric-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .metric-card {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px;
+        border-radius: 12px;
+    }
+    .status-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .status-label { font-size: 0.7rem; color: #8899bb; }
+    .status-value { font-size: 0.9rem; font-weight: bold; color: #ffffff; }
+
+    /* Mobile Responsiveness Overrides */
+    @media (max-width: 768px) {
+        .level-grid {
+            grid-template-columns: 1fr;
+        }
+        .metric-row {
+            flex-direction: column;
+        }
+        .status-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .trade-ticker {
+            font-size: 1.4rem;
+        }
+        .terminal-panel {
+            padding: 15px;
+        }
+        .terminal-head {
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
 sidebar_settings, chart_options = render_sidebar(load_ticker_history, run_backtest_cached)
+
+# Module Status Indicator
+with st.sidebar:
+    st.divider()
+    st.caption("🧩 SYSTEM MODULES")
+    if news.HAS_TEXTBLOB:
+        st.success("Sentiment Engine: ACTIVE", icon="🧠")
+    else:
+        st.error("Sentiment Engine: MISSING", icon="🛑")
+        st.caption("To enable, run: `pip install textblob`")
+
 render_hero_header()
 
 tab_scanner, tab_backtest, tab_watchlist, tab_market, tab_news, tab_risk, tab_journal, tab_settings = st.tabs(

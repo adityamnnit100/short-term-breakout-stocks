@@ -6,7 +6,7 @@ import pandas as pd
 import streamlit as st
 
 import scanner_service
-from alphascanner_ui.charts import build_chart, style_scanner_results
+from alphascanner_ui.charts import build_chart, render_top_picks, style_scanner_results
 from alphascanner_ui.data import get_sector_mapping
 
 
@@ -43,43 +43,17 @@ def _render_status_banner(
     source_label = scan_source or "None"
     time_label = scan_time or "Never"
     st.markdown(
-        f"""
-        <div class="glass-card" style="margin: 8px 0 18px;">
-            <div class="panel-title">Scanner Status</div>
-            <div class="status-grid">
-                <div class="status-cell"><div class="status-label">Source</div><div class="status-value">{source_label}</div></div>
-                <div class="status-cell"><div class="status-label">Last Run</div><div class="status-value">{time_label}</div></div>
-                <div class="status-cell"><div class="status-label">Total Results</div><div class="status-value">{total_results}</div></div>
-                <div class="status-cell"><div class="status-label">Visible After Filters</div><div class="status-value">{filtered_count}</div></div>
-            </div>
-        </div>
-        """,
+        f'<div class="glass-card" style="margin: 8px 0 18px;">'
+        f'<div class="panel-title">Scanner Status</div>'
+        f'<div class="status-grid">'
+        f'<div class="status-cell"><div class="status-label">Source</div><div class="status-value">{source_label}</div></div>'
+        f'<div class="status-cell"><div class="status-label">Last Run</div><div class="status-value">{time_label}</div></div>'
+        f'<div class="status-cell"><div class="status-label">Total Results</div><div class="status-value">{total_results}</div></div>'
+        f'<div class="status-cell"><div class="status-label">Visible After Filters</div><div class="status-value">{filtered_count}</div></div>'
+        f'</div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
-
-
-def _render_top_picks(results: pd.DataFrame) -> None:
-    st.markdown("### ⭐ Top Breakout Picks")
-    top_picks = results.head(3)
-    cards = []
-    for _, row in top_picks.iterrows():
-        cards.append(
-            f"""
-            <div class="top-pick-card">
-                <div class="top-pick-head">
-                    <div class="top-pick-symbol">{row['Ticker']}</div>
-                    <div class="top-pick-price">₹{row['LTP']}</div>
-                </div>
-                <div class="top-pick-meta">{row.get('Pattern', '') or 'Momentum setup'}</div>
-                <div class="top-pick-tags">
-                    <span class="mini-tag">RSI {row.get('RSI', '—')}</span>
-                    <span class="mini-tag">Vol {row.get('Vol_x', '—')}x</span>
-                    <span class="mini-tag">Strength {row.get('Signal_Strength', '—')}</span>
-                </div>
-            </div>
-            """
-        )
-    st.markdown(f'<div class="top-picks-grid">{"".join(cards)}</div>', unsafe_allow_html=True)
 
 
 def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Optional[str]) -> None:
@@ -90,35 +64,28 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
     pass_rate = total_hits / max(scanned, 1) * 100
 
     st.markdown(
-        f"""
-        <div class="metric-row">
-            <div class="metric-card">
-                <div class="metric-label">Opportunities</div>
-                <div class="metric-value" style="color:#00e5ff;">{total_hits}</div>
-                <div class="metric-delta neutral">of {scanned} scanned</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Pass Rate</div>
-                <div class="metric-value">{pass_rate:.1f}<span style="font-size:0.9rem;">%</span></div>
-                <div class="metric-delta neutral">quality filter</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Avg RSI</div>
-                <div class="metric-value" style="color:{'#ffca28' if avg_rsi > 70 else '#00e676'};">{avg_rsi:.0f}</div>
-                <div class="metric-delta neutral">momentum zone</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Avg Strength</div>
-                <div class="metric-value">{avg_strength:.1f}<span style="font-size:0.9rem;">/10</span></div>
-                <div class="metric-delta {'up' if avg_strength >= 6 else 'down'}">{"Strong" if avg_strength >= 6 else "Moderate"}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">Scan Time</div>
-                <div class="metric-value" style="font-size:0.9rem;">{(scan_time or "–")[-8:]}</div>
-                <div class="metric-delta neutral">{(scan_time or "–")[:10]}</div>
-            </div>
-        </div>
-        """,
+        f'<div class="metric-row">'
+        f'<div class="metric-card">'
+        f'<div class="metric-label">Opportunities</div>'
+        f'<div class="metric-value" style="color:#00e5ff;">{total_hits}</div>'
+        f'<div class="metric-delta neutral">of {scanned} scanned</div></div>'
+        f'<div class="metric-card">'
+        f'<div class="metric-label">Pass Rate</div>'
+        f'<div class="metric-value">{pass_rate:.1f}<span style="font-size:0.9rem;">%</span></div>'
+        f'<div class="metric-delta neutral">quality filter</div></div>'
+        f'<div class="metric-card">'
+        f'<div class="metric-label">Avg RSI</div>'
+        f'<div class="metric-value" style="color:{"#ffca28" if avg_rsi > 70 else "#00e676"};">{avg_rsi:.0f}</div>'
+        f'<div class="metric-delta neutral">momentum zone</div></div>'
+        f'<div class="metric-card">'
+        f'<div class="metric-label">Avg Strength</div>'
+        f'<div class="metric-value">{avg_strength:.1f}<span style="font-size:0.9rem;">/10</span></div>'
+        f'<div class="metric-delta {"up" if avg_strength >= 6 else "down"}">{"Strong" if avg_strength >= 6 else "Moderate"}</div></div>'
+        f'<div class="metric-card">'
+        f'<div class="metric-label">Scan Time</div>'
+        f'<div class="metric-value" style="font-size:0.9rem;">{(scan_time or "–")[-8:]}</div>'
+        f'<div class="metric-delta neutral">{(scan_time or "–")[:10]}</div></div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
@@ -183,31 +150,20 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     support_2 = row.get("_Support2", ltp - 4 * atr)
 
     st.markdown(
-        f"""
-<div class="trade-card">
-    <div style="display:flex; align-items:center; gap:14px; margin-bottom:4px;">
-        <div class="trade-ticker">{ticker}</div>
-        <div style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.25);
-             border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#00e5ff;">
-            {row.get('Type', '')}</div>
-        <div style="background:{'rgba(0,230,118,0.12)' if signal_strength >= 7 else 'rgba(255,202,40,0.12)'};
-             border:1px solid {'rgba(0,230,118,0.3)' if signal_strength >= 7 else 'rgba(255,202,40,0.3)'};
-             border-radius:20px;padding:2px 10px;font-size:0.75rem;
-             color:{'#00e676' if signal_strength >= 7 else '#ffca28'};">
-            ⚡ {signal_strength}/10 Signal</div>
-        <div style="background:rgba(124,77,255,0.1);border:1px solid rgba(124,77,255,0.3);
-             border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#7c4dff;">
-            RS: {rs_value}</div>
-    </div>
-    <div class="trade-subtitle">{row.get('Pattern', '')}</div>
-    <div class="level-grid">
-        <div class="level-box"><div class="level-label">Entry</div><div class="level-value level-entry">₹{entry:,.2f}</div></div>
-        <div class="level-box"><div class="level-label">Stop Loss  (1.5×ATR)</div><div class="level-value level-sl">₹{stop_loss:,.2f}</div><div style="font-size:0.7rem;color:#ff5252;margin-top:2px;">−₹{risk:.2f}</div></div>
-        <div class="level-box"><div class="level-label">Target 1  (1×ATR)</div><div class="level-value level-tp1">₹{target_1:,.2f}</div><div style="font-size:0.7rem;color:#ffca28;margin-top:2px;">+₹{(target_1 - entry):.2f}</div></div>
-        <div class="level-box"><div class="level-label">Target 2  (3×ATR)</div><div class="level-value level-tp2">₹{target_2:,.2f}</div><div style="font-size:0.7rem;color:#00e676;margin-top:2px;">+₹{(target_2 - entry):.2f} · RR {risk_reward:.1f}×</div></div>
-    </div>
-</div>
-""",
+        f'<div class="trade-card">'
+        f'<div style="display:flex; align-items:center; gap:14px; margin-bottom:4px;">'
+        f'<div class="trade-ticker">{ticker}</div>'
+        f'<div style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.25);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#00e5ff;">{row.get("Type", "")}</div>'
+        f'<div style="background:{"rgba(0,230,118,0.12)" if signal_strength >= 7 else "rgba(255,202,40,0.12)"};border:1px solid {"rgba(0,230,118,0.3)" if signal_strength >= 7 else "rgba(255,202,40,0.3)"};border-radius:20px;padding:2px 10px;font-size:0.75rem;color:{"#00e676" if signal_strength >= 7 else "#ffca28"};">⚡ {signal_strength}/10 Signal</div>'
+        f'<div style="background:rgba(124,77,255,0.1);border:1px solid rgba(124,77,255,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#7c4dff;">RS: {rs_value}</div></div>'
+        f'<div class="trade-subtitle">{row.get("Pattern", "")}</div>'
+        f'<div class="level-grid">'
+        f'<div class="level-box"><div class="level-label">Entry</div><div class="level-value level-entry">₹{entry:,.2f}</div></div>'
+        f'<div class="level-box"><div class="level-label">Stop Loss  (1.5×ATR)</div><div class="level-value level-sl">₹{stop_loss:,.2f}</div><div style="font-size:0.7rem;color:#ff5252;margin-top:2px;">−₹{risk:.2f}</div></div>'
+        f'<div class="level-box"><div class="level-label">Target 1  (1×ATR)</div><div class="level-value level-tp1">₹{target_1:,.2f}</div><div style="font-size:0.7rem;color:#ffca28;margin-top:2px;">+₹{(target_1 - entry):.2f}</div></div>'
+        f'<div class="level-box"><div class="level-label">Target 2  (3×ATR)</div><div class="level-value level-tp2">₹{target_2:,.2f}</div><div style="font-size:0.7rem;color:#00e676;margin-top:2px;">+₹{(target_2 - entry):.2f} · RR {risk_reward:.1f}×</div></div>'
+        f'</div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
@@ -228,19 +184,16 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     bar_color = "#00e676" if confidence >= 70 else "#ffca28" if confidence >= 50 else "#ff5252"
 
     st.markdown(
-        f"""
-<div class="glass-card">
-    <div class="panel-title">Signal Confirmations</div>
-    <div style="margin-bottom:12px;">{pills}</div>
-    <div style="display:flex;align-items:center;gap:12px;">
-        <div style="font-size:0.78rem;color:#8899bb;">Confidence</div>
-        <div class="strength-bar-wrap" style="flex:1;">
-            <div class="strength-bar" style="width:{confidence:.0f}%;background:{bar_color};"></div>
-        </div>
-        <div style="font-size:0.82rem;font-family:'JetBrains Mono';color:{bar_color};">{confidence:.0f}%</div>
-    </div>
-</div>
-""",
+        f'<div class="glass-card">'
+        f'<div class="panel-title">Signal Confirmations</div>'
+        f'<div style="margin-bottom:12px;">{pills}</div>'
+        f'<div style="display:flex;align-items:center;gap:12px;">'
+        f'<div style="font-size:0.78rem;color:#8899bb;">Confidence</div>'
+        f'<div class="strength-bar-wrap" style="flex:1;">'
+        f'<div class="strength-bar" style="width:{confidence:.0f}%;background:{bar_color};"></div></div>'
+        f'<div style="font-size:0.82rem;font-family:{"JetBrains Mono"};color:{bar_color};">{confidence:.0f}%</div>'
+        f'</div>'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
@@ -420,7 +373,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
     filtered_results = _apply_result_filters(results)
 
     if results is not None and len(results) > 0:
-        _render_top_picks(filtered_results if filtered_results is not None and len(filtered_results) > 0 else results)
+        render_top_picks(filtered_results if filtered_results is not None and len(filtered_results) > 0 else results)
         _render_metrics(results, stats, scan_time)
         _render_filter_breakdown(stats)
         _render_watchlist_quick_add(results)
@@ -470,12 +423,10 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
         st.info("No high-conviction opportunities match current filters. Try relaxing the parameters.", icon="ℹ️")
     else:
         st.markdown(
-            """
-        <div class="glass-card" style="text-align:center;padding:48px 24px;">
-            <div style="font-size:3rem;margin-bottom:12px;">⚡</div>
-            <div style="font-size:1.1rem;font-weight:600;color:#00e5ff;margin-bottom:8px;">Scanner is standing by</div>
-            <div style="color:#8899bb;font-size:0.9rem;">Choose Fresh Scan or Use Cache in the sidebar, then click the action button to start.</div>
-        </div>
-        """,
+            '<div class="glass-card" style="text-align:center;padding:48px 24px;">'
+            '<div style="font-size:3rem;margin-bottom:12px;">⚡</div>'
+            '<div style="font-size:1.1rem;font-weight:600;color:#00e5ff;margin-bottom:8px;">Scanner is standing by</div>'
+            '<div style="color:#8899bb;font-size:0.9rem;">Choose Fresh Scan or Use Cache in the sidebar, then click the action button to start.</div>'
+            '</div>',
             unsafe_allow_html=True,
         )

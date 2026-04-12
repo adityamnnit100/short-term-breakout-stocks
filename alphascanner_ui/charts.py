@@ -14,6 +14,7 @@ def render_top_picks(df: pd.DataFrame):
     if df is None or df.empty or "Signal_Strength" not in df.columns:
         return
 
+    st.markdown("### ⭐ Top Breakout Picks")
     top_3 = df.nlargest(3, "Signal_Strength")
     
     html = '<div class="top-picks-grid">'
@@ -25,20 +26,17 @@ def render_top_picks(df: pd.DataFrame):
         vol = row.get("Vol_x", 0)
         strength = row.get("Signal_Strength", 0)
         
-        html += f"""
-        <div class="top-pick-card">
-            <div class="top-pick-head">
-                <div class="top-pick-symbol">{symbol}</div>
-                <div class="top-pick-price">₹{price:,.2f}</div>
-            </div>
-            <div class="top-pick-meta">{pattern}</div>
-            <div class="top-pick-tags">
-                <span class="mini-tag">RSI {rsi:.1f}</span>
-                <span class="mini-tag">Vol {vol:.1f}x</span>
-                <span class="mini-tag">Strength {strength:.1f}</span>
-            </div>
-        </div>
-        """
+        html += (
+            f'<div class="top-pick-card">'
+            f'<div class="top-pick-head"><div class="top-pick-symbol">{symbol}</div>'
+            f'<div class="top-pick-price">₹{price:,.2f}</div></div>'
+            f'<div class="top-pick-meta">{pattern}</div>'
+            f'<div class="top-pick-tags">'
+            f'<span class="mini-tag">RSI {rsi:.1f}</span>'
+            f'<span class="mini-tag">Vol {vol:.1f}x</span>'
+            f'<span class="mini-tag">Strength {strength:.1f}</span>'
+            f'</div></div>'
+        )
     html += '</div>'
     st.markdown(html, unsafe_allow_html=True)
 
