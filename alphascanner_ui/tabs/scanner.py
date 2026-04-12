@@ -392,16 +392,20 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
             )
 
         with st.spinner("Downloading market data from Yahoo Finance…"):
-            effective_market_cap = settings.min_mkt_cap if settings.universe == "Total Market (Cap Focused)" else 0
+            is_total_market = settings.universe == "Total Market (Cap Focused)"
+            min_cap = settings.min_mkt_cap if is_total_market else 0
+            max_cap = settings.max_mkt_cap if is_total_market else 0
             sector_map = get_sector_mapping(settings.universe)
             results, stats, scan_time = scanner_service.perform_fresh_scan(
-                settings.universe,
-                settings.vol_thresh,
-                settings.rsi_range,
-                settings.dist_thresh,
-                effective_market_cap,
-                sector_map,
-                _progress,
+                universe=settings.universe,
+                vol_thresh=settings.vol_thresh,
+                rsi_min=settings.rsi_range[0],
+                rsi_max=settings.rsi_range[1],
+                dist_thresh=settings.dist_thresh,
+                min_mkt_cap_cr=min_cap,
+                max_mkt_cap_cr=max_cap,
+                sector_map=sector_map,
+                progress_callback=_progress,
             )
         progress_bar.empty()
         progress_text.empty()

@@ -77,7 +77,7 @@ def get_nifty_500() -> list:
 def get_nifty_total_market() -> list:
     """Fetches the Nifty Total Market list (Nifty 500 + Microcaps)."""
     from alphascanner_ui.data import HEADERS # Import HEADERS from data.py
-    url = "https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarket_list.csv"
+    url = "https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv"
     try:
         res = requests.get(url, headers=HEADERS, timeout=10)
         res.raise_for_status()
@@ -378,6 +378,7 @@ def _process_single_ticker(
     dist_thresh: float,
     apply_market_cap_filter: bool,
     min_mkt_cap_cr: float,
+    max_mkt_cap_cr: float,
     sector_map: Optional[dict],
     trending_sectors: set,
     sector_sentiment_map: dict,
@@ -538,6 +539,9 @@ def _process_single_ticker(
         if apply_market_cap_filter and mkt_cap_cr < min_mkt_cap_cr:
              return None
 
+        if apply_market_cap_filter and max_mkt_cap_cr > 0 and mkt_cap_cr > max_mkt_cap_cr:
+             return None
+
         patterns = []
         if detect_flag_pattern(df): patterns.append("Flag")
         if detect_triangle_breakout(df): patterns.append("Triangle")
@@ -617,11 +621,12 @@ def run_scanner(
     rsi_max: float = 90,
     dist_thresh: float = 1.5,
     min_mkt_cap_cr: float = 0.0,
+    max_mkt_cap_cr: float = 0.0,
     universe: str = "Nifty 500",
     sector_map: Optional[dict] = None,
     progress_callback=None,
 ):
-    apply_market_cap_filter = min_mkt_cap_cr > 0
+    apply_market_cap_filter = min_mkt_cap_cr > 0 or max_mkt_cap_cr > 0
 
     if universe == "Total Market (Cap Focused)":
         tickers = get_nifty_total_market()
@@ -702,7 +707,7 @@ def run_scanner(
             executor.submit(
                 _process_single_ticker, 
                 ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh, 
-                apply_market_cap_filter, min_mkt_cap_cr, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
+                apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
             ): ticker for ticker in avail
         }
         

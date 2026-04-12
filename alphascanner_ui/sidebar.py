@@ -14,6 +14,7 @@ class SidebarSettings:
     rsi_range: Tuple[int, int]
     dist_thresh: float
     min_mkt_cap: int
+    max_mkt_cap: int
     use_cache: bool
 
 
@@ -46,16 +47,14 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
             vol_thresh = st.slider("Min Volume Ratio (×avg)", 1.0, 5.0, 1.5, 0.1)
             rsi_range = st.slider("RSI Range", 0, 100, (60, 78))
             dist_thresh = st.slider("Breakout Distance (%)", 0.5, 5.0, 1.5, 0.1)
-            min_mkt_cap = 5000
+            min_mkt_cap, max_mkt_cap = 0, 1000000
             if universe == "Total Market (Cap Focused)":
-                min_mkt_cap = st.number_input(
-                    "Min Market Cap (Cr)",
-                    0,
-                    1000000,
-                    5000,
-                    500,
-                    help="Applied only for the Total Market scanner.",
+                mkt_cap_range = st.slider(
+                    "Market Cap Range (Cr)",
+                    0, 100000, (500, 20000), 100,
+                    help="Focus on Small Caps (<5k) or Mid Caps (5k-20k).",
                 )
+                min_mkt_cap, max_mkt_cap = mkt_cap_range
 
         st.divider()
 
@@ -101,6 +100,7 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         rsi_range=rsi_range,
         dist_thresh=dist_thresh,
         min_mkt_cap=min_mkt_cap,
+        max_mkt_cap=max_mkt_cap,
         use_cache=use_cache,
     )
     return settings, chart_options
