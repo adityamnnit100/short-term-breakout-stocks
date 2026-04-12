@@ -37,11 +37,24 @@ def _render_status_banner(
     filtered_results: Optional[pd.DataFrame],
     scan_time: Optional[str],
     scan_source: Optional[str],
+    stats: Optional[dict] = None,
 ) -> None:
     total_results = 0 if results is None else len(results)
     filtered_count = 0 if filtered_results is None else len(filtered_results)
     source_label = scan_source or "None"
     time_label = scan_time or "Never"
+    
+    trending = (stats or {}).get("trending_sectors", [])
+    sector_scores = (stats or {}).get("sector_sentiment", {})
+    
+    pills = ""
+    for s in trending:
+        score = sector_scores.get(s, 5.0)
+        color = "#00ffaa" if score >= 8 else ("#ffca28" if score >= 5 else "#ff5252")
+        pills += f'<span class="mini-tag" style="background:rgba(255,255,255,0.05); color:{color}; border:1px solid {color}44; margin-top:4px;">{s} ({score})</span>'
+
+    sector_section = f'<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05);"><div class="status-label" style="margin-bottom:6px;">🔥 Outperforming Sectors (vs Nifty)</div><div style="display:flex; flex-wrap:wrap; gap:6px;">{pills if pills else "No trending sectors detected"}</div></div>'
+
     st.markdown(
         f'<div class="glass-card" style="margin: 8px 0 18px;">'
         f'<div class="panel-title">Scanner Status</div>'
@@ -49,9 +62,8 @@ def _render_status_banner(
         f'<div class="status-cell"><div class="status-label">Source</div><div class="status-value">{source_label}</div></div>'
         f'<div class="status-cell"><div class="status-label">Last Run</div><div class="status-value">{time_label}</div></div>'
         f'<div class="status-cell"><div class="status-label">Total Results</div><div class="status-value">{total_results}</div></div>'
-        f'<div class="status-cell"><div class="status-label">Visible After Filters</div><div class="status-value">{filtered_count}</div></div>'
-        f'</div>'
-        f'</div>',
+        f'<div class="status-cell"><div class="status-label">Visible After Filters</div><div class="status-value">{filtered_count}</div></div></div>'
+        f'{sector_section}</div>',
         unsafe_allow_html=True,
     )
 
@@ -62,6 +74,12 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
     avg_rsi = results["RSI"].mean() if "RSI" in results else 0
     avg_strength = results["Signal_Strength"].mean() if "Signal_Strength" in results else 0
     pass_rate = total_hits / max(scanned, 1) * 100
+    
+    sector_scores = (stats or {}).get("sector_sentiment", {})
+    best_sector = "Neutral"
+    if sector_scores:
+        bs = max(sector_scores, key=sector_scores.get)
+        if sector_scores[bs] > 6: best_sector = f"{bs} ({sector_scores[bs]})"
 
     st.markdown(
         f'<div class="metric-row">'
@@ -82,6 +100,10 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
         f'<div class="metric-value">{avg_strength:.1f}<span style="font-size:0.9rem;">/10</span></div>'
         f'<div class="metric-delta {"up" if avg_strength >= 6 else "down"}">{"Strong" if avg_strength >= 6 else "Moderate"}</div></div>'
         f'<div class="metric-card">'
+        f'<div class="metric-label">Market Context</div>'
+        f'<div class="metric-value" style="color:#00ffaa; font-size:1.1rem;">{best_sector}</div>'
+        f'<div class="metric-delta neutral">trending sectors</div></div>'
+        f'<div class="metric-card">'
         f'<div class="metric-label">Scan Time</div>'
         f'<div class="metric-value" style="font-size:0.9rem;">{(scan_time or "–")[-8:]}</div>'
         f'<div class="metric-delta neutral">{(scan_time or "–")[:10]}</div></div>'
@@ -94,7 +116,7 @@ def _render_filter_breakdown(stats: Optional[dict]) -> None:
     if not stats or stats.get("scanned", 0) <= 0:
         return
     with st.expander("📉 Filter Breakdown", expanded=False):
-        columns = st.columns(6)
+        columns = st.columns(7)
         for column, (label, key) in zip(
             columns,
             [
@@ -104,6 +126,7 @@ def _render_filter_breakdown(stats: Optional[dict]) -> None:
                 ("ADX", "adx_fail"),
                 ("MACD", "macd_fail"),
                 ("B.Bands", "bb_fail"),
+                ("Fakeouts", "fakeout_trap"),
             ],
         ):
             column.metric(f"❌ {label}", stats.get(key, 0))
@@ -136,7 +159,11 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     row = results.iloc[selected_rows[0]].to_dict()
     ticker = row.get("Ticker", "")
     ltp = float(row.get("LTP", 0))
+    sector_score = row.get("Sector_Score", 5.0)
     atr = float(row.get("ATR", ltp * 0.015))
+    sect_color = "#00e676" if sector_score >= 8.0 else ("#ffca28" if sector_score >= 5 else "#ff5252")
+    sect_label = "Strong Bullish" if sector_score >= 8.5 else ("Bullish" if sector_score >= 6.5 else ("Weak" if sector_score <= 4 else "Neutral"))
+
     signal_strength = int(row.get("Signal_Strength", 0))
     entry = ltp
     rs_value = row.get("RS_Rating", 100)
@@ -155,6 +182,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
         f'<div class="trade-ticker">{ticker}</div>'
         f'<div style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.25);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#00e5ff;">{row.get("Type", "")}</div>'
         f'<div style="background:{"rgba(0,230,118,0.12)" if signal_strength >= 7 else "rgba(255,202,40,0.12)"};border:1px solid {"rgba(0,230,118,0.3)" if signal_strength >= 7 else "rgba(255,202,40,0.3)"};border-radius:20px;padding:2px 10px;font-size:0.75rem;color:{"#00e676" if signal_strength >= 7 else "#ffca28"};">⚡ {signal_strength}/10 Signal</div>'
+        f'<div style="background:{sect_color}1a; border:1px solid {sect_color}44; border-radius:20px; padding:2px 10px; font-size:0.75rem; color:{sect_color};">Sector: {sect_label} ({sector_score})</div>'
         f'<div style="background:rgba(124,77,255,0.1);border:1px solid rgba(124,77,255,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#7c4dff;">RS: {rs_value}</div></div>'
         f'<div class="trade-subtitle">{row.get("Pattern", "")}</div>'
         f'<div class="level-grid">'
@@ -172,7 +200,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
         "BB Zone": row.get("BB") == "✅",
         "VWAP": row.get("VWAP") == "✅",
         "Divergence": "Bull" in str(row.get("Divergence", "")),
-        "Vol Spike": row.get("Vol_Spike") == "✅",
+        "Vol Spike": row.get("Vol_Spike") in ["✅", "🔥 SURGE"],
     }
     pills = "".join(
         [
@@ -269,6 +297,7 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
         "LTP",
         "ROE",
         "Sector",
+        "Sector_Score",
         "Mkt_Cap_Cr",
         "Pattern",
         "RS_Rating",
@@ -287,6 +316,7 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
             "Vol_Spike": "Spike",
             "Type": "Level",
             "RS_Rating": "RS",
+            "Sector_Score": "Sect.Score",
         }
     ).copy()
 
@@ -373,6 +403,10 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
     filtered_results = _apply_result_filters(results)
 
     if results is not None and len(results) > 0:
+        _render_status_banner(
+            results, filtered_results, st.session_state.last_scan_time, 
+            st.session_state.get("scan_source"), stats
+        )
         render_top_picks(filtered_results if filtered_results is not None and len(filtered_results) > 0 else results)
         _render_metrics(results, stats, scan_time)
         _render_filter_breakdown(stats)

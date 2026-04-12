@@ -27,6 +27,12 @@ import numpy as np
 import pandas as pd
 import requests
 import yfinance as yf
+try:
+    from textblob import TextBlob
+    HAS_TEXTBLOB = True
+except ImportError:
+    HAS_TEXTBLOB = False
+
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -40,7 +46,8 @@ DB_PATH = os.environ.get(
 _EMPTY_STATS: dict = {
     "scanned": 0, "volume_fail": 0, "trend_fail": 0,
     "breakout_fail": 0, "momentum_fail": 0, "adx_fail": 0,
-    "macd_fail": 0, "bb_fail": 0, "rs_fail": 0,
+    "macd_fail": 0, "bb_fail": 0, "rs_fail": 0, "fakeout_trap": 0,
+    "trending_sectors": [], "sector_sentiment": {},
 }
 
 
@@ -194,6 +201,13 @@ def detect_volume_dryup(volume: pd.Series, window: int = 30, threshold: float = 
     avg_vol = volume.rolling(window).mean().iloc[-2]
     return float(volume.iloc[-1]) < (avg_vol * threshold)
 
+def detect_volume_surge(volume: pd.Series, window: int = 10, threshold: float = 3.0) -> bool:
+    """Detects 'Volume Surge' (Institutional entry) compared to short-term average."""
+    if len(volume) < window:
+        return False
+    avg_vol_short = volume.rolling(window).mean().iloc[-2]
+    return float(volume.iloc[-1]) >= (avg_vol_short * threshold)
+
 def detect_candlestick_pattern(df: pd.DataFrame) -> str:
     """Detects simple candlestick patterns for high-conviction entries."""
     if len(df) < 2: return "Neutral"
@@ -228,7 +242,8 @@ def detect_52week_high(df, proximity_pct: float = 2.0) -> bool:
 def detect_range_breakout(df, lookback: int = 20):
     h = float(df["High"].iloc[-lookback:-1].max())
     l = float(df["Low"].iloc[-lookback:-1].min())
-    return float(df["Close"].iloc[-1]) > h * 0.98, h, l
+    # Launch Zone: Price is within 2% of the high but hasn't crossed it significantly yet
+    return h * 0.98 <= float(df["Close"].iloc[-1]) <= h * 1.005, h, l
 
 
 def detect_trendline_breakout(df, lookback: int = 30) -> bool:
@@ -348,6 +363,8 @@ def _process_single_ticker(
     apply_market_cap_filter: bool,
     min_mkt_cap_cr: float,
     sector_map: Optional[dict],
+    trending_sectors: set,
+    sector_sentiment_map: dict,
     stats: dict,
     stats_lock: Lock
 ) -> Optional[dict]:
@@ -385,15 +402,19 @@ def _process_single_ticker(
         vwap = calculate_vwap(high, low, close, vol).iloc[-1]
 
         ltp = float(close.iloc[-1])
+        ticker_sector = sector_map.get(ticker, "N/A") if sector_map else "N/A"
+        sector_score = sector_sentiment_map.get(ticker_sector, 5.0)
         is_tight = detect_vcp_tightness(close)
         is_dry = detect_volume_dryup(vol)
+
+        # Volume Surge is validated only if the stock belongs to a trending/outperforming sector
+        is_surge = detect_volume_surge(vol)
+        if sector_map and ticker_sector != "N/A":
+            is_surge = is_surge and (ticker_sector in trending_sectors)
 
         # Volume filter
         vol_ratio = float(vol.iloc[-1]) / max(avg_vol, 1)
         min_vol_ratio = max(float(vol_thresh), 1.0)
-        if vol_ratio < min_vol_ratio and not (is_tight and is_dry):
-            with stats_lock: stats["volume_fail"] += 1
-            return None
 
         # Relaxed Trend filter: Just needs short-term alignment
         if not (ltp > ema_20 and ema_20 > sma_50):
@@ -421,10 +442,21 @@ def _process_single_ticker(
         # Breakout logic
         prev_h20 = float(high.iloc[-21:-1].max())
         prev_h52 = float(high.iloc[-252:-1].max())
-        actual_breakout = ltp > prev_h20
+        
+        # ANTICIPATORY LOGIC: Is it about to break?
+        # Price is within 1.5% of 20-day high OR 52-week high
+        near_20d = prev_h20 * 0.985 <= ltp <= prev_h20 * 1.005
         near_52w = ltp >= prev_h52 * (1 - dist_thresh / 100)
+        is_breaking_out = ltp > prev_h20 * 1.005 or ltp > prev_h52 * 1.005
+        actual_breakout = near_20d or near_52w
 
-        if not (actual_breakout or near_52w):
+        # Fakeout detection: price breaks resistance but volume is below threshold
+        is_fakeout = is_breaking_out and vol_ratio < min_vol_ratio
+        if vol_ratio < min_vol_ratio and not (is_tight and is_dry or is_breaking_out):
+            with stats_lock: stats["volume_fail"] += 1
+            return None
+
+        if not (near_20d or near_52w or is_breaking_out):
             with stats_lock: stats["breakout_fail"] += 1
             return None
 
@@ -432,6 +464,11 @@ def _process_single_ticker(
         body = abs(close.iloc[-1] - df["Open"].iloc[-1])
         range_ = high.iloc[-1] - low.iloc[-1]
         if range_ == 0 or (body / range_) < 0.4:
+            return None
+
+        # Anti-Chase Filter: If the stock is already up > 4% today, it might be a "late" signal
+        daily_pcnt = (ltp - df["Open"].iloc[-1]) / df["Open"].iloc[-1] * 100
+        if daily_pcnt > 4.5:
             return None
 
         candle_sentiment = detect_candlestick_pattern(df)
@@ -492,16 +529,30 @@ def _process_single_ticker(
         if detect_inverted_head_shoulders(df): patterns.append("Inv-H&S")
         if is_tight: patterns.append("VCP-Tight")
         if is_dry: patterns.append("Vol-Dryup")
+        if is_surge: patterns.append("Vol-Surge")
+        if is_fakeout:
+            patterns.append("Fakeout-Trap")
+            with stats_lock: stats["fakeout_trap"] += 1
 
         # Enhanced Weighted Signal Strength Scoring (0-10)
-        strength = (len(patterns) * 1.5) + (3 if actual_breakout else 0) + (1.5 if near_52w else 0)
+        # We give the MOST weight to "Tightness" and "Proximity" to find stocks BEFORE the move
+        strength = (3.0 if (is_tight and is_dry) else 1.0) 
+        strength += (2.5 if near_20d else 0) + (2.0 if near_52w else 0)
         strength += (1 if macd_bull else 0) + (1 if above_vwap else 0) + (1 if bb_bull else 0)
-        strength += (1 if ma_slope_bull else 0) + (1 if bull_div else 0)
+        strength += (1 if ma_slope_bull else 0)
+        strength += (2.0 if is_surge else 0)
         strength += max(0, (rs_rating - 70) / 5) # Gradual contribution from RS
-        strength = min(10.0, round(strength, 1))
 
-        # Logic-driven Recommendation
-        advice = "Strong Entry" if (strength >= 8.5 and candle_sentiment != "Neutral") else ("Potential" if strength >= 6.5 else "Watchlist")
+        # Sector Sentiment Factor (Bonus/Penalty)
+        if sector_score >= 8.0:
+            strength += 1.5
+        elif sector_score <= 4.0:
+            strength -= 1.0
+        
+        if is_fakeout:
+            strength = min(strength, 3.5) # Drastic reduction for low-volume traps
+
+        strength = min(10.0, round(strength, 1))
 
         # TRIGGER LOGIC (OR): At least one major signal must be present
         if not (actual_breakout or near_52w or bb_breakout or len(patterns) > 0):
@@ -517,20 +568,21 @@ def _process_single_ticker(
             "RS_Rating": rs_rating,
             "ROE": round(roe * 100, 1),
             "Mkt_Cap_Cr": round(mkt_cap_cr, 1),
-            "Sector": sector_map.get(ticker, "N/A") if sector_map else "N/A",
+            "Sector": ticker_sector,
+            "Sector_Score": sector_score,
             "Vol_x": round(vol_ratio, 1),
             "MACD": "✅" if macd_bull else "—",
             "BB": "✅" if bb_bull else "—",
             "VWAP": "✅" if above_vwap else "—",
             "Divergence": "Bullish" if bull_div else ("Bearish" if bear_div else "—"),
-            "Vol_Spike": "✅" if vol_ratio >= min_vol_ratio else "—",
+            "Vol_Spike": "🔥 SURGE" if is_surge else ("✅" if vol_ratio >= min_vol_ratio else "—"),
             "_Support1": round(float(support), 2),
             "_Support2": round(float(sma_200), 2),
             "_Resistance": round(float(resistance), 2),
             "Signal_Strength": strength,
             "Trend": trend_intensity,
-            "Candle": candle_sentiment,
-            "Action": advice,
+            "Candle": "Consolidating" if daily_pcnt < 1.5 else candle_sentiment,
+            "Action": "AVOID: Fakeout" if is_fakeout else ("Ready to Pop" if (strength >= 7.5 and is_tight) else "Watching"),
             "Pattern": ", ".join(patterns) if patterns else ("20D Breakout" if actual_breakout else ("Near 52W" if near_52w else "Vol Breakout")),
         }
     except Exception as e:
@@ -579,17 +631,56 @@ def run_scanner(
         if isinstance(data.columns, pd.MultiIndex) else tickers
     )
 
+    # Identify Trending Sectors (Sectors outperforming the benchmark)
+    trending_sectors = set()
+    sector_sentiment_map = {}
+    if sector_map and not data.empty and len(nifty_close) > 1:
+        try:
+            ticker_returns = (data['Close'].iloc[-1] / data['Close'].iloc[-2] - 1) * 100
+            nifty_ret = (nifty_close.iloc[-1] / nifty_close.iloc[-2] - 1) * 100
+            
+            sector_perf = {}
+            for t, ret in ticker_returns.items():
+                sect = sector_map.get(t)
+                if sect and not pd.isna(ret):
+                    sector_perf.setdefault(sect, []).append(ret)
+            
+            for s, rets in sector_perf.items():
+                avg_ret = np.mean(rets)
+                # 1. Performance Component (0-5)
+                perf_diff = avg_ret - nifty_ret
+                perf_score = np.clip((perf_diff / 1.5) * 5, 0, 5) if perf_diff > 0 else 0
+                
+                # 2. News Sentiment Component (0-5)
+                news_score = 2.5 # Neutral fallback
+                if HAS_TEXTBLOB:
+                    try:
+                        search = yf.Search(f"{s} sector India news", news_count=5)
+                        if search.news:
+                            polarities = [TextBlob(a.get("title", "")).sentiment.polarity for a in search.news]
+                            news_score = ( (sum(polarities) / len(polarities)) + 1 ) * 2.5
+                    except Exception: pass
+                
+                sector_sentiment_map[s] = round(perf_score + news_score, 1)
+                if avg_ret > max(0, nifty_ret):
+                    trending_sectors.add(s)
+
+        except Exception as e:
+            logging.getLogger("AlphaScanner.Engine").warning(f"Sector momentum calculation failed: {e}")
+
+    stats["trending_sectors"] = list(trending_sectors)
+    stats["sector_sentiment"] = sector_sentiment_map
+
     stats_lock = Lock()
     hits = []
     
     # Use ThreadPoolExecutor for concurrent processing
-    # 10 workers is usually a safe limit for Yahoo Finance to avoid aggressive rate limiting
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         future_to_ticker = {
             executor.submit(
                 _process_single_ticker, 
                 ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh, 
-                apply_market_cap_filter, min_mkt_cap_cr, sector_map, stats, stats_lock
+                apply_market_cap_filter, min_mkt_cap_cr, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
             ): ticker for ticker in avail
         }
         
