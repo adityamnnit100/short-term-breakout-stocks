@@ -7,7 +7,7 @@ import streamlit as st
 
 
 def render_tab() -> None:
-    st.markdown('<div class="glass-card"><div class="panel-title">Trade Journal</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Trade Journal</div></div>', unsafe_allow_html=True)
 
     with st.expander("➕ Log New Trade", expanded=False):
         col_1, col_2, col_3 = st.columns(3)

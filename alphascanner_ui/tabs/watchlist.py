@@ -5,7 +5,7 @@ import streamlit as st
 
 
 def render_tab(load_ticker_history) -> None:
-    st.markdown('<div class="glass-card"><div class="panel-title">Watchlist</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Watchlist</div></div>', unsafe_allow_html=True)
 
     watchlist = st.session_state.watchlist
     add_symbol = st.text_input("Add Ticker (e.g. RELIANCE.NS)", key="wl_add").upper().strip()

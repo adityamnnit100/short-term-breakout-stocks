@@ -35,7 +35,7 @@ def fetch_news_cached(query: str, news_count: int = 12):
 
 
 def render_tab() -> None:
-    st.markdown('<div class="glass-card"><div class="panel-title">Market News & Insights</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Market News & Insights</div></div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns([3, 1])
     with col1:

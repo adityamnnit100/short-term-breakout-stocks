@@ -5,7 +5,7 @@ import streamlit as st
 
 
 def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history, logger) -> None:
-    st.markdown('<div class="glass-card"><div class="panel-title">Global Market Snapshot</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Global Market Snapshot</div></div>', unsafe_allow_html=True)
 
     with st.spinner("Fetching indices…"):
         index_data = fetch_indices_performance()

@@ -9,7 +9,7 @@ import streamlit as st
 
 def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
     st.markdown(
-        '<div class="glass-card"><div class="panel-title">Strategy Back-test</div><p style="color:#8899bb;margin:0;">Validates signal quality using 1:2 risk-reward (SL = 1.5×ATR, TP = 3×ATR)</p></div>',
+        '<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Strategy Back-test</div><p style="color:#8899bb;margin:0;">Validates signal quality using 1:2 risk-reward (SL = 1.5×ATR, TP = 3×ATR)</p></div>',
         unsafe_allow_html=True,
     )
 

@@ -7,7 +7,7 @@ import streamlit as st
 
 
 def render_tab() -> None:
-    st.markdown('<div class="glass-card"><div class="panel-title">Portfolio Risk Management</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Portfolio Risk Management</div></div>', unsafe_allow_html=True)
 
     input_col_1, input_col_2, input_col_3 = st.columns(3)
     account_size = input_col_1.number_input("Account Size (₹)", 10_000, 100_000_000, 500_000, 10_000, key="rm_acct")
