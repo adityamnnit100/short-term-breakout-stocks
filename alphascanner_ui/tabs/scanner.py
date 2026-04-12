@@ -329,8 +329,13 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
         is_high = s["Sect.Score"] >= 8.0
         return ['background-color: rgba(0, 255, 170, 0.15)' if is_high else '' for _ in s]
 
-    # Chain the sector highlight to existing scanner styles
-    styled = style_scanner_results(rendered_df).apply(highlight_high_sector, axis=1)
+    def highlight_long_term_bottom(s):
+        """Highlight rows where the Pattern contains 'Base-20W' in gold."""
+        is_base_20 = "Base-20W" in str(s["Pattern"])
+        return ['background-color: rgba(255, 215, 0, 0.25)' if is_base_20 else '' for _ in s]
+
+    # Chain the sector highlight and long-term bottom (gold) highlight to existing scanner styles
+    styled = style_scanner_results(rendered_df).apply(highlight_high_sector, axis=1).apply(highlight_long_term_bottom, axis=1)
     
     try:
         return st.dataframe(
