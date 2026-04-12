@@ -53,16 +53,16 @@ def _render_status_banner(
         color = "#00ffaa" if score >= 8 else ("#ffca28" if score >= 5 else "#ff5252")
         pills += f'<span class="mini-tag" style="background:rgba(0,0,0,0.3); color:{color}; border:1px solid {color}66; margin-top:4px; display:inline-block;">{s} ({score})</span>'
 
-    sector_section = f'<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05);"><div class="status-label" style="margin-bottom:6px; color:#94a3b8;">🔥 Outperforming Sectors (vs Nifty)</div><div style="display:flex; flex-wrap:wrap; gap:6px;">{pills if pills else "No trending sectors detected"}</div></div>'
+    sector_section = f'<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(128,128,128,0.2);"><div class="status-label" style="margin-bottom:6px; color:#94a3b8;">🔥 Outperforming Sectors (vs Nifty)</div><div style="display:flex; flex-wrap:wrap; gap:6px;">{pills if pills else "No trending sectors detected"}</div></div>'
 
     st.markdown(
         f'<div class="glass-card" style="margin: 8px 0 18px;">'
         f'<div class="panel-title" style="color: #00e5ff;">Scanner Status</div>'
         f'<div class="status-grid">'
-        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Source</div><div class="status-value" style="color: #ffffff;">{source_label}</div></div>'
-        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Last Run</div><div class="status-value" style="color: #ffffff;">{time_label}</div></div>'
-        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Total Results</div><div class="status-value" style="color: #ffffff;">{total_results}</div></div>'
-        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Visible After Filters</div><div class="status-value" style="color: #ffffff;">{filtered_count}</div></div></div>'
+        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Source</div><div class="status-value" style="color: #00e5ff;">{source_label}</div></div>'
+        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Last Run</div><div class="status-value" style="color: #00e5ff;">{time_label}</div></div>'
+        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Total Results</div><div class="status-value" style="color: #00e5ff;">{total_results}</div></div>'
+        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Visible After Filters</div><div class="status-value" style="color: #00e5ff;">{filtered_count}</div></div></div>'
         f'{sector_section}</div>',
         unsafe_allow_html=True,
     )
@@ -89,7 +89,7 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
         f'<div class="metric-delta neutral" style="color: #64748b;">of {scanned} scanned</div></div>'
         f'<div class="metric-card">'
         f'<div class="metric-label" style="color: #94a3b8;">Pass Rate</div>'
-        f'<div class="metric-value" style="color: #ffffff;">{pass_rate:.1f}<span style="font-size:0.9rem;">%</span></div>'
+        f'<div class="metric-value" style="color: #00e5ff;">{pass_rate:.1f}<span style="font-size:0.9rem;">%</span></div>'
         f'<div class="metric-delta neutral" style="color: #64748b;">quality filter</div></div>'
         f'<div class="metric-card">'
         f'<div class="metric-label" style="color: #94a3b8;">Avg RSI</div>'
@@ -97,7 +97,7 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
         f'<div class="metric-delta neutral" style="color: #64748b;">momentum zone</div></div>'
         f'<div class="metric-card">'
         f'<div class="metric-label" style="color: #94a3b8;">Avg Strength</div>'
-        f'<div class="metric-value" style="color: #ffffff;">{avg_strength:.1f}<span style="font-size:0.9rem;">/10</span></div>'
+        f'<div class="metric-value" style="color: #00e5ff;">{avg_strength:.1f}<span style="font-size:0.9rem;">/10</span></div>'
         f'<div class="metric-delta {"up" if avg_strength >= 6 else "down"}">{"Strong" if avg_strength >= 6 else "Moderate"}</div></div>'
         f'<div class="metric-card">'
         f'<div class="metric-label" style="color: #94a3b8;">Market Context</div>'
@@ -105,7 +105,7 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
         f'<div class="metric-delta neutral" style="color: #64748b;">trending sectors</div></div>'
         f'<div class="metric-card">'
         f'<div class="metric-label" style="color: #94a3b8;">Scan Time</div>'
-        f'<div class="metric-value" style="font-size:0.9rem; color: #ffffff;">{(scan_time or "–")[-8:]}</div>'
+        f'<div class="metric-value" style="font-size:0.9rem; color: #00e5ff;">{(scan_time or "–")[-8:]}</div>'
         f'<div class="metric-delta neutral" style="color: #64748b;">{(scan_time or "–")[:10]}</div></div>'
         f'</div>',
         unsafe_allow_html=True,
@@ -179,17 +179,17 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     st.markdown(
         f'<div class="trade-card">'
         f'<div style="display:flex; align-items:center; gap:14px; margin-bottom:4px;">'
-        f'<div class="trade-ticker">{ticker}</div>'
+        f'<div class="trade-ticker" style="color: #00e5ff;">{ticker}</div>'
         f'<div style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.25);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#00e5ff;">{row.get("Type", "")}</div>'
         f'<div style="background:{"rgba(0,230,118,0.12)" if signal_strength >= 7 else "rgba(255,202,40,0.12)"};border:1px solid {"rgba(0,230,118,0.3)" if signal_strength >= 7 else "rgba(255,202,40,0.3)"};border-radius:20px;padding:2px 10px;font-size:0.75rem;color:{"#00e676" if signal_strength >= 7 else "#ffca28"};">⚡ {signal_strength}/10 Signal</div>'
         f'<div style="background:{sect_color}1a; border:1px solid {sect_color}44; border-radius:20px; padding:2px 10px; font-size:0.75rem; color:{sect_color};">Sector: {sect_label} ({sector_score})</div>'
         f'<div style="background:rgba(124,77,255,0.1);border:1px solid rgba(124,77,255,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#7c4dff;">RS: {rs_value}</div></div>'
-        f'<div class="trade-subtitle">{row.get("Pattern", "")}</div>'
+        f'<div class="trade-subtitle" style="color: #94a3b8;">{row.get("Pattern", "")}</div>'
         f'<div class="level-grid">'
-        f'<div class="level-box"><div class="level-label">Entry</div><div class="level-value level-entry">₹{entry:,.2f}</div></div>'
-        f'<div class="level-box"><div class="level-label">Stop Loss  (1.5×ATR)</div><div class="level-value level-sl">₹{stop_loss:,.2f}</div><div style="font-size:0.7rem;color:#ff5252;margin-top:2px;">−₹{risk:.2f}</div></div>'
-        f'<div class="level-box"><div class="level-label">Target 1  (1×ATR)</div><div class="level-value level-tp1">₹{target_1:,.2f}</div><div style="font-size:0.7rem;color:#ffca28;margin-top:2px;">+₹{(target_1 - entry):.2f}</div></div>'
-        f'<div class="level-box"><div class="level-label">Target 2  (3×ATR)</div><div class="level-value level-tp2">₹{target_2:,.2f}</div><div style="font-size:0.7rem;color:#00e676;margin-top:2px;">+₹{(target_2 - entry):.2f} · RR {risk_reward:.1f}×</div></div>'
+        f'<div class="level-box"><div class="level-label" style="color: #94a3b8;">Entry</div><div class="level-value level-entry" style="color: #00e5ff;">₹{entry:,.2f}</div></div>'
+        f'<div class="level-box"><div class="level-label" style="color: #94a3b8;">Stop Loss  (1.5×ATR)</div><div class="level-value level-sl" style="color: #ff5252;">₹{stop_loss:,.2f}</div><div style="font-size:0.7rem;color:#ff5252;margin-top:2px;">−₹{risk:.2f}</div></div>'
+        f'<div class="level-box"><div class="level-label" style="color: #94a3b8;">Target 1  (1×ATR)</div><div class="level-value level-tp1" style="color: #ffca28;">₹{target_1:,.2f}</div><div style="font-size:0.7rem;color:#ffca28;margin-top:2px;">+₹{(target_1 - entry):.2f}</div></div>'
+        f'<div class="level-box"><div class="level-label" style="color: #94a3b8;">Target 2  (3×ATR)</div><div class="level-value level-tp2" style="color: #00e676;">₹{target_2:,.2f}</div><div style="font-size:0.7rem;color:#00e676;margin-top:2px;">+₹{(target_2 - entry):.2f} · RR {risk_reward:.1f}×</div></div>'
         f'</div>'
         f'</div>',
         unsafe_allow_html=True,
@@ -213,11 +213,11 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
 
     st.markdown(
         f'<div class="glass-card">'
-        f'<div class="panel-title">Signal Confirmations</div>'
+        f'<div class="panel-title" style="color: #00e5ff;">Signal Confirmations</div>'
         f'<div style="margin-bottom:12px;">{pills}</div>'
         f'<div style="display:flex;align-items:center;gap:12px;">'
         f'<div style="font-size:0.78rem;color:#8899bb;">Confidence</div>'
-        f'<div class="strength-bar-wrap" style="flex:1;">'
+        f'<div class="strength-bar-wrap" style="flex:1; background: rgba(128,128,128,0.2);">'
         f'<div class="strength-bar" style="width:{confidence:.0f}%;background:{bar_color};"></div></div>'
         f'<div style="font-size:0.82rem;font-family:{"JetBrains Mono"};color:{bar_color};">{confidence:.0f}%</div>'
         f'</div>'
@@ -440,10 +440,10 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                 <div class="terminal-panel">
                     <div class="terminal-head">
                         <div>
-                            <div class="terminal-title">Signal Blotter</div>
-                            <div class="terminal-subtitle">Ranked breakout candidates after post-scan filtering</div>
+                            <div class="terminal-title" style="color: #00e5ff;">Signal Blotter</div>
+                            <div class="terminal-subtitle" style="color: #94a3b8;">Ranked breakout candidates after post-scan filtering</div>
                         </div>
-                        <div class="terminal-badge">{len(filtered_results)} MATCHES</div>
+                        <div class="terminal-badge" style="background: #00e5ff; color: #000000; font-weight: bold; padding: 2px 8px; border-radius: 4px;">{len(filtered_results)} MATCHES</div>
                     </div>
                 """,
                 unsafe_allow_html=True,
@@ -457,10 +457,10 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                 <div class="terminal-panel">
                     <div class="terminal-head">
                         <div>
-                            <div class="terminal-title">Setup Workspace</div>
-                            <div class="terminal-subtitle">Levels, confirmations, chart context, and sizing</div>
+                            <div class="terminal-title" style="color: #00e5ff;">Setup Workspace</div>
+                            <div class="terminal-subtitle" style="color: #94a3b8;">Levels, confirmations, chart context, and sizing</div>
                         </div>
-                        <div class="terminal-badge">DETAIL</div>
+                        <div class="terminal-badge" style="background: #94a3b8; color: #000000; font-weight: bold; padding: 2px 8px; border-radius: 4px;">DETAIL</div>
                     </div>
                 """,
                 unsafe_allow_html=True,
