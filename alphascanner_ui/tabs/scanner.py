@@ -13,23 +13,23 @@ from alphascanner_ui.data import get_sector_mapping
 def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
     with st.expander("Refine Visible Results", expanded=False):
         st.caption("These controls only narrow the current scan output. They do not rerun the scanner.")
-        filter_col_1, filter_col_2, filter_col_3 = st.columns(3)
-        min_strength = filter_col_1.slider("Min Strength", 0, 10, 1) # Default 1 for visibility
-        min_rsi = filter_col_2.slider("Min RSI", 0, 100, 40) # Default 40
-        min_vol = filter_col_3.slider("Min Volume ×", 1.0, 5.0, 1.0) # Default 1.0
+        fcol1, fcol2, fcol3, fcol4 = st.columns(4)
+        min_strength = fcol1.slider("Min Strength", 0, 10, 1)
+        min_rsi = fcol2.slider("Min RSI", 0, 100, 50)
+        min_vol = fcol3.slider("Min Volume ×", 1.0, 5.0, 1.0)
+        min_base = fcol4.slider("Min Base (Weeks)", 0, 20, 0)
 
     if results is None or results.empty:
         return results
 
-    required_cols = ["Signal_Strength", "RSI", "Vol_x"]
-    if not all(col in results.columns for col in required_cols):
-        return results
+    mask = (results["Signal_Strength"] >= min_strength) & \
+           (results["RSI"] >= min_rsi) & \
+           (results["Vol_x"] >= min_vol)
 
-    return results[
-        (results["Signal_Strength"] >= min_strength)
-        & (results["RSI"] >= min_rsi)
-        & (results["Vol_x"] >= min_vol)
-    ]
+    if "Base_Weeks" in results.columns:
+        mask &= (results["Base_Weeks"] >= min_base)
+
+    return results[mask]
 
 
 def _render_status_banner(
@@ -279,6 +279,8 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
             show_vwap=chart_options.show_vwap,
         )
         st.plotly_chart(fig, use_container_width=True)
+        if st.button("🖥️ View Full Screen Chart", key=f"fs_{ticker}", use_container_width=True):
+            show_full_chart(fig)
     else:
         st.warning("Chart data unavailable for this ticker.")
 
@@ -295,6 +297,7 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
     display_columns = [
         "Ticker",
         "LTP",
+        "Base_Weeks",
         "ROE",
         "Sector",
         "Sector_Score",
@@ -317,10 +320,18 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
             "Type": "Level",
             "RS_Rating": "RS",
             "Sector_Score": "Sect.Score",
+            "Base_Weeks": "Base",
         }
     ).copy()
 
-    styled = style_scanner_results(rendered_df)
+    def highlight_high_sector(s):
+        """Highlight rows where the Sector Score is 8.0 or higher."""
+        is_high = s["Sect.Score"] >= 8.0
+        return ['background-color: rgba(0, 255, 170, 0.15)' if is_high else '' for _ in s]
+
+    # Chain the sector highlight to existing scanner styles
+    styled = style_scanner_results(rendered_df).apply(highlight_high_sector, axis=1)
+    
     try:
         return st.dataframe(
             styled,

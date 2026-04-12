@@ -84,7 +84,7 @@ st.markdown("""
     .top-pick-symbol {
         font-weight: 800;
         font-size: 1.1rem;
-        color: #f8fafc;
+        color: #00ffaa;
     }
     .top-pick-price {
         color: #00ffaa;
@@ -93,7 +93,7 @@ st.markdown("""
     }
     .top-pick-meta {
         font-size: 0.85rem;
-        color: #888;
+        color: #94a3b8;
         margin-bottom: 10px;
     }
     .mini-tag {

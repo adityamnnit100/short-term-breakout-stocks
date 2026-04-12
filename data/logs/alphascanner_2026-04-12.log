@@ -3,3 +3,6 @@
 2026-04-12 01:41:34,644 ERROR 
 1 Failed download:
 2026-04-12 01:41:34,645 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-12 19:07:49,293 ERROR 
+3 Failed downloads:
+2026-04-12 19:07:49,294 ERROR ['APLAPOLLO.NS', 'BANKBARODA.NS', 'HAL.NS']: TypeError("'NoneType' object is not subscriptable")

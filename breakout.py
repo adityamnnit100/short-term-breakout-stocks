@@ -194,6 +194,22 @@ def detect_vcp_tightness(close, window: int = 10):
     hist_std = close.tail(50).std()
     return recent_std < (hist_std * 0.75)
 
+def calculate_base_weeks(df: pd.DataFrame, max_range_pct: float = 12.0) -> int:
+    """Calculates consecutive weeks where price stayed within a tight percentage range prior to today."""
+    if len(df) < 10:
+        return 0
+    weeks = 0
+    # Check backwards in 5-day increments, excluding the current candle
+    for w in range(1, (len(df) // 5)):
+        period = df.iloc[-(w * 5) - 1 : -1]
+        p_max = period["High"].max()
+        p_min = period["Low"].min()
+        if ((p_max - p_min) / p_min) * 100 <= max_range_pct:
+            weeks = w
+        else:
+            break
+    return weeks
+
 def detect_volume_dryup(volume: pd.Series, window: int = 30, threshold: float = 0.7) -> bool:
     """Detects 'Volume Dry-up' (Supply exhaustion) compared to recent average."""
     if len(volume) < window:
@@ -405,6 +421,7 @@ def _process_single_ticker(
         ticker_sector = sector_map.get(ticker, "N/A") if sector_map else "N/A"
         sector_score = sector_sentiment_map.get(ticker_sector, 5.0)
         is_tight = detect_vcp_tightness(close)
+        base_weeks = calculate_base_weeks(df)
         is_dry = detect_volume_dryup(vol)
 
         # Volume Surge is validated only if the stock belongs to a trending/outperforming sector
@@ -468,7 +485,7 @@ def _process_single_ticker(
 
         # Anti-Chase Filter: If the stock is already up > 4% today, it might be a "late" signal
         daily_pcnt = (ltp - df["Open"].iloc[-1]) / df["Open"].iloc[-1] * 100
-        if daily_pcnt > 4.5:
+        if daily_pcnt > 4.0: # Tightened slightly to ensure we don't chase
             return None
 
         candle_sentiment = detect_candlestick_pattern(df)
@@ -476,7 +493,7 @@ def _process_single_ticker(
         # Trend Intensity based on MA Slopes and ADX
         ema_20_prev = close.ewm(span=20, adjust=False).mean().iloc[-5]
         trend_slope = (ema_20 - ema_20_prev) / max(ema_20_prev, 1e-9) * 100
-        trend_intensity = "Strong" if (adx > 25 and trend_slope > 0.5) else ("Moderate" if adx > 18 else "Weak")
+        trend_intensity = "Strong" if (adx > 25 and trend_slope > 0.5) else ("Moderate" if adx > 20 else "Weak")
 
         # MACD confirmation
         macd_bull = macd.iloc[-1] > macd_sig.iloc[-1] and macd_hist.iloc[-1] > 0
@@ -530,6 +547,8 @@ def _process_single_ticker(
         if is_tight: patterns.append("VCP-Tight")
         if is_dry: patterns.append("Vol-Dryup")
         if is_surge: patterns.append("Vol-Surge")
+        if base_weeks >= 4:
+            patterns.append(f"Base-{base_weeks}W")
         if is_fakeout:
             patterns.append("Fakeout-Trap")
             with stats_lock: stats["fakeout_trap"] += 1
@@ -546,6 +565,8 @@ def _process_single_ticker(
         # Sector Sentiment Factor (Bonus/Penalty)
         if sector_score >= 8.0:
             strength += 1.5
+            if rs_rating >= 85: # Synergistic bonus for Sentiment + High RS
+                strength += 1.5
         elif sector_score <= 4.0:
             strength -= 1.0
         
@@ -570,6 +591,7 @@ def _process_single_ticker(
             "Mkt_Cap_Cr": round(mkt_cap_cr, 1),
             "Sector": ticker_sector,
             "Sector_Score": sector_score,
+            "Base_Weeks": base_weeks,
             "Vol_x": round(vol_ratio, 1),
             "MACD": "✅" if macd_bull else "—",
             "BB": "✅" if bb_bull else "—",
