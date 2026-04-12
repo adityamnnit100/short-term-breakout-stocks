@@ -63,7 +63,7 @@ def get_sector_mapping(universe_type: str = "Nifty 500") -> dict:
     if universe_type == "Nifty 500":
         url = "https://archives.nseindia.com/content/indices/ind_nifty500list.csv"
     elif universe_type == "Total Market (Cap Focused)":
-        url = "https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarket_list.csv"
+        url = "https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv"
     else:
         return {}  # Should not happen with current universe options
 
