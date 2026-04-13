@@ -22,6 +22,24 @@
 ✨ = NEW advanced filters
 ```
 
+### 🧪 NEW: THE PRE-BREAKOUT SCANNER (VCP MODE)
+
+To catch moves *before* they happen, use the **Pre-Breakout** mode. This is specifically designed to find "Launchpad" setups where price is tight and supply is exhausted.
+
+**Recommended Settings for Mid/Small Caps:**
+- **Scanner Type**: Pre-Breakout
+- **Universe**: Total Market (Cap Focused)
+- **Market Cap**: 500Cr - 20,000Cr
+- **RSI Range**: 40-65 (Look for accumulation, not extension)
+- **Proximity**: 3% - 5% (Distance to 20D or 52W high)
+
+**Key Pre-Breakout Actions:**
+- `VCP Setup`: High conviction. Indicates Volatility Contraction Pattern.
+- `Near Breakout`: Price is knocking on the door of resistance.
+- `Vol-Dryup`: Indicates supply is gone; the path of least resistance is likely up.
+- `Setup Score`: A granular 0-10 rating of the base quality (Tightness + RSI Accumulation).
+```
+
 ---
 
 ## 📊 SIGNAL STRENGTH LEGEND (0-10)

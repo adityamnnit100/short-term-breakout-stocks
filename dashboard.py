@@ -13,7 +13,7 @@ from alphascanner_ui.data import (
 from alphascanner_ui.sidebar import render_sidebar
 from alphascanner_ui.state import init_session_state
 from alphascanner_ui.tabs import backtest, journal, market, news, risk, scanner, settings, watchlist
-from alphascanner_ui.theme import apply_global_styles, apply_plotly_theme, render_footer, render_hero_header
+from alphascanner_ui.theme import apply_global_styles, apply_plotly_theme, render_footer
 
 
 st.set_page_config(
@@ -297,8 +297,6 @@ with st.sidebar:
         st.error("Sentiment Engine: MISSING", icon="🛑")
         st.caption("To enable, run: `pip install textblob`")
 
-render_hero_header()
-
 tab_scanner, tab_backtest, tab_watchlist, tab_market, tab_news, tab_risk, tab_journal, tab_settings = st.tabs(
     [
         "🎯 Scanner",
@@ -313,7 +311,7 @@ tab_scanner, tab_backtest, tab_watchlist, tab_market, tab_news, tab_risk, tab_jo
 )
 
 with tab_scanner:
-    scanner.render_tab(sidebar_settings, chart_options, load_ticker_history, fetch_indices_performance)
+    scanner.render_tab(sidebar_settings, chart_options, load_ticker_history, fetch_indices_performance) # scanner_type is now part of sidebar_settings
     # Smooth UI interaction: notify user when scan results are fresh
     if st.session_state.get('last_scan_time') and not st.session_state.get('scan_running'):
         st.toast(f"Latest opportunities loaded (Scan time: {st.session_state.last_scan_time})", icon="⚡")

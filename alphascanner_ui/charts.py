@@ -86,6 +86,25 @@ def style_scanner_results(df: pd.DataFrame):
             return "color:#22d3ee;"
         return "color:#cbd5e1;"
 
+    def _action(val):
+        v = str(val)
+        if "VCP" in v:
+            return "color:#8b5cf6; font-weight:700;" # Purple for VCP
+        if "Ready" in v:
+            return "color:#00ffaa; font-weight:700;" # Neon Green for Breakout
+        return ""
+
+    def _setup(val):
+        try:
+            value = float(val)
+        except Exception:
+            return ""
+        if value >= 8:
+            return "color:#8b5cf6; font-weight:700;" # Vivid Purple for elite setup
+        if value >= 5:
+            return "color:#a78bfa;" # Lighter Purple
+        return ""
+
     styled = df.style
     formats = {}
     if "LTP" in df.columns:
@@ -98,6 +117,10 @@ def style_scanner_results(df: pd.DataFrame):
         formats["Strength"] = "{:.0f}"
     if "Vol×" in df.columns:
         formats["Vol×"] = "{:.1f}×"
+    if "Setup" in df.columns:
+        formats["Setup"] = "{:.1f}"
+    if "Tight Days" in df.columns:
+        formats["Tight Days"] = "{:.0f}d"
     if formats:
         styled = styled.format(formats)
     if "Strength" in df.columns:
@@ -120,6 +143,16 @@ def style_scanner_results(df: pd.DataFrame):
             styled = styled.map(_rs, subset=["RS"])
         except AttributeError:
             styled = styled.applymap(_rs, subset=["RS"])
+    if "Action" in df.columns:
+        try:
+            styled = styled.map(_action, subset=["Action"])
+        except AttributeError:
+            styled = styled.applymap(_action, subset=["Action"])
+    if "Setup" in df.columns:
+        try:
+            styled = styled.map(_setup, subset=["Setup"])
+        except AttributeError:
+            styled = styled.applymap(_setup, subset=["Setup"])
     return styled
 
 

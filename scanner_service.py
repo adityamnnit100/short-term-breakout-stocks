@@ -11,7 +11,7 @@ def fetch_cached_data(use_cache: bool):
     return get_cached_results()
 
 
-def perform_fresh_scan(universe, vol_thresh, rsi_min, rsi_max, dist_thresh, min_mkt_cap_cr, max_mkt_cap_cr, sector_map, progress_callback=None):
+def perform_fresh_scan(universe, vol_thresh, rsi_min, rsi_max, dist_thresh, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, sector_map, progress_callback=None):
     """Run a live scan, persist results, and return (results_df, stats_dict, scan_time_str)."""
     results, stats = run_scanner(
         vol_thresh=vol_thresh,
@@ -21,6 +21,7 @@ def perform_fresh_scan(universe, vol_thresh, rsi_min, rsi_max, dist_thresh, min_
         min_mkt_cap_cr=min_mkt_cap_cr,
         max_mkt_cap_cr=max_mkt_cap_cr,
         universe=universe,
+        scanner_type=scanner_type,
         sector_map=sector_map,
         progress_callback=progress_callback,
     )

@@ -39,7 +39,11 @@ html, body, .stApp {
         linear-gradient(180deg, #020617 0%, #0f172a 100%);
     color: var(--text);
 }
-.block-container { padding: 1.5rem 2rem 3rem; max-width: 1600px; }
+.block-container { padding: 0.5rem 1rem 2rem; max-width: 100%; }
+[data-testid="stSidebar"] {
+    min-width: 260px !important;
+    max-width: 260px !important;
+}
 .stSidebar > div:first-child {
     background:
         linear-gradient(180deg, #020617 0%, #0f172a 100%);
@@ -68,92 +72,6 @@ footer { visibility: hidden; }
 .stApp [data-testid="stWidgetLabel"] p,
 .stApp [data-testid="stExpander"] summary p {
     color: var(--muted) !important;
-}
-
-.hero-header {
-    background:
-        linear-gradient(125deg, rgba(4,12,24,0.96) 0%, rgba(9,25,46,0.96) 55%, rgba(8,21,39,0.98) 100%);
-    border: 1px solid rgba(0,229,255,0.14);
-    border-radius: 18px;
-    padding: 30px 32px 26px;
-    margin-bottom: 24px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 50px rgba(0,0,0,0.5);
-}
-.hero-header::before {
-    content: '';
-    position: absolute;
-    top: -60%; left: -20%;
-    width: 60%; height: 200%;
-    background: radial-gradient(ellipse, rgba(0,229,255,0.08) 0%, transparent 70%);
-    animation: pulse 6s ease-in-out infinite alternate;
-}
-.hero-header::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 100% 36px, 36px 100%;
-    mask-image: linear-gradient(180deg, rgba(255,255,255,0.3), transparent 85%);
-    pointer-events: none;
-}
-@keyframes pulse { from { transform: translateX(-10px); } to { transform: translateX(10px); } }
-
-.hero-kicker {
-    font-size: 0.72rem;
-    letter-spacing: 0.22rem;
-    text-transform: uppercase;
-    color: var(--cyan-dim);
-    margin-bottom: 10px;
-    font-family: 'JetBrains Mono', monospace;
-}
-.hero-title {
-    font-size: 2.1rem; font-weight: 700; letter-spacing: -0.7px;
-    background: linear-gradient(90deg, #ffffff, #22d3ee 45%, #0891b2 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin: 0 0 10px;
-}
-.hero-sub { color: var(--muted); font-size: 0.95rem; margin: 0 0 20px; max-width: 780px; line-height: 1.6; }
-.hero-grid {
-    display: block;
-    grid-template-columns: minmax(0, 1.8fr) minmax(300px, 1fr);
-    gap: 20px;
-    align-items: end;
-    position: relative;
-    z-index: 1;
-}
-.hero-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-.hero-stat {
-    padding: 12px 14px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px;
-}
-.hero-stat-label {
-    color: var(--slate);
-    font-size: 0.68rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1rem;
-    margin-bottom: 6px;
-}
-.hero-stat-value {
-    color: var(--text);
-    font-size: 1rem;
-    font-family: 'JetBrains Mono', monospace;
-}
-.badge-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.badge {
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 20px; padding: 4px 12px;
-    font-size: 0.78rem; color: var(--cyan-dim); font-family: 'JetBrains Mono', monospace;
-    white-space: nowrap;
 }
 
 .metric-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -690,30 +608,6 @@ def apply_plotly_theme() -> None:
     
     pio.templates["alphascanner_pro"] = template
     pio.templates.default = "alphascanner_pro"
-
-def render_hero_header() -> None:
-    st.markdown(
-        """
-<div class="hero-header">
-    <div class="hero-grid">
-        <div>
-            <div class="hero-kicker">NSE Momentum Terminal</div>
-            <div class="hero-title">AlphaScanner PRO</div>
-            <div class="hero-sub">Professional breakout workflow for scanning, validating, sizing, and reviewing momentum setups from one trading dashboard.</div>
-            <div class="badge-row">
-                <span class="badge">11 Filters</span>
-                <span class="badge">MACD · BB · VWAP · StochRSI</span>
-                <span class="badge">ATR Risk Engine</span>
-                <span class="badge">Pattern Recognition</span>
-                <span class="badge">Backtest Console</span>
-            </div>
-        </div>
-    </div>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
-
 
 def render_footer(last_scan_time: Optional[str]) -> None:
     st.markdown(

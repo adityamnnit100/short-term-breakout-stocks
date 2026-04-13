@@ -1,1 +1,15 @@
 2026-04-13 00:56:14,362 WARNING Failed to fetch Nifty Total Market: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-13 22:13:37,871 ERROR Failed to fetch sector mapping for Total Market (Cap Focused): 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-13 22:27:26,451 ERROR Failed to fetch sector mapping for Total Market (Cap Focused): 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-13 22:27:26,507 WARNING Failed to fetch Nifty Total Market: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-13 22:28:09,913 WARNING Failed to fetch Nifty Total Market: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-13 22:29:51,376 ERROR Error in NTPC.NS: name 'actual_breakout' is not defined
+2026-04-13 22:29:53,554 ERROR Error in TATAPOWER.NS: name 'actual_breakout' is not defined
+2026-04-13 22:45:06,038 ERROR Error in NTPC.NS: name 'actual_breakout' is not defined
+2026-04-13 22:45:08,399 ERROR Error in TATAPOWER.NS: name 'actual_breakout' is not defined
+2026-04-13 22:46:04,136 ERROR Failed to fetch sector mapping for Total Market (Cap Focused): 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-13 22:46:04,217 WARNING Failed to fetch Nifty Total Market: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-13 22:49:57,749 ERROR Failed to fetch sector mapping for Total Market (Cap Focused): 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-13 22:49:58,077 WARNING Failed to fetch Nifty Total Market: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-13 22:51:49,355 ERROR Error in NTPC.NS: name 'actual_breakout' is not defined
+2026-04-13 22:51:52,177 ERROR Error in TATAPOWER.NS: name 'actual_breakout' is not defined

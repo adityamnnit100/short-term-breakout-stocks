@@ -210,6 +210,22 @@ def calculate_base_weeks(df: pd.DataFrame, max_range_pct: float = 12.0) -> int:
             break
     return weeks
 
+def calculate_consolidation_days(df: pd.DataFrame, max_range_pct: float = 10.0) -> int:
+    """Calculates consecutive trading days where price stayed within a tight range prior to today."""
+    if len(df) < 5:
+        return 0
+    days = 0
+    # Check backwards day by day from yesterday (excluding current incomplete candle)
+    for d in range(1, len(df) - 1):
+        period = df.iloc[-(d + 1) : -1]
+        p_max = period["High"].max()
+        p_min = period["Low"].min()
+        if p_min > 0 and ((p_max - p_min) / p_min) * 100 <= max_range_pct:
+            days = d
+        else:
+            break
+    return days
+
 def detect_volume_dryup(volume: pd.Series, window: int = 30, threshold: float = 0.7) -> bool:
     """Detects 'Volume Dry-up' (Supply exhaustion) compared to recent average."""
     if len(volume) < window:
@@ -379,7 +395,8 @@ def _process_single_ticker(
     apply_market_cap_filter: bool,
     min_mkt_cap_cr: float,
     max_mkt_cap_cr: float,
-    sector_map: Optional[dict],
+    scanner_type: str,
+    sector_map: Optional[dict], # Added scanner_type
     trending_sectors: set,
     sector_sentiment_map: dict,
     stats: dict,
@@ -423,7 +440,18 @@ def _process_single_ticker(
         sector_score = sector_sentiment_map.get(ticker_sector, 5.0)
         is_tight = detect_vcp_tightness(close)
         base_weeks = calculate_base_weeks(df)
+        consol_days = calculate_consolidation_days(df)
         is_dry = detect_volume_dryup(vol)
+
+        # GRANULAR SETUP SCORE (0-10) for Pre-Breakout Ranking
+        recent_std = close.tail(10).std()
+        hist_std = close.tail(50).std()
+        tightness_ratio = (recent_std / hist_std) if hist_std > 0 else 1.0
+        # 1. RSI Accumulation Score: Centered at 52.5 (Max 5 pts)
+        rsi_acc_score = max(0, 5 - abs(rsi - 52.5) / 2.5) if 40 <= rsi <= 65 else 0
+        # 2. Tightness Score: Max points if ratio <= 0.5 (Max 5 pts)
+        t_acc_score = max(0, min(5.0, (0.75 - tightness_ratio) / 0.25 * 5)) if tightness_ratio < 0.75 else 0
+        setup_score = round(min(10.0, rsi_acc_score + t_acc_score), 1)
 
         # Volume Surge is validated only if the stock belongs to a trending/outperforming sector
         is_surge = detect_volume_surge(vol)
@@ -453,10 +481,10 @@ def _process_single_ticker(
         rs_bonus = 3 if rs_rating >= 95 else (2 if rs_rating >= 90 else 0)
 
         # ADX rising condition
-        if not (adx > 18): # Lowered floor
+        if not (adx > (15 if scanner_type == "Pre-Breakout" else 18)): # Lowered floor for Pre-Breakout
             with stats_lock: stats["adx_fail"] += 1
             return None
-
+        
         # Breakout logic
         prev_h20 = float(high.iloc[-21:-1].max())
         prev_h52 = float(high.iloc[-252:-1].max())
@@ -464,17 +492,27 @@ def _process_single_ticker(
         # ANTICIPATORY LOGIC: Is it about to break?
         # Price is within 1.5% of 20-day high OR 52-week high
         near_20d = prev_h20 * 0.985 <= ltp <= prev_h20 * 1.005
-        near_52w = ltp >= prev_h52 * (1 - dist_thresh / 100)
-        is_breaking_out = ltp > prev_h20 * 1.005 or ltp > prev_h52 * 1.005
-        actual_breakout = near_20d or near_52w
+        near_52w = ltp >= prev_h52 * (1 - dist_thresh / 100) # dist_thresh is now dynamic from sidebar
+        
+        is_breaking_out = False
+        actual_breakout_condition_met = False
+        
+        if scanner_type == "Breakout":
+            is_breaking_out = ltp > prev_h20 * 1.005 or ltp > prev_h52 * 1.005
+            actual_breakout_condition_met = near_20d or near_52w or is_breaking_out
+        else: # Pre-Breakout
+            # For pre-breakout, we want to be *near* the high, but not yet broken out
+            is_consolidating_near_20d = ltp >= prev_h20 * (1 - dist_thresh / 100) and ltp < prev_h20 * 1.005
+            is_consolidating_near_52w = ltp >= prev_h52 * (1 - dist_thresh / 100) and ltp < prev_h52 * 1.005
+            actual_breakout_condition_met = is_consolidating_near_20d or is_consolidating_near_52w
 
         # Fakeout detection: price breaks resistance but volume is below threshold
         is_fakeout = is_breaking_out and vol_ratio < min_vol_ratio
         if vol_ratio < min_vol_ratio and not (is_tight and is_dry or is_breaking_out):
             with stats_lock: stats["volume_fail"] += 1
             return None
-
-        if not (near_20d or near_52w or is_breaking_out):
+        
+        if not actual_breakout_condition_met:
             with stats_lock: stats["breakout_fail"] += 1
             return None
 
@@ -558,12 +596,20 @@ def _process_single_ticker(
             with stats_lock: stats["fakeout_trap"] += 1
 
         # Enhanced Weighted Signal Strength Scoring (0-10)
-        # We give the MOST weight to "Tightness" and "Proximity" to find stocks BEFORE the move
-        strength = (3.0 if (is_tight and is_dry) else 1.0) 
-        strength += (2.5 if near_20d else 0) + (2.0 if near_52w else 0)
-        strength += (1 if macd_bull else 0) + (1 if above_vwap else 0) + (1 if bb_bull else 0)
-        strength += (1 if ma_slope_bull else 0)
-        strength += (2.0 if is_surge else 0)
+        if scanner_type == "Pre-Breakout":
+            strength = (1.5 + (setup_score * 0.35) if is_dry else 1.0) # Weighted by setup quality and supply dry-up
+            strength += (2.0 if is_consolidating_near_20d else 0) + (1.5 if is_consolidating_near_52w else 0)
+            strength += (0.5 if macd_bull else 0) + (0.5 if above_vwap else 0) + (0.5 if bb_bull else 0)
+            strength += (0.5 if ma_slope_bull else 0)
+            strength += (1.0 if is_surge else 0) # Surge is still good for early accumulation
+            strength += (setup_score / 5.0) # Bonus for high-quality technical setup
+        else: # Breakout scanner
+            strength = (3.0 if (is_tight and is_dry) else 1.0) 
+            strength += (2.5 if near_20d else 0) + (2.0 if near_52w else 0)
+            strength += (1 if macd_bull else 0) + (1 if above_vwap else 0) + (1 if bb_bull else 0)
+            strength += (1 if ma_slope_bull else 0)
+            strength += (2.0 if is_surge else 0)
+
         strength += max(0, (rs_rating - 70) / 5) # Gradual contribution from RS
 
         # Sector Sentiment Factor (Bonus/Penalty)
@@ -580,9 +626,15 @@ def _process_single_ticker(
         strength = min(10.0, round(strength, 1))
 
         # TRIGGER LOGIC (OR): At least one major signal must be present
-        if not (actual_breakout or near_52w or bb_breakout or len(patterns) > 0):
-            with stats_lock: stats["breakout_fail"] += 1
-            return None
+        if scanner_type == "Pre-Breakout":
+            # For pre-breakout, we need VCP/Dry-up or consolidation near high
+            if not ((is_tight and is_dry) or is_consolidating_near_20d or is_consolidating_near_52w or len(patterns) > 0):
+                with stats_lock: stats["breakout_fail"] += 1
+                return None
+        else: # Breakout scanner
+            if not (is_breaking_out or near_52w or bb_breakout or len(patterns) > 0):
+                with stats_lock: stats["breakout_fail"] += 1
+                return None
 
         return {
             "Ticker": ticker,
@@ -593,9 +645,11 @@ def _process_single_ticker(
             "RS_Rating": rs_rating,
             "ROE": round(roe * 100, 1),
             "Mkt_Cap_Cr": round(mkt_cap_cr, 1),
+            "Setup_Score": setup_score if scanner_type == "Pre-Breakout" else 0.0,
             "Sector": ticker_sector,
             "Sector_Score": sector_score,
             "Base_Weeks": base_weeks,
+            "Consol_Days": consol_days,
             "Vol_x": round(vol_ratio, 1),
             "MACD": "✅" if macd_bull else "—",
             "BB": "✅" if bb_bull else "—",
@@ -608,7 +662,11 @@ def _process_single_ticker(
             "Signal_Strength": strength,
             "Trend": trend_intensity,
             "Candle": "Consolidating" if daily_pcnt < 1.5 else candle_sentiment,
-            "Action": "AVOID: Fakeout" if is_fakeout else ("Ready to Pop" if (strength >= 7.5 and is_tight) else "Watching"),
+            "Action": "AVOID: Fakeout" if is_fakeout else (
+                "VCP Setup" if (scanner_type == "Pre-Breakout" and is_tight and is_dry) else
+                ("Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
+                 ("Ready to Pop" if (strength >= 7.5 and is_tight) else "Watching"))
+            ),
             "Pattern": ", ".join(patterns) if patterns else ("20D Breakout" if actual_breakout else ("Near 52W" if near_52w else "Vol Breakout")),
         }
     except Exception as e:
@@ -622,6 +680,7 @@ def run_scanner(
     dist_thresh: float = 1.5,
     min_mkt_cap_cr: float = 0.0,
     max_mkt_cap_cr: float = 0.0,
+    scanner_type: str = "Breakout", # Added scanner_type
     universe: str = "Nifty 500",
     sector_map: Optional[dict] = None,
     progress_callback=None,
@@ -706,8 +765,8 @@ def run_scanner(
         future_to_ticker = {
             executor.submit(
                 _process_single_ticker, 
-                ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh, 
-                apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
+                ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh, # Pass scanner_type
+                apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
             ): ticker for ticker in avail
         }
         

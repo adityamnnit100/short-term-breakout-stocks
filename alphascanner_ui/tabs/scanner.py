@@ -297,6 +297,9 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
     display_columns = [
         "Ticker",
         "LTP",
+        "Action",
+        "Setup_Score",
+        "Consol_Days",
         "Base_Weeks",
         "ROE",
         "Sector",
@@ -321,6 +324,8 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
             "RS_Rating": "RS",
             "Sector_Score": "Sect.Score",
             "Base_Weeks": "Base",
+            "Setup_Score": "Setup",
+            "Consol_Days": "Tight Days",
         }
     ).copy()
 
@@ -334,8 +339,17 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
         is_base_20 = "Base-20W" in str(s["Pattern"])
         return ['background-color: rgba(255, 215, 0, 0.25)' if is_base_20 else '' for _ in s]
 
-    # Chain the sector highlight and long-term bottom (gold) highlight to existing scanner styles
-    styled = style_scanner_results(rendered_df).apply(highlight_high_sector, axis=1).apply(highlight_long_term_bottom, axis=1)
+    def highlight_setup_type(s):
+        """Highlight rows based on the type of signal (VCP/Pre-Breakout vs Standard)."""
+        action = str(s["Action"])
+        if "VCP" in action:
+            return ['background-color: rgba(139, 92, 246, 0.2)'] * len(s) # Purple tint for VCP
+        if "Near" in action:
+            return ['background-color: rgba(34, 211, 238, 0.15)'] * len(s) # Cyan tint for Near Breakout
+        return ['' for _ in s]
+
+    # Chain the sector highlight, long-term bottom (gold), and setup type highlights
+    styled = style_scanner_results(rendered_df).apply(highlight_high_sector, axis=1).apply(highlight_long_term_bottom, axis=1).apply(highlight_setup_type, axis=1)
     
     try:
         return st.dataframe(
@@ -404,6 +418,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                 dist_thresh=settings.dist_thresh,
                 min_mkt_cap_cr=min_cap,
                 max_mkt_cap_cr=max_cap,
+                scanner_type=settings.scanner_type,
                 sector_map=sector_map,
                 progress_callback=_progress,
             )

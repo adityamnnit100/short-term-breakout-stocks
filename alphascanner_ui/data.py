@@ -10,7 +10,7 @@ import requests
 import streamlit as st
 import yfinance as yf
 
-from breakout import run_backtest
+from breakout import run_backtest # This import is fine, no circular dependency with HEADERS
 
 
 HEADERS = {

@@ -15,6 +15,7 @@ class SidebarSettings:
     dist_thresh: float
     min_mkt_cap: int
     max_mkt_cap: int
+    scanner_type: str
     use_cache: bool
 
 
@@ -39,14 +40,24 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
 
         with st.expander("🎯 Filter Parameters", expanded=True):
             universe = st.selectbox(
-                "Scanner Universe",
+                "Universe",
                 ["Nifty 500", "Total Market (Cap Focused)"],
                 index=0,
                 help="Use Nifty 500 for the core scanner, or Total Market when you want market-cap screening.",
             )
-            vol_thresh = st.slider("Min Volume Ratio (×avg)", 1.0, 5.0, 1.5, 0.1)
-            rsi_range = st.slider("RSI Range", 0, 100, (60, 78))
-            dist_thresh = st.slider("Breakout Distance (%)", 0.5, 5.0, 1.5, 0.1)
+            scanner_type = st.selectbox(
+                "Scanner Type",
+                ["Breakout", "Pre-Breakout"],
+                index=0,
+                help="Breakout: Stocks actively breaking out. Pre-Breakout: Stocks consolidating near highs.",
+            )
+            vol_thresh = st.slider("Min Volume Ratio (×avg)", 1.0, 5.0, 1.5 if scanner_type == "Breakout" else 0.8, 0.1)
+            if scanner_type == "Breakout":
+                rsi_range = st.slider("RSI Range", 0, 100, (60, 78))
+                dist_thresh = st.slider("Breakout Distance (%)", 0.5, 5.0, 1.5, 0.1)
+            else: # Pre-Breakout
+                rsi_range = st.slider("RSI Range", 0, 100, (40, 65), help="RSI range for accumulation phase.")
+                dist_thresh = st.slider("Proximity to High (%)", 0.5, 10.0, 5.0, 0.5, help="How close to 20D/52W high for pre-breakout.")
             min_mkt_cap, max_mkt_cap = 0, 1000000
             if universe == "Total Market (Cap Focused)":
                 mkt_cap_range = st.slider(
@@ -101,6 +112,7 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         dist_thresh=dist_thresh,
         min_mkt_cap=min_mkt_cap,
         max_mkt_cap=max_mkt_cap,
+        scanner_type=scanner_type,
         use_cache=use_cache,
     )
     return settings, chart_options
