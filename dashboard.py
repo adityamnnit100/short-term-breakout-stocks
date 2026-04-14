@@ -252,6 +252,10 @@ st.markdown("""
         [data-testid="stDataFrame"] {
             min-width: 1000px; /* Force minimum width to trigger horizontal scroll */
         }
+        /* Enhanced Table Visibility */
+        .stDataFrame div[data-testid="stHorizontalBlock"] {
+            overflow-x: auto !important;
+        }
         .terminal-head {
             flex-direction: column;
             gap: 10px;

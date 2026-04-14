@@ -1,0 +1,26 @@
+2026-04-14 18:37:13,474 ERROR Failed to fetch sector mapping for Total Market (Cap Focused): 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-14 18:37:13,513 WARNING Failed to fetch Nifty Total Market: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-14 18:38:32,603 WARNING Failed to fetch Nifty Total Market: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-14 18:58:38,253 ERROR Failed to fetch sector mapping for Total Market (Cap Focused): 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-14 18:58:38,607 ERROR Nifty Total Market fetch failed (404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv). Falling back to Nifty 500.
+2026-04-14 19:08:26,992 ERROR Failed to fetch sector mapping for Total Market (Cap Focused): 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-14 19:08:27,189 ERROR Nifty Total Market fetch failed (Could not fetch Total Market list from any valid NSE source). Falling back to Nifty 500.
+2026-04-14 19:09:13,278 ERROR Nifty Total Market fetch failed (Could not fetch Total Market list from any valid NSE source). Falling back to Nifty 500.
+2026-04-14 19:17:28,114 ERROR Failed to fetch sector mapping for Total Market (Cap Focused): 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-14 19:19:54,125 ERROR Failed to fetch sector mapping for Total Market (Cap Focused): 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv
+2026-04-14 19:19:54,556 ERROR Nifty Total Market fetch failed (Could not fetch a valid Total Market list from NSE.). Falling back to Nifty 500.
+2026-04-14 19:33:05,621 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-14 19:33:06,494 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-14 19:33:06,503 ERROR 
+1 Failed download:
+2026-04-14 19:33:06,503 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-14 22:24:38,126 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-14 22:24:38,771 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-14 22:24:39,324 ERROR 
+1 Failed download:
+2026-04-14 22:24:39,324 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-14 22:25:58,517 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-14 22:25:59,458 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-14 22:26:00,280 ERROR 
+1 Failed download:
+2026-04-14 22:26:00,281 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")

@@ -14,8 +14,22 @@ from breakout import run_backtest # This import is fine, no circular dependency 
 
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Accept": "text/csv,application/json,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Referer": "https://www.nseindia.com/",
 }
+
+def _fetch_nse_csv(url: str) -> pd.DataFrame:
+    """Robustly fetch CSV from NSE using a session handshake to bypass bot protection."""
+    session = requests.Session()
+    # Visit home page first to get cookies
+    session.get("https://www.nseindia.com", headers=HEADERS, timeout=10)
+    res = session.get(url, headers=HEADERS, timeout=15)
+    res.raise_for_status()
+    if "text/csv" not in res.headers.get("Content-Type", "").lower() and "octet-stream" not in res.headers.get("Content-Type", "").lower():
+        if "<html>" in res.text.lower():
+            raise ValueError("NSE blocked the request (Splash Page detected)")
+    return pd.read_csv(io.StringIO(res.text))
 
 
 def configure_logging() -> logging.Logger:
@@ -59,26 +73,34 @@ def run_backtest_cached(**kwargs):
 @st.cache_data(ttl=86400, show_spinner=False)  # Cache for 24 hours
 def get_sector_mapping(universe_type: str = "Nifty 500") -> dict:
     """Fetches a mapping of ticker to sector."""
-    url = ""
+    urls = []
     if universe_type == "Nifty 500":
-        url = "https://archives.nseindia.com/content/indices/ind_nifty500list.csv"
+        urls = ["https://archives.nseindia.com/content/indices/ind_nifty500list.csv"]
     elif universe_type == "Total Market (Cap Focused)":
-        url = "https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv"
+        urls = [
+            "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
+            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv"
+        ]
     else:
         return {}  # Should not happen with current universe options
 
-    try:
-        res = requests.get(url, headers=HEADERS, timeout=10)
-        res.raise_for_status()
-        df = pd.read_csv(io.StringIO(res.text))
-        sym_col = next((c for c in df.columns if "symbol" in c.lower()), None)
-        sector_col = next((c for c in df.columns if "industry" in c.lower() or "sector" in c.lower()), None)
-        if sym_col is None or sector_col is None:
-            return {}
-        return {f"{row[sym_col]}.NS": row[sector_col] for _, row in df.iterrows() if pd.notna(row[sym_col]) and pd.notna(row[sector_col])}
-    except Exception as exc:
-        logging.getLogger("AlphaScanner").error(f"Failed to fetch sector mapping for {universe_type}: {exc}")
-        return {}
+    mapping = {}
+    for url in urls:
+        try:
+            df = _fetch_nse_csv(url)
+            sym_col = next((c for c in df.columns if "symbol" in c.lower()), None)
+            sector_col = next((c for c in df.columns if "industry" in c.lower() or "sector" in c.lower()), None)
+            if sym_col and sector_col:
+                batch_map = {
+                    f"{row[sym_col]}.NS": row[sector_col] 
+                    for _, row in df.iterrows() 
+                    if pd.notna(row[sym_col]) and pd.notna(row[sector_col])
+                }
+                mapping.update(batch_map)
+        except Exception as exc:
+            logging.getLogger("AlphaScanner").warning(f"Sector segment {url} failed: {exc}")
+    
+    return mapping
 
 
 @st.cache_data(ttl=1800, show_spinner=False)

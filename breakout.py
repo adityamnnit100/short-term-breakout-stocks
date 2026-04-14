@@ -55,12 +55,10 @@ _EMPTY_STATS: dict = {
 # Universe
 # ---------------------------------------------------------------------------
 def get_nifty_500() -> list:
+    from alphascanner_ui.data import _fetch_nse_csv
     url = "https://archives.nseindia.com/content/indices/ind_nifty500list.csv"
-    from alphascanner_ui.data import HEADERS # Import HEADERS from data.py
     try:
-        res = requests.get(url, headers=HEADERS, timeout=10)
-        res.raise_for_status()
-        df = pd.read_csv(io.StringIO(res.text))
+        df = _fetch_nse_csv(url)
         sym_col = next((c for c in df.columns if "symbol" in c.lower()), None)
         if sym_col is None:
             logging.getLogger("AlphaScanner.Engine").warning("Symbol column not found in Nifty 500 list.")
@@ -76,19 +74,33 @@ def get_nifty_500() -> list:
 
 def get_nifty_total_market() -> list:
     """Fetches the Nifty Total Market list (Nifty 500 + Microcaps)."""
-    from alphascanner_ui.data import HEADERS # Import HEADERS from data.py
-    url = "https://nsearchives.nseindia.com/content/indices/ind_niftytotalmarketlist.csv"
+    from alphascanner_ui.data import _fetch_nse_csv
+    
+    # NSE often restricts the single Total Market CSV or redirects it to Nifty 500.
+    # Combining primary segments (500 + Microcap 250) is the most stable reconstruction.
+    segment_urls = [
+        "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
+        "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv"
+    ]
+    
+    all_tickers = set()
+    for url in segment_urls:
+        try:
+            df = _fetch_nse_csv(url)
+            sym_col = next((c for c in df.columns if "symbol" in c.lower()), None)
+            if sym_col:
+                batch = [f"{s}.NS" for s in df[sym_col].dropna().str.strip() if s.strip()]
+                all_tickers.update(batch)
+        except Exception as e:
+            logging.getLogger("AlphaScanner.Engine").warning(f"Failed to fetch segment {url}: {e}")
+
+    if len(all_tickers) > 550:
+        return sorted(list(all_tickers))
+    
     try:
-        res = requests.get(url, headers=HEADERS, timeout=10)
-        res.raise_for_status()
-        df = pd.read_csv(io.StringIO(res.text))
-        sym_col = next((c for c in df.columns if "symbol" in c.lower()), None)
-        if sym_col is None:
-            logging.getLogger("AlphaScanner.Engine").warning("Symbol column not found in Nifty Total Market list.")
-            return []
-        return [f"{s}.NS" for s in df[sym_col].dropna().str.strip()]
+        raise ValueError("Could not fetch a valid Total Market list from NSE.")
     except Exception as exc:
-        logging.getLogger("AlphaScanner.Engine").warning(f"Failed to fetch Nifty Total Market: {exc}")
+        logging.getLogger("AlphaScanner.Engine").error(f"Nifty Total Market fetch failed ({exc}). Falling back to Nifty 500.")
         # Fallback to Nifty 500 if total market fetch fails
         return get_nifty_500()
 
@@ -178,11 +190,18 @@ def calculate_stochastic_rsi(rsi, window: int = 14, smooth_k: int = 3, smooth_d:
 
 
 def detect_divergence(close, rsi, lookback: int = 20):
-    """FIX: removed rolling argmin that caused FutureWarning in pandas >= 2.0."""
-    if len(close) <= lookback * 2:
+    """Improved divergence detection comparing current price action to recent structural peaks."""
+    if len(close) < lookback + 5:
         return False, False
-    bull = bool(close.iloc[-1] < close.iloc[-lookback] and rsi.iloc[-1] > rsi.iloc[-lookback])
-    bear = bool(close.iloc[-1] > close.iloc[-lookback] and rsi.iloc[-1] < rsi.iloc[-lookback])
+    
+    # Find local min/max in the lookback window (excluding current candle)
+    prev_min_price = close.iloc[-lookback:-1].min()
+    prev_min_rsi = rsi.iloc[-lookback:-1].min()
+    prev_max_price = close.iloc[-lookback:-1].max()
+    prev_max_rsi = rsi.iloc[-lookback:-1].max()
+
+    bull = bool(close.iloc[-1] < prev_min_price and rsi.iloc[-1] > prev_min_rsi)
+    bear = bool(close.iloc[-1] > prev_max_price and rsi.iloc[-1] < prev_max_rsi)
     return bull, bear
 
 
@@ -494,16 +513,20 @@ def _process_single_ticker(
         near_20d = prev_h20 * 0.985 <= ltp <= prev_h20 * 1.005
         near_52w = ltp >= prev_h52 * (1 - dist_thresh / 100) # dist_thresh is now dynamic from sidebar
         
+        # Initialize flags to avoid UnboundLocalError
         is_breaking_out = False
+        is_consolidating_near_20d = False
+        is_consolidating_near_52w = False
         actual_breakout_condition_met = False
         
         if scanner_type == "Breakout":
             is_breaking_out = ltp > prev_h20 * 1.005 or ltp > prev_h52 * 1.005
             actual_breakout_condition_met = near_20d or near_52w or is_breaking_out
         else: # Pre-Breakout
-            # For pre-breakout, we want to be *near* the high, but not yet broken out
+            # Pre-Breakout: Price within proximity threshold but hasn't surged past resistance yet
             is_consolidating_near_20d = ltp >= prev_h20 * (1 - dist_thresh / 100) and ltp < prev_h20 * 1.005
             is_consolidating_near_52w = ltp >= prev_h52 * (1 - dist_thresh / 100) and ltp < prev_h52 * 1.005
+            is_breaking_out = ltp > prev_h20 * 1.005 # Still tracked for labeling
             actual_breakout_condition_met = is_consolidating_near_20d or is_consolidating_near_52w
 
         # Fakeout detection: price breaks resistance but volume is below threshold
@@ -667,7 +690,7 @@ def _process_single_ticker(
                 ("Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
                  ("Ready to Pop" if (strength >= 7.5 and is_tight) else "Watching"))
             ),
-            "Pattern": ", ".join(patterns) if patterns else ("20D Breakout" if actual_breakout else ("Near 52W" if near_52w else "Vol Breakout")),
+            "Pattern": ", ".join(patterns) if patterns else ("20D Breakout" if is_breaking_out else ("Near 52W" if near_52w else "Vol Breakout")),
         }
     except Exception as e:
         logging.getLogger("AlphaScanner.Engine").error(f"Error in {ticker}: {str(e)}")
@@ -694,23 +717,42 @@ def run_scanner(
 
     stats = _EMPTY_STATS.copy()
 
+    # 1. Download benchmark first to ensure the regime filter is available
     try:
-        # RS rating and 52-week checks need at least 252 aligned trading days.
-        # A calendar year often has fewer rows after weekends/holidays, so use 2y.
-        data = yf.download(tickers, period="2y", interval="1d", progress=False, timeout=90)
         nifty = yf.download("^NSEI", period="2y", interval="1d", progress=False)
-
         if isinstance(nifty.columns, pd.MultiIndex):
             nifty.columns = nifty.columns.get_level_values(0)
-
         nifty_close = nifty["Close"].dropna()
-
-    except Exception as exc: # Catch all exceptions during download
-        logging.getLogger("AlphaScanner.Engine").error(f"Download error: {exc}")
+    except Exception as exc:
+        logging.getLogger("AlphaScanner.Engine").error(f"Benchmark download error: {exc}")
         return pd.DataFrame(), stats
 
-    if data is None or data.empty:
+    # 2. Download ticker data in chunks of 50 to improve stability for large universes (Total Market)
+    download_weight = 0.4 # Allocate 40% of progress to download
+    chunk_size = 50
+    data_frames = []
+    num_chunks = (len(tickers) + chunk_size - 1) // chunk_size
+
+    for i, start_idx in enumerate(range(0, len(tickers), chunk_size)):
+        chunk = tickers[start_idx : start_idx + chunk_size]
+        try:
+            # RS rating and 52-week checks need at least 252 aligned trading days; use 2y.
+            chunk_data = yf.download(chunk, period="2y", interval="1d", progress=False, timeout=45)
+            if not chunk_data.empty:
+                data_frames.append(chunk_data)
+            
+            if progress_callback:
+                progress_callback((i + 1) / num_chunks * download_weight)
+        except Exception as exc:
+            logging.getLogger("AlphaScanner.Engine").warning(f"Chunk starting with {chunk[0]} failed: {exc}")
+            if progress_callback:
+                progress_callback((i + 1) / num_chunks * download_weight)
+
+    if not data_frames:
+        logging.getLogger("AlphaScanner.Engine").error("No ticker data could be downloaded.")
         return pd.DataFrame(), stats
+
+    data = pd.concat(data_frames, axis=1, sort=True)
 
     avail = (
         data.columns.get_level_values(1).unique().tolist()
@@ -776,7 +818,8 @@ def run_scanner(
                 hits.append(res)
             
             if progress_callback:
-                progress_callback((i + 1) / len(avail))
+                # Final 60% of progress bar for signal processing
+                progress_callback(download_weight + ((i + 1) / len(avail) * (1 - download_weight)))
 
     df_out = pd.DataFrame(hits).sort_values("Signal_Strength", ascending=False) if hits else pd.DataFrame()
 
