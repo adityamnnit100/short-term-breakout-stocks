@@ -31,9 +31,7 @@ def _fetch_nse_csv(url: str) -> pd.DataFrame:
             raise ValueError("NSE blocked the request (Splash Page detected)")
     return pd.read_csv(io.StringIO(res.text))
 
-
-def configure_logging() -> logging.Logger:
-    """Ensure the app log directory and logger are ready before rendering."""
+def configure_logging():
     Path("data/logs").mkdir(parents=True, exist_ok=True)
     logging.basicConfig(
         filename=f"data/logs/alphascanner_{datetime.date.today()}.log",
