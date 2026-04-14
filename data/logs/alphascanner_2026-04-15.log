@@ -1,5 +1,0 @@
-2026-04-15 00:39:21,425 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
-2026-04-15 00:39:21,884 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
-2026-04-15 00:39:21,887 ERROR 
-1 Failed download:
-2026-04-15 00:39:21,888 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")

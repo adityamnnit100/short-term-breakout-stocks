@@ -26,7 +26,6 @@ from threading import Lock
 import numpy as np
 import pandas as pd
 import requests
-import streamlit as st
 import yfinance as yf
 try:
     from textblob import TextBlob
@@ -407,7 +406,6 @@ def _extract_ticker(data, ticker):
 def _process_single_ticker(
     ticker: str,
     data: pd.DataFrame,
-    v_inds: dict,
     nifty_close: pd.Series,
     vol_thresh: float,
     rsi_min: float,
@@ -442,26 +440,20 @@ def _process_single_ticker(
         # Align RS safely
         close_aligned, nifty_aligned = close.align(nifty_close, join="inner")
 
-        # Use Pre-calculated Vectorized Indicators
-        rsi_series = v_inds['rsi'][ticker]
-        rsi = rsi_series.iloc[-1]
-        ema_20 = v_inds['ema20'][ticker].iloc[-1]
-        sma_50 = v_inds['sma50'][ticker].iloc[-1]
-        sma_200 = v_inds['sma200'][ticker].iloc[-1]
-        
-        adx_series = v_inds['adx'][ticker]
-        adx = adx_series.iloc[-1]
-        adx_prev = adx_series.iloc[-2]
-
-        macd_val = float(v_inds['macd'][ticker].iloc[-1])
-        macd_sig_val = float(v_inds['macd_sig'][ticker].iloc[-1])
-        macd_hist_val = float(v_inds['macd_hist'][ticker].iloc[-1])
-
-        upper_bb_val = float(v_inds['bb_up'][ticker].iloc[-1])
-        mid_bb_val = float(v_inds['bb_mid'][ticker].iloc[-1])
-        vwap_val = float(v_inds['vwap'][ticker].iloc[-1])
+        # Indicators
+        sma_200 = close.rolling(200).mean().iloc[-1]
+        sma_50 = close.rolling(50).mean().iloc[-1]
+        ema_20 = close.ewm(span=20, adjust=False).mean().iloc[-1]
 
         avg_vol = vol.rolling(30).mean().iloc[-2]
+        rsi = calculate_rsi(close).iloc[-1]
+        adx_series = calculate_adx(high, low, close)
+        adx = adx_series.iloc[-1]
+        adx_prev = adx_series.iloc[-2]
+        macd, macd_sig, macd_hist = calculate_macd(close)
+        upper_bb, mid_bb, lower_bb = calculate_bollinger_bands(close)
+        vwap = calculate_vwap(high, low, close, vol).iloc[-1]
+
         ltp = float(close.iloc[-1])
         ticker_sector = sector_map.get(ticker, "N/A") if sector_map else "N/A"
         sector_score = sector_sentiment_map.get(ticker_sector, 5.0)
@@ -500,8 +492,8 @@ def _process_single_ticker(
             return None
 
         # RS filter
-        rs_rating = v_inds['rs_ratings'].get(ticker, 100.0)
-        if rs_rating < 60:  # More inclusive floor
+        rs_rating = calculate_relative_strength(close_aligned, nifty_aligned)
+        if rs_rating < 60: # More inclusive floor
             with stats_lock: stats["rs_fail"] += 1
             return None
 
@@ -561,23 +553,23 @@ def _process_single_ticker(
         candle_sentiment = detect_candlestick_pattern(df)
         
         # Trend Intensity based on MA Slopes and ADX
-        ema_20_prev = v_inds['ema20'][ticker].iloc[-5]
+        ema_20_prev = close.ewm(span=20, adjust=False).mean().iloc[-5]
         trend_slope = (ema_20 - ema_20_prev) / max(ema_20_prev, 1e-9) * 100
         trend_intensity = "Strong" if (adx > 25 and trend_slope > 0.5) else ("Moderate" if adx > 20 else "Weak")
 
         # MACD confirmation
-        macd_bull = macd_val > macd_sig_val and macd_hist_val > 0
+        macd_bull = macd.iloc[-1] > macd_sig.iloc[-1] and macd_hist.iloc[-1] > 0
 
         # BB & VWAP confirmation
-        bb_upper_zone = ltp >= (mid_bb_val + (upper_bb_val - mid_bb_val) * 0.5)
-        bb_breakout = ltp > upper_bb_val
-        above_vwap = ltp > vwap_val
+        bb_upper_zone = ltp >= (mid_bb.iloc[-1] + (upper_bb.iloc[-1] - mid_bb.iloc[-1]) * 0.5)
+        bb_breakout = ltp > upper_bb.iloc[-1]
+        above_vwap = ltp > vwap
         bb_bull = bb_upper_zone or bb_breakout
 
         # Additional confirmations used in scoring and UI.
-        ma_slope_bull = ema_20 > v_inds['ema20'][ticker].iloc[-6]
-        bull_div, bear_div = detect_divergence(close, rsi_series)
-        atr = v_inds['atr'][ticker].iloc[-1]
+        ma_slope_bull = ema_20 > close.ewm(span=20, adjust=False).mean().iloc[-6]
+        bull_div, bear_div = detect_divergence(close, calculate_rsi(close))
+        atr = calculate_atr(high, low, close).iloc[-1]
         atr = float(atr) if not pd.isna(atr) and atr > 0 else ltp * 0.015
         support_breakout, near_support, resistance, support = detect_support_resistance(df)
 
@@ -735,60 +727,6 @@ def run_scanner(
         logging.getLogger("AlphaScanner.Engine").error(f"Benchmark download error: {exc}")
         return pd.DataFrame(), stats
 
-    # --- PERFORMANCE OPTIMIZATION: Vectorized Pre-calculation ---
-    def get_vectorized_indicators(data_df: pd.DataFrame, nifty_close: pd.Series):
-        """Calculates indicators for all tickers at once on the MultiIndex DataFrame."""
-        close_df = data_df['Close']
-        high_df = data_df['High']
-        low_df = data_df['Low']
-        vol_df = data_df['Volume']
-        
-        # Pre-calculate all indicators for the entire block
-        rsi_df = calculate_rsi(close_df)
-        atr_df = calculate_atr(high_df, low_df, close_df)
-        ema20_df = close_df.ewm(span=20, adjust=False).mean()
-        sma50_df = close_df.rolling(50).mean()
-        sma200_df = close_df.rolling(200).mean()
-        adx_df = calculate_adx(high_df, low_df, close_df)
-        macd_df, macd_sig_df, macd_hist_df = calculate_macd(close_df)
-        bb_up_df, bb_mid_df, bb_low_df = calculate_bollinger_bands(close_df)
-        vwap_df = calculate_vwap(high_df, low_df, close_df, vol_df)
-        
-        # Vectorized Relative Strength Rating vs Benchmark
-        rs_ratings = pd.Series(100.0, index=close_df.columns)
-        if len(close_df) >= 252 and len(nifty_close) >= 252:
-            def get_perf_vec(obj):
-                """Calculates weighted performance. Works for both DataFrame and Series."""
-                def get_safe_denom(idx):
-                    val = obj.iloc[idx]
-                    # Series/DataFrames have .replace(); scalars (numpy floats) do not.
-                    if hasattr(val, 'replace'):
-                        return val.replace(0, np.nan)
-                    return val if val != 0 else np.nan
-
-                return ((obj.iloc[-1] / get_safe_denom(-63) * 0.4) +
-                        (obj.iloc[-1] / get_safe_denom(-126) * 0.2) +
-                        (obj.iloc[-1] / get_safe_denom(-189) * 0.2) +
-                        (obj.iloc[-1] / get_safe_denom(-252) * 0.2))
-            
-            # Compute performance for all stocks and index at once
-            s_perf = get_perf_vec(close_df)
-            # Ensure nifty is aligned with the data_df index before calculating performance
-            nifty_aligned = nifty_close.reindex(close_df.index, method='ffill').fillna(method='bfill')
-            i_perf = get_perf_vec(nifty_aligned)
-            
-            # Only update if benchmark performance is valid
-            if not pd.isna(i_perf) and i_perf != 0:
-                rs_ratings = round((s_perf / i_perf) * 100, 1).fillna(100.0)
-
-        return {
-            "rsi": rsi_df, "atr": atr_df, "ema20": ema20_df, "sma50": sma50_df, "sma200": sma200_df,
-            "adx": adx_df, "macd": macd_df, "macd_sig": macd_sig_df, "macd_hist": macd_hist_df,
-            "bb_up": bb_up_df, "bb_mid": bb_mid_df, "bb_low": bb_low_df, "vwap": vwap_df,
-            "ltp": close_df.iloc[-1], "rs_ratings": rs_ratings
-        }
-    # -----------------------------------------------------------
-
     # 2. Download ticker data in chunks of 50 to improve stability for large universes (Total Market)
     download_weight = 0.4 # Allocate 40% of progress to download
     chunk_size = 50
@@ -815,10 +753,6 @@ def run_scanner(
         return pd.DataFrame(), stats
 
     data = pd.concat(data_frames, axis=1, sort=True)
-
-    # Run the heavy math once on the big block
-    with st.spinner("Calculating Engine Indicators..."):
-        v_inds = get_vectorized_indicators(data, nifty_close)
 
     avail = (
         data.columns.get_level_values(1).unique().tolist()
@@ -872,8 +806,8 @@ def run_scanner(
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         future_to_ticker = {
             executor.submit(
-                _process_single_ticker,
-                ticker, data, v_inds, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh,
+                _process_single_ticker, 
+                ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh, # Pass scanner_type
                 apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
             ): ticker for ticker in avail
         }
