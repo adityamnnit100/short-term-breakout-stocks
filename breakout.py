@@ -163,19 +163,24 @@ def calculate_adx(high, low, close, period: int = 14):
 
 def calculate_relative_strength(stock_close, index_close):
     """Calculates Relative Strength Rating vs Benchmark (0-100 scale logic)."""
-    if len(stock_close) < 252 or len(index_close) < 252:
+    # Require at least 3 months (63 days) of data for a meaningful RS calculation
+    if len(stock_close) < 63 or len(index_close) < 63:
         return 0.0
     
-    # 1-Year Performance (Weighted towards most recent quarter)
+    # Weighted Performance calculation based on available history
     def get_perf(series):
-        return ((series.iloc[-1] / series.iloc[-63] * 0.4) + 
-                (series.iloc[-1] / series.iloc[-126] * 0.2) + 
-                (series.iloc[-1] / series.iloc[-189] * 0.2) + 
-                (series.iloc[-1] / series.iloc[-252] * 0.2))
+        l = len(series)
+        p1 = series.iloc[-1] / series.iloc[-63] if l >= 63 else 1.0
+        p2 = series.iloc[-1] / series.iloc[-126] if l >= 126 else p1
+        p3 = series.iloc[-1] / series.iloc[-189] if l >= 189 else p2
+        p4 = series.iloc[-1] / series.iloc[-252] if l >= 252 else p3
+        return (p1 * 0.4) + (p2 * 0.2) + (p3 * 0.2) + (p4 * 0.2)
     
-    s_perf = get_perf(stock_close)
-    i_perf = get_perf(index_close)
-    rs_ratio = (s_perf / i_perf) * 100
+    try:
+        s_perf = get_perf(stock_close)
+        i_perf = get_perf(index_close)
+        rs_ratio = (s_perf / i_perf) * 100
+    except Exception: return 0.0
     return round(rs_ratio, 1)
 
 
@@ -212,6 +217,20 @@ def detect_vcp_tightness(close, window: int = 10):
     recent_std = close.tail(window).std()
     hist_std = close.tail(50).std()
     return recent_std < (hist_std * 0.75)
+
+def detect_inside_bar(df: pd.DataFrame) -> bool:
+    """Detects an Inside Bar pattern (current candle is contained within previous candle)."""
+    if len(df) < 2: return False
+    last = df.iloc[-1]
+    prev = df.iloc[-2]
+    return (last['High'] <= prev['High']) and (last['Low'] >= prev['Low'])
+
+def detect_nr7(df: pd.DataFrame) -> bool:
+    """Detects NR7 (Narrow Range 7) pattern – current range is the narrowest of the last 7 sessions."""
+    if len(df) < 7: return False
+    daily_ranges = (df['High'] - df['Low']).tail(7)
+    # Check if current range is the minimum of the 7-day window
+    return bool(daily_ranges.iloc[-1] == daily_ranges.min())
 
 def calculate_base_weeks(df: pd.DataFrame, max_range_pct: float = 12.0) -> int:
     """Calculates consecutive weeks where price stayed within a tight percentage range prior to today."""
@@ -415,6 +434,7 @@ def _process_single_ticker(
     min_mkt_cap_cr: float,
     max_mkt_cap_cr: float,
     scanner_type: str,
+    universe: str,
     sector_map: Optional[dict], # Added scanner_type
     trending_sectors: set,
     sector_sentiment_map: dict,
@@ -458,6 +478,8 @@ def _process_single_ticker(
         ticker_sector = sector_map.get(ticker, "N/A") if sector_map else "N/A"
         sector_score = sector_sentiment_map.get(ticker_sector, 5.0)
         is_tight = detect_vcp_tightness(close)
+        is_inside_bar = detect_inside_bar(df)
+        is_nr7 = detect_nr7(df)
         base_weeks = calculate_base_weeks(df)
         consol_days = calculate_consolidation_days(df)
         is_dry = detect_volume_dryup(vol)
@@ -482,7 +504,9 @@ def _process_single_ticker(
         min_vol_ratio = max(float(vol_thresh), 1.0)
 
         # Relaxed Trend filter: Just needs short-term alignment
-        if not (ltp > ema_20 and ema_20 > sma_50):
+        # Pre-Breakout allows price to be resting slightly below EMA20
+        trend_ok = (ltp > ema_20 * 0.99) and (ema_20 > sma_50) if scanner_type == "Pre-Breakout" else (ltp > ema_20 and ema_20 > sma_50)
+        if not trend_ok:
             with stats_lock: stats["trend_fail"] += 1
             return None
 
@@ -493,14 +517,18 @@ def _process_single_ticker(
 
         # RS filter
         rs_rating = calculate_relative_strength(close_aligned, nifty_aligned)
-        if rs_rating < 60: # More inclusive floor
+        rs_floor = 50 if "Total Market" in universe else 60
+        if scanner_type == "Pre-Breakout":
+            rs_floor -= 10 # Accumulating stocks have lower immediate RS
+            
+        if rs_rating < rs_floor and not (rs_rating == 0 and rsi > 70):
             with stats_lock: stats["rs_fail"] += 1
             return None
 
         rs_bonus = 3 if rs_rating >= 95 else (2 if rs_rating >= 90 else 0)
 
         # ADX rising condition
-        if not (adx > (15 if scanner_type == "Pre-Breakout" else 18)): # Lowered floor for Pre-Breakout
+        if not (adx > (12 if scanner_type == "Pre-Breakout" else 18)): # Lowered floor for Pre-Breakout
             with stats_lock: stats["adx_fail"] += 1
             return None
         
@@ -510,15 +538,15 @@ def _process_single_ticker(
         
         # ANTICIPATORY LOGIC: Is it about to break?
         # Price is within 1.5% of 20-day high OR 52-week high
-        near_20d = prev_h20 * 0.985 <= ltp <= prev_h20 * 1.005
-        near_52w = ltp >= prev_h52 * (1 - dist_thresh / 100) # dist_thresh is now dynamic from sidebar
+        near_20d = prev_h20 * (1 - dist_thresh / 100) <= ltp <= prev_h20 * 1.005
+        near_52w = prev_h52 * (1 - dist_thresh / 100) <= ltp <= prev_h52 * 1.005
         
         # Initialize flags to avoid UnboundLocalError
         is_breaking_out = False
         is_consolidating_near_20d = False
         is_consolidating_near_52w = False
         actual_breakout_condition_met = False
-        
+
         if scanner_type == "Breakout":
             is_breaking_out = ltp > prev_h20 * 1.005 or ltp > prev_h52 * 1.005
             actual_breakout_condition_met = near_20d or near_52w or is_breaking_out
@@ -542,12 +570,12 @@ def _process_single_ticker(
         # Candle confirmation
         body = abs(close.iloc[-1] - df["Open"].iloc[-1])
         range_ = high.iloc[-1] - low.iloc[-1]
-        if range_ == 0 or (body / range_) < 0.4:
+        if range_ == 0 or (body / range_) < 0.3:
             return None
 
-        # Anti-Chase Filter: If the stock is already up > 4% today, it might be a "late" signal
+        # Anti-Chase Filter: Increased threshold for small caps
         daily_pcnt = (ltp - df["Open"].iloc[-1]) / df["Open"].iloc[-1] * 100
-        if daily_pcnt > 4.0: # Tightened slightly to ensure we don't chase
+        if daily_pcnt > 8.0:
             return None
 
         candle_sentiment = detect_candlestick_pattern(df)
@@ -609,6 +637,8 @@ def _process_single_ticker(
         if detect_cup_handle(df): patterns.append("CupHandle")
         if detect_rounding_bottom(df): patterns.append("Rounding")
         if detect_inverted_head_shoulders(df): patterns.append("Inv-H&S")
+        if is_inside_bar: patterns.append("Inside Bar")
+        if is_nr7: patterns.append("NR7")
         if is_tight: patterns.append("VCP-Tight")
         if is_dry: patterns.append("Vol-Dryup")
         if is_surge: patterns.append("Vol-Surge")
@@ -626,12 +656,21 @@ def _process_single_ticker(
             strength += (0.5 if ma_slope_bull else 0)
             strength += (1.0 if is_surge else 0) # Surge is still good for early accumulation
             strength += (setup_score / 5.0) # Bonus for high-quality technical setup
+            if is_inside_bar and is_tight:
+                strength += 1.5 # Inside bar during tight consolidation is high conviction
+            if is_inside_bar and is_nr7:
+                strength += 2.0 # NR7 + Inside Bar "SuperCoil"
         else: # Breakout scanner
             strength = (3.0 if (is_tight and is_dry) else 1.0) 
             strength += (2.5 if near_20d else 0) + (2.0 if near_52w else 0)
             strength += (1 if macd_bull else 0) + (1 if above_vwap else 0) + (1 if bb_bull else 0)
             strength += (1 if ma_slope_bull else 0)
             strength += (2.0 if is_surge else 0)
+
+            if is_inside_bar and is_tight:
+                strength += 2.0 # Volatility contraction + Inside bar is a coil
+            if is_inside_bar and is_nr7:
+                strength += 2.5 # Extremely high-conviction coil
 
         strength += max(0, (rs_rating - 70) / 5) # Gradual contribution from RS
 
@@ -650,8 +689,8 @@ def _process_single_ticker(
 
         # TRIGGER LOGIC (OR): At least one major signal must be present
         if scanner_type == "Pre-Breakout":
-            # For pre-breakout, we need VCP/Dry-up or consolidation near high
-            if not ((is_tight and is_dry) or is_consolidating_near_20d or is_consolidating_near_52w or len(patterns) > 0):
+            # For pre-breakout, we allow Tightness OR Dry-up OR proximity
+            if not (is_tight or is_dry or is_consolidating_near_20d or is_consolidating_near_52w or len(patterns) > 0):
                 with stats_lock: stats["breakout_fail"] += 1
                 return None
         else: # Breakout scanner
@@ -688,7 +727,9 @@ def _process_single_ticker(
             "Action": "AVOID: Fakeout" if is_fakeout else (
                 "VCP Setup" if (scanner_type == "Pre-Breakout" and is_tight and is_dry) else
                 ("Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
-                 ("Ready to Pop" if (strength >= 7.5 and is_tight) else "Watching"))
+                 ("ID/NR7 SuperCoil" if (is_inside_bar and is_nr7) else
+                  ("Inside Bar Coil" if (is_inside_bar and is_tight) else
+                   ("Ready to Pop" if (strength >= 7.5 and is_tight) else "Watching"))))
             ),
             "Pattern": ", ".join(patterns) if patterns else ("20D Breakout" if is_breaking_out else ("Near 52W" if near_52w else "Vol Breakout")),
         }
@@ -808,7 +849,7 @@ def run_scanner(
             executor.submit(
                 _process_single_ticker, 
                 ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh, # Pass scanner_type
-                apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
+                apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, universe, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
             ): ticker for ticker in avail
         }
         
