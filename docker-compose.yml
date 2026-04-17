@@ -10,6 +10,7 @@ services:
       - STREAMLIT_SERVER_PORT=8501
       - STREAMLIT_SERVER_ADDRESS=0.0.0.0
     volumes:
+      - ./breakout_history.db:/app/breakout_history.db
       - ./config:/app/config
       - ./logs:/app/logs
       - ./cache:/app/cache

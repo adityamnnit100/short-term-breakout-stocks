@@ -3,6 +3,8 @@
 import pandas as pd
 import streamlit as st
 
+from alphascanner_ui.auth import save_current_user_workspace
+
 
 def render_tab(load_ticker_history) -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Watchlist</div></div>', unsafe_allow_html=True)
@@ -14,6 +16,7 @@ def render_tab(load_ticker_history) -> None:
         if st.button("➕ Add", key="wl_add_btn") and add_symbol:
             if add_symbol not in watchlist:
                 watchlist.append(add_symbol)
+                save_current_user_workspace()
                 st.success(f"Added {add_symbol}")
             else:
                 st.info("Already in watchlist")
@@ -54,4 +57,5 @@ def render_tab(load_ticker_history) -> None:
     remove_symbol = st.selectbox("Remove from watchlist", ["–"] + watchlist, key="wl_rem")
     if remove_symbol != "–" and st.button("❌ Remove", key="wl_rem_btn"):
         st.session_state.watchlist.remove(remove_symbol)
+        save_current_user_workspace()
         st.rerun()

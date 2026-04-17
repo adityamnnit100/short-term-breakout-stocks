@@ -5,6 +5,8 @@ import datetime
 import pandas as pd
 import streamlit as st
 
+from alphascanner_ui.auth import save_current_user_workspace
+
 
 def render_tab() -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Trade Journal</div></div>', unsafe_allow_html=True)
@@ -40,6 +42,7 @@ def render_tab() -> None:
                         "status": "Closed" if exit_price > 0 else "Open",
                     }
                 )
+                save_current_user_workspace()
                 st.success(f"Saved trade for {ticker}!")
                 st.rerun()
             else:

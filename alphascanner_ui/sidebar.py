@@ -51,7 +51,7 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                 index=0,
                 help="Breakout: Stocks actively breaking out. Pre-Breakout: Stocks consolidating near highs.",
             )
-            vol_thresh = st.slider("Min Volume Ratio (×avg)", 1.0, 5.0, 1.5 if scanner_type == "Breakout" else 0.8, 0.1)
+            vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 1.5 if scanner_type == "Breakout" else 0.8, 0.1)
             if scanner_type == "Breakout":
                 rsi_range = st.slider("RSI Range", 0, 100, (60, 78))
                 dist_thresh = st.slider("Breakout Distance (%)", 0.5, 5.0, 1.5, 0.1)

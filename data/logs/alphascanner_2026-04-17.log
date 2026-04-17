@@ -28,3 +28,32 @@
 2026-04-17 01:00:56,224 ERROR 
 1 Failed download:
 2026-04-17 01:00:56,224 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-17 23:29:46,304 INFO Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-04-17 23:39:20,132 WARNING Sector segment https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-17 23:39:20,296 WARNING Sector segment https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-17 23:39:20,410 INFO Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-04-17 23:39:20,509 INFO Fetched 251 symbols for Nifty Microcap 250 from https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv
+2026-04-17 23:39:23,220 INFO Prefetching metadata for 726 tickers...
+2026-04-17 23:40:04,267 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-17 23:41:29,930 ERROR 
+1 Failed download:
+2026-04-17 23:41:29,930 ERROR ['DUMMYALCAR.NS']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2026-04-17 23:42:49,970 INFO Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-04-17 23:42:50,102 INFO Fetched 251 symbols for Nifty Microcap 250 from https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv
+2026-04-17 23:42:52,216 INFO Prefetching metadata for 225 tickers...
+2026-04-17 23:42:52,585 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:42:52,987 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:42:53,008 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:42:53,009 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:42:53,014 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:42:53,209 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:42:53,212 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:42:53,223 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:42:53,327 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-17 23:42:53,327 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-17 23:42:53,327 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:42:53,329 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-17 23:42:53,330 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-17 23:43:01,650 ERROR 
+1 Failed download:
+2026-04-17 23:43:01,650 ERROR ['DUMMYALCAR.NS']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')

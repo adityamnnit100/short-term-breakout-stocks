@@ -48,66 +48,134 @@ _EMPTY_STATS: dict = {
     "breakout_fail": 0, "momentum_fail": 0, "adx_fail": 0,
     "macd_fail": 0, "bb_fail": 0, "rs_fail": 0, "fakeout_trap": 0,
     "trending_sectors": [], "sector_sentiment": {},
+    "universe": None, "universe_size": 0,
 }
+
+
+def _connect_db() -> sqlite3.Connection:
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA busy_timeout=30000")
+    return conn
 
 
 # ---------------------------------------------------------------------------
 # Universe
 # ---------------------------------------------------------------------------
-def get_nifty_500() -> list:
+def _extract_symbols_from_index_csv(df: pd.DataFrame) -> list:
+    sym_col = next((c for c in df.columns if "symbol" in c.lower()), None)
+    if sym_col is None:
+        return []
+    return [
+        f"{str(symbol).strip()}.NS"
+        for symbol in df[sym_col].dropna()
+        if str(symbol).strip()
+    ]
+
+
+def _fetch_index_symbols(urls: List[str], label: str) -> list:
     from alphascanner_ui.data import _fetch_nse_csv
-    url = "https://archives.nseindia.com/content/indices/ind_nifty500list.csv"
-    try:
-        df = _fetch_nse_csv(url)
-        sym_col = next((c for c in df.columns if "symbol" in c.lower()), None)
-        if sym_col is None:
-            logging.getLogger("AlphaScanner.Engine").warning("Symbol column not found in Nifty 500 list.")
-            return []
-        return [f"{s}.NS" for s in df[sym_col].dropna().str.strip()]
-    except Exception as exc:
-        logging.getLogger("AlphaScanner.Engine").warning(f"Failed to fetch Nifty 500 ({exc}), using fallback.")
-        return [
-            "RELIANCE.NS", "TCS.NS", "INFY.NS", "SBIN.NS", "HDFCBANK.NS",
-            "ICICIBANK.NS", "KOTAKBANK.NS", "HINDUNILVR.NS", "ITC.NS", "AXISBANK.NS",
-        ]
+
+    logger = logging.getLogger("AlphaScanner.Engine")
+    for url in urls:
+        try:
+            df = _fetch_nse_csv(url)
+            symbols = _extract_symbols_from_index_csv(df)
+            if symbols:
+                logger.info("Fetched %s symbols for %s from %s", len(symbols), label, url)
+                return symbols
+            logger.warning("Symbol column not found for %s from %s", label, url)
+        except Exception as exc:
+            logger.warning("Failed to fetch %s from %s: %s", label, url, exc)
+    return []
+
+
+def get_nifty_500() -> list:
+    urls = [
+        "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
+        "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
+    ]
+    symbols = _fetch_index_symbols(urls, "Nifty 500")
+    if symbols:
+        return symbols
+
+    logging.getLogger("AlphaScanner.Engine").warning("Failed to fetch Nifty 500, using fallback.")
+    return [
+        "RELIANCE.NS", "TCS.NS", "INFY.NS", "SBIN.NS", "HDFCBANK.NS",
+        "ICICIBANK.NS", "KOTAKBANK.NS", "HINDUNILVR.NS", "ITC.NS", "AXISBANK.NS",
+    ]
 
 
 def get_nifty_total_market() -> list:
     """Fetches the Nifty Total Market list (Nifty 500 + Microcaps)."""
-    from alphascanner_ui.data import _fetch_nse_csv
-    
-    # NSE often restricts the single Total Market CSV or redirects it to Nifty 500.
-    # Combining primary segments (500 + Microcap 250) is the most stable reconstruction.
-    segment_urls = [
-        "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
-        "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv"
-    ]
-    
+    # NSE often restricts the single Total Market CSV. Combining Nifty 500 with
+    # Microcap 250 is a stable reconstruction of the broader cap-focused universe.
+    segments = {
+        "Nifty 500": [
+            "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
+            "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
+        ],
+        "Nifty Microcap 250": [
+            "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
+            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
+            "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv",
+            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv",
+        ],
+    }
+
     all_tickers = set()
-    for url in segment_urls:
-        try:
-            df = _fetch_nse_csv(url)
-            sym_col = next((c for c in df.columns if "symbol" in c.lower()), None)
-            if sym_col:
-                batch = [f"{s}.NS" for s in df[sym_col].dropna().str.strip() if s.strip()]
-                all_tickers.update(batch)
-        except Exception as e:
-            logging.getLogger("AlphaScanner.Engine").warning(f"Failed to fetch segment {url}: {e}")
+    fetched_counts = {}
+    for label, urls in segments.items():
+        symbols = _fetch_index_symbols(urls, label)
+        fetched_counts[label] = len(symbols)
+        all_tickers.update(symbols)
 
     if len(all_tickers) > 550:
         return sorted(list(all_tickers))
-    
-    try:
-        raise ValueError("Could not fetch a valid Total Market list from NSE.")
-    except Exception as exc:
-        logging.getLogger("AlphaScanner.Engine").error(f"Nifty Total Market fetch failed ({exc}). Falling back to Nifty 500.")
-        # Fallback to Nifty 500 if total market fetch fails
-        return get_nifty_500()
+
+    logging.getLogger("AlphaScanner.Engine").error(
+        "Nifty Total Market fetch only returned %s unique symbols (segment counts: %s). Falling back to Nifty 500.",
+        len(all_tickers),
+        fetched_counts,
+    )
+    return get_nifty_500()
 
 
 # ---------------------------------------------------------------------------
 # Indicator helpers
 # ---------------------------------------------------------------------------
+
+def is_market_open() -> bool:
+    """Checks if the NSE market is currently open (9:15 AM - 3:30 PM IST, Mon-Fri)."""
+    # IST is UTC + 5:30
+    now_utc = datetime.utcnow()
+    now_ist = now_utc + timedelta(hours=5, minutes=30)
+
+    # Weekends (Saturday=5, Sunday=6)
+    if now_ist.weekday() >= 5:
+        return False
+
+    market_open = now_ist.replace(hour=9, minute=15, second=0, microsecond=0)
+    market_close = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
+
+    return market_open <= now_ist <= market_close
+
+
+def get_last_market_close_utc() -> datetime:
+    """Returns the UTC datetime of the most recent NSE market close."""
+    now_utc = datetime.utcnow()
+    now_ist = now_utc + timedelta(hours=5, minutes=30)
+    
+    close_ist = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
+
+    if now_ist.weekday() >= 5:
+        # Weekend: roll back to Friday close.
+        close_ist -= timedelta(days=now_ist.weekday() - 4)
+    elif now_ist < close_ist:
+        # Before today's close: previous trading day, or Friday on Monday morning.
+        close_ist -= timedelta(days=3 if now_ist.weekday() == 0 else 1)
+
+    return close_ist - timedelta(hours=5, minutes=30)
 
 def calculate_vwap(high, low, close, volume, window: int = 20):
     tp = (high + low + close) / 3
@@ -170,10 +238,16 @@ def calculate_relative_strength(stock_close, index_close):
     # Weighted Performance calculation based on available history
     def get_perf(series):
         l = len(series)
-        p1 = series.iloc[-1] / series.iloc[-63] if l >= 63 else 1.0
-        p2 = series.iloc[-1] / series.iloc[-126] if l >= 126 else p1
-        p3 = series.iloc[-1] / series.iloc[-189] if l >= 189 else p2
-        p4 = series.iloc[-1] / series.iloc[-252] if l >= 252 else p3
+        def calc_p(idx):
+            if l >= abs(idx):
+                denom = series.iloc[idx]
+                return series.iloc[-1] / denom if denom != 0 else 1.0
+            return None
+
+        p1 = calc_p(-63) or 1.0
+        p2 = calc_p(-126) or p1
+        p3 = calc_p(-189) or p2
+        p4 = calc_p(-252) or p3
         return (p1 * 0.4) + (p2 * 0.2) + (p3 * 0.2) + (p4 * 0.2)
     
     try:
@@ -242,7 +316,7 @@ def calculate_base_weeks(df: pd.DataFrame, max_range_pct: float = 12.0) -> int:
         period = df.iloc[-(w * 5) - 1 : -1]
         p_max = period["High"].max()
         p_min = period["Low"].min()
-        if ((p_max - p_min) / p_min) * 100 <= max_range_pct:
+        if p_min > 0 and ((p_max - p_min) / p_min) * 100 <= max_range_pct:
             weeks = w
         else:
             break
@@ -422,6 +496,32 @@ def _extract_ticker(data, ticker):
 
 # Replace ONLY run_scanner() in your breakout.py with this version
 
+def prefetch_metadata(tickers: List[str]):
+    """Optimized batch fetching of fundamental metadata to populate cache."""
+    logger = logging.getLogger("AlphaScanner.Engine")
+    to_fetch = [t for t in tickers if get_metadata_cache(t)[0] is None]
+    
+    if not to_fetch:
+        return
+
+    logger.info(f"Prefetching metadata for {len(to_fetch)} tickers...")
+    
+    def _fetch_worker(ticker):
+        try:
+            t_obj = yf.Ticker(ticker)
+            # fast_info is high performance; only hit .info if absolutely necessary
+            m_cap = t_obj.fast_info.get('marketCap', 0)
+            roe = 0.0
+            try:
+                roe = t_obj.info.get('returnOnEquity', 0.0)
+            except: pass
+            update_metadata_cache(ticker, m_cap / 10_000_000, roe)
+        except Exception:
+            pass
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+        executor.map(_fetch_worker, to_fetch)
+
 def _process_single_ticker(
     ticker: str,
     data: pd.DataFrame,
@@ -435,7 +535,7 @@ def _process_single_ticker(
     max_mkt_cap_cr: float,
     scanner_type: str,
     universe: str,
-    sector_map: Optional[dict], # Added scanner_type
+    sector_map: Optional[dict],
     trending_sectors: set,
     sector_sentiment_map: dict,
     stats: dict,
@@ -501,7 +601,7 @@ def _process_single_ticker(
 
         # Volume filter
         vol_ratio = float(vol.iloc[-1]) / max(avg_vol, 1)
-        min_vol_ratio = max(float(vol_thresh), 1.0)
+        min_vol_ratio = float(vol_thresh)
 
         # Relaxed Trend filter: Just needs short-term alignment
         # Pre-Breakout allows price to be resting slightly below EMA20
@@ -604,26 +704,16 @@ def _process_single_ticker(
         # Fundamental Check
         mkt_cap_cr, roe = 0.0, 0.0
         cached_mkt_cap, cached_roe = get_metadata_cache(ticker)
-        
+
         if cached_mkt_cap is not None:
             mkt_cap_cr, roe = cached_mkt_cap, cached_roe
         else:
-            max_retries = 3
-            for attempt in range(max_retries):
-                try:
-                    t_obj = yf.Ticker(ticker)
-                    info = t_obj.info
-                    roe = info.get('returnOnEquity', 0.0)
-                    mkt_cap = t_obj.fast_info.get("marketCap", 0)
-                    mkt_cap_cr = mkt_cap / 10_000_000
-                    update_metadata_cache(ticker, mkt_cap_cr, roe)
-                    break
-                except Exception as e:
-                    if attempt < max_retries - 1:
-                        time.sleep(1)
-                        continue
-                    logging.getLogger("AlphaScanner.Engine").warning(f"Metadata error for {ticker} after {max_retries} attempts: {e}")
-                    if apply_market_cap_filter: return None
+            # Fallback if prefetch missed it (should be rare)
+            try:
+                t_obj = yf.Ticker(ticker)
+                mkt_cap_cr = t_obj.fast_info.get('marketCap', 0) / 10_000_000
+                roe = 0.0 # Skip heavy .info in the hot loop
+            except: pass
 
         if apply_market_cap_filter and mkt_cap_cr < min_mkt_cap_cr:
              return None
@@ -757,6 +847,8 @@ def run_scanner(
         tickers = get_nifty_500()
 
     stats = _EMPTY_STATS.copy()
+    stats["universe"] = universe
+    stats["universe_size"] = len(tickers)
 
     # 1. Download benchmark first to ensure the regime filter is available
     try:
@@ -768,8 +860,13 @@ def run_scanner(
         logging.getLogger("AlphaScanner.Engine").error(f"Benchmark download error: {exc}")
         return pd.DataFrame(), stats
 
+    # 1.5 Prefetch Metadata (Background Batch Task)
+    if progress_callback: progress_callback(0.05)
+    prefetch_metadata(tickers)
+    if progress_callback: progress_callback(0.10)
+
     # 2. Download ticker data in chunks of 50 to improve stability for large universes (Total Market)
-    download_weight = 0.4 # Allocate 40% of progress to download
+    download_weight = 0.4 
     chunk_size = 50
     data_frames = []
     num_chunks = (len(tickers) + chunk_size - 1) // chunk_size
@@ -793,7 +890,14 @@ def run_scanner(
         logging.getLogger("AlphaScanner.Engine").error("No ticker data could be downloaded.")
         return pd.DataFrame(), stats
 
-    data = pd.concat(data_frames, axis=1, sort=True)
+    try:
+        data = pd.concat(data_frames, axis=1, sort=True)
+    except Exception as exc:
+        logging.getLogger("AlphaScanner.Engine").error(f"Data concatenation failed: {exc}")
+        return pd.DataFrame(), stats
+
+    if data.empty:
+        return pd.DataFrame(), stats
 
     avail = (
         data.columns.get_level_values(1).unique().tolist()
@@ -866,12 +970,132 @@ def run_scanner(
 
     return df_out, stats
 
+
+def run_daily_cache_update():
+    """Target function for a cron job to update scan results after market hours."""
+    logging.getLogger("AlphaScanner.Engine").info("Starting automated post-market cache update...")
+    from alphascanner_ui.data import get_sector_mapping
+
+    # Common presets to cache
+    for scan_type in ["Breakout", "Pre-Breakout"]:
+        sector_map = get_sector_mapping("Nifty 500")
+        results, stats = run_scanner(
+            universe="Nifty 500",
+            vol_thresh=1.5,
+            scanner_type=scan_type,
+            sector_map=sector_map
+        )
+        if not results.empty:
+            save_results_to_db(results, stats)
+    logging.getLogger("AlphaScanner.Engine").info("Daily cache update complete.")
+
+
+def fetch_fii_dii_data(logger=None):
+    """Fetches Daily FII/DII activity from NSE with robust session handling and caching."""
+    if logger is None:
+        logger = logging.getLogger("AlphaScanner.Engine")
+    # 1. Try to get from cache (Expiry 4 hours)
+    cached_data = get_system_cache("fii_dii_activity", expiry_hours=4)
+    if cached_data:
+        try:
+            return json.loads(cached_data)
+        except Exception:
+            pass
+
+    # 2. If no cache or expired, fetch from NSE
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://www.nseindia.com/reports/fii-dii",
+        "X-Requested-With": "XMLHttpRequest"
+    }
+    
+    try:
+        session = requests.Session()
+        # Visit home page first to establish session cookies
+        session.get("https://www.nseindia.com", headers=headers, timeout=10)
+        
+        # Now fetch the actual data
+        api_url = "https://www.nseindia.com/api/fiidiiTradeReact"
+        response = session.get(api_url, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data:
+                # Transform NSE list to summary dict expected by the UI
+                summary = {
+                    "fii_buy": 0.0, "fii_sell": 0.0, "fii_net": 0.0,
+                    "dii_buy": 0.0, "dii_sell": 0.0, "dii_net": 0.0,
+                    "date": "N/A"
+                }
+                for item in data:
+                    cat = item.get("category", "").upper()
+                    def clean_val(v):
+                        try: return float(str(v).replace(",", ""))
+                        except: return 0.0
+                    if "FII" in cat:
+                        summary["fii_buy"] = clean_val(item.get("buyValue"))
+                        summary["fii_sell"] = clean_val(item.get("sellValue"))
+                        summary["fii_net"] = clean_val(item.get("netValue"))
+                        summary["date"] = item.get("date", "N/A")
+                    elif "DII" in cat:
+                        summary["dii_buy"] = clean_val(item.get("buyValue"))
+                        summary["dii_sell"] = clean_val(item.get("sellValue"))
+                        summary["dii_net"] = clean_val(item.get("netValue"))
+
+                # Save to cache
+                set_system_cache("fii_dii_activity", json.dumps(summary))
+                return summary
+    except Exception as e:
+        logger.error(f"FII/DII fetch failed: {e}")
+        
+    # 3. Fallback to older cache if fetch failed (up to 1 week old)
+    stale_data = get_system_cache("fii_dii_activity", expiry_hours=168)
+    if stale_data:
+        return json.loads(stale_data)
+        
+    return {
+        "fii_buy": 0.0, "fii_sell": 0.0, "fii_net": 0.0,
+        "dii_buy": 0.0, "dii_sell": 0.0, "dii_net": 0.0,
+        "date": "N/A"
+    }
+
 # ---------------------------------------------------------------------------
 # Database helpers
 # ---------------------------------------------------------------------------
 
+def get_system_cache(key: str, expiry_hours: int = 12) -> Optional[str]:
+    """Fetch a value from the generic system cache if not expired."""
+    init_db()
+    cutoff = (datetime.utcnow() - timedelta(hours=expiry_hours)).strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        conn = _connect_db()
+        cur = conn.cursor()
+        cur.execute("SELECT value FROM system_cache WHERE key = ? AND updated_at > ?", (key, cutoff))
+        row = cur.fetchone()
+        conn.close()
+        return row[0] if row else None
+    except Exception:
+        return None
+
+
+def set_system_cache(key: str, value: str):
+    """Insert or update a value in the generic system cache."""
+    init_db()
+    try:
+        conn = _connect_db()
+        conn.execute(
+            "INSERT OR REPLACE INTO system_cache (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)",
+            (key, value)
+        )
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = _connect_db()
     conn.execute("""
         CREATE TABLE IF NOT EXISTS scans (
             id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -888,6 +1112,13 @@ def init_db():
             updated_at    DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS system_cache (
+            key          TEXT PRIMARY KEY,
+            value        TEXT,
+            updated_at   DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -897,7 +1128,7 @@ def get_metadata_cache(ticker: str, expiry_hours: int = 24) -> Tuple[Optional[fl
     init_db()
     cutoff = (datetime.now() - timedelta(hours=expiry_hours)).strftime("%Y-%m-%d %H:%M:%S")
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = _connect_db()
         cur = conn.cursor()
         cur.execute("SELECT market_cap_cr, roe FROM ticker_metadata WHERE ticker = ? AND updated_at > ?", (ticker, cutoff))
         row = cur.fetchone()
@@ -910,7 +1141,7 @@ def get_metadata_cache(ticker: str, expiry_hours: int = 24) -> Tuple[Optional[fl
 def update_metadata_cache(ticker: str, market_cap_cr: float, roe: float):
     """Insert or update fundamental metadata in the local cache."""
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = _connect_db()
         conn.execute(
             "INSERT OR REPLACE INTO ticker_metadata (ticker, market_cap_cr, roe, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
             (ticker, market_cap_cr, roe)
@@ -924,7 +1155,7 @@ def clear_metadata_cache():
     """Delete all entries from the ticker_metadata table."""
     init_db()
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = _connect_db()
         conn.execute("DELETE FROM ticker_metadata")
         conn.commit()
         conn.close()
@@ -932,21 +1163,24 @@ def clear_metadata_cache():
         logging.getLogger("AlphaScanner.Engine").error(f"Metadata cache clear error: {exc}")
 
 
-def get_cached_results(hours: int = 12):
+def get_cached_results(hours: int = 12, universe: Optional[str] = None):
     init_db()
     cutoff = (datetime.now() - timedelta(hours=hours)).strftime("%Y-%m-%d %H:%M:%S")
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = _connect_db()
         cur  = conn.cursor()
         cur.execute(
             "SELECT stats, results_json, timestamp FROM scans "
-            "WHERE timestamp > ? ORDER BY timestamp DESC LIMIT 1",
+            "WHERE timestamp > ? ORDER BY timestamp DESC",
             (cutoff,),
         )
-        row = cur.fetchone()
+        rows = cur.fetchall()
         conn.close()
-        if row:
-            return pd.read_json(io.StringIO(row[1])), json.loads(row[0]), row[2]
+        for row in rows:
+            stats = json.loads(row[0])
+            if universe and stats.get("universe") not in (universe, None):
+                continue
+            return pd.read_json(io.StringIO(row[1])), stats, row[2]
     except Exception as exc:
         logging.getLogger("AlphaScanner.Engine").error(f"Cache read error: {exc}")
     return None, None, None
@@ -955,7 +1189,7 @@ def get_cached_results(hours: int = 12):
 def save_results_to_db(df: pd.DataFrame, stats: dict):
     init_db()
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = _connect_db()
         conn.execute(
             "INSERT INTO scans (stats, results_json) VALUES (?, ?)",
             (json.dumps(stats), df.to_json()),
@@ -1015,19 +1249,12 @@ def run_backtest(
             df["RSI"]        = calculate_rsi(close)
             df["ATR"]        = calculate_atr(high, low, close)
             
-            # MACD & BB for scoring
-            df["MACD"], df["MACD_Sig"], _ = calculate_macd(close)
-            df["BB_Up"], df["BB_Mid"], _ = calculate_bollinger_bands(close)
             df["ADX"]        = calculate_adx(high, low, close)
             df["MACD"], df["MACD_Signal"], _ = calculate_macd(close)
-            df["BB_Upper"], _, df["BB_Lower"] = calculate_bollinger_bands(close)
+            df["BB_Upper"], df["BB_Mid"], df["BB_Lower"] = calculate_bollinger_bands(close)
             bb_rng = (df["BB_Upper"] - df["BB_Lower"]).replace(0, np.nan)
             df["BB_Position"] = (close - df["BB_Lower"]) / bb_rng
             df["VWAP"]       = calculate_vwap(high, low, close, vol)
-
-            # Pre-align Nifty with ticker data
-            nifty_aligned_close, _ = nifty_close.align(close, join="inner")
-            nifty_aligned_sma, _ = nifty_sma50.align(close, join="inner")
 
             if start_date and end_date:
                 mask = (df.index.date >= start_date) & (df.index.date <= end_date)
@@ -1054,11 +1281,11 @@ def run_backtest(
                 near_52w = ltp >= h52 * (1 - dist_thresh / 100)
                 
                 # BB logic matching scanner
-                bb_upper_zone = ltp >= (row["BB_Mid"] + (row["BB_Up"] - row["BB_Mid"]) * 0.5)
-                bb_breakout = ltp > row["BB_Up"]
+                bb_upper_zone = ltp >= (row["BB_Mid"] + (row["BB_Upper"] - row["BB_Mid"]) * 0.5)
+                bb_breakout = ltp > row["BB_Upper"]
                 bb_bull = bb_upper_zone or bb_breakout
                 
-                macd_bull = row["MACD"] > row["MACD_Sig"]
+                macd_bull = row["MACD"] > row["MACD_Signal"]
                 above_vwap = ltp > row["VWAP"]
                 
                 # Candlestick Intelligence
@@ -1071,9 +1298,20 @@ def run_backtest(
                 strength += 1.5 if ltp > row["SMA200"] else 0
                 strength = min(10.0, round(strength, 1))
 
+                current_date = df.index[i]
+                market_close = nifty_close.get(current_date)
+                market_sma50 = nifty_sma50.get(current_date)
+                market_is_bullish = (
+                    market_close is not None
+                    and market_sma50 is not None
+                    and not pd.isna(market_close)
+                    and not pd.isna(market_sma50)
+                    and float(market_close) > float(market_sma50)
+                )
+
                 # Strategy Filters + Broad Market Regime Filter
                 checks = [
-                    nifty_aligned_close.iloc[i] > nifty_aligned_sma.iloc[i], # Market must be bullish
+                    market_is_bullish, # Market must be bullish
                     ltp > row["EMA20"] > row["SMA50"] > row["SMA200"],
                     row["Volume"] > vol_thresh * row["AvgVol"],
                     rsi_min <= row["RSI"] <= rsi_max,

@@ -1,6 +1,7 @@
 """News tab UI."""
 
 import datetime
+import html
 import streamlit as st
 import yfinance as yf
 
@@ -70,9 +71,9 @@ def render_tab() -> None:
         articles.sort(key=lambda x: TextBlob(x.get("title", "")).sentiment.polarity, reverse=True)
 
     for article in articles:
-        title = article.get("title", "No Title")
-        link = article.get("link", "#")
-        publisher = article.get("publisher", "Unknown Source")
+        title = html.escape(str(article.get("title", "No Title")))
+        link = html.escape(str(article.get("link", "#")), quote=True)
+        publisher = html.escape(str(article.get("publisher", "Unknown Source")))
         pub_time = article.get("providerPublishTime", 0)
         date_str = datetime.datetime.fromtimestamp(pub_time).strftime('%Y-%m-%d %H:%M') if pub_time else "Recent"
         

@@ -5,6 +5,8 @@ import datetime
 import pandas as pd
 import streamlit as st
 
+from alphascanner_ui.auth import save_current_user_workspace
+
 
 def render_tab() -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Portfolio Risk Management</div></div>', unsafe_allow_html=True)
@@ -59,6 +61,7 @@ def render_tab() -> None:
                     "date_added": str(datetime.date.today()),
                 }
             )
+            save_current_user_workspace()
             st.success(f"Added {quantity} × {selected_symbol}")
             st.rerun()
 
@@ -73,4 +76,5 @@ def render_tab() -> None:
         st.session_state.portfolio_positions = [
             position for position in positions if position["ticker"] != remove_position
         ]
+        save_current_user_workspace()
         st.rerun()

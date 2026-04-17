@@ -18,17 +18,31 @@ def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history
             column.metric(name, f"{data['price']:,.2f}", f"{change:+.2f}%", delta_color="normal" if change >= 0 else "inverse")
 
     st.divider()
-    st.subheader("FII / DII Activity")
+    st.markdown('<div class="panel-title" style="color: #ffca28; border-left-color: #ffca28;">Institutional Flow (FII/DII)</div>', unsafe_allow_html=True)
+
     with st.spinner("Fetching FII/DII data…"):
         fii_dii = fetch_fii_dii_data(logger)
 
-    metrics = st.columns(6)
-    metrics[0].metric("FII Net", f"₹{fii_dii['fii_net']:,.0f} Cr", delta=f"{'▲' if fii_dii['fii_net'] > 0 else '▼'}")
-    metrics[1].metric("FII Buy", f"₹{fii_dii['fii_buy']:,.0f} Cr")
-    metrics[2].metric("FII Sell", f"₹{fii_dii['fii_sell']:,.0f} Cr")
-    metrics[3].metric("DII Net", f"₹{fii_dii['dii_net']:,.0f} Cr", delta=f"{'▲' if fii_dii['dii_net'] > 0 else '▼'}")
-    metrics[4].metric("DII Buy", f"₹{fii_dii['dii_buy']:,.0f} Cr")
-    metrics[5].metric("DII Sell", f"₹{fii_dii['dii_sell']:,.0f} Cr")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown('<div class="glass-card" style="border-left: 4px solid #00e5ff; height: 100%;">', unsafe_allow_html=True)
+        st.caption("FII (Foreign Investors)")
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Net Flow", f"₹{fii_dii['fii_net']:,.0f} Cr", delta=f"{fii_dii['fii_net']:+,.0f}")
+        m2.metric("Gross Buy", f"₹{fii_dii['fii_buy']:,.0f}")
+        m3.metric("Gross Sell", f"₹{fii_dii['fii_sell']:,.0f}")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="glass-card" style="border-left: 4px solid #ffca28; height: 100%;">', unsafe_allow_html=True)
+        st.caption("DII (Domestic Investors)")
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Net Flow", f"₹{fii_dii['dii_net']:,.0f} Cr", delta=f"{fii_dii['dii_net']:+,.0f}")
+        m2.metric("Gross Buy", f"₹{fii_dii['dii_buy']:,.0f}")
+        m3.metric("Gross Sell", f"₹{fii_dii['dii_sell']:,.0f}")
+        st.markdown('</div>', unsafe_allow_html=True)
+
     st.caption(f"Data date: {fii_dii['date']}")
 
     st.divider()

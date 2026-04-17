@@ -6,6 +6,7 @@ from pathlib import Path
 import streamlit as st
 
 from breakout import clear_metadata_cache
+from alphascanner_ui.auth import render_user_management
 
 
 @st.dialog("Reset Confirmation")
@@ -19,6 +20,8 @@ def confirm_reset_dialog(action_fn, label):
 
 def render_tab(load_ticker_history, run_backtest_cached) -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">System Settings</div></div>', unsafe_allow_html=True)
+
+    render_user_management()
 
     st.markdown("### 🎨 Theme & Visibility")
     st.info("To toggle Light/Dark mode, use the **Settings** option in the top-right menu (⚡ icon or Hamburger menu).")

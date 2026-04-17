@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 
 import scanner_service
+from alphascanner_ui.auth import save_current_user_workspace
 from alphascanner_ui.charts import build_chart, render_top_picks, style_scanner_results
 from alphascanner_ui.data import get_sector_mapping
 
@@ -71,6 +72,8 @@ def _render_status_banner(
 def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Optional[str]) -> None:
     total_hits = len(results)
     scanned = (stats or {}).get("scanned", 0)
+    universe_size = (stats or {}).get("universe_size") or scanned
+    universe_label = (stats or {}).get("universe") or "Universe"
     avg_rsi = results["RSI"].mean() if "RSI" in results else 0
     avg_strength = results["Signal_Strength"].mean() if "Signal_Strength" in results else 0
     pass_rate = total_hits / max(scanned, 1) * 100
@@ -86,7 +89,7 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
         f'<div class="metric-card">'
         f'<div class="metric-label" style="color: #94a3b8;">Opportunities</div>'
         f'<div class="metric-value" style="color:#00e5ff;">{total_hits}</div>'
-        f'<div class="metric-delta neutral" style="color: #64748b;">of {scanned} scanned</div></div>'
+        f'<div class="metric-delta neutral" style="color: #64748b;">{scanned}/{universe_size} eligible · {universe_label}</div></div>'
         f'<div class="metric-card">'
         f'<div class="metric-label" style="color: #94a3b8;">Pass Rate</div>'
         f'<div class="metric-value" style="color: #00e5ff;">{pass_rate:.1f}<span style="font-size:0.9rem;">%</span></div>'
@@ -148,6 +151,8 @@ def _render_watchlist_quick_add(results: pd.DataFrame) -> None:
                 if ticker not in st.session_state.watchlist:
                     st.session_state.watchlist.append(ticker)
                     added += 1
+            if added:
+                save_current_user_workspace()
             st.success(f"Added {added} ticker(s)")
 
 
@@ -287,6 +292,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     if st.button("➕ Add to Watchlist", key=f"aw_{ticker}"):
         if ticker not in st.session_state.watchlist:
             st.session_state.watchlist.append(ticker)
+            save_current_user_workspace()
             st.success(f"{ticker} added to watchlist!")
         else:
             st.info("Already in watchlist.")
@@ -377,7 +383,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
     status_placeholder = st.empty()
 
     if settings.use_cache and need_scan:
-        results, stats, scan_time = scanner_service.fetch_cached_data(True)
+        results, stats, scan_time = scanner_service.fetch_cached_data(True, universe=settings.universe)
         if results is not None:
             st.session_state.update(
                 results=results,
@@ -395,6 +401,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
         status_placeholder.info("ℹ️ Showing previous scan. Click Run Fresh Scan to refresh.")
 
     if not settings.use_cache and need_scan:
+        st.session_state.scan_running = True
         progress_bar = st.progress(0.0)
         progress_text = st.empty()
 
@@ -405,25 +412,29 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                 unsafe_allow_html=True,
             )
 
-        with st.spinner("Downloading market data from Yahoo Finance…"):
-            is_total_market = settings.universe == "Total Market (Cap Focused)"
-            min_cap = settings.min_mkt_cap if is_total_market else 0
-            max_cap = settings.max_mkt_cap if is_total_market else 0
-            sector_map = get_sector_mapping(settings.universe)
-            results, stats, scan_time = scanner_service.perform_fresh_scan(
-                universe=settings.universe,
-                vol_thresh=settings.vol_thresh,
-                rsi_min=settings.rsi_range[0],
-                rsi_max=settings.rsi_range[1],
-                dist_thresh=settings.dist_thresh,
-                min_mkt_cap_cr=min_cap,
-                max_mkt_cap_cr=max_cap,
-                scanner_type=settings.scanner_type,
-                sector_map=sector_map,
-                progress_callback=_progress,
-            )
-        progress_bar.empty()
-        progress_text.empty()
+        try:
+            with st.spinner("Downloading market data from Yahoo Finance…"):
+                is_total_market = settings.universe == "Total Market (Cap Focused)"
+                min_cap = settings.min_mkt_cap if is_total_market else 0
+                max_cap = settings.max_mkt_cap if is_total_market else 0
+                sector_map = get_sector_mapping(settings.universe)
+                results, stats, scan_time = scanner_service.perform_fresh_scan(
+                    universe=settings.universe,
+                    vol_thresh=settings.vol_thresh,
+                    rsi_min=settings.rsi_range[0],
+                    rsi_max=settings.rsi_range[1],
+                    dist_thresh=settings.dist_thresh,
+                    min_mkt_cap_cr=min_cap,
+                    max_mkt_cap_cr=max_cap,
+                    scanner_type=settings.scanner_type,
+                    sector_map=sector_map,
+                    progress_callback=_progress,
+                )
+        finally:
+            progress_bar.empty()
+            progress_text.empty()
+            st.session_state.scan_running = False
+
         st.session_state.update(
             results=results,
             stats=stats,

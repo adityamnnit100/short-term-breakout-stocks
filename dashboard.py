@@ -2,9 +2,10 @@
 
 import streamlit as st
 
+from breakout import fetch_fii_dii_data
+from alphascanner_ui.auth import render_logout_control, require_login
 from alphascanner_ui.data import (
     configure_logging,
-    fetch_fii_dii_data,
     fetch_indices_performance,
     load_nifty_history,
     load_ticker_history,
@@ -12,7 +13,7 @@ from alphascanner_ui.data import (
 )
 from alphascanner_ui.sidebar import render_sidebar
 from alphascanner_ui.state import init_session_state
-from alphascanner_ui.tabs import backtest, journal, market, news, risk, scanner, settings, watchlist
+from alphascanner_ui.tabs import backtest, journal, market, news, portfolio, risk, scanner, settings, watchlist
 from alphascanner_ui.theme import apply_global_styles, apply_plotly_theme, render_footer
 
 
@@ -27,6 +28,7 @@ logger = configure_logging()
 init_session_state()
 apply_global_styles()
 apply_plotly_theme()
+require_login()
 
 # Custom CSS for modern metrics and Top Pick cards
 st.markdown("""
@@ -272,6 +274,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 sidebar_settings, chart_options = render_sidebar(load_ticker_history, run_backtest_cached)
+render_logout_control()
 
 # Apply 'Compact Mode' styles if enabled in Settings
 if st.session_state.get('compact_mode', False):
@@ -301,11 +304,12 @@ with st.sidebar:
         st.error("Sentiment Engine: MISSING", icon="🛑")
         st.caption("To enable, run: `pip install textblob`")
 
-tab_scanner, tab_backtest, tab_watchlist, tab_market, tab_news, tab_risk, tab_journal, tab_settings = st.tabs(
+tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, tab_risk, tab_journal, tab_settings = st.tabs(
     [
         "🎯 Scanner",
         "📈 Backtest",
         "📋 Watchlist",
+        "💼 Portfolio",
         "🌍 Market",
         "📰 News",
         "⚠️ Risk Mgmt",
@@ -317,14 +321,22 @@ tab_scanner, tab_backtest, tab_watchlist, tab_market, tab_news, tab_risk, tab_jo
 with tab_scanner:
     scanner.render_tab(sidebar_settings, chart_options, load_ticker_history, fetch_indices_performance) # scanner_type is now part of sidebar_settings
     # Smooth UI interaction: notify user when scan results are fresh
-    if st.session_state.get('last_scan_time') and not st.session_state.get('scan_running'):
+    if (
+        st.session_state.get('last_scan_time')
+        and not st.session_state.get('scan_running')
+        and st.session_state.get('last_toast_scan_time') != st.session_state.last_scan_time
+    ):
         st.toast(f"Latest opportunities loaded (Scan time: {st.session_state.last_scan_time})", icon="⚡")
+        st.session_state.last_toast_scan_time = st.session_state.last_scan_time
 
 with tab_backtest:
     backtest.render_tab(sidebar_settings, run_backtest_cached, load_nifty_history)
 
 with tab_watchlist:
     watchlist.render_tab(load_ticker_history)
+
+with tab_portfolio:
+    portfolio.render_tab(load_ticker_history)
 
 with tab_market:
     market.render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history, logger)
