@@ -13,7 +13,7 @@ from alphascanner_ui.data import (
 )
 from alphascanner_ui.sidebar import render_sidebar
 from alphascanner_ui.state import init_session_state
-from alphascanner_ui.tabs import backtest, journal, market, news, portfolio, risk, scanner, settings, watchlist
+from alphascanner_ui.tabs import backtest, journal, market, news, portfolio, risk, scanner, settings, watchlist, notes
 from alphascanner_ui.theme import apply_global_styles, apply_plotly_theme, render_footer
 
 
@@ -304,7 +304,7 @@ with st.sidebar:
         st.error("Sentiment Engine: MISSING", icon="🛑")
         st.caption("To enable, run: `pip install textblob`")
 
-tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, tab_risk, tab_journal, tab_settings = st.tabs(
+tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, tab_risk, tab_journal, tab_notes, tab_settings = st.tabs(
     [
         "🎯 Scanner",
         "📈 Backtest",
@@ -314,6 +314,7 @@ tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, t
         "📰 News",
         "⚠️ Risk Mgmt",
         "📝 Journal",
+        "📝 Notes",
         "⚙️ Settings",
     ]
 )
@@ -349,6 +350,9 @@ with tab_risk:
 
 with tab_journal:
     journal.render_tab()
+
+with tab_notes:
+    notes.render_tab()
 
 with tab_settings:
     settings.render_tab(load_ticker_history, run_backtest_cached)

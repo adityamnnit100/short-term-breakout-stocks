@@ -57,3 +57,6 @@
 2026-04-17 23:43:01,650 ERROR 
 1 Failed download:
 2026-04-17 23:43:01,650 ERROR ['DUMMYALCAR.NS']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2026-04-17 23:49:41,293 ERROR 
+1 Failed download:
+2026-04-17 23:49:41,293 ERROR ['^NSEI']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')

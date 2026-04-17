@@ -22,6 +22,7 @@ DEFAULT_SESSION_STATE = {
     "portfolios": [],
     "portfolio_positions": [],
     "trade_journal": [],
+    "notes": [],
     "ticker_cache_refreshed_at": None,
     "backtest_cache_refreshed_at": None,
 }
