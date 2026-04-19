@@ -2,7 +2,7 @@
 
 import streamlit as st
 
-from breakout import fetch_fii_dii_data
+from breakout import fetch_fii_dii_data, start_background_metadata_worker
 from alphascanner_ui.auth import render_logout_control, require_login
 from alphascanner_ui.data import (
     configure_logging,
@@ -26,6 +26,7 @@ st.set_page_config(
 
 logger = configure_logging()
 init_session_state()
+start_background_metadata_worker()
 apply_global_styles()
 apply_plotly_theme()
 require_login()
@@ -50,7 +51,8 @@ st.markdown("""
 
     /* FORCE BLACK TEXT for all standard Streamlit containers */
     .stApp [data-testid="stMarkdownContainer"], .stApp p, .stApp label, .stApp h1, .stApp h2, .stApp h3, .stApp span, .stApp [data-testid="stWidgetLabel"] p {
-        color: #0f172a !important;
+        color: #000000 !important; /* Pure black for production-grade contrast */
+        font-weight: 450;
     }
 
     /* Tab Navigation Styling */
@@ -68,12 +70,13 @@ st.markdown("""
         padding: 8px 16px !important;
     }
     .stTabs [data-baseweb="tab"] p {
-        color: #475569 !important;
-        font-weight: 500 !important;
+        color: #334155 !important; /* Darker slate for unselected tabs */
+        font-weight: 600 !important;
         font-size: 1rem !important;
     }
     .stTabs [aria-selected="true"] p {
-        color: #0369a1 !important;
+        color: #0284c7 !important;
+        text-decoration: underline;
         font-weight: 700 !important;
     }
 
@@ -157,7 +160,7 @@ st.markdown("""
     /* Trade Setup Workspace Styling */
     .terminal-panel {
         background: #ffffff !important;
-        border: 1px solid #bae6fd !important;
+        border: 1px solid #075985 !important; /* High contrast border */
         border-radius: 16px;
         padding: 20px;
         color: #0f172a;
@@ -279,7 +282,7 @@ st.markdown("""
 
     /* Dataframe High-Contrast Borders & Container */
     [data-testid="stDataFrame"] {
-        border: 1px solid #0369a1 !important;
+        border: 2px solid #075985 !important; /* Bold high-contrast border for grids */
         border-radius: 8px !important;
         padding: 4px !important;
         background: #ffffff !important;

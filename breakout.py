@@ -18,6 +18,7 @@ import time
 import json
 import sqlite3
 import logging
+import threading
 import concurrent.futures
 from datetime import datetime, timedelta, timezone
 from typing import Callable, Optional, Tuple, List, Dict
@@ -531,6 +532,36 @@ def prefetch_metadata(tickers: List[str]):
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         executor.map(_fetch_worker, to_fetch)
 
+
+_METADATA_WORKER_THREAD = None
+_METADATA_WORKER_LOCK = Lock()
+
+def _metadata_worker_loop(interval_hours: int = 8):
+    """Background loop that keeps the fundamental metadata fresh while the app is idle."""
+    logger = logging.getLogger("AlphaScanner.Engine")
+    logger.info("Background metadata worker starting...")
+    while True:
+        try:
+            # Target the broadest universe to ensure cache coverage
+            tickers = get_nifty_total_market()
+            prefetch_metadata(tickers)
+            logger.info(f"Background cache refresh complete for {len(tickers)} symbols.")
+        except Exception as e:
+            logger.error(f"Metadata background worker error: {e}")
+        time.sleep(interval_hours * 3600)
+
+def start_background_metadata_worker():
+    """Initializes the metadata worker thread if it is not already running."""
+    global _METADATA_WORKER_THREAD
+    with _METADATA_WORKER_LOCK:
+        if _METADATA_WORKER_THREAD is None or not _METADATA_WORKER_THREAD.is_alive():
+            _METADATA_WORKER_THREAD = threading.Thread(
+                target=_metadata_worker_loop,
+                daemon=True,
+                name="MetadataBackgroundWorker"
+            )
+            _METADATA_WORKER_THREAD.start()
+
 def _process_single_ticker(
     ticker: str,
     data: pd.DataFrame,
@@ -577,7 +608,8 @@ def _process_single_ticker(
         ema_20 = close.ewm(span=20, adjust=False).mean().iloc[-1]
 
         avg_vol = vol.rolling(30).mean().iloc[-2]
-        rsi = calculate_rsi(close).iloc[-1]
+        rsi_series = calculate_rsi(close)
+        rsi = rsi_series.iloc[-1]
         adx_series = calculate_adx(high, low, close)
         adx = adx_series.iloc[-1]
         adx_prev = adx_series.iloc[-2]
@@ -585,7 +617,17 @@ def _process_single_ticker(
         upper_bb, mid_bb, lower_bb = calculate_bollinger_bands(close)
         vwap = calculate_vwap(high, low, close, vol).iloc[-1]
 
+        # Stochastic RSI implementation (Filter 10)
+        stoch_k_ser, _ = calculate_stochastic_rsi(rsi_series)
+        stoch_k = stoch_k_ser.iloc[-1]
+        stoch_neutral = 20 <= stoch_k <= 80
+
         ltp = float(close.iloc[-1])
+        # MA Slopes (Filter 11: MAs rising over last 5 days)
+        ema_20_prev_val = close.ewm(span=20, adjust=False).mean().iloc[-5]
+        sma_50_prev_val = close.rolling(50).mean().iloc[-5]
+        ma_slope_bull = (ema_20 > ema_20_prev_val) and (sma_50 > sma_50_prev_val)
+
         ticker_sector = sector_map.get(ticker, "N/A") if sector_map else "N/A"
         sector_score = sector_sentiment_map.get(ticker_sector, 5.0)
         is_tight = detect_vcp_tightness(close)
@@ -600,7 +642,7 @@ def _process_single_ticker(
         hist_std = close.tail(50).std()
         tightness_ratio = (recent_std / hist_std) if hist_std > 0 else 1.0
         # 1. RSI Accumulation Score: Centered at 52.5 (Max 5 pts)
-        rsi_acc_score = max(0, 5 - abs(rsi - 52.5) / 2.5) if 40 <= rsi <= 65 else 0
+        rsi_acc_score = max(0, 5 - abs(rsi - 52.5) / 2.5) if (40 <= rsi <= 65) else 0
         # 2. Tightness Score: Max points if ratio <= 0.5 (Max 5 pts)
         t_acc_score = max(0, min(5.0, (0.75 - tightness_ratio) / 0.25 * 5)) if tightness_ratio < 0.75 else 0
         setup_score = round(min(10.0, rsi_acc_score + t_acc_score), 1)
@@ -642,14 +684,15 @@ def _process_single_ticker(
             with stats_lock: stats["rs_fail"] += 1
             return None
 
-        rs_bonus = 3 if rs_rating >= 95 else (2 if rs_rating >= 90 else 0)
-
-        # ADX rising condition
-        if not (adx > (12 if scanner_type == "Pre-Breakout" else 18)): # Lowered floor for Pre-Breakout
+        # ADX Threshold (Filter 5)
+        adx_min = 20 if scanner_type == "Breakout" else 15
+        if not (adx > adx_min):
             with stats_lock: stats["adx_fail"] += 1
             return None
         
-        # Breakout logic
+        adx_rising = adx > adx_prev
+
+        # Breakout logic (Filter 6)
         prev_h20 = float(high.iloc[-21:-1].max())
         prev_h52 = float(high.iloc[-252:-1].max())
         
@@ -684,10 +727,12 @@ def _process_single_ticker(
             with stats_lock: stats["breakout_fail"] += 1
             return None
 
-        # Candle confirmation
+        # Candle confirmation (Filter 4: Top 30% of range)
         body = abs(close.iloc[-1] - df["Open"].iloc[-1])
         range_ = high.iloc[-1] - low.iloc[-1]
-        if range_ == 0 or (body / range_) < 0.3:
+        relative_close = (ltp - low.iloc[-1]) / range_ if range_ > 0 else 0
+        
+        if range_ == 0 or (body / range_) < 0.3 or relative_close < 0.7:
             return None
 
         # Anti-Chase Filter: Increased threshold for small caps
@@ -698,22 +743,19 @@ def _process_single_ticker(
         candle_sentiment = detect_candlestick_pattern(df)
         
         # Trend Intensity based on MA Slopes and ADX
-        ema_20_prev = close.ewm(span=20, adjust=False).mean().iloc[-5]
         trend_slope = (ema_20 - ema_20_prev) / max(ema_20_prev, 1e-9) * 100
         trend_intensity = "Strong" if (adx > 25 and trend_slope > 0.5) else ("Moderate" if adx > 20 else "Weak")
 
-        # MACD confirmation
+        # MACD confirmation (Filter 7)
         macd_bull = macd.iloc[-1] > macd_sig.iloc[-1] and macd_hist.iloc[-1] > 0
 
-        # BB & VWAP confirmation
+        # BB & VWAP confirmation (Filters 8 & 9)
         bb_upper_zone = ltp >= (mid_bb.iloc[-1] + (upper_bb.iloc[-1] - mid_bb.iloc[-1]) * 0.5)
         bb_breakout = ltp > upper_bb.iloc[-1]
         above_vwap = ltp > vwap
         bb_bull = bb_upper_zone or bb_breakout
 
-        # Additional confirmations used in scoring and UI.
-        ma_slope_bull = ema_20 > close.ewm(span=20, adjust=False).mean().iloc[-6]
-        bull_div, bear_div = detect_divergence(close, calculate_rsi(close))
+        bull_div, bear_div = detect_divergence(close, rsi_series)
         atr = calculate_atr(high, low, close).iloc[-1]
         atr = float(atr) if not pd.isna(atr) and atr > 0 else ltp * 0.015
         support_breakout, near_support, resistance, support = detect_support_resistance(df)
@@ -759,8 +801,9 @@ def _process_single_ticker(
         if scanner_type == "Pre-Breakout":
             strength = (1.5 + (setup_score * 0.35) if is_dry else 1.0) # Weighted by setup quality and supply dry-up
             strength += (2.0 if is_consolidating_near_20d else 0) + (1.5 if is_consolidating_near_52w else 0)
-            strength += (0.5 if macd_bull else 0) + (0.5 if above_vwap else 0) + (0.5 if bb_bull else 0)
+            strength += (1.0 if macd_bull else 0) + (0.5 if above_vwap else 0) + (0.5 if bb_bull else 0)
             strength += (0.5 if ma_slope_bull else 0)
+            strength += (0.5 if stoch_neutral else 0)
             strength += (1.0 if is_surge else 0) # Surge is still good for early accumulation
             strength += (setup_score / 5.0) # Bonus for high-quality technical setup
             if is_inside_bar and is_tight:
@@ -769,9 +812,10 @@ def _process_single_ticker(
                 strength += 2.0 # NR7 + Inside Bar "SuperCoil"
         else: # Breakout scanner
             strength = (3.0 if (is_tight and is_dry) else 1.0) 
-            strength += (2.5 if near_20d else 0) + (2.0 if near_52w else 0)
+            strength += (3.5 if is_breaking_out else 0)
+            strength += (1.5 if near_20d else 0) + (1.0 if near_52w else 0)
             strength += (1 if macd_bull else 0) + (1 if above_vwap else 0) + (1 if bb_bull else 0)
-            strength += (1 if ma_slope_bull else 0)
+            strength += (1 if ma_slope_bull else 0) + (0.5 if stoch_neutral else 0)
             strength += (2.0 if is_surge else 0)
 
             if is_inside_bar and is_tight:
