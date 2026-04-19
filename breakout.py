@@ -48,8 +48,9 @@ _EMPTY_STATS: dict = {
     "scanned": 0, "volume_fail": 0, "trend_fail": 0,
     "breakout_fail": 0, "momentum_fail": 0, "adx_fail": 0,
     "macd_fail": 0, "bb_fail": 0, "rs_fail": 0, "fakeout_trap": 0,
+    "liquidity_fail": 0,
     "trending_sectors": [], "sector_sentiment": {},
-    "universe": None, "universe_size": 0,
+    "universe": None, "universe_size": 0, "scanner_type": None,
 }
 
 
@@ -209,7 +210,11 @@ def calculate_rsi(close, period: int = 14):
     delta = close.diff()
     gain = delta.where(delta > 0, 0.0).rolling(period).mean()
     loss = (-delta.where(delta < 0, 0.0)).rolling(period).mean()
-    return 100 - (100 / (1 + gain / loss.replace(0, np.nan)))
+    rs = gain / loss.replace(0, np.nan)
+    rsi = 100 - (100 / (1 + rs))
+    rsi = rsi.mask((loss == 0) & (gain > 0), 100)
+    rsi = rsi.mask((loss == 0) & (gain == 0), 50)
+    return rsi
 
 
 def calculate_atr(high, low, close, period: int = 14):
@@ -478,6 +483,34 @@ def detect_support_resistance(df, lookback: int = 50):
     return c > h * 0.98, c < l * 1.02, h, l
 
 
+def _is_finite(*values) -> bool:
+    return all(pd.notna(value) and np.isfinite(float(value)) for value in values)
+
+
+def _scanner_quality_profile(scanner_type: str, universe: str) -> dict:
+    """Central quality gates so Nifty 500 and cap-focused scans stay consistent."""
+    is_total_market = universe == "Total Market (Cap Focused)"
+    is_pre_breakout = scanner_type == "Pre-Breakout"
+
+    return {
+        "rs_floor": (
+            45 if is_total_market and is_pre_breakout else  # RELAXED
+            50 if is_total_market else                      # RELAXED
+            50 if is_pre_breakout else                      # RELAXED
+            55                                               # RELAXED
+        ),
+        "adx_min": 10 if is_pre_breakout else 16,  # RELAXED for consolidations
+        "breakout_buffer_pct": 0.3 if is_total_market else 0.2,  # REALISTIC: Recent breakouts
+        "breakout_upper_buffer_pct": 0.50,
+        "pre_breakout_upper_buffer_pct": 0.20,  # For consolidating near high
+        "min_avg_volume": 75_000 if is_total_market else 50_000,
+        "min_price": 20 if is_total_market else 10,
+        "max_daily_extension_pct": 7.0 if is_total_market else 8.0,
+        "min_close_position": 0.55 if is_pre_breakout else 0.65,
+        "accumulation_signal_count_min": 2,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Main scanner
 # ---------------------------------------------------------------------------
@@ -623,9 +656,24 @@ def _process_single_ticker(
         stoch_neutral = 20 <= stoch_k <= 80
 
         ltp = float(close.iloc[-1])
-        # MA Slopes (Filter 11: MAs rising over last 5 days)
-        ema_20_prev_val = close.ewm(span=20, adjust=False).mean().iloc[-5]
-        sma_50_prev_val = close.rolling(50).mean().iloc[-5]
+        open_price = float(df["Open"].iloc[-1])
+        day_range = float(high.iloc[-1] - low.iloc[-1])
+        body = abs(ltp - open_price)
+        relative_close = (ltp - float(low.iloc[-1])) / day_range if day_range > 0 else 0.0
+        daily_pcnt = (ltp - open_price) / max(open_price, 1e-9) * 100
+        quality_profile = _scanner_quality_profile(scanner_type, universe)
+
+        if not _is_finite(ltp, avg_vol, sma_200, sma_50, ema_20, rsi, adx, adx_prev, vwap):
+            return None
+
+        if ltp < quality_profile["min_price"] or avg_vol < quality_profile["min_avg_volume"]:
+            with stats_lock:
+                stats["liquidity_fail"] += 1
+            return None
+
+        # MA Slopes (Filter 11: MAs rising over last 3 days for responsiveness)
+        ema_20_prev_val = close.ewm(span=20, adjust=False).mean().iloc[-3]
+        sma_50_prev_val = close.rolling(50).mean().iloc[-3]
         ma_slope_bull = (ema_20 > ema_20_prev_val) and (sma_50 > sma_50_prev_val)
 
         ticker_sector = sector_map.get(ticker, "N/A") if sector_map else "N/A"
@@ -636,6 +684,12 @@ def _process_single_ticker(
         base_weeks = calculate_base_weeks(df)
         consol_days = calculate_consolidation_days(df)
         is_dry = detect_volume_dryup(vol)
+        
+        # Accumulation signal counter for pre-breakout
+        accum_signals_count = sum([
+            is_tight, is_dry, is_inside_bar, is_nr7,
+            base_weeks >= 2, consol_days >= 5
+        ])
 
         # GRANULAR SETUP SCORE (0-10) for Pre-Breakout Ranking
         recent_std = close.tail(10).std()
@@ -650,42 +704,52 @@ def _process_single_ticker(
         # Volume Surge is validated only if the stock belongs to a trending/outperforming sector
         is_surge = detect_volume_surge(vol)
         if sector_map and ticker_sector != "N/A":
-            is_surge = is_surge and (ticker_sector in trending_sectors)
+            # For Pre-Breakout, volume surge is a bonus but not required
+            # For Breakout, it's part of the verification
+            if scanner_type == "Breakout":
+                is_surge = is_surge and (ticker_sector in trending_sectors)
+            else:
+                # Pre-breakout just needs ANY vol confirmation or pattern
+                is_surge = is_surge or detect_volume_dryup(vol)
 
-        # Volume filter
+        # Volume filter - use appropriate threshold
         vol_ratio = float(vol.iloc[-1]) / max(avg_vol, 1)
-        min_vol_ratio = float(vol_thresh)
+        # For Pre-Breakout, relax volume requirement: just need 0.5x avg in tight setup
+        if scanner_type == "Pre-Breakout" and (is_tight or is_dry):
+            min_vol_ratio = max(0.5, float(vol_thresh) * 0.5)  # Softer requirement for tight patterns
+        else:
+            min_vol_ratio = float(vol_thresh)
 
         # Tightened Trend Stack Filter (EMA20 > SMA50 > SMA200)
         # Matches TRADER_GUIDE.md and Backtest logic
         trend_stack_ok = (ema_20 > sma_50) and (sma_50 > sma_200)
+        # Filter 1: Trend Stack
         if scanner_type == "Pre-Breakout":
             # Allow slight pullback below EMA20 for accumulation setups
             trend_ok = trend_stack_ok and (ltp > ema_20 * 0.985)
         else:
-            trend_ok = trend_stack_ok and (ltp > ema_20)
+            # For Breakout: price should be near or above EMA20
+            trend_ok = trend_stack_ok and (ltp > ema_20 * 0.98)
 
         if not trend_ok:
             with stats_lock: stats["trend_fail"] += 1
             return None
 
-        # RSI filter
+        # Filter 3: RSI Momentum
         if not (rsi_min <= rsi <= rsi_max):
             with stats_lock: stats["momentum_fail"] += 1
             return None
 
         # RS filter
         rs_rating = calculate_relative_strength(close_aligned, nifty_aligned)
-        rs_floor = 50 if "Total Market" in universe else 60
-        if scanner_type == "Pre-Breakout":
-            rs_floor -= 10 # Accumulating stocks have lower immediate RS
-            
+        rs_floor = quality_profile["rs_floor"]
+
         if rs_rating < rs_floor and not (rs_rating == 0 and rsi > 70):
             with stats_lock: stats["rs_fail"] += 1
             return None
 
         # ADX Threshold (Filter 5)
-        adx_min = 20 if scanner_type == "Breakout" else 15
+        adx_min = quality_profile["adx_min"]
         if not (adx > adx_min):
             with stats_lock: stats["adx_fail"] += 1
             return None
@@ -695,11 +759,16 @@ def _process_single_ticker(
         # Breakout logic (Filter 6)
         prev_h20 = float(high.iloc[-21:-1].max())
         prev_h52 = float(high.iloc[-252:-1].max())
-        
-        # ANTICIPATORY LOGIC: Is it about to break?
-        # Price is within 1.5% of 20-day high OR 52-week high
-        near_20d = prev_h20 * (1 - dist_thresh / 100) <= ltp <= prev_h20 * 1.005
-        near_52w = prev_h52 * (1 - dist_thresh / 100) <= ltp <= prev_h52 * 1.005
+        breakout_buffer = 1 + quality_profile["breakout_buffer_pct"] / 100
+        breakout_upper = 1 + quality_profile["breakout_upper_buffer_pct"] / 100
+        pre_upper_buffer = 1 + quality_profile["pre_breakout_upper_buffer_pct"] / 100
+
+        # Use appropriate upper buffer based on scanner type
+        upper_buffer = breakout_upper if scanner_type == "Breakout" else pre_upper_buffer
+        near_20d = prev_h20 * (1 - dist_thresh / 100) <= ltp <= prev_h20 * upper_buffer
+        near_52w = prev_h52 * (1 - dist_thresh / 100) <= ltp <= prev_h52 * upper_buffer
+        broke_20d = ltp >= prev_h20 * breakout_buffer
+        broke_52w = ltp >= prev_h52 * breakout_buffer
         
         # Initialize flags to avoid UnboundLocalError
         is_breaking_out = False
@@ -708,42 +777,46 @@ def _process_single_ticker(
         actual_breakout_condition_met = False
 
         if scanner_type == "Breakout":
-            is_breaking_out = ltp > prev_h20 * 1.005 or ltp > prev_h52 * 1.005
-            actual_breakout_condition_met = near_20d or near_52w or is_breaking_out
+            is_breaking_out = broke_20d or broke_52w
+            actual_breakout_condition_met = is_breaking_out
         else: # Pre-Breakout
-            # Pre-Breakout: Price within proximity threshold but hasn't surged past resistance yet
-            is_consolidating_near_20d = ltp >= prev_h20 * (1 - dist_thresh / 100) and ltp < prev_h20 * 1.005
-            is_consolidating_near_52w = ltp >= prev_h52 * (1 - dist_thresh / 100) and ltp < prev_h52 * 1.005
-            is_breaking_out = ltp > prev_h20 * 1.005 # Still tracked for labeling
-            actual_breakout_condition_met = is_consolidating_near_20d or is_consolidating_near_52w
+            # Pre-breakout is a tight, constructive base near resistance, not a late chase after expansion.
+            is_consolidating_near_20d = near_20d and not broke_20d
+            is_consolidating_near_52w = near_52w and not broke_52w
+            is_breaking_out = broke_20d or broke_52w
+            # Pre-breakout: Need at least 1 accumulation signal (tight base, vol dry-up, inside bar, NR7, base weeks, or consol days)
+            # OR if RSI + ADX are both strong, relax requirement
+            has_strong_momentum = (rsi >= 70) and (adx > 20)
+            has_strong_setup = (rsi <= 55) and (adx > 15)  # Accumulation zone  + momentum
+            accumulation_signal = (accum_signals_count >= 1) or has_strong_momentum or has_strong_setup
+            actual_breakout_condition_met = (
+                (is_consolidating_near_20d or is_consolidating_near_52w)
+                and accumulation_signal
+            )
 
         # Fakeout detection: price breaks resistance but volume is below threshold
         is_fakeout = is_breaking_out and vol_ratio < min_vol_ratio
-        if vol_ratio < min_vol_ratio and not (is_tight and is_dry or is_breaking_out):
-            with stats_lock: stats["volume_fail"] += 1
-            return None
         
+        # Check breakout condition early - core requirement
         if not actual_breakout_condition_met:
             with stats_lock: stats["breakout_fail"] += 1
             return None
 
-        # Candle confirmation (Filter 4: Top 30% of range)
-        body = abs(close.iloc[-1] - df["Open"].iloc[-1])
-        range_ = high.iloc[-1] - low.iloc[-1]
-        relative_close = (ltp - low.iloc[-1]) / range_ if range_ > 0 else 0
-        
-        if range_ == 0 or (body / range_) < 0.3 or relative_close < 0.7:
+        # Filter 4: Candle quality. Breakouts need expansion; pre-breakouts can be quieter but must close constructively.
+        if day_range == 0:
+            return None
+        body_ratio = body / day_range
+        if scanner_type == "Pre-Breakout" and relative_close < quality_profile["min_close_position"]:
             return None
 
-        # Anti-Chase Filter: Increased threshold for small caps
-        daily_pcnt = (ltp - df["Open"].iloc[-1]) / df["Open"].iloc[-1] * 100
-        if daily_pcnt > 8.0:
+        # Anti-chase filter: especially important in small/midcap scans where late entries get punished.
+        if daily_pcnt > quality_profile["max_daily_extension_pct"]:
             return None
 
         candle_sentiment = detect_candlestick_pattern(df)
         
         # Trend Intensity based on MA Slopes and ADX
-        trend_slope = (ema_20 - ema_20_prev) / max(ema_20_prev, 1e-9) * 100
+        trend_slope = (ema_20 - ema_20_prev_val) / max(ema_20_prev_val, 1e-9) * 100
         trend_intensity = "Strong" if (adx > 25 and trend_slope > 0.5) else ("Moderate" if adx > 20 else "Weak")
 
         # MACD confirmation (Filter 7)
@@ -779,6 +852,10 @@ def _process_single_ticker(
 
         if apply_market_cap_filter and max_mkt_cap_cr > 0 and mkt_cap_cr > max_mkt_cap_cr:
              return None
+        
+        # Market cap sanity check (avoid micro-cap garbage)
+        if mkt_cap_cr > 0 and mkt_cap_cr < 10:  # <10Cr stocks are too illiquid
+             return None
 
         patterns = []
         if detect_flag_pattern(df): patterns.append("Flag")
@@ -793,37 +870,32 @@ def _process_single_ticker(
         if is_surge: patterns.append("Vol-Surge")
         if base_weeks >= 4:
             patterns.append(f"Base-{base_weeks}W")
-        if is_fakeout:
+
+        # Standardized 11-Filter Confluence Scoring (0-10)
+        score = 0.0
+        score += 1.5 if trend_stack_ok else 0.0      # Filter 1
+        score += 1.0 if vol_ratio >= 1.5 else 0.5    # Filter 2 (Partial for lower vol in Pre-Breakout)
+        score += 1.0 if (rsi_min <= rsi <= rsi_max) else 0.0 # Filter 3
+        score += 1.5 if relative_close >= 0.7 else 0.0 # Filter 4 (High quality close)
+        score += 1.0 if (adx > 20 or (scanner_type == "Pre-Breakout" and adx > adx_min)) else 0.0 # Filter 5
+        score += 1.0 if actual_breakout_condition_met else 0.0 # Filter 6
+        score += 1.0 if macd_bull else 0.0           # Filter 7
+        score += 1.0 if bb_bull else 0.0             # Filter 8
+        score += 0.5 if above_vwap else 0.0          # Filter 9
+        score += 0.5 if stoch_neutral else 0.0       # Filter 10
+        score += 1.0 if ma_slope_bull else 0.0       # Filter 11
+        score += 0.5 if adx_rising else 0.0
+        
+        # Pattern Bonuses
+        if is_tight and is_dry: score += 1.5
+        if is_inside_bar and is_nr7: score += 2.0
+        if rs_rating >= 90: score += 1.0
+        if is_fakeout: 
+            score -= 3.0
             patterns.append("Fakeout-Trap")
             with stats_lock: stats["fakeout_trap"] += 1
 
-        # Enhanced Weighted Signal Strength Scoring (0-10)
-        if scanner_type == "Pre-Breakout":
-            strength = (1.5 + (setup_score * 0.35) if is_dry else 1.0) # Weighted by setup quality and supply dry-up
-            strength += (2.0 if is_consolidating_near_20d else 0) + (1.5 if is_consolidating_near_52w else 0)
-            strength += (1.0 if macd_bull else 0) + (0.5 if above_vwap else 0) + (0.5 if bb_bull else 0)
-            strength += (0.5 if ma_slope_bull else 0)
-            strength += (0.5 if stoch_neutral else 0)
-            strength += (1.0 if is_surge else 0) # Surge is still good for early accumulation
-            strength += (setup_score / 5.0) # Bonus for high-quality technical setup
-            if is_inside_bar and is_tight:
-                strength += 1.5 # Inside bar during tight consolidation is high conviction
-            if is_inside_bar and is_nr7:
-                strength += 2.0 # NR7 + Inside Bar "SuperCoil"
-        else: # Breakout scanner
-            strength = (3.0 if (is_tight and is_dry) else 1.0) 
-            strength += (3.5 if is_breaking_out else 0)
-            strength += (1.5 if near_20d else 0) + (1.0 if near_52w else 0)
-            strength += (1 if macd_bull else 0) + (1 if above_vwap else 0) + (1 if bb_bull else 0)
-            strength += (1 if ma_slope_bull else 0) + (0.5 if stoch_neutral else 0)
-            strength += (2.0 if is_surge else 0)
-
-            if is_inside_bar and is_tight:
-                strength += 2.0 # Volatility contraction + Inside bar is a coil
-            if is_inside_bar and is_nr7:
-                strength += 2.5 # Extremely high-conviction coil
-
-        strength += max(0, (rs_rating - 70) / 5) # Gradual contribution from RS
+        strength = min(10.0, max(0.0, round(score, 1)))
 
         # Sector Sentiment Factor (Bonus/Penalty)
         if sector_score >= 8.0:
@@ -838,16 +910,13 @@ def _process_single_ticker(
 
         strength = min(10.0, round(strength, 1))
 
-        # TRIGGER LOGIC (OR): At least one major signal must be present
-        if scanner_type == "Pre-Breakout":
-            # For pre-breakout, we allow Tightness OR Dry-up OR proximity
-            if not (is_tight or is_dry or is_consolidating_near_20d or is_consolidating_near_52w or len(patterns) > 0):
+        # FINAL TRIGGER: Simple and clean (no redundancy)
+        if scanner_type == "Breakout":
+            # Breakout requires: actual break + volume confirmation
+            if not (is_breaking_out and (vol_ratio >= min_vol_ratio)):
                 with stats_lock: stats["breakout_fail"] += 1
                 return None
-        else: # Breakout scanner
-            if not (is_breaking_out or near_52w or bb_breakout or len(patterns) > 0):
-                with stats_lock: stats["breakout_fail"] += 1
-                return None
+        # Pre-Breakout already validated via actual_breakout_condition_met above
 
         return {
             "Ticker": ticker,
@@ -882,7 +951,12 @@ def _process_single_ticker(
                   ("🌀 Tight Coil" if (is_inside_bar and is_tight) else
                    ("🚀 Ready to Pop" if (strength >= 7.5 and is_tight) else "👀 Monitoring"))))
             ),
-            "Pattern": ", ".join(patterns) if patterns else ("20D Breakout" if is_breaking_out else ("Near 52W" if near_52w else "Vol Breakout")),
+            "Pattern": ", ".join(patterns) if patterns else (
+                "52W Breakout" if broke_52w else
+                "20D Breakout" if broke_20d else
+                "Near 52W" if is_consolidating_near_52w else
+                "Near 20D"
+            ),
         }
     except Exception as e:
         logging.getLogger("AlphaScanner.Engine").error(f"Error in {ticker}: {str(e)}")
@@ -910,6 +984,7 @@ def run_scanner(
     stats = _EMPTY_STATS.copy()
     stats["universe"] = universe
     stats["universe_size"] = len(tickers)
+    stats["scanner_type"] = scanner_type
 
     # 1. Download benchmark first to ensure the regime filter is available
     try:
@@ -941,7 +1016,7 @@ def run_scanner(
                 data_frames.append(chunk_data)
             
             if progress_callback:
-                progress_callback((i + 1) / num_chunks * download_weight)
+                progress_callback(0.10 + ((i + 1) / num_chunks * download_weight))
         except Exception as exc:
             logging.getLogger("AlphaScanner.Engine").warning(f"Chunk starting with {chunk[0]} failed: {exc}")
             if progress_callback:
@@ -1024,8 +1099,8 @@ def run_scanner(
                 hits.append(res)
             
             if progress_callback:
-                # Final 60% of progress bar for signal processing
-                progress_callback(download_weight + ((i + 1) / len(avail) * (1 - download_weight)))
+                # Final 50% of progress bar for signal processing (starting from 50%)
+                progress_callback(0.50 + ((i + 1) / len(avail) * 0.50))
 
     df_out = pd.DataFrame(hits).sort_values("Signal_Strength", ascending=False) if hits else pd.DataFrame()
 
@@ -1040,9 +1115,15 @@ def run_daily_cache_update():
     # Common presets to cache
     for scan_type in ["Breakout", "Pre-Breakout"]:
         sector_map = get_sector_mapping("Nifty 500")
+        rsi_min, rsi_max = (60, 78) if scan_type == "Breakout" else (40, 65)
+        vol_thresh = 1.5 if scan_type == "Breakout" else 0.8
+        dist_thresh = 1.5 if scan_type == "Breakout" else 5.0
         results, stats = run_scanner(
             universe="Nifty 500",
-            vol_thresh=1.5,
+            vol_thresh=vol_thresh,
+            rsi_min=rsi_min,
+            rsi_max=rsi_max,
+            dist_thresh=dist_thresh,
             scanner_type=scan_type,
             sector_map=sector_map
         )
@@ -1224,7 +1305,7 @@ def clear_metadata_cache():
         logging.getLogger("AlphaScanner.Engine").error(f"Metadata cache clear error: {exc}")
 
 
-def get_cached_results(hours: int = 12, universe: Optional[str] = None):
+def get_cached_results(hours: int = 12, universe: Optional[str] = None, scanner_type: Optional[str] = None):
     init_db()
     cutoff = (datetime.now() - timedelta(hours=hours)).strftime("%Y-%m-%d %H:%M:%S")
     try:
@@ -1240,6 +1321,8 @@ def get_cached_results(hours: int = 12, universe: Optional[str] = None):
         for row in rows:
             stats = json.loads(row[0])
             if universe and stats.get("universe") not in (universe, None):
+                continue
+            if scanner_type and stats.get("scanner_type") != scanner_type:
                 continue
             return pd.read_json(io.StringIO(row[1])), stats, row[2]
     except Exception as exc:
@@ -1309,9 +1392,14 @@ def run_backtest(
             df["AvgVol"]     = vol.rolling(30).mean().shift(1)
             df["RSI"]        = calculate_rsi(close)
             df["ATR"]        = calculate_atr(high, low, close)
-            
             df["ADX"]        = calculate_adx(high, low, close)
+            
+            # New Indicators for 11-Filter System
             df["MACD"], df["MACD_Signal"], _ = calculate_macd(close)
+            df["Stoch_K"], _ = calculate_stochastic_rsi(df["RSI"].fillna(50))
+            df["EMA20_Slope"] = df["EMA20"].diff(3) > 0
+            df["SMA50_Slope"] = df["SMA50"].diff(3) > 0
+            
             df["BB_Upper"], df["BB_Mid"], df["BB_Lower"] = calculate_bollinger_bands(close)
             bb_rng = (df["BB_Upper"] - df["BB_Lower"]).replace(0, np.nan)
             df["BB_Position"] = (close - df["BB_Lower"]) / bb_rng
@@ -1334,30 +1422,63 @@ def run_backtest(
                 if atr <= 0:
                     continue
 
+                # 11-Filter Component Calculations
                 ph20 = float(df["High"].iloc[i-21:i].max())
                 h52  = float(df["High"].iloc[i-252:i].max())
-
-                # New Weighted Signal Calculation for Backtest
                 actual_breakout = ltp > ph20
-                near_52w = ltp >= h52 * (1 - dist_thresh / 100)
+                near_20d = ph20 * (1 - dist_thresh / 100) <= ltp <= ph20 * 1.005
+                near_52w = h52 * (1 - dist_thresh / 100) <= ltp <= h52 * 1.005
+                actual_breakout_condition_met = actual_breakout or near_20d or near_52w
+
+                vol_ratio = float(row["Volume"]) / max(float(row["AvgVol"]), 1)
+                trend_stack_ok = ltp > row["EMA20"] > row["SMA50"] > row["SMA200"]
                 
-                # BB logic matching scanner
+                range_day = float(row["High"] - row["Low"])
+                relative_close = (ltp - float(row["Low"])) / range_day if range_day > 0 else 0
+                
                 bb_upper_zone = ltp >= (row["BB_Mid"] + (row["BB_Upper"] - row["BB_Mid"]) * 0.5)
                 bb_breakout = ltp > row["BB_Upper"]
                 bb_bull = bb_upper_zone or bb_breakout
-                
                 macd_bull = row["MACD"] > row["MACD_Signal"]
                 above_vwap = ltp > row["VWAP"]
+                stoch_neutral = 20 <= row["Stoch_K"] <= 80
+                ma_slope_bull = row["EMA20_Slope"] and row["SMA50_Slope"]
+
+                # Pattern Detections
+                window_df = df.iloc[max(0, i-50):i+1]
+                is_tight = detect_vcp_tightness(window_df["Close"])
+                is_dry = detect_volume_dryup(window_df["Volume"])
+                is_inside_bar = detect_inside_bar(window_df)
+                is_nr7 = detect_nr7(window_df)
+
+                # RS Approximation for historical accuracy
+                stock_slice = df["Close"].iloc[max(0, i-252):i+1]
+                nifty_slice = nifty_close.loc[stock_slice.index]
+                rs_rating = calculate_relative_strength(stock_slice, nifty_slice)
                 
                 # Candlestick Intelligence
                 candle = detect_candlestick_pattern(df.iloc[:i+1])
                 
-                # Weighted Score (consistent with run_scanner)
-                strength = (3 if actual_breakout else 0) + (1.5 if near_52w else 0)
-                strength += (1 if macd_bull else 0) + (1 if above_vwap else 0) + (1 if bb_bull else 0)
-                # RS Contribution (approximate rating for backtest)
-                strength += 1.5 if ltp > row["SMA200"] else 0
-                strength = min(10.0, round(strength, 1))
+                # Standardized 11-Filter Confluence Scoring (Matches run_scanner)
+                score = 0.0
+                score += 1.5 if trend_stack_ok else 0.0
+                score += 1.0 if vol_ratio >= 1.5 else 0.5
+                score += 1.0 if (rsi_min <= row["RSI"] <= rsi_max) else 0.0
+                score += 1.5 if relative_close >= 0.7 else 0.0
+                score += 1.0 if row["ADX"] > 20 else 0.0
+                score += 1.0 if actual_breakout_condition_met else 0.0
+                score += 1.0 if macd_bull else 0.0
+                score += 1.0 if bb_bull else 0.0
+                score += 0.5 if above_vwap else 0.0
+                score += 0.5 if stoch_neutral else 0.0
+                score += 1.0 if ma_slope_bull else 0.0
+                
+                # Pattern Bonuses
+                if is_tight and is_dry: score += 1.5
+                if is_inside_bar and is_nr7: score += 2.0
+                if rs_rating >= 90: score += 1.0
+
+                strength = min(10.0, max(0.0, round(score, 1)))
 
                 current_date = df.index[i]
                 market_close = nifty_close.get(current_date)
@@ -1372,15 +1493,13 @@ def run_backtest(
 
                 # Strategy Filters + Broad Market Regime Filter
                 checks = [
-                    market_is_bullish, # Market must be bullish
-                    ltp > row["EMA20"] > row["SMA50"] > row["SMA200"],
-                    row["Volume"] > vol_thresh * row["AvgVol"],
-                    rsi_min <= row["RSI"] <= rsi_max,
-                    not pd.isna(row["ADX"]) and row["ADX"] >= 20,
-                    ltp > ph20, # Must be an actual breakout above 20-day resistance
-                    strength >= 5.0, # Minimum conviction threshold for backtest
-                    candle != "Neutral"
+                    market_is_bullish,
+                    trend_stack_ok,
+                    actual_breakout_condition_met,
+                    strength >= 6.0, # Minimum conviction threshold for a backtested entry
+                    candle != "Neutral" or is_inside_bar
                 ]
+                
                 if not all(checks):
                     continue
 

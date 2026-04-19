@@ -119,11 +119,12 @@ def _render_filter_breakdown(stats: Optional[dict]) -> None:
     if not stats or stats.get("scanned", 0) <= 0:
         return
     with st.expander("📉 Filter Breakdown", expanded=False):
-        columns = st.columns(7)
+        columns = st.columns(8)
         for column, (label, key) in zip(
             columns,
             [
                 ("Trend", "trend_fail"),
+                ("Liquidity", "liquidity_fail"),
                 ("Volume", "volume_fail"),
                 ("Momentum", "momentum_fail"),
                 ("ADX", "adx_fail"),
@@ -231,7 +232,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     )
 
     support_col_1, support_col_2, support_col_3 = st.columns(3)
-    support_col_1.metric("Support 1 (BB Lower)", f"₹{support_1:,.2f}")
+    support_col_1.metric("Support 1 (20-SMA)", f"₹{support_1:,.2f}")
     support_col_2.metric("Support 2 (SMA 200)", f"₹{support_2:,.2f}")
     support_col_3.metric("Extended Target (5×ATR)", f"₹{target_3:,.2f}", delta=f"+₹{(target_3 - entry):.2f}")
 
@@ -383,7 +384,11 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
     status_placeholder = st.empty()
 
     if settings.use_cache and need_scan:
-        results, stats, scan_time = scanner_service.fetch_cached_data(True, universe=settings.universe)
+        results, stats, scan_time = scanner_service.fetch_cached_data(
+            True,
+            universe=settings.universe,
+            scanner_type=settings.scanner_type,
+        )
         if results is not None:
             st.session_state.update(
                 results=results,

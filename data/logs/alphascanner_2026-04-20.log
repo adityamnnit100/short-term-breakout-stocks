@@ -1,0 +1,6 @@
+2026-04-20 00:24:17,911 INFO Background metadata worker starting...
+2026-04-20 00:24:18,393 INFO Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-04-20 00:24:19,630 INFO Fetched 251 symbols for Nifty Microcap 250 from https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv
+2026-04-20 00:24:23,507 INFO Prefetching metadata for 3 tickers...
+2026-04-20 00:24:25,236 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-20 00:24:25,615 INFO Background cache refresh complete for 751 symbols.

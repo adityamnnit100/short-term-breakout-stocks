@@ -51,12 +51,12 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                 index=0,
                 help="Breakout: Stocks actively breaking out. Pre-Breakout: Stocks consolidating near highs.",
             )
-            vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 1.5 if scanner_type == "Breakout" else 0.8, 0.1)
+            vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 1.0 if scanner_type == "Breakout" else 0.6, 0.1, help="Lower = more results, Higher = quality filter")
             if scanner_type == "Breakout":
-                rsi_range = st.slider("RSI Range", 0, 100, (60, 78))
+                rsi_range = st.slider("RSI Range", 0, 100, (50, 85), help="Momentum zone for breakouts. Default 50-85 is broader for more scan results.")
                 dist_thresh = st.slider("Breakout Distance (%)", 0.5, 5.0, 1.5, 0.1)
             else: # Pre-Breakout
-                rsi_range = st.slider("RSI Range", 0, 100, (40, 65), help="RSI range for accumulation phase.")
+                rsi_range = st.slider("RSI Range", 0, 100, (35, 70), help="RSI range for accumulation phase. Default 35-70 for more setups.")
                 dist_thresh = st.slider("Proximity to High (%)", 0.5, 10.0, 5.0, 0.5, help="How close to 20D/52W high for pre-breakout.")
             min_mkt_cap, max_mkt_cap = 0, 1000000
             if universe == "Total Market (Cap Focused)":

@@ -2,8 +2,12 @@
 
 import datetime
 import html
+import xml.etree.ElementTree as ET
+import urllib.parse
+import requests
 import streamlit as st
 import yfinance as yf
+from dateutil import parser as date_parser
 
 try:
     from textblob import TextBlob
@@ -25,14 +29,61 @@ def get_sentiment(text: str):
     return "NEUTRAL", "rgba(255, 255, 255, 0.05)", "#94a3b8"
 
 
-@st.cache_data(ttl=900, show_spinner=False)
-def fetch_news_cached(query: str, news_count: int = 12):
-    """Fetch news articles from Yahoo Finance with a 15-minute cache."""
+@st.cache_data(ttl=600, show_spinner=False)
+def fetch_news_cached(query: str, news_count: int = 15):
+    """
+    Fetch news articles with a focus on the Indian market.
+    Prioritizes Google News RSS for better local relevance and recency.
+    """
+    news_results = []
+    
+    # 1. Try Google News RSS (High relevance for Indian business news)
     try:
-        search = yf.Search(query, news_count=news_count)
-        return search.news
+        encoded_query = urllib.parse.quote(query)
+        # Targeted parameters for India: hl=en-IN (language), gl=IN (region), ceid=IN:en
+        url = f"https://news.google.com/rss/search?q={encoded_query}&hl=en-IN&gl=IN&ceid=IN:en"
+        
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        }
+        
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            root = ET.fromstring(response.text)
+            for item in root.findall(".//item")[:news_count]:
+                title = item.find("title").text if item.find("title") is not None else "No Title"
+                link = item.find("link").text if item.find("link") is not None else "#"
+                pub_date = item.find("pubDate").text if item.find("pubDate") is not None else ""
+                source = item.find("source").text if item.find("source") is not None else "Unknown"
+                
+                try:
+                    ts = int(date_parser.parse(pub_date).timestamp())
+                except Exception:
+                    ts = int(datetime.datetime.now().timestamp())
+                
+                # Clean title: Google News often appends " - Source" at the end
+                display_title = title
+                if source and title.endswith(source):
+                    display_title = title[:-(len(source) + 3)].strip()
+                
+                news_results.append({
+                    "title": display_title,
+                    "link": link,
+                    "publisher": source,
+                    "providerPublishTime": ts
+                })
     except Exception:
-        return []
+        pass 
+
+    # 2. Fallback to Yahoo Finance Search if Google RSS fails or is empty
+    if not news_results:
+        try:
+            search = yf.Search(query, news_count=news_count)
+            news_results = getattr(search, "news", [])
+        except Exception:
+            pass
+            
+    return news_results
 
 
 def render_tab() -> None:
@@ -52,11 +103,11 @@ def render_tab() -> None:
         if refresh:
             fetch_news_cached.clear()
 
-    # Use "Indian Stock Market" as default if no query is provided
-    query = news_ticker.strip() if news_ticker else "Indian Stock Market"
+    # Use a more descriptive default for better Indian equity relevance
+    query = news_ticker.strip() if news_ticker else "Nifty 50 Sensex Indian Equity Market News"
     
     with st.spinner(f"Fetching latest news for '{query}'..."):
-        articles = fetch_news_cached(query, news_count=12)
+        articles = fetch_news_cached(query, news_count=15)
 
     if articles is None:
         st.error("Could not fetch news at this time.")
@@ -66,9 +117,8 @@ def render_tab() -> None:
         st.info("No recent news articles found for this query.")
         return
 
-    # Sort articles by sentiment polarity (Bullish/highest score first)
-    if HAS_TEXTBLOB:
-        articles.sort(key=lambda x: TextBlob(x.get("title", "")).sentiment.polarity, reverse=True)
+    # Sort articles by time (Most recent first) to ensure a real-time feed experience
+    articles.sort(key=lambda x: x.get("providerPublishTime", 0), reverse=True)
 
     for article in articles:
         title = html.escape(str(article.get("title", "No Title")))
