@@ -26,17 +26,20 @@ st.set_page_config(
 
 logger = configure_logging()
 init_session_state()
+require_login()
+
+# Only run these after successful login to prevent UI flickering and state errors
 start_background_metadata_worker()
 apply_global_styles()
 apply_plotly_theme()
-require_login()
 
 # Custom CSS for modern metrics and Top Pick cards
 st.markdown("""
 <style>
-    /* PURE TERMINAL LOOK: Eliminate all unnecessary top padding */
-    [data-testid="stHeader"] {
-        display: none;
+    /* PURE TERMINAL LOOK: Remove header background but keep sidebar toggle visible */
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+        border: none !important;
     }
     .main .block-container {
         padding-top: 0.8rem !important;
