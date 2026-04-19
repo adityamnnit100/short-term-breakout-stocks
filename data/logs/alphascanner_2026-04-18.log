@@ -1,0 +1,15 @@
+2026-04-18 16:12:19,874 INFO Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-04-18 16:12:21,598 INFO Prefetching metadata for 112 tickers...
+2026-04-18 17:16:43,105 INFO Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-04-18 17:16:44,781 INFO Prefetching metadata for 26 tickers...
+2026-04-18 17:47:21,804 INFO Prefetching metadata for 1 tickers...
+2026-04-18 18:00:33,139 WARNING Sector segment https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-18 18:00:33,349 WARNING Sector segment https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-18 18:00:33,460 INFO Fetched 251 symbols for Nifty Microcap 250 from https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv
+2026-04-18 18:00:37,485 INFO Prefetching metadata for 95 tickers...
+2026-04-18 18:00:38,997 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-18 18:01:20,544 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-18 18:01:21,333 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-18 18:01:21,583 ERROR 
+1 Failed download:
+2026-04-18 18:01:21,583 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")

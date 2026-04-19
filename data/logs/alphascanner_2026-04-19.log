@@ -1,0 +1,26 @@
+2026-04-19 13:18:00,580 INFO Prefetching metadata for 500 tickers...
+2026-04-19 13:20:22,389 WARNING Sector segment https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-19 13:20:22,491 WARNING Sector segment https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-19 13:20:24,658 INFO Prefetching metadata for 282 tickers...
+2026-04-19 13:20:25,772 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:20:25,773 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:20:25,774 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:20:25,775 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:20:25,776 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:20:25,779 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:20:25,780 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:20:25,780 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:20:25,868 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:20:25,869 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:21:05,054 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-19 13:21:27,802 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-19 13:21:28,632 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-19 13:21:29,279 ERROR 
+1 Failed download:
+2026-04-19 13:21:29,280 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-19 13:33:32,878 INFO Prefetching metadata for 3 tickers...
+2026-04-19 13:33:33,160 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-19 13:33:40,119 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-19 13:33:41,269 ERROR 
+1 Failed download:
+2026-04-19 13:33:41,270 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")

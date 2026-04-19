@@ -33,49 +33,102 @@ require_login()
 # Custom CSS for modern metrics and Top Pick cards
 st.markdown("""
 <style>
+    /* PURE TERMINAL LOOK: Eliminate all unnecessary top padding */
+    [data-testid="stHeader"] {
+        display: none;
+    }
+    .main .block-container {
+        padding-top: 0.8rem !important;
+        padding-bottom: 1rem !important;
+    }
+
     /* Global Theme Overrides for Visibility */
     .stApp {
-        background-color: #0f172a; /* Force dark background */
-        color: #f1f5f9; /* Explicitly set light text */
+        background: radial-gradient(circle at top right, #f0f9ff, #e0f2fe) !important;
+        color: #0f172a !important;
+    }
+
+    /* FORCE BLACK TEXT for all standard Streamlit containers */
+    .stApp [data-testid="stMarkdownContainer"], .stApp p, .stApp label, .stApp h1, .stApp h2, .stApp h3, .stApp span, .stApp [data-testid="stWidgetLabel"] p {
+        color: #0f172a !important;
+    }
+
+    /* Tab Navigation Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 12px;
+        background-color: #ffffff !important;
+        padding: 8px 16px !important;
+        border-radius: 12px;
+        border: 1px solid #bae6fd;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: transparent !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+    }
+    .stTabs [data-baseweb="tab"] p {
+        color: #475569 !important;
+        font-weight: 500 !important;
+        font-size: 1rem !important;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #e0f2fe !important;
+    }
+    .stTabs [aria-selected="true"] p {
+        color: #0284c7 !important;
+        font-weight: 700 !important;
     }
 
     /* Global Visibility & Backgrounds */
     .glass-card {
-        background: rgba(15, 23, 42, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: #ffffff !important;
+        border: 1px solid #bae6fd !important;
         padding: 20px;
         border-radius: 16px;
-        color: #f1f5f9; /* Explicitly set light text for dark background */
+        color: #0f172a;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     /* Metric Box Styling */
     [data-testid="stMetric"] {
-        background: rgba(30, 41, 59, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: #ffffff !important;
+        border: 1px solid #bae6fd !important;
         padding: 15px;
         border-radius: 12px;
         transition: all 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        min-height: 110px;
+    }
+    [data-testid="stMetricValue"] {
+        color: #0f172a !important;
+        font-weight: 800 !important;
+    }
+    [data-testid="stMetricLabel"] p {
+        color: #0369a1 !important; /* Sky 700 labels for better visibility */
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
     }
     [data-testid="stMetric"]:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: #00ffaa;
+        background: #f0f9ff !important;
+        border-color: #0284c7;
         transform: translateY(-2px);
-        box-shadow: 0 0 15px rgba(0, 255, 170, 0.15);
+        box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
     }
 
     /* Top Pick Card Layout */
     .top-pick-card {
-        background: linear-gradient(135deg, #1e1e26 0%, #121216 100%);
-        border-left: 4px solid #00ffaa;
+        background: #ffffff;
+        border-left: 4px solid #0284c7;
         padding: 16px;
         margin-bottom: 12px;
         border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         transition: transform 0.2s ease;
     }
     .top-pick-card:hover {
         transform: scale(1.02);
-        box-shadow: 0 8px 25px rgba(0, 255, 170, 0.2);
+        box-shadow: 0 4px 15px rgba(2, 132, 199, 0.15);
     }
     .top-pick-head {
         display: flex;
@@ -86,10 +139,10 @@ st.markdown("""
     .top-pick-symbol {
         font-weight: 800;
         font-size: 1.1rem;
-        color: #00ffaa;
+        color: #0369a1;
     }
     .top-pick-price {
-        color: #00ffaa;
+        color: #0284c7;
         font-family: 'Courier New', monospace;
         font-weight: bold;
     }
@@ -99,8 +152,8 @@ st.markdown("""
         margin-bottom: 10px;
     }
     .mini-tag {
-        background: rgba(0, 255, 170, 0.1);
-        color: #00ffaa;
+        background: #e0f2fe;
+        color: #0369a1;
         padding: 2px 8px;
         border-radius: 4px;
         font-size: 0.75rem;
@@ -109,11 +162,11 @@ st.markdown("""
 
     /* Trade Setup Workspace Styling */
     .terminal-panel {
-        background: rgba(10, 20, 35, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: #ffffff !important;
+        border: 1px solid #bae6fd !important;
         border-radius: 16px;
         padding: 20px;
-        color: #f1f5f9;
+        color: #0f172a;
         height: 100%;
         overflow-x: auto; /* Enable horizontal scroll for children */
     }
@@ -125,16 +178,16 @@ st.markdown("""
     }
     .terminal-title {
         font-size: 1.2rem;
-        font-weight: 700;
-        color: #f8fafc;
+        font-weight: 800;
+        color: #0f172a;
     }
     .terminal-subtitle {
         font-size: 0.8rem;
-        color: #8899bb;
+        color: #475569;
     }
     .terminal-badge {
-        background: rgba(0, 229, 255, 0.1);
-        color: #00e5ff;
+        background: #e0f2fe;
+        color: #0369a1;
         padding: 4px 10px;
         border-radius: 6px;
         font-size: 0.7rem;
@@ -152,8 +205,8 @@ st.markdown("""
         margin-bottom: 8px;
         font-weight: 600;
     }
-    .sp-yes { background: rgba(0, 230, 118, 0.15); color: #00e676; border: 1px solid rgba(0, 230, 118, 0.3); }
-    .sp-no { background: rgba(255, 82, 82, 0.1); color: #ff5252; border: 1px solid rgba(255, 82, 82, 0.2); }
+    .sp-yes { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .sp-no { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 
     /* Level Grid */
     .level-grid {
@@ -163,31 +216,44 @@ st.markdown("""
         margin-top: 20px;
     }
     .level-box {
-        background: rgba(255, 255, 255, 0.03);
+        background: #f8fafc;
         padding: 12px;
         border-radius: 10px;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid #e2e8f0;
     }
-    .level-label { font-size: 0.7rem; color: #8899bb; margin-bottom: 4px; }
+    .level-label { font-size: 0.7rem; color: #64748b; margin-bottom: 4px; }
     .level-value { font-size: 1.1rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-    .level-entry { color: #00e5ff; }
-    .level-sl { color: #ff5252; }
-    .level-tp1 { color: #ffca28; }
-    .level-tp2 { color: #00e676; }
+    .level-entry { color: #0284c7; }
+    .level-sl { color: #dc2626; }
+    .level-tp1 { color: #b45309; }
+    .level-tp2 { color: #15803d; }
 
     /* Trade Card */
     .trade-card {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+        background: #ffffff;
         border-radius: 15px;
         padding: 20px;
         margin-bottom: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid #e2e8f0;
     }
-    .trade-ticker { font-size: 1.8rem; font-weight: 800; color: #f8fafc; }
-    .trade-subtitle { font-size: 0.9rem; color: #8899bb; margin-bottom: 15px; }
+    .trade-ticker { font-size: 1.8rem; font-weight: 800; color: #0f172a; }
+    .trade-subtitle { font-size: 0.9rem; color: #475569; margin-bottom: 15px; }
 
-    .strength-bar-wrap { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+    /* Dynamic Strength Bar */
+    .strength-bar-wrap { 
+        height: 10px; 
+        background: #f1f5f9; 
+        border-radius: 10px; 
+        overflow: hidden; 
+        border: 1px solid #e2e8f0;
+    }
     .strength-bar { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+
+    /* Heat-Mapped Colors */
+    .strength-high { background: linear-gradient(90deg, #0284c7, #0d9488); box-shadow: 0 0 10px rgba(13, 148, 136, 0.2); }
+    .strength-mid { background: linear-gradient(90deg, #d97706, #059669); }
+    .strength-low { background: linear-gradient(90deg, #dc2626, #ea580c); }
+    .strength-trap { background: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
 
     /* Metric Row and Scanner Status Styling */
     .metric-row {
@@ -198,11 +264,11 @@ st.markdown("""
     }
     .metric-card {
         flex: 1;
-        background: rgba(30, 41, 59, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
         padding: 12px;
         border-radius: 12px;
-        color: #f1f5f9;
+        color: #0f172a;
     }
     .status-grid {
         display: grid;
@@ -210,16 +276,34 @@ st.markdown("""
         gap: 10px;
         margin-top: 10px;
     }
-    .status-label { font-size: 0.75rem; color: #94a3b8; }
-    .status-value { font-size: 0.9rem; font-weight: bold; color: #f8fafc; }
-    .metric-value { color: #f8fafc; }
-    .metric-delta.neutral { color: #94a3b8; }
-    .panel-title { color: #f8fafc; font-weight: 700; }
-    .trade-ticker { color: #f8fafc; }
+    .status-label { font-size: 0.75rem; color: #64748b; }
+    .status-value { font-size: 0.9rem; font-weight: bold; color: #0f172a; }
+    .metric-value { color: #0f172a; }
+    .metric-delta.neutral { color: #64748b; }
+    .panel-title { color: #0f172a; font-weight: 700; }
+    .trade-ticker { color: #0f172a; }
 
-    /* Metrics Label visibility */
-    [data-testid="stMetricLabel"] p {
-        color: #94a3b8 !important;
+    /* Dataframe High-Contrast Borders & Container */
+    [data-testid="stDataFrame"] {
+        border: 1px solid #0369a1 !important;
+        border-radius: 8px !important;
+        padding: 4px !important;
+        background: #ffffff !important;
+    }
+
+    /* Visibility for Table elements if rendered as standard HTML */
+    table {
+        border-collapse: collapse !important;
+        color: #0f172a !important;
+    }
+    th, td { border: 1px solid #cbd5e1 !important; }
+
+    /* Sidebar Visibility Fixes */
+    [data-testid="stSidebar"] {
+        background-color: #e0f2fe !important;
+    }
+    [data-testid="stSidebar"] * {
+        color: #0f172a !important;
     }
 
     /* Mobile Responsiveness Overrides */
@@ -301,7 +385,7 @@ with st.sidebar:
     if news.HAS_TEXTBLOB:
         st.success("Sentiment Engine: ACTIVE", icon="🧠")
     else:
-        st.error("Sentiment Engine: MISSING", icon="🛑")
+        st.warning("Sentiment Engine: INACTIVE", icon="🛑")
         st.caption("To enable, run: `pip install textblob`")
 
 tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, tab_risk, tab_journal, tab_notes, tab_settings = st.tabs(
@@ -314,7 +398,7 @@ tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, t
         "📰 News",
         "⚠️ Risk Mgmt",
         "📝 Journal",
-        "📝 Notes",
+        "📒 Notes",
         "⚙️ Settings",
     ]
 )

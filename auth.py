@@ -18,7 +18,7 @@ HASH_ALGORITHM = "pbkdf2_sha256"
 DEFAULT_ITERATIONS = 260_000
 DB_PATH = os.environ.get(
     "ALPHASCANNER_DB",
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "breakout_history.db"),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "breakout_history.db"),
 )
 WORKSPACE_FIELDS = {
     "watchlist": [],

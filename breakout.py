@@ -19,7 +19,7 @@ import json
 import sqlite3
 import logging
 import concurrent.futures
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Callable, Optional, Tuple, List, Dict
 from threading import Lock
 
@@ -76,6 +76,12 @@ def _extract_symbols_from_index_csv(df: pd.DataFrame) -> list:
 def _fetch_index_symbols(urls: List[str], label: str) -> list:
     from alphascanner_ui.data import _fetch_nse_csv
 
+    # Try Cache First (Expiry 24 hours) for Production Stability
+    cache_key = f"symbols_{label.replace(' ', '_').lower()}"
+    cached_data = get_system_cache(cache_key, expiry_hours=24)
+    if cached_data:
+        return json.loads(cached_data)
+
     logger = logging.getLogger("AlphaScanner.Engine")
     for url in urls:
         try:
@@ -83,6 +89,7 @@ def _fetch_index_symbols(urls: List[str], label: str) -> list:
             symbols = _extract_symbols_from_index_csv(df)
             if symbols:
                 logger.info("Fetched %s symbols for %s from %s", len(symbols), label, url)
+                set_system_cache(cache_key, json.dumps(symbols))
                 return symbols
             logger.warning("Symbol column not found for %s from %s", label, url)
         except Exception as exc:
@@ -148,8 +155,8 @@ def get_nifty_total_market() -> list:
 def is_market_open() -> bool:
     """Checks if the NSE market is currently open (9:15 AM - 3:30 PM IST, Mon-Fri)."""
     # IST is UTC + 5:30
-    now_utc = datetime.utcnow()
-    now_ist = now_utc + timedelta(hours=5, minutes=30)
+    now_utc = datetime.now(timezone.utc)
+    now_ist = now_utc.astimezone(timezone(timedelta(hours=5, minutes=30)))
 
     # Weekends (Saturday=5, Sunday=6)
     if now_ist.weekday() >= 5:
@@ -163,8 +170,8 @@ def is_market_open() -> bool:
 
 def get_last_market_close_utc() -> datetime:
     """Returns the UTC datetime of the most recent NSE market close."""
-    now_utc = datetime.utcnow()
-    now_ist = now_utc + timedelta(hours=5, minutes=30)
+    now_utc = datetime.now(timezone.utc)
+    now_ist = now_utc.astimezone(timezone(timedelta(hours=5, minutes=30)))
     
     close_ist = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
 
@@ -559,6 +566,8 @@ def _process_single_ticker(
 
         # Align RS safely
         close_aligned, nifty_aligned = close.align(nifty_close, join="inner")
+        if close_aligned.empty or nifty_aligned.empty:
+            return None
 
         # Indicators
         sma_200 = close.rolling(200).mean().iloc[-1]
@@ -603,9 +612,15 @@ def _process_single_ticker(
         vol_ratio = float(vol.iloc[-1]) / max(avg_vol, 1)
         min_vol_ratio = float(vol_thresh)
 
-        # Relaxed Trend filter: Just needs short-term alignment
-        # Pre-Breakout allows price to be resting slightly below EMA20
-        trend_ok = (ltp > ema_20 * 0.99) and (ema_20 > sma_50) if scanner_type == "Pre-Breakout" else (ltp > ema_20 and ema_20 > sma_50)
+        # Tightened Trend Stack Filter (EMA20 > SMA50 > SMA200)
+        # Matches TRADER_GUIDE.md and Backtest logic
+        trend_stack_ok = (ema_20 > sma_50) and (sma_50 > sma_200)
+        if scanner_type == "Pre-Breakout":
+            # Allow slight pullback below EMA20 for accumulation setups
+            trend_ok = trend_stack_ok and (ltp > ema_20 * 0.985)
+        else:
+            trend_ok = trend_stack_ok and (ltp > ema_20)
+
         if not trend_ok:
             with stats_lock: stats["trend_fail"] += 1
             return None
@@ -790,7 +805,7 @@ def _process_single_ticker(
 
         return {
             "Ticker": ticker,
-            "Type": "Breakout",
+            "Type": scanner_type,
             "LTP": round(ltp, 2),
             "ATR": round(atr, 2),
             "RSI": round(rsi, 1),
@@ -808,18 +823,18 @@ def _process_single_ticker(
             "VWAP": "✅" if above_vwap else "—",
             "Divergence": "Bullish" if bull_div else ("Bearish" if bear_div else "—"),
             "Vol_Spike": "🔥 SURGE" if is_surge else ("✅" if vol_ratio >= min_vol_ratio else "—"),
-            "_Support1": round(float(support), 2),
+            "_Support1": round(float(mid_bb.iloc[-1]), 2), # Use tactical 20-SMA Support per PRO specs
             "_Support2": round(float(sma_200), 2),
             "_Resistance": round(float(resistance), 2),
             "Signal_Strength": strength,
             "Trend": trend_intensity,
             "Candle": "Consolidating" if daily_pcnt < 1.5 else candle_sentiment,
             "Action": "AVOID: Fakeout" if is_fakeout else (
-                "VCP Setup" if (scanner_type == "Pre-Breakout" and is_tight and is_dry) else
-                ("Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
-                 ("ID/NR7 SuperCoil" if (is_inside_bar and is_nr7) else
-                  ("Inside Bar Coil" if (is_inside_bar and is_tight) else
-                   ("Ready to Pop" if (strength >= 7.5 and is_tight) else "Watching"))))
+                "💎 VCP Setup" if (scanner_type == "Pre-Breakout" and is_tight and is_dry) else
+                ("🎯 Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
+                 ("⚡ SuperCoil" if (is_inside_bar and is_nr7) else
+                  ("🌀 Tight Coil" if (is_inside_bar and is_tight) else
+                   ("🚀 Ready to Pop" if (strength >= 7.5 and is_tight) else "👀 Monitoring"))))
             ),
             "Pattern": ", ".join(patterns) if patterns else ("20D Breakout" if is_breaking_out else ("Near 52W" if near_52w else "Vol Breakout")),
         }
@@ -1068,7 +1083,7 @@ def fetch_fii_dii_data(logger=None):
 def get_system_cache(key: str, expiry_hours: int = 12) -> Optional[str]:
     """Fetch a value from the generic system cache if not expired."""
     init_db()
-    cutoff = (datetime.utcnow() - timedelta(hours=expiry_hours)).strftime("%Y-%m-%d %H:%M:%S")
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=expiry_hours)).strftime("%Y-%m-%d %H:%M:%S")
     try:
         conn = _connect_db()
         cur = conn.cursor()

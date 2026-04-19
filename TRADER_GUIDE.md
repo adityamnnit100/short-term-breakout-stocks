@@ -76,8 +76,8 @@ Target 2        = Entry + (3.0 × ATR)
 Target 3        = Entry + (5.0 × ATR)
                   ↓ (Extended run if momentum continues)
 
-Support 1       = Bollinger Lower Band
-                  ↓ (Quick support)
+Support 1       = Bollinger Middle Band (20-SMA)
+                  ↓ (Tactical trailing support)
 
 Support 2       = 200-Day SMA
                   ↓ (Strategic support)

@@ -46,7 +46,7 @@ Your trading system has been **completely upgraded** from a Gemini-generated pro
 
 8. **Support Level Calculation**
    - **Gap**: No identified support levels for risk management
-   - **Fix**: Support 1 = Bollinger Lower Band, Support 2 = 200-SMA
+   - **Fix**: Support 1 = Bollinger Middle Band (20-SMA), Support 2 = 200-SMA
    - **Trader Value**: Clear levels for aggressive stops
 
 ### Logic Issues Fixed ✅
@@ -110,7 +110,7 @@ UI now shows failure reasons to help traders:
    - Status of each technical indicator
 
 3. **Multiple Support Levels**
-   - Support 1: Bollinger Lower Band (tactical)
+   - Support 1: Bollinger Middle Band (tactical trailing)
    - Support 2: 200-SMA (strategic)
 
 4. **Multiple Profit Targets**
