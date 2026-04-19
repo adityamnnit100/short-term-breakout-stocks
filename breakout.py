@@ -506,9 +506,11 @@ def _extract_ticker(data, ticker):
 def prefetch_metadata(tickers: List[str]):
     """Optimized batch fetching of fundamental metadata to populate cache."""
     logger = logging.getLogger("AlphaScanner.Engine")
-    to_fetch = [t for t in tickers if get_metadata_cache(t)[0] is None]
+    # Only fetch if cache is missing OR older than 24 hours
+    to_fetch = [t for t in tickers if get_metadata_cache(t, expiry_hours=24)[0] is None]
     
     if not to_fetch:
+        logger.info("Metadata cache is up to date. Skipping prefetch.")
         return
 
     logger.info(f"Prefetching metadata for {len(to_fetch)} tickers...")

@@ -72,36 +72,30 @@ st.markdown("""
         font-weight: 500 !important;
         font-size: 1rem !important;
     }
-    .stTabs [aria-selected="true"] {
-        background-color: #e0f2fe !important;
-    }
     .stTabs [aria-selected="true"] p {
-        color: #0284c7 !important;
+        color: #0369a1 !important;
         font-weight: 700 !important;
     }
 
     /* Global Visibility & Backgrounds */
     .glass-card {
         background: #ffffff !important;
-        border: 1px solid #bae6fd !important;
+        border: 1px solid #cbd5e1 !important;
         padding: 20px;
         border-radius: 16px;
-        color: #0f172a;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
     }
 
     /* Metric Box Styling */
     [data-testid="stMetric"] {
         background: #ffffff !important;
-        border: 1px solid #bae6fd !important;
+        border: 1px solid #cbd5e1 !important;
         padding: 15px;
         border-radius: 12px;
-        transition: all 0.3s ease;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        min-height: 110px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
     [data-testid="stMetricValue"] {
-        color: #0f172a !important;
+        color: #020617 !important;
         font-weight: 800 !important;
     }
     [data-testid="stMetricLabel"] p {
