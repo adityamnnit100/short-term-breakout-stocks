@@ -21,7 +21,7 @@ DB_PATH = os.environ.get(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "breakout_history.db"),
 )
 WORKSPACE_FIELDS = {
-    "watchlist": [],
+    "watchlist": {"Default": []},
     "trade_journal": [],
     "portfolio_positions": [],
     "portfolios": [],
@@ -300,15 +300,21 @@ def load_user_workspace(username: str) -> dict:
     conn.close()
 
     if not row:
-        return {field: list(default_value) for field, default_value in WORKSPACE_FIELDS.items()}
+        # Return deep copies of default structures
+        return {field: (list(val) if isinstance(val, list) else dict(val))
+                for field, val in WORKSPACE_FIELDS.items()}
 
     values = {}
     for field, raw_value in zip(WORKSPACE_FIELDS, row):
         try:
             loaded = json.loads(raw_value)
-            values[field] = loaded if isinstance(loaded, list) else []
+            if field == "watchlist" and isinstance(loaded, list):
+                # Auto-migration: wrap old flat list into a default category
+                values[field] = {"Default": loaded}
+            else:
+                values[field] = loaded if isinstance(loaded, (list, dict)) else WORKSPACE_FIELDS[field]
         except (TypeError, json.JSONDecodeError):
-            values[field] = []
+            values[field] = WORKSPACE_FIELDS[field]
     return values
 
 

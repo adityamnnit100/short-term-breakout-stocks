@@ -1,0 +1,13 @@
+2026-04-23 00:27:02,765 INFO Background metadata worker starting...
+2026-04-23 00:27:05,642 INFO Prefetching metadata for 3 tickers...
+2026-04-23 00:27:06,647 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-23 00:27:06,949 INFO Background cache refresh complete for 751 symbols.
+2026-04-23 00:27:25,043 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: POWER"}}}
+2026-04-23 00:27:25,575 ERROR $POWER: possibly delisted; no price data found  (period=5d) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-23 00:27:25,582 ERROR 
+1 Failed download:
+2026-04-23 00:27:25,582 ERROR ['POWER']: possibly delisted; no price data found  (period=5d) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-23 00:38:54,624 INFO Background metadata worker starting...
+2026-04-23 00:38:57,033 INFO Prefetching metadata for 3 tickers...
+2026-04-23 00:38:58,315 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-23 00:38:58,557 INFO Background cache refresh complete for 751 symbols.

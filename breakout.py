@@ -174,7 +174,7 @@ def get_last_market_close_utc() -> datetime:
     """Returns the UTC datetime of the most recent NSE market close."""
     now_utc = datetime.now(timezone.utc)
     now_ist = now_utc.astimezone(timezone(timedelta(hours=5, minutes=30)))
-    
+
     close_ist = now_ist.replace(hour=15, minute=30, second=0, microsecond=0)
 
     if now_ist.weekday() >= 5:
@@ -247,7 +247,7 @@ def calculate_relative_strength(stock_close, index_close):
     # Require at least 3 months (63 days) of data for a meaningful RS calculation
     if len(stock_close) < 63 or len(index_close) < 63:
         return 0.0
-    
+
     # Weighted Performance calculation based on available history
     def get_perf(series):
         l = len(series)
@@ -262,7 +262,7 @@ def calculate_relative_strength(stock_close, index_close):
         p3 = calc_p(-189) or p2
         p4 = calc_p(-252) or p3
         return (p1 * 0.4) + (p2 * 0.2) + (p3 * 0.2) + (p4 * 0.2)
-    
+
     try:
         s_perf = get_perf(stock_close)
         i_perf = get_perf(index_close)
@@ -285,7 +285,7 @@ def detect_divergence(close, rsi, lookback: int = 20):
     """Improved divergence detection comparing current price action to recent structural peaks."""
     if len(close) < lookback + 5:
         return False, False
-    
+
     # Find local min/max in the lookback window (excluding current candle)
     prev_min_price = close.iloc[-lookback:-1].min()
     prev_min_rsi = rsi.iloc[-lookback:-1].min()
@@ -370,20 +370,20 @@ def detect_candlestick_pattern(df: pd.DataFrame) -> str:
     if len(df) < 2: return "Neutral"
     last = df.iloc[-1]
     prev = df.iloc[-2]
-    
+
     body = last['Close'] - last['Open']
     abs_body = abs(body)
     range_ = max(last['High'] - last['Low'], 1e-9)
     upper_wick = last['High'] - max(last['Open'], last['Close'])
     lower_wick = min(last['Open'], last['Close']) - last['Low']
-    
+
     # Hammer / Bullish Pin Bar
     if lower_wick > 2 * abs_body and upper_wick < 0.1 * range_:
         return "Bullish Hammer"
     # Bullish Engulfing
     if body > 0 and prev['Close'] < prev['Open'] and last['Close'] > prev['Open'] and last['Open'] < prev['Close']:
         return "Bullish Engulfing"
-    
+
     return "Strong Bullish" if (body > 0 and abs_body > 0.8 * range_) else "Neutral"
 
 # ---------------------------------------------------------------------------
@@ -491,15 +491,17 @@ def _scanner_quality_profile(scanner_type: str, universe: str) -> dict:
     """Central quality gates so Nifty 500 and cap-focused scans stay consistent."""
     is_total_market = universe == "Total Market (Cap Focused)"
     is_pre_breakout = scanner_type == "Pre-Breakout"
+    is_pullback = scanner_type == "Pullback"
 
     return {
         "rs_floor": (
             45 if is_total_market and is_pre_breakout else  # RELAXED
+            50 if is_pullback else                          # Moderate for pullbacks
             50 if is_total_market else                      # RELAXED
             50 if is_pre_breakout else                      # RELAXED
             55                                               # RELAXED
         ),
-        "adx_min": 10 if is_pre_breakout else 16,  # RELAXED for consolidations
+        "adx_min": 20 if is_pullback else (10 if is_pre_breakout else 16),
         "breakout_buffer_pct": 0.3 if is_total_market else 0.2,  # REALISTIC: Recent breakouts
         "breakout_upper_buffer_pct": 0.50,
         "pre_breakout_upper_buffer_pct": 0.20,  # For consolidating near high
@@ -542,13 +544,13 @@ def prefetch_metadata(tickers: List[str]):
     logger = logging.getLogger("AlphaScanner.Engine")
     # Only fetch if cache is missing OR older than 24 hours
     to_fetch = [t for t in tickers if get_metadata_cache(t, expiry_hours=24)[0] is None]
-    
+
     if not to_fetch:
         logger.info("Metadata cache is up to date. Skipping prefetch.")
         return
 
     logger.info(f"Prefetching metadata for {len(to_fetch)} tickers...")
-    
+
     def _fetch_worker(ticker):
         try:
             t_obj = yf.Ticker(ticker)
@@ -684,7 +686,7 @@ def _process_single_ticker(
         base_weeks = calculate_base_weeks(df)
         consol_days = calculate_consolidation_days(df)
         is_dry = detect_volume_dryup(vol)
-        
+
         # Accumulation signal counter for pre-breakout
         accum_signals_count = sum([
             is_tight, is_dry, is_inside_bar, is_nr7,
@@ -717,14 +719,15 @@ def _process_single_ticker(
         # For Pre-Breakout, relax volume requirement: just need 0.5x avg in tight setup
         if scanner_type == "Pre-Breakout" and (is_tight or is_dry):
             min_vol_ratio = max(0.5, float(vol_thresh) * 0.5)  # Softer requirement for tight patterns
+        elif scanner_type == "Pullback":
+            min_vol_ratio = 0.4  # We WANT low volume on a pullback (supply dry-up)
         else:
             min_vol_ratio = float(vol_thresh)
 
         # Tightened Trend Stack Filter (EMA20 > SMA50 > SMA200)
         # Matches TRADER_GUIDE.md and Backtest logic
         trend_stack_ok = (ema_20 > sma_50) and (sma_50 > sma_200)
-        # Filter 1: Trend Stack
-        if scanner_type == "Pre-Breakout":
+        if scanner_type in ["Pre-Breakout", "Pullback"]:
             # Allow slight pullback below EMA20 for accumulation setups
             trend_ok = trend_stack_ok and (ltp > ema_20 * 0.985)
         else:
@@ -753,7 +756,7 @@ def _process_single_ticker(
         if not (adx > adx_min):
             with stats_lock: stats["adx_fail"] += 1
             return None
-        
+
         adx_rising = adx > adx_prev
 
         # Breakout logic (Filter 6)
@@ -769,17 +772,25 @@ def _process_single_ticker(
         near_52w = prev_h52 * (1 - dist_thresh / 100) <= ltp <= prev_h52 * upper_buffer
         broke_20d = ltp >= prev_h20 * breakout_buffer
         broke_52w = ltp >= prev_h52 * breakout_buffer
-        
+
         # Initialize flags to avoid UnboundLocalError
         is_breaking_out = False
         is_consolidating_near_20d = False
         is_consolidating_near_52w = False
         actual_breakout_condition_met = False
+        is_pullback_to_ema = False
 
         if scanner_type == "Breakout":
             is_breaking_out = broke_20d or broke_52w
             actual_breakout_condition_met = is_breaking_out
-        else: # Pre-Breakout
+        elif scanner_type == "Pullback":
+            # Pullback logic: Price is within 1.5% of EMA 20 and volume is decreasing
+            is_near_ema20 = (ema_20 * 0.99 <= ltp <= ema_20 * 1.015)
+            # Confirmation: Previous candle was further from EMA20 (showing a return to mean)
+            was_stretched = (df["Close"].iloc[-5:-1].max() > ema_20 * 1.03)
+            is_pullback_to_ema = is_near_ema20 and was_stretched
+            actual_breakout_condition_met = is_pullback_to_ema
+        else: # Pre-Breakout (default)
             # Pre-breakout is a tight, constructive base near resistance, not a late chase after expansion.
             is_consolidating_near_20d = near_20d and not broke_20d
             is_consolidating_near_52w = near_52w and not broke_52w
@@ -796,7 +807,7 @@ def _process_single_ticker(
 
         # Fakeout detection: price breaks resistance but volume is below threshold
         is_fakeout = is_breaking_out and vol_ratio < min_vol_ratio
-        
+
         # Check breakout condition early - core requirement
         if not actual_breakout_condition_met:
             with stats_lock: stats["breakout_fail"] += 1
@@ -814,7 +825,7 @@ def _process_single_ticker(
             return None
 
         candle_sentiment = detect_candlestick_pattern(df)
-        
+
         # Trend Intensity based on MA Slopes and ADX
         trend_slope = (ema_20 - ema_20_prev_val) / max(ema_20_prev_val, 1e-9) * 100
         trend_intensity = "Strong" if (adx > 25 and trend_slope > 0.5) else ("Moderate" if adx > 20 else "Weak")
@@ -852,7 +863,7 @@ def _process_single_ticker(
 
         if apply_market_cap_filter and max_mkt_cap_cr > 0 and mkt_cap_cr > max_mkt_cap_cr:
              return None
-        
+
         # Market cap sanity check (avoid micro-cap garbage)
         if mkt_cap_cr > 0 and mkt_cap_cr < 10:  # <10Cr stocks are too illiquid
              return None
@@ -885,12 +896,12 @@ def _process_single_ticker(
         score += 0.5 if stoch_neutral else 0.0       # Filter 10
         score += 1.0 if ma_slope_bull else 0.0       # Filter 11
         score += 0.5 if adx_rising else 0.0
-        
+
         # Pattern Bonuses
         if is_tight and is_dry: score += 1.5
         if is_inside_bar and is_nr7: score += 2.0
         if rs_rating >= 90: score += 1.0
-        if is_fakeout: 
+        if is_fakeout:
             score -= 3.0
             patterns.append("Fakeout-Trap")
             with stats_lock: stats["fakeout_trap"] += 1
@@ -904,7 +915,7 @@ def _process_single_ticker(
                 strength += 1.5
         elif sector_score <= 4.0:
             strength -= 1.0
-        
+
         if is_fakeout:
             strength = min(strength, 3.5) # Drastic reduction for low-volume traps
 
@@ -916,7 +927,7 @@ def _process_single_ticker(
             if not (is_breaking_out and (vol_ratio >= min_vol_ratio)):
                 with stats_lock: stats["breakout_fail"] += 1
                 return None
-        # Pre-Breakout already validated via actual_breakout_condition_met above
+        # Pre-Breakout and Pullback validated via actual_breakout_condition_met above
 
         return {
             "Ticker": ticker,
@@ -946,10 +957,11 @@ def _process_single_ticker(
             "Candle": "Consolidating" if daily_pcnt < 1.5 else candle_sentiment,
             "Action": "AVOID: Fakeout" if is_fakeout else (
                 "💎 VCP Setup" if (scanner_type == "Pre-Breakout" and is_tight and is_dry) else
+                ("🛡️ EMA Support" if (scanner_type == "Pullback" and is_pullback_to_ema) else
                 ("🎯 Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
                  ("⚡ SuperCoil" if (is_inside_bar and is_nr7) else
                   ("🌀 Tight Coil" if (is_inside_bar and is_tight) else
-                   ("🚀 Ready to Pop" if (strength >= 7.5 and is_tight) else "👀 Monitoring"))))
+                   ("🚀 Ready to Pop" if (strength >= 7.5 and is_tight) else "👀 Monitoring")))))
             ),
             "Pattern": ", ".join(patterns) if patterns else (
                 "52W Breakout" if broke_52w else
@@ -1002,7 +1014,7 @@ def run_scanner(
     if progress_callback: progress_callback(0.10)
 
     # 2. Download ticker data in chunks of 50 to improve stability for large universes (Total Market)
-    download_weight = 0.4 
+    download_weight = 0.4
     chunk_size = 50
     data_frames = []
     num_chunks = (len(tickers) + chunk_size - 1) // chunk_size
@@ -1014,7 +1026,7 @@ def run_scanner(
             chunk_data = yf.download(chunk, period="2y", interval="1d", progress=False, timeout=45)
             if not chunk_data.empty:
                 data_frames.append(chunk_data)
-            
+
             if progress_callback:
                 progress_callback(0.10 + ((i + 1) / num_chunks * download_weight))
         except Exception as exc:
@@ -1047,19 +1059,19 @@ def run_scanner(
         try:
             ticker_returns = (data['Close'].iloc[-1] / data['Close'].iloc[-2] - 1) * 100
             nifty_ret = (nifty_close.iloc[-1] / nifty_close.iloc[-2] - 1) * 100
-            
+
             sector_perf = {}
             for t, ret in ticker_returns.items():
                 sect = sector_map.get(t)
                 if sect and not pd.isna(ret):
                     sector_perf.setdefault(sect, []).append(ret)
-            
+
             for s, rets in sector_perf.items():
                 avg_ret = np.mean(rets)
                 # 1. Performance Component (0-5)
                 perf_diff = avg_ret - nifty_ret
                 perf_score = np.clip((perf_diff / 1.5) * 5, 0, 5) if perf_diff > 0 else 0
-                
+
                 # 2. News Sentiment Component (0-5)
                 news_score = 2.5 # Neutral fallback
                 if HAS_TEXTBLOB:
@@ -1069,7 +1081,7 @@ def run_scanner(
                             polarities = [TextBlob(a.get("title", "")).sentiment.polarity for a in search.news]
                             news_score = ( (sum(polarities) / len(polarities)) + 1 ) * 2.5
                     except Exception: pass
-                
+
                 sector_sentiment_map[s] = round(perf_score + news_score, 1)
                 if avg_ret > max(0, nifty_ret):
                     trending_sectors.add(s)
@@ -1082,22 +1094,22 @@ def run_scanner(
 
     stats_lock = Lock()
     hits = []
-    
+
     # Use ThreadPoolExecutor for concurrent processing
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         future_to_ticker = {
             executor.submit(
-                _process_single_ticker, 
+                _process_single_ticker,
                 ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh, # Pass scanner_type
                 apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, universe, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
             ): ticker for ticker in avail
         }
-        
+
         for i, future in enumerate(concurrent.futures.as_completed(future_to_ticker)):
             res = future.result()
             if res:
                 hits.append(res)
-            
+
             if progress_callback:
                 # Final 50% of progress bar for signal processing (starting from 50%)
                 progress_callback(0.50 + ((i + 1) / len(avail) * 0.50))
@@ -1152,16 +1164,16 @@ def fetch_fii_dii_data(logger=None):
         "Referer": "https://www.nseindia.com/reports/fii-dii",
         "X-Requested-With": "XMLHttpRequest"
     }
-    
+
     try:
         session = requests.Session()
         # Visit home page first to establish session cookies
         session.get("https://www.nseindia.com", headers=headers, timeout=10)
-        
+
         # Now fetch the actual data
         api_url = "https://www.nseindia.com/api/fiidiiTradeReact"
         response = session.get(api_url, headers=headers, timeout=10)
-        
+
         if response.status_code == 200:
             data = response.json()
             if data:
@@ -1191,12 +1203,12 @@ def fetch_fii_dii_data(logger=None):
                 return summary
     except Exception as e:
         logger.error(f"FII/DII fetch failed: {e}")
-        
+
     # 3. Fallback to older cache if fetch failed (up to 1 week old)
     stale_data = get_system_cache("fii_dii_activity", expiry_hours=168)
     if stale_data:
         return json.loads(stale_data)
-        
+
     return {
         "fii_buy": 0.0, "fii_sell": 0.0, "fii_net": 0.0,
         "dii_buy": 0.0, "dii_sell": 0.0, "dii_net": 0.0,
@@ -1361,7 +1373,7 @@ def run_backtest(
         nifty = yf.download("^NSEI", period="2y", interval="1d", progress=False)
         if isinstance(nifty.columns, pd.MultiIndex):
             nifty.columns = nifty.columns.get_level_values(0)
-        
+
         nifty["SMA50"] = nifty["Close"].rolling(50).mean()
         nifty_close = nifty["Close"]
         nifty_sma50 = nifty["SMA50"]
@@ -1393,13 +1405,13 @@ def run_backtest(
             df["RSI"]        = calculate_rsi(close)
             df["ATR"]        = calculate_atr(high, low, close)
             df["ADX"]        = calculate_adx(high, low, close)
-            
+
             # New Indicators for 11-Filter System
             df["MACD"], df["MACD_Signal"], _ = calculate_macd(close)
             df["Stoch_K"], _ = calculate_stochastic_rsi(df["RSI"].fillna(50))
             df["EMA20_Slope"] = df["EMA20"].diff(3) > 0
             df["SMA50_Slope"] = df["SMA50"].diff(3) > 0
-            
+
             df["BB_Upper"], df["BB_Mid"], df["BB_Lower"] = calculate_bollinger_bands(close)
             bb_rng = (df["BB_Upper"] - df["BB_Lower"]).replace(0, np.nan)
             df["BB_Position"] = (close - df["BB_Lower"]) / bb_rng
@@ -1432,10 +1444,10 @@ def run_backtest(
 
                 vol_ratio = float(row["Volume"]) / max(float(row["AvgVol"]), 1)
                 trend_stack_ok = ltp > row["EMA20"] > row["SMA50"] > row["SMA200"]
-                
+
                 range_day = float(row["High"] - row["Low"])
                 relative_close = (ltp - float(row["Low"])) / range_day if range_day > 0 else 0
-                
+
                 bb_upper_zone = ltp >= (row["BB_Mid"] + (row["BB_Upper"] - row["BB_Mid"]) * 0.5)
                 bb_breakout = ltp > row["BB_Upper"]
                 bb_bull = bb_upper_zone or bb_breakout
@@ -1455,10 +1467,10 @@ def run_backtest(
                 stock_slice = df["Close"].iloc[max(0, i-252):i+1]
                 nifty_slice = nifty_close.loc[stock_slice.index]
                 rs_rating = calculate_relative_strength(stock_slice, nifty_slice)
-                
+
                 # Candlestick Intelligence
                 candle = detect_candlestick_pattern(df.iloc[:i+1])
-                
+
                 # Standardized 11-Filter Confluence Scoring (Matches run_scanner)
                 score = 0.0
                 score += 1.5 if trend_stack_ok else 0.0
@@ -1472,7 +1484,7 @@ def run_backtest(
                 score += 0.5 if above_vwap else 0.0
                 score += 0.5 if stoch_neutral else 0.0
                 score += 1.0 if ma_slope_bull else 0.0
-                
+
                 # Pattern Bonuses
                 if is_tight and is_dry: score += 1.5
                 if is_inside_bar and is_nr7: score += 2.0
@@ -1499,7 +1511,7 @@ def run_backtest(
                     strength >= 6.0, # Minimum conviction threshold for a backtested entry
                     candle != "Neutral" or is_inside_bar
                 ]
-                
+
                 if not all(checks):
                     continue
 
@@ -1507,7 +1519,7 @@ def run_backtest(
                 sl = ltp - risk
                 tp = ltp + 3.0 * atr
                 breakeven_trigger = ltp + 1.5 * atr
-                
+
                 outcome = "Pending"
                 exit_date = None
                 exit_price = np.nan
@@ -1519,12 +1531,12 @@ def run_backtest(
                 for j in range(i + 1, end_j + 1):
                     fr = df.iloc[j]
                     holding_days = j - i
-                    
+
                     if not hit_breakeven and float(fr["High"]) >= breakeven_trigger:
                         hit_breakeven = True
-                    
+
                     current_sl = ltp if hit_breakeven else sl
-                    
+
                     if float(fr["Low"]) <= current_sl:
                         outcome = "Loss"
                         exit_date = df.index[j].date()

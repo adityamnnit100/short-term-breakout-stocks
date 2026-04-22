@@ -1,0 +1,23 @@
+2026-04-23 00:02:25,766 INFO Background metadata worker starting...
+2026-04-23 00:02:26,895 INFO Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-04-23 00:02:28,194 INFO Fetched 251 symbols for Nifty Microcap 250 from https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv
+2026-04-23 00:02:33,281 INFO Prefetching metadata for 751 tickers...
+2026-04-23 00:03:23,439 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-23 00:04:42,118 INFO Background cache refresh complete for 751 symbols.
+2026-04-23 00:12:11,522 WARNING Sector segment https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-23 00:12:11,647 WARNING Sector segment https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-23 00:12:13,981 INFO Prefetching metadata for 99 tickers...
+2026-04-23 00:12:16,586 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-23 00:12:39,904 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-23 00:12:40,934 ERROR 
+1 Failed download:
+2026-04-23 00:12:40,934 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-23 00:16:38,875 INFO Prefetching metadata for 3 tickers...
+2026-04-23 00:16:39,089 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-23 00:16:39,126 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-23 00:16:46,773 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-23 00:16:48,046 ERROR 
+1 Failed download:
+2026-04-23 00:16:48,046 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-23 00:17:51,544 INFO Prefetching metadata for 1 tickers...
+2026-04-23 00:18:42,631 INFO Prefetching metadata for 1 tickers...

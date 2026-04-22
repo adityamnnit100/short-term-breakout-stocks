@@ -21,10 +21,11 @@ DB_PATH = os.environ.get(
     os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "breakout_history.db"),
 )
 WORKSPACE_FIELDS = {
-    "watchlist": [],
+    "watchlist": {"Default": []},
     "trade_journal": [],
     "portfolio_positions": [],
     "portfolios": [],
+    "notes": [],
 }
 USERNAME_PATTERN = re.compile(r"^[a-z0-9_.-]{3,32}$")
 
@@ -99,6 +100,7 @@ def init_auth_db() -> None:
             trade_journal_json       TEXT NOT NULL DEFAULT '[]',
             portfolio_positions_json TEXT NOT NULL DEFAULT '[]',
             portfolios_json          TEXT NOT NULL DEFAULT '[]',
+            notes_json               TEXT NOT NULL DEFAULT '[]',
             updated_at               DATETIME DEFAULT CURRENT_TIMESTAMP
         )
         """
@@ -108,6 +110,8 @@ def init_auth_db() -> None:
     }
     if "portfolios_json" not in columns:
         conn.execute("ALTER TABLE user_workspace ADD COLUMN portfolios_json TEXT NOT NULL DEFAULT '[]'")
+    if "notes_json" not in columns:
+        conn.execute("ALTER TABLE user_workspace ADD COLUMN notes_json TEXT NOT NULL DEFAULT '[]'")
     conn.commit()
     conn.close()
 
@@ -287,7 +291,7 @@ def load_user_workspace(username: str) -> dict:
     conn = _connect_db()
     row = conn.execute(
         """
-        SELECT watchlist_json, trade_journal_json, portfolio_positions_json, portfolios_json
+        SELECT watchlist_json, trade_journal_json, portfolio_positions_json, portfolios_json, notes_json
         FROM user_workspace
         WHERE username = ?
         """,
@@ -296,15 +300,25 @@ def load_user_workspace(username: str) -> dict:
     conn.close()
 
     if not row:
-        return {field: list(default_value) for field, default_value in WORKSPACE_FIELDS.items()}
+        return {
+            field: (list(default_value) if isinstance(default_value, list) else dict(default_value))
+            for field, default_value in WORKSPACE_FIELDS.items()
+        }
 
     values = {}
     for field, raw_value in zip(WORKSPACE_FIELDS, row):
         try:
             loaded = json.loads(raw_value)
-            values[field] = loaded if isinstance(loaded, list) else []
+            if field == "watchlist" and isinstance(loaded, list):
+                values[field] = {"Default": loaded}
+            elif isinstance(loaded, type(WORKSPACE_FIELDS[field])):
+                values[field] = loaded
+            else:
+                default_value = WORKSPACE_FIELDS[field]
+                values[field] = list(default_value) if isinstance(default_value, list) else dict(default_value)
         except (TypeError, json.JSONDecodeError):
-            values[field] = []
+            default_value = WORKSPACE_FIELDS[field]
+            values[field] = list(default_value) if isinstance(default_value, list) else dict(default_value)
     return values
 
 
@@ -331,14 +345,16 @@ def save_user_workspace(username: str, workspace: dict) -> None:
             trade_journal_json,
             portfolio_positions_json,
             portfolios_json,
+            notes_json,
             updated_at
         )
-        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
         ON CONFLICT(username) DO UPDATE SET
             watchlist_json = excluded.watchlist_json,
             trade_journal_json = excluded.trade_journal_json,
             portfolio_positions_json = excluded.portfolio_positions_json,
             portfolios_json = excluded.portfolios_json,
+            notes_json = excluded.notes_json,
             updated_at = CURRENT_TIMESTAMP
         """,
         (
@@ -347,6 +363,7 @@ def save_user_workspace(username: str, workspace: dict) -> None:
             payload["trade_journal"],
             payload["portfolio_positions"],
             payload["portfolios"],
+            payload["notes"],
         ),
     )
     conn.commit()

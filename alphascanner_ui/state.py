@@ -18,7 +18,7 @@ DEFAULT_SESSION_STATE = {
     "run_scan": False,
     "scan_running": False,
     "bt_results": None,
-    "watchlist": [],
+    "watchlist": {"Default": []},
     "portfolios": [],
     "portfolio_positions": [],
     "trade_journal": [],

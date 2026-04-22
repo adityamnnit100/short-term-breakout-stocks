@@ -44,10 +44,10 @@ def _render_status_banner(
     filtered_count = 0 if filtered_results is None else len(filtered_results)
     source_label = scan_source or "None"
     time_label = scan_time or "Never"
-    
+
     trending = (stats or {}).get("trending_sectors", [])
     sector_scores = (stats or {}).get("sector_sentiment", {})
-    
+
     pills = ""
     for s in trending:
         score = sector_scores.get(s, 5.0)
@@ -77,7 +77,7 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
     avg_rsi = results["RSI"].mean() if "RSI" in results else 0
     avg_strength = results["Signal_Strength"].mean() if "Signal_Strength" in results else 0
     pass_rate = total_hits / max(scanned, 1) * 100
-    
+
     sector_scores = (stats or {}).get("sector_sentiment", {})
     best_sector = "Neutral"
     if sector_scores:
@@ -137,24 +137,37 @@ def _render_filter_breakdown(stats: Optional[dict]) -> None:
 
 
 def _render_watchlist_quick_add(results: pd.DataFrame) -> None:
-    top_3 = results.head(3)["Ticker"].tolist()
+    if isinstance(st.session_state.get("watchlist"), list):
+        st.session_state.watchlist = {"Default": st.session_state.watchlist}
+    elif not isinstance(st.session_state.get("watchlist"), dict):
+        st.session_state.watchlist = {"Default": []}
+
+    watchlist_names = list(st.session_state.watchlist.keys())
+
+    col1, col2 = st.columns([1, 1])
+    target_wl = col1.selectbox("Target Watchlist", options=watchlist_names, help="Select an existing list")
+    new_wl_name = col2.text_input("OR Create New", placeholder="New list name...", help="Type to create and add")
+
+    top_3 = results.head(3)["Ticker"].tolist() if not results.empty else []
     selected_tickers = st.multiselect(
         "Quick-add to Watchlist",
         options=results["Ticker"].tolist(),
         default=top_3,
-        help="Select tickers then click ➕",
     )
-    add_col, _ = st.columns([1, 3])
-    with add_col:
-        if st.button("➕ Add to Watchlist", key="qk_add"):
-            added = 0
-            for ticker in selected_tickers:
-                if ticker not in st.session_state.watchlist:
-                    st.session_state.watchlist.append(ticker)
-                    added += 1
-            if added:
-                save_current_user_workspace()
-            st.success(f"Added {added} ticker(s)")
+
+    if st.button("➕ Add to Watchlist", key="qk_add", use_container_width=True):
+        final_wl = new_wl_name.strip() if new_wl_name.strip() else target_wl
+        if final_wl not in st.session_state.watchlist:
+            st.session_state.watchlist[final_wl] = []
+
+        added = 0
+        for ticker in selected_tickers:
+            if ticker not in st.session_state.watchlist[final_wl]:
+                st.session_state.watchlist[final_wl].append(ticker)
+                added += 1
+        if added:
+            save_current_user_workspace()
+        st.success(f"Added {added} ticker(s) to '{final_wl}'")
 
 
 def _render_detail_view(results, selection, load_ticker_history, chart_options) -> None:
@@ -179,8 +192,12 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     target_3 = ltp + 5.0 * atr
     risk = entry - stop_loss
     risk_reward = (target_2 - entry) / risk if risk > 0 else 0
+    rr_label = lambda target: f"1:{(target - entry) / risk:.1f}" if risk > 0 else "—"
+    stop_pct = risk / entry * 100 if entry > 0 else 0
+    target_2_pct = (target_2 - entry) / entry * 100 if entry > 0 else 0
     support_1 = row.get("_Support1", ltp - 2 * atr)
     support_2 = row.get("_Support2", ltp - 4 * atr)
+    vol_ratio = float(row.get("Vol_x", 0) or 0)
 
     st.markdown(
         f'<div class="trade-card">'
@@ -236,12 +253,41 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     support_col_2.metric("Support 2 (SMA 200)", f"₹{support_2:,.2f}")
     support_col_3.metric("Extended Target (5×ATR)", f"₹{target_3:,.2f}", delta=f"+₹{(target_3 - entry):.2f}")
 
+    with st.expander("Short-Term Trade Guardrails", expanded=True):
+        guard_col_1, guard_col_2, guard_col_3, guard_col_4 = st.columns(4)
+        guard_col_1.metric("Stop Distance", f"{stop_pct:.1f}%")
+        guard_col_2.metric("Target 2 Upside", f"{target_2_pct:.1f}%")
+        guard_col_3.metric("Risk / Reward", f"1:{risk_reward:.1f}")
+        guard_col_4.metric("Volume Confirmation", f"{vol_ratio:.1f}×")
+
+        checks = [
+            ("Risk/reward is at least 1:2", risk_reward >= 2),
+            ("Stop is volatility-based, not arbitrary", atr > 0 and risk > 0),
+            ("Volume confirms participation", vol_ratio >= 1.5),
+            ("Signal strength is high enough for short-term focus", signal_strength >= 7),
+            ("Avoid chase if stop is wider than 8%", stop_pct <= 8),
+        ]
+        checklist = pd.DataFrame(
+            {
+                "Rule": [label for label, _ in checks],
+                "Status": ["✅ Pass" if ok else "⚠️ Review" for _, ok in checks],
+            }
+        )
+        st.dataframe(checklist, use_container_width=True, hide_index=True)
+
+        if risk_reward < 2 or signal_strength < 7 or stop_pct > 8:
+            st.warning("This setup needs extra caution for short-term trading. Reduce size, wait for a tighter entry, or skip.")
+        else:
+            st.success("Setup passes the basic short-term risk checks. Still confirm trend, liquidity, news, and your daily loss limit before trading.")
+        st.caption("Discipline note: cap per-trade risk, define the stop before entry, and stop trading for the day after your preset daily loss limit.")
+
     with st.expander("🧮 Position Sizer", expanded=False):
         size_col_1, size_col_2, size_col_3 = st.columns(3)
         account = size_col_1.number_input("Account Size (₹)", 10_000, 10_000_000, 100_000, 10_000, key=f"acct_{ticker}")
         risk_pct = size_col_2.number_input("Risk per Trade (%)", 0.25, 5.0, 1.0, 0.25, key=f"rpct_{ticker}")
-        size_col_3.number_input("Max Portfolio Risk (%)", 1.0, 20.0, 5.0, 0.5, key=f"mrisk_{ticker}")
+        daily_stop_pct = size_col_3.number_input("Daily Stop (%)", 0.5, 10.0, 3.0, 0.5, key=f"dstp_{ticker}")
         risk_amount = account * risk_pct / 100
+        daily_stop_amount = account * daily_stop_pct / 100
         quantity = int(risk_amount // risk) if risk > 0 else 0
         position_value = quantity * entry
         metric_col_1, metric_col_2, metric_col_3, metric_col_4 = st.columns(4)
@@ -249,6 +295,8 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
         metric_col_2.metric("Shares to Buy", quantity)
         metric_col_3.metric("Position Value", f"₹{position_value:,.0f}")
         metric_col_4.metric("Portfolio %", f"{position_value / account * 100:.1f}%")
+        losing_trades_to_stop = int(daily_stop_amount // risk_amount) if risk_amount > 0 else 0
+        st.caption(f"Daily stop budget: ₹{daily_stop_amount:,.0f}. At this size, about {losing_trades_to_stop} full-risk losing trade(s) reach the daily limit.")
 
         exit_df = pd.DataFrame(
             {
@@ -262,9 +310,9 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
                 ],
                 "RR": [
                     "—",
-                    f"1:{(target_1 - entry) / risk:.1f}",
-                    f"1:{(target_2 - entry) / risk:.1f}",
-                    f"1:{(target_3 - entry) / risk:.1f}",
+                    rr_label(target_1),
+                    rr_label(target_2),
+                    rr_label(target_3),
                 ],
             }
         )
@@ -290,13 +338,22 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     else:
         st.warning("Chart data unavailable for this ticker.")
 
-    if st.button("➕ Add to Watchlist", key=f"aw_{ticker}"):
-        if ticker not in st.session_state.watchlist:
-            st.session_state.watchlist.append(ticker)
+    st.divider()
+    wcol1, wcol2 = st.columns([1, 1])
+    if isinstance(st.session_state.get("watchlist"), list):
+        st.session_state.watchlist = {"Default": st.session_state.watchlist}
+    elif not isinstance(st.session_state.get("watchlist"), dict):
+        st.session_state.watchlist = {"Default": []}
+
+    wl_target = wcol1.selectbox("Watchlist", options=list(st.session_state.watchlist.keys()), key=f"wl_sel_{ticker}")
+    if wcol2.button("➕ Add to Watchlist", key=f"aw_{ticker}", use_container_width=True):
+        if ticker not in st.session_state.watchlist[wl_target]:
+            st.session_state.watchlist[wl_target].append(ticker)
             save_current_user_workspace()
-            st.success(f"{ticker} added to watchlist!")
+            st.success(f"{ticker} added to '{wl_target}'")
         else:
-            st.info("Already in watchlist.")
+            st.info(f"{ticker} is already in '{wl_target}'")
+
     return True
 
 
@@ -357,7 +414,7 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
 
     # Chain the sector highlight, long-term bottom (gold), and setup type highlights
     styled = style_scanner_results(rendered_df).apply(highlight_high_sector, axis=1).apply(highlight_long_term_bottom, axis=1).apply(highlight_setup_type, axis=1)
-    
+
     try:
         return st.dataframe(
             styled,
@@ -455,7 +512,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
 
     if results is not None and len(results) > 0:
         _render_status_banner(
-            results, filtered_results, st.session_state.last_scan_time, 
+            results, filtered_results, st.session_state.last_scan_time,
             st.session_state.get("scan_source"), stats
         )
         render_top_picks(filtered_results if filtered_results is not None and len(filtered_results) > 0 else results)
