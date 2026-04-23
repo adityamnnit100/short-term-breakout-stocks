@@ -51,6 +51,7 @@ _EMPTY_STATS: dict = {
     "liquidity_fail": 0,
     "trending_sectors": [], "sector_sentiment": {},
     "universe": None, "universe_size": 0, "scanner_type": None,
+    "timeframe": "1d",
 }
 
 
@@ -148,6 +149,62 @@ def get_nifty_total_market() -> list:
         fetched_counts,
     )
     return get_nifty_500()
+
+
+def _build_market_context() -> dict:
+    """Infer broad market bias from index moves and institutional flows."""
+    try:
+        from alphascanner_ui.data import fetch_indices_performance, fetch_fii_dii_data
+        indices = fetch_indices_performance()
+        fii_dii = fetch_fii_dii_data()
+    except Exception as exc:
+        logging.getLogger("AlphaScanner.Engine").warning(f"Market context fetch failed: {exc}")
+        return {
+            "market_bias": "Neutral",
+            "market_bias_score": 0.0,
+            "fii_net": 0.0,
+            "dii_net": 0.0,
+            "nifty_change": 0.0,
+            "bank_nifty_change": 0.0,
+        }
+
+    nifty_change = indices.get("Nifty 50", {}).get("change", 0.0)
+    bank_change = indices.get("Bank Nifty", {}).get("change", 0.0)
+    fii_net = float(fii_dii.get("fii_net", 0.0) or 0.0)
+    dii_net = float(fii_dii.get("dii_net", 0.0) or 0.0)
+
+    if nifty_change > 0 and bank_change > 0:
+        bias = "Bullish"
+    elif nifty_change < 0 and bank_change < 0:
+        bias = "Bearish"
+    elif nifty_change > 0 or bank_change > 0:
+        bias = "Slightly Bullish"
+    elif nifty_change < 0 or bank_change < 0:
+        bias = "Slightly Bearish"
+    else:
+        bias = "Neutral"
+
+    score = 0.0
+    if bias == "Bullish":
+        score += 0.8
+    elif bias == "Slightly Bullish":
+        score += 0.4
+    elif bias == "Bearish":
+        score -= 0.8
+    elif bias == "Slightly Bearish":
+        score -= 0.4
+
+    score += 0.2 if fii_net > 0 else -0.2
+    score += 0.2 if dii_net > 0 else -0.2
+
+    return {
+        "market_bias": bias,
+        "market_bias_score": round(score, 2),
+        "fii_net": fii_net,
+        "dii_net": dii_net,
+        "nifty_change": round(nifty_change, 2),
+        "bank_nifty_change": round(bank_change, 2),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -610,9 +667,11 @@ def _process_single_ticker(
     max_mkt_cap_cr: float,
     scanner_type: str,
     universe: str,
+    timeframe: str,
     sector_map: Optional[dict],
     trending_sectors: set,
     sector_sentiment_map: dict,
+    market_context: dict,
     stats: dict,
     stats_lock: Lock
 ) -> Optional[dict]:
@@ -927,6 +986,12 @@ def _process_single_ticker(
             if not (is_breaking_out and (vol_ratio >= min_vol_ratio)):
                 with stats_lock: stats["breakout_fail"] += 1
                 return None
+
+        market_score = float(market_context.get("market_bias_score", 0.0))
+        if scanner_type == "Pre-Breakout":
+            market_score *= 0.5
+        strength += market_score
+        strength = min(10.0, max(0.0, round(strength, 1)))
         # Pre-Breakout and Pullback validated via actual_breakout_condition_met above
 
         return {
@@ -952,6 +1017,8 @@ def _process_single_ticker(
             "_Support1": round(float(mid_bb.iloc[-1]), 2), # Use tactical 20-SMA Support per PRO specs
             "_Support2": round(float(sma_200), 2),
             "_Resistance": round(float(resistance), 2),
+            "Market_Bias": market_context.get("market_bias", "Neutral"),
+            "Macro_Score": round(market_context.get("market_bias_score", 0.0), 2),
             "Signal_Strength": strength,
             "Trend": trend_intensity,
             "Candle": "Consolidating" if daily_pcnt < 1.5 else candle_sentiment,
@@ -983,6 +1050,7 @@ def run_scanner(
     max_mkt_cap_cr: float = 0.0,
     scanner_type: str = "Breakout", # Added scanner_type
     universe: str = "Nifty 500",
+    timeframe: str = "1d",
     sector_map: Optional[dict] = None,
     progress_callback=None,
 ):
@@ -997,10 +1065,20 @@ def run_scanner(
     stats["universe"] = universe
     stats["universe_size"] = len(tickers)
     stats["scanner_type"] = scanner_type
+    stats["timeframe"] = timeframe
+    market_context = _build_market_context()
+    stats["market_bias"] = market_context.get("market_bias")
+    stats["market_bias_score"] = market_context.get("market_bias_score")
+    stats["fii_net"] = market_context.get("fii_net")
+    stats["dii_net"] = market_context.get("dii_net")
+    stats["nifty_change"] = market_context.get("nifty_change")
+    stats["bank_nifty_change"] = market_context.get("bank_nifty_change")
+    stats["timeframe"] = timeframe
 
     # 1. Download benchmark first to ensure the regime filter is available
+    benchmark_period = "2y" if timeframe == "1d" else "60d"
     try:
-        nifty = yf.download("^NSEI", period="2y", interval="1d", progress=False)
+        nifty = yf.download("^NSEI", period=benchmark_period, interval=timeframe, progress=False)
         if isinstance(nifty.columns, pd.MultiIndex):
             nifty.columns = nifty.columns.get_level_values(0)
         nifty_close = nifty["Close"].dropna()
@@ -1022,8 +1100,9 @@ def run_scanner(
     for i, start_idx in enumerate(range(0, len(tickers), chunk_size)):
         chunk = tickers[start_idx : start_idx + chunk_size]
         try:
-            # RS rating and 52-week checks need at least 252 aligned trading days; use 2y.
-            chunk_data = yf.download(chunk, period="2y", interval="1d", progress=False, timeout=45)
+            # RS rating and breakout checks need enough history; choose daily 2y or intraday 60d.
+            chunk_period = "2y" if timeframe == "1d" else "60d"
+            chunk_data = yf.download(chunk, period=chunk_period, interval=timeframe, progress=False, timeout=45)
             if not chunk_data.empty:
                 data_frames.append(chunk_data)
 
@@ -1100,8 +1179,9 @@ def run_scanner(
         future_to_ticker = {
             executor.submit(
                 _process_single_ticker,
-                ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh, # Pass scanner_type
-                apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, universe, sector_map, trending_sectors, sector_sentiment_map, stats, stats_lock
+                ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh,
+                apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, universe, timeframe,
+                sector_map, trending_sectors, sector_sentiment_map, market_context, stats, stats_lock
             ): ticker for ticker in avail
         }
 
@@ -1317,7 +1397,7 @@ def clear_metadata_cache():
         logging.getLogger("AlphaScanner.Engine").error(f"Metadata cache clear error: {exc}")
 
 
-def get_cached_results(hours: int = 12, universe: Optional[str] = None, scanner_type: Optional[str] = None):
+def get_cached_results(hours: int = 12, universe: Optional[str] = None, scanner_type: Optional[str] = None, timeframe: Optional[str] = None):
     init_db()
     cutoff = (datetime.now() - timedelta(hours=hours)).strftime("%Y-%m-%d %H:%M:%S")
     try:
@@ -1335,6 +1415,8 @@ def get_cached_results(hours: int = 12, universe: Optional[str] = None, scanner_
             if universe and stats.get("universe") not in (universe, None):
                 continue
             if scanner_type and stats.get("scanner_type") != scanner_type:
+                continue
+            if timeframe and stats.get("timeframe") != timeframe:
                 continue
             return pd.read_json(io.StringIO(row[1])), stats, row[2]
     except Exception as exc:

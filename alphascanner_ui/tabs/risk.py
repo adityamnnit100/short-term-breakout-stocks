@@ -11,6 +11,9 @@ from alphascanner_ui.auth import save_current_user_workspace
 def render_tab() -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Portfolio Risk Management</div></div>', unsafe_allow_html=True)
 
+    if "portfolio_positions" not in st.session_state:
+        st.session_state.portfolio_positions = []
+
     input_col_1, input_col_2, input_col_3 = st.columns(3)
     account_size = input_col_1.number_input("Account Size (₹)", 10_000, 100_000_000, 500_000, 10_000, key="rm_acct")
     risk_per_trade = input_col_2.number_input("Risk per Trade (%)", 0.25, 5.0, 1.0, 0.25, key="rm_rpt")

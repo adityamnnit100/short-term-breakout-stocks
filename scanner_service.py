@@ -4,20 +4,20 @@ from datetime import datetime
 from breakout import run_scanner, get_cached_results, save_results_to_db, is_market_open, get_last_market_close_utc
 
 
-def fetch_cached_data(use_cache: bool, universe: str = None, scanner_type: str = None):
+def fetch_cached_data(use_cache: bool, universe: str = None, scanner_type: str = None, timeframe: str = "1d"):
     """Return (results_df, stats_dict, scan_time_str) from DB cache, or (None, None, None)."""
     if not use_cache:
         return None, None, None
-    return get_cached_results(universe=universe, scanner_type=scanner_type)
+    return get_cached_results(universe=universe, scanner_type=scanner_type, timeframe=timeframe)
 
 
-def perform_fresh_scan(universe, vol_thresh, rsi_min, rsi_max, dist_thresh, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, sector_map, progress_callback=None, force_fresh=True):
+def perform_fresh_scan(universe, vol_thresh, rsi_min, rsi_max, dist_thresh, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, timeframe: str, sector_map, progress_callback=None, force_fresh=True):
     """Run a live scan, persist results, and return (results_df, stats_dict, scan_time_str)."""
     
     # PERFORMANCE OPTIMIZATION:
     # If market is closed, check if we already have a scan generated after the last market close.
     if not is_market_open() and not force_fresh:
-        cached_df, cached_stats, cached_time_str = get_cached_results(hours=24, universe=universe, scanner_type=scanner_type)
+        cached_df, cached_stats, cached_time_str = get_cached_results(hours=24, universe=universe, scanner_type=scanner_type, timeframe=timeframe)
         if cached_df is not None and cached_time_str:
             try:
                 # cached_time_str from SQLite is UTC
@@ -38,6 +38,7 @@ def perform_fresh_scan(universe, vol_thresh, rsi_min, rsi_max, dist_thresh, min_
         max_mkt_cap_cr=max_mkt_cap_cr,
         universe=universe,
         scanner_type=scanner_type,
+        timeframe=timeframe,
         sector_map=sector_map,
         progress_callback=progress_callback,
     )

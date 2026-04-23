@@ -16,6 +16,7 @@ class SidebarSettings:
     min_mkt_cap: int
     max_mkt_cap: int
     scanner_type: str
+    timeframe: str
     use_cache: bool
 
 
@@ -52,6 +53,15 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                 help="Breakout: Stocks actively breaking out. Pre-Breakout: Stocks consolidating near highs.",
             )
             vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 1.0 if scanner_type == "Breakout" else 0.6, 0.1, help="Lower = more results, Higher = quality filter")
+            timeframe_choice = st.selectbox(
+                "Timeframe",
+                ["Daily", "60m", "30m", "15m"],
+                index=0,
+                help="Choose the analysis timeframe for the scan. Intraday intervals are useful for short-term setups.",
+            )
+            interval_map = {"Daily": "1d", "60m": "60m", "30m": "30m", "15m": "15m"}
+            timeframe = interval_map.get(timeframe_choice, "1d")
+
             if scanner_type == "Breakout":
                 rsi_range = st.slider("RSI Range", 0, 100, (50, 85), help="Momentum zone for breakouts. Default 50-85 is broader for more scan results.")
                 dist_thresh = st.slider("Breakout Distance (%)", 0.5, 5.0, 1.5, 0.1)
@@ -113,6 +123,7 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         min_mkt_cap=min_mkt_cap,
         max_mkt_cap=max_mkt_cap,
         scanner_type=scanner_type,
+        timeframe=timeframe,
         use_cache=use_cache,
     )
     return settings, chart_options

@@ -44,9 +44,9 @@ def configure_logging() -> logging.Logger:
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
-def load_ticker_history(ticker: str, period: str = "1y") -> pd.DataFrame:
+def load_ticker_history(ticker: str, period: str = "1y", interval: str = "1d") -> pd.DataFrame:
     try:
-        df = yf.download(ticker, period=period, interval="1d", progress=False)
+        df = yf.download(ticker, period=period, interval=interval, progress=False)
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
         return df.dropna(subset=["Open", "High", "Low", "Close"]) if not df.empty else pd.DataFrame()

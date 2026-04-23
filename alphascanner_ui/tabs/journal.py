@@ -5,11 +5,13 @@ import datetime
 import pandas as pd
 import streamlit as st
 
-from alphascanner_ui.auth import save_current_user_workspace
+from alphascanner_ui.auth import get_current_user
+from alphascanner_ui.database import get_journal, add_journal_entry
 
 
 def render_tab() -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Trade Journal</div></div>', unsafe_allow_html=True)
+    user = get_current_user()
 
     with st.expander("➕ Log New Trade", expanded=False):
         col_1, col_2, col_3 = st.columns(3)
@@ -28,27 +30,24 @@ def render_tab() -> None:
 
         if st.button("💾 Save Trade"):
             if ticker and entry_price > 0 and quantity > 0:
-                st.session_state.trade_journal.append(
-                    {
-                        "ticker": ticker,
-                        "entry_date": str(entry_date),
-                        "entry": entry_price,
-                        "exit_date": str(exit_date) if exit_date else None,
-                        "exit": exit_price,
-                        "qty": quantity,
-                        "pattern": pattern,
-                        "notes": notes,
-                        "pnl": (exit_price - entry_price) * quantity if exit_price > 0 else 0,
-                        "status": "Closed" if exit_price > 0 else "Open",
-                    }
-                )
-                save_current_user_workspace()
+                add_journal_entry(user, {
+                    "ticker": ticker,
+                    "entry_date": str(entry_date),
+                    "entry": entry_price,
+                    "exit_date": str(exit_date) if exit_date else None,
+                    "exit": exit_price,
+                    "qty": quantity,
+                    "pattern": pattern,
+                    "notes": notes,
+                    "pnl": (exit_price - entry_price) * quantity if exit_price > 0 else 0,
+                    "status": "Closed" if exit_price > 0 else "Open",
+                })
                 st.success(f"Saved trade for {ticker}!")
                 st.rerun()
             else:
                 st.error("Fill in ticker, entry price and quantity.")
 
-    journal = st.session_state.trade_journal
+    journal = get_journal(user)
     if not journal:
         st.info("No trades logged yet.")
         return

@@ -6,8 +6,10 @@ from typing import Dict, List
 import pandas as pd
 import streamlit as st
 
+from alphascanner_ui.auth import get_current_user
 from breakout import calculate_atr, calculate_macd, calculate_rsi
-from alphascanner_ui.auth import save_current_user_workspace
+from alphascanner_ui.database import (get_portfolios_with_holdings, add_holding, 
+                                      execute_query)
 
 
 def _normalise_ticker(ticker: str) -> str:
@@ -18,11 +20,7 @@ def _normalise_ticker(ticker: str) -> str:
 
 
 def _get_portfolios() -> List[Dict]:
-    portfolios = st.session_state.setdefault("portfolios", [])
-    if not isinstance(portfolios, list):
-        portfolios = []
-        st.session_state.portfolios = portfolios
-    return portfolios
+    return get_portfolios_with_holdings(get_current_user())
 
 
 def _analyse_holding(holding: Dict, load_ticker_history) -> Dict:
@@ -152,21 +150,7 @@ def _render_portfolio_tab(index: int, portfolio: Dict, load_ticker_history) -> N
             if not ticker:
                 st.error("Enter a ticker.")
             else:
-                existing = next((row for row in holdings if row.get("ticker") == ticker), None)
-                if existing:
-                    existing["quantity"] = int(quantity)
-                    existing["avg_price"] = float(avg_price)
-                    existing["updated_at"] = str(datetime.date.today())
-                else:
-                    holdings.append(
-                        {
-                            "ticker": ticker,
-                            "quantity": int(quantity),
-                            "avg_price": float(avg_price),
-                            "date_added": str(datetime.date.today()),
-                        }
-                    )
-                save_current_user_workspace()
+                add_holding(portfolio["id"], ticker, int(quantity), float(avg_price))
                 st.success(f"Saved {ticker}.")
                 st.rerun()
 
@@ -194,8 +178,7 @@ def _render_portfolio_tab(index: int, portfolio: Dict, load_ticker_history) -> N
                 st.session_state[f"portfolio_analysis_{index}"] = True
         with action_col_2:
             if remove_ticker != "-" and st.button("Remove Stock", key=f"pf_remove_btn_{index}", use_container_width=True):
-                portfolio["holdings"] = [holding for holding in holdings if holding["ticker"] != remove_ticker]
-                save_current_user_workspace()
+                execute_query("DELETE FROM holdings WHERE portfolio_id = ? AND ticker = ?", (portfolio["id"], remove_ticker))
                 st.rerun()
 
         if st.session_state.get(f"portfolio_analysis_{index}"):
@@ -210,6 +193,7 @@ def render_tab(load_ticker_history) -> None:
         '<p style="color:#cbd5e1;margin:0;">Create separate broker/account sections and analyse holdings independently.</p></div>',
         unsafe_allow_html=True,
     )
+    user = get_current_user()
 
     portfolios = _get_portfolios()
 
@@ -226,8 +210,7 @@ def render_tab(load_ticker_history) -> None:
                 elif any(portfolio.get("name", "").lower() == clean_name.lower() for portfolio in portfolios):
                     st.error("A portfolio with this name already exists.")
                 else:
-                    portfolios.append({"name": clean_name, "holdings": []})
-                    save_current_user_workspace()
+                    execute_query("INSERT INTO portfolios (username, name) VALUES (?, ?)", (user, clean_name))
                     st.success(f"Created {clean_name}.")
                     st.rerun()
 
@@ -243,6 +226,5 @@ def render_tab(load_ticker_history) -> None:
 
             st.divider()
             if st.button("Delete This Portfolio", key=f"pf_delete_{index}"):
-                portfolios.pop(index)
-                save_current_user_workspace()
+                execute_query("DELETE FROM portfolios WHERE id = ?", (portfolio["id"],))
                 st.rerun()

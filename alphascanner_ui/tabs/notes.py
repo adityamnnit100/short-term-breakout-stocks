@@ -2,10 +2,12 @@
 
 import datetime
 import streamlit as st
-from alphascanner_ui.auth import save_current_user_workspace
+from alphascanner_ui.auth import get_current_user
+from alphascanner_ui.database import get_all_notes, save_note, delete_note
 
 def render_tab() -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Notes & Strategy Scratchpad</div></div>', unsafe_allow_html=True)
+    user = get_current_user()
 
     # Input section
     with st.expander("📝 Create New Note", expanded=True):
@@ -14,23 +16,15 @@ def render_tab() -> None:
         
         if st.button("💾 Save Note", use_container_width=True):
             if note_content.strip():
-                new_note = {
-                    "id": str(datetime.datetime.now().timestamp()),
-                    "title": note_title if note_title else "Untitled Note",
-                    "content": note_content,
-                    "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                }
-                st.session_state.notes.insert(0, new_note)
-                save_current_user_workspace()
+                note_id = str(datetime.datetime.now().timestamp())
+                save_note(user, note_id, note_title or "Untitled Note", note_content)
                 st.success("Note saved!")
                 st.rerun()
-            else:
-                st.error("Please enter some content.")
 
     st.divider()
 
     # Display section
-    notes = st.session_state.get("notes", [])
+    notes = get_all_notes(user)
     if not notes:
         st.info("Your scratchpad is empty. Create your first note above.")
         return
@@ -48,6 +42,5 @@ def render_tab() -> None:
             """, unsafe_allow_html=True)
             
             if st.button(f"🗑 Delete Note", key=f"del_note_{note['id']}"):
-                st.session_state.notes.pop(i)
-                save_current_user_workspace()
+                delete_note(user, note['id'])
                 st.rerun()

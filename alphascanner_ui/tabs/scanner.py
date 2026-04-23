@@ -8,7 +8,7 @@ import streamlit as st
 import scanner_service
 from alphascanner_ui.auth import save_current_user_workspace
 from alphascanner_ui.charts import build_chart, render_top_picks, style_scanner_results
-from alphascanner_ui.data import get_sector_mapping
+from alphascanner_ui.data import fetch_fii_dii_data, fetch_indices_performance, get_sector_mapping
 
 
 def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
@@ -39,11 +39,13 @@ def _render_status_banner(
     scan_time: Optional[str],
     scan_source: Optional[str],
     stats: Optional[dict] = None,
+    timeframe: Optional[str] = None,
 ) -> None:
     total_results = 0 if results is None else len(results)
     filtered_count = 0 if filtered_results is None else len(filtered_results)
     source_label = scan_source or "None"
     time_label = scan_time or "Never"
+    timeframe_label = "Daily" if timeframe == "1d" else (timeframe or "Daily")
 
     trending = (stats or {}).get("trending_sectors", [])
     sector_scores = (stats or {}).get("sector_sentiment", {})
@@ -62,6 +64,7 @@ def _render_status_banner(
         f'<div class="status-grid">'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Source</div><div class="status-value" style="color: #00e5ff;">{source_label}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Last Run</div><div class="status-value" style="color: #00e5ff;">{time_label}</div></div>'
+        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Timeframe</div><div class="status-value" style="color: #00e5ff;">{timeframe_label}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Total Results</div><div class="status-value" style="color: #00e5ff;">{total_results}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Visible After Filters</div><div class="status-value" style="color: #00e5ff;">{filtered_count}</div></div></div>'
         f'{sector_section}</div>',
@@ -111,6 +114,42 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
         f'<div class="metric-value" style="font-size:0.9rem; color: #00e5ff;">{(scan_time or "–")[-8:]}</div>'
         f'<div class="metric-delta neutral" style="color: #64748b;">{(scan_time or "–")[:10]}</div></div>'
         f'</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def _render_macro_context(stats: Optional[dict]) -> None:
+    if not stats:
+        return
+
+    fii_dii = fetch_fii_dii_data()
+    indices = fetch_indices_performance()
+    nifty = indices.get("Nifty 50", {})
+    bank_nifty = indices.get("Bank Nifty", {})
+    trending = stats.get("trending_sectors", [])
+    sector_rotation = ", ".join(trending[:3]) if trending else "No strong rotation"
+    if len(trending) > 3:
+        sector_rotation += f" +{len(trending) - 3} more"
+
+    bias_label = "Neutral"
+    if nifty.get("change", 0) > 0 and bank_nifty.get("change", 0) > 0:
+        bias_label = "Bullish"
+    elif nifty.get("change", 0) < 0 and bank_nifty.get("change", 0) < 0:
+        bias_label = "Bearish"
+    else:
+        bias_label = "Mixed"
+
+    st.markdown(
+        '<div class="glass-card" style="margin-top: 16px; padding: 14px;">'
+        '<div class="panel-title" style="color: #ffca28;">Market Context</div>'
+        '<div class="status-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">'
+        f'<div class="status-cell"><div class="status-label">Nifty Bias</div><div class="status-value">{bias_label}</div><div class="status-delta">{nifty.get("change", 0):+.2f}%</div></div>'
+        f'<div class="status-cell"><div class="status-label">Bank Nifty</div><div class="status-value">{bank_nifty.get("change", 0):+.2f}%</div><div class="status-delta">{bank_nifty.get("price", "N/A")}</div></div>'
+        f'<div class="status-cell"><div class="status-label">FII Net Flow</div><div class="status-value">₹{fii_dii.get("fii_net", 0):,.0f} Cr</div><div class="status-delta">{fii_dii.get("fii_net", 0):+.0f}</div></div>'
+        f'<div class="status-cell"><div class="status-label">DII Net Flow</div><div class="status-value">₹{fii_dii.get("dii_net", 0):,.0f} Cr</div><div class="status-delta">{fii_dii.get("dii_net", 0):+.0f}</div></div>'
+        '</div>'
+        f'<div style="margin-top: 12px; color: #94a3b8;">Sector Rotation: {sector_rotation}</div>'
+        '</div>',
         unsafe_allow_html=True,
     )
 
@@ -445,6 +484,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
             True,
             universe=settings.universe,
             scanner_type=settings.scanner_type,
+            timeframe=settings.timeframe,
         )
         if results is not None:
             st.session_state.update(
@@ -489,6 +529,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                     min_mkt_cap_cr=min_cap,
                     max_mkt_cap_cr=max_cap,
                     scanner_type=settings.scanner_type,
+                    timeframe=settings.timeframe,
                     sector_map=sector_map,
                     progress_callback=_progress,
                 )
@@ -513,10 +554,12 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
     if results is not None and len(results) > 0:
         _render_status_banner(
             results, filtered_results, st.session_state.last_scan_time,
-            st.session_state.get("scan_source"), stats
+            st.session_state.get("scan_source"), stats,
+            timeframe=settings.timeframe,
         )
         render_top_picks(filtered_results if filtered_results is not None and len(filtered_results) > 0 else results)
         _render_metrics(results, stats, scan_time)
+        _render_macro_context(stats)
         _render_filter_breakdown(stats)
         _render_watchlist_quick_add(results)
         st.caption("Select one row from the blotter to open the detailed setup, chart, and position sizing workspace.")
