@@ -10,7 +10,8 @@ import numpy as np
 from breakout import (
     get_nifty_500, calculate_rsi, calculate_adx, calculate_vwap,
     calculate_macd, calculate_bollinger_bands, _scanner_quality_profile,
-    detect_vcp_tightness, detect_volume_dryup, get_nifty_total_market
+    detect_vcp_tightness, detect_volume_dryup, get_nifty_total_market,
+    calculate_rvol, detect_breakaway_gap
 )
 
 def test_scanner_logic(universe="Nifty 500", scanner_type="Breakout", sample_size=20):
@@ -79,9 +80,21 @@ def test_scanner_logic(universe="Nifty 500", scanner_type="Breakout", sample_siz
             # Indicators
             sma_200 = close.rolling(200).mean().iloc[-1]
             sma_50 = close.rolling(50).mean().iloc[-1]
-            ema_20 = close.ewm(span=20, adjust=False).mean().iloc[-1]
+            ema_20_ser = close.ewm(span=20, adjust=False).mean()
+            ema_20 = ema_20_ser.iloc[-1]
             rsi = calculate_rsi(close).iloc[-1]
             adx = calculate_adx(high, low, close).iloc[-1]
+            
+            # New Professional Features Sanity
+            rvol = calculate_rvol(vol)
+            is_breakaway = detect_breakaway_gap(df)
+            
+            # Extension check
+            dist_from_ema = (ltp - ema_20) / max(ema_20, 1e-9) * 100
+            is_stretched = dist_from_ema > 5.0
+            if is_stretched:
+                print(f"! {ticker}: WARNING - Stretched ({dist_from_ema:.1f}% from EMA20)")
+                # We don't 'continue' here because we want to see if it passes other filters
             
             # Filter 1: Trend
             trend_ok = (ema_20 > sma_50) and (sma_50 > sma_200)

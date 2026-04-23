@@ -299,6 +299,24 @@ def calculate_adx(high, low, close, period: int = 14):
     return dx.rolling(period).mean()
 
 
+def calculate_rvol(volume: pd.Series, window: int = 5) -> float:
+    """Calculates Relative Volume (RVOL) compared to a short 5-day window.
+    RVOL > 2.0 indicates significant institutional activity."""
+    if len(volume) < window + 1:
+        return 1.0
+    avg_vol = volume.iloc[-(window+1):-1].mean()
+    return float(volume.iloc[-1] / max(avg_vol, 1e-9))
+
+
+def detect_breakaway_gap(df: pd.DataFrame, threshold_pct: float = 0.5) -> bool:
+    """Detects if today's Open is significantly higher than yesterday's High.
+    Crucial for identifying high-momentum Indian breakout plays."""
+    if len(df) < 2:
+        return False
+    gap = (df["Open"].iloc[-1] - df["High"].iloc[-2]) / df["High"].iloc[-2] * 100
+    return bool(gap >= threshold_pct)
+
+
 def calculate_relative_strength(stock_close, index_close):
     """Calculates Relative Strength Rating vs Benchmark (0-100 scale logic)."""
     # Require at least 3 months (63 days) of data for a meaningful RS calculation
@@ -710,18 +728,27 @@ def _process_single_ticker(
         macd, macd_sig, macd_hist = calculate_macd(close)
         upper_bb, mid_bb, lower_bb = calculate_bollinger_bands(close)
         vwap = calculate_vwap(high, low, close, vol).iloc[-1]
+        
+        # Short-term Professional Features
+        rvol = calculate_rvol(vol) if not vol.empty else 1.0
+        is_breakaway = detect_breakaway_gap(df) if len(df) >= 2 else False
 
         # Stochastic RSI implementation (Filter 10)
         stoch_k_ser, _ = calculate_stochastic_rsi(rsi_series)
-        stoch_k = stoch_k_ser.iloc[-1]
+        stoch_k = stoch_k_ser.iloc[-1] if not stoch_k_ser.empty else 50.0
         stoch_neutral = 20 <= stoch_k <= 80
 
         ltp = float(close.iloc[-1])
         open_price = float(df["Open"].iloc[-1])
         day_range = float(high.iloc[-1] - low.iloc[-1])
         body = abs(ltp - open_price)
-        relative_close = (ltp - float(low.iloc[-1])) / day_range if day_range > 0 else 0.0
+        relative_close = (ltp - float(low.iloc[-1])) / max(day_range, 1e-9)
         daily_pcnt = (ltp - open_price) / max(open_price, 1e-9) * 100
+        
+        # Extension Check: Distance from EMA20
+        dist_from_ema = (ltp - ema_20) / max(ema_20, 1e-9) * 100
+        is_stretched = dist_from_ema > 5.0  # Avoid entry if > 5% away from 20-EMA
+
         quality_profile = _scanner_quality_profile(scanner_type, universe)
 
         if not _is_finite(ltp, avg_vol, sma_200, sma_50, ema_20, rsi, adx, adx_prev, vwap):
@@ -951,16 +978,19 @@ def _process_single_ticker(
         score += 1.0 if actual_breakout_condition_met else 0.0 # Filter 6
         score += 1.0 if macd_bull else 0.0           # Filter 7
         score += 1.0 if bb_bull else 0.0             # Filter 8
-        score += 0.5 if above_vwap else 0.0          # Filter 9
+        score += 0.5 if (pd.notna(vwap) and above_vwap) else 0.0  # Filter 9
         score += 0.5 if stoch_neutral else 0.0       # Filter 10
         score += 1.0 if ma_slope_bull else 0.0       # Filter 11
         score += 0.5 if adx_rising else 0.0
+        score += 1.5 if (pd.notna(rvol) and rvol >= 2.5) else 0.5 # Bonus for high RVOL
+        score += 1.0 if (pd.notna(is_breakaway) and is_breakaway) else 0.0
 
         # Pattern Bonuses
         if is_tight and is_dry: score += 1.5
         if is_inside_bar and is_nr7: score += 2.0
         if rs_rating >= 90: score += 1.0
-        if is_fakeout:
+        
+        if is_fakeout or is_stretched:
             score -= 3.0
             patterns.append("Fakeout-Trap")
             with stats_lock: stats["fakeout_trap"] += 1
@@ -1000,6 +1030,8 @@ def _process_single_ticker(
             "LTP": round(ltp, 2),
             "ATR": round(atr, 2),
             "RSI": round(rsi, 1),
+            "RVOL": round(rvol, 1),
+            "EMA_Dist": f"{dist_from_ema:.1f}%",
             "RS_Rating": rs_rating,
             "ROE": round(roe * 100, 1),
             "Mkt_Cap_Cr": round(mkt_cap_cr, 1),
@@ -1014,8 +1046,8 @@ def _process_single_ticker(
             "VWAP": "✅" if above_vwap else "—",
             "Divergence": "Bullish" if bull_div else ("Bearish" if bear_div else "—"),
             "Vol_Spike": "🔥 SURGE" if is_surge else ("✅" if vol_ratio >= min_vol_ratio else "—"),
-            "_Support1": round(float(mid_bb.iloc[-1]), 2), # Use tactical 20-SMA Support per PRO specs
-            "_Support2": round(float(sma_200), 2),
+            "_Support1": round(float(mid_bb.iloc[-1]), 2) if pd.notna(mid_bb.iloc[-1]) else round(ltp * 0.95, 2),
+            "_Support2": round(float(sma_200), 2) if pd.notna(sma_200) else round(ltp * 0.90, 2),
             "_Resistance": round(float(resistance), 2),
             "Market_Bias": market_context.get("market_bias", "Neutral"),
             "Macro_Score": round(market_context.get("market_bias_score", 0.0), 2),
@@ -1023,12 +1055,14 @@ def _process_single_ticker(
             "Trend": trend_intensity,
             "Candle": "Consolidating" if daily_pcnt < 1.5 else candle_sentiment,
             "Action": "AVOID: Fakeout" if is_fakeout else (
-                "💎 VCP Setup" if (scanner_type == "Pre-Breakout" and is_tight and is_dry) else
+                "⚠️ STRETCHED" if is_stretched else
+                ("💎 VCP Setup" if (scanner_type == "Pre-Breakout" and is_tight and is_dry) else
                 ("🛡️ EMA Support" if (scanner_type == "Pullback" and is_pullback_to_ema) else
                 ("🎯 Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
                  ("⚡ SuperCoil" if (is_inside_bar and is_nr7) else
-                  ("🌀 Tight Coil" if (is_inside_bar and is_tight) else
-                   ("🚀 Ready to Pop" if (strength >= 7.5 and is_tight) else "👀 Monitoring")))))
+                  ("🚀 Breakaway" if is_breakaway and rvol > 2 else
+                   ("🌀 Tight Coil" if (is_inside_bar and is_tight) else
+                    ("🚀 Ready to Pop" if (strength >= 7.5 and is_tight) else "👀 Monitoring"))))))
             ),
             "Pattern": ", ".join(patterns) if patterns else (
                 "52W Breakout" if broke_52w else
