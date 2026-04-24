@@ -10,3 +10,29 @@
 2026-04-24 07:16:38,506 ERROR 
 1 Failed download:
 2026-04-24 07:16:38,506 ERROR ['LTM.NS']: possibly delisted; no price data found  (period=60d) (Yahoo error = "15m data not available for startTime=1771386300 and endTime=1776995194. The requested range must be within the last 60 days.")
+2026-04-24 13:23:35,642 INFO Background metadata worker starting...
+2026-04-24 13:23:38,905 INFO Prefetching metadata for 3 tickers...
+2026-04-24 13:23:40,440 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-24 13:23:40,724 INFO Background cache refresh complete for 751 symbols.
+2026-04-24 13:24:03,218 INFO Prefetching metadata for 1 tickers...
+2026-04-24 13:25:21,863 INFO Prefetching metadata for 1 tickers...
+2026-04-24 13:25:53,139 ERROR $LTM.NS: possibly delisted; no price data found  (period=60d) (Yahoo error = "15m data not available for startTime=1771386300 and endTime=1777017353. The requested range must be within the last 60 days.")
+2026-04-24 13:25:53,698 ERROR 
+1 Failed download:
+2026-04-24 13:25:53,698 ERROR ['LTM.NS']: possibly delisted; no price data found  (period=60d) (Yahoo error = "15m data not available for startTime=1771386300 and endTime=1777017353. The requested range must be within the last 60 days.")
+2026-04-24 13:29:45,706 WARNING Sector segment https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-24 13:29:45,827 WARNING Sector segment https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-24 13:29:48,572 INFO Prefetching metadata for 3 tickers...
+2026-04-24 13:29:49,638 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-24 13:30:00,901 ERROR $CCAVENUE.NS: possibly delisted; no price data found  (period=60d) (Yahoo error = "15m data not available for startTime=1769485500 and endTime=1777017600. The requested range must be within the last 60 days.")
+2026-04-24 13:30:00,903 ERROR 
+1 Failed download:
+2026-04-24 13:30:00,903 ERROR ['CCAVENUE.NS']: possibly delisted; no price data found  (period=60d) (Yahoo error = "15m data not available for startTime=1769485500 and endTime=1777017600. The requested range must be within the last 60 days.")
+2026-04-24 13:30:08,382 ERROR $DUMMYALCAR.NS: possibly delisted; no price data found  (period=60d) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-24 13:30:09,237 ERROR 
+1 Failed download:
+2026-04-24 13:30:09,237 ERROR ['DUMMYALCAR.NS']: possibly delisted; no price data found  (period=60d) (Yahoo error = "No data found, symbol may be delisted")
+2026-04-24 13:30:24,298 ERROR $LTM.NS: possibly delisted; no price data found  (period=60d) (Yahoo error = "15m data not available for startTime=1771386300 and endTime=1777017624. The requested range must be within the last 60 days.")
+2026-04-24 13:30:24,886 ERROR 
+1 Failed download:
+2026-04-24 13:30:24,886 ERROR ['LTM.NS']: possibly delisted; no price data found  (period=60d) (Yahoo error = "15m data not available for startTime=1771386300 and endTime=1777017624. The requested range must be within the last 60 days.")

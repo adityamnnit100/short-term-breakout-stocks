@@ -45,12 +45,13 @@ DB_PATH = os.environ.get(
 )
 
 _EMPTY_STATS: dict = {
-    "scanned": 0, "volume_fail": 0, "trend_fail": 0,
+    "scanned": 0, "universe": None, "universe_size": 0,
+    "volume_fail": 0, "trend_fail": 0,
     "breakout_fail": 0, "momentum_fail": 0, "adx_fail": 0,
     "macd_fail": 0, "bb_fail": 0, "rs_fail": 0, "fakeout_trap": 0,
     "liquidity_fail": 0,
     "trending_sectors": [], "sector_sentiment": {},
-    "universe": None, "universe_size": 0, "scanner_type": None,
+    "market_breadth_50": 0.0, "scanner_type": None,
     "timeframe": "1d",
 }
 
@@ -379,6 +380,37 @@ def detect_vcp_tightness(close, window: int = 10):
     recent_std = close.tail(window).std()
     hist_std = close.tail(50).std()
     return recent_std < (hist_std * 0.75)
+
+def detect_minervini_template(df: pd.DataFrame, ltp: float) -> bool:
+    """
+    Implementation of Mark Minervini's Trend Template.
+    Used by top momentum traders to ensure the stock is in a confirmed Stage 2 uptrend.
+    """
+    if len(df) < 200: return False
+    close = df['Close']
+    sma_50 = close.rolling(50).mean().iloc[-1]
+    sma_150 = close.rolling(150).mean().iloc[-1]
+    sma_200 = close.rolling(200).mean().iloc[-1]
+    
+    # 1. Price > 150 and 200 SMA
+    c1 = ltp > sma_150 and ltp > sma_200
+    # 2. 150 SMA > 200 SMA
+    c2 = sma_150 > sma_200
+    # 3. 200 SMA trending up for at least 1 month (22 sessions)
+    sma_200_prev = close.rolling(200).mean().iloc[-22]
+    c3 = sma_200 > sma_200_prev
+    # 4. 50 SMA > 150 and 50 SMA > 200
+    c4 = sma_50 > sma_150 and sma_50 > sma_200
+    # 5. Price > 50 SMA
+    c5 = ltp > sma_50
+    # 6. Price at least 30% above 52-week low
+    low_52 = close.tail(252).min()
+    c6 = ltp >= (low_52 * 1.30)
+    # 7. Price within 25% of 52-week high
+    high_52 = close.tail(252).max()
+    c7 = ltp >= (high_52 * 0.75)
+    
+    return all([c1, c2, c3, c4, c5, c6, c7])
 
 def detect_inside_bar(df: pd.DataFrame) -> bool:
     """Detects an Inside Bar pattern (current candle is contained within previous candle)."""
@@ -836,11 +868,14 @@ def _process_single_ticker(
         # Trend filter: require strong short-term momentum, but allow new breakouts
         # where the 50-day average is still catching up to the 200-day average.
         trend_stack_ok = (ema_20 > sma_50) and (sma_50 > sma_200)
+        is_minervini_leader = detect_minervini_template(df, ltp)
+        
         partial_trend_ok = (ema_20 > sma_50) and (sma_50 >= sma_200 * 0.96)
         if scanner_type == "Breakout":
             # Breakouts may occur before the long-term stack is fully aligned.
             trend_ok = (
-                (trend_stack_ok and (ltp > ema_20 * 0.98))
+                (is_minervini_leader)
+                or (trend_stack_ok and (ltp > ema_20 * 0.98))
                 or (partial_trend_ok and (ltp > ema_20 * 0.99) and adx > 18)
             )
         elif scanner_type == "Pre-Breakout":
@@ -1036,6 +1071,7 @@ def _process_single_ticker(
         score += 0.5 if stoch_neutral else 0.0       # Filter 10
         score += 1.0 if ma_slope_bull else 0.0       # Filter 11
         score += 0.5 if adx_rising else 0.0
+        score += 1.5 if is_minervini_leader else 0.0 # Pro Leader Bonus
         score += 1.5 if (pd.notna(rvol) and rvol >= 2.5) else 0.5 # Bonus for high RVOL
         score += 1.0 if (pd.notna(is_breakaway) and is_breakaway) else 0.0
 
@@ -1115,6 +1151,7 @@ def _process_single_ticker(
                 "🛡️ EMA Support" if (scanner_type == "Pullback" and is_pullback_to_ema) else
                 "🎯 Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
                 "⚡ SuperCoil" if (is_inside_bar and is_nr7) else
+                "🏆 Market Leader" if is_minervini_leader else
                 "🚀 Breakaway" if (is_breakaway and rvol > 2) else
                 "🌀 Tight Coil" if (is_inside_bar and is_tight) else
                 "🚀 Ready to Pop" if (strength >= 7.5 and is_tight) else "👀 Monitoring"
@@ -1214,6 +1251,15 @@ def run_scanner(
 
     if data.empty:
         return pd.DataFrame(), stats
+
+    # 2.5 Market Breadth Calculation (Pro Feature)
+    # Successful traders only trade breakouts when Breadth > 50%
+    try:
+        all_close = data['Close']
+        all_sma50 = all_close.rolling(50).mean()
+        breadth_50 = (all_close.iloc[-1] > all_sma50.iloc[-1]).mean() * 100
+        stats["market_breadth_50"] = round(breadth_50, 1)
+    except: pass
 
     avail = (
         data.columns.get_level_values(1).unique().tolist()
