@@ -38,8 +38,8 @@ def test_scanner_logic(universe="Nifty 500", scanner_type="Breakout", sample_siz
     
     quality_profile = _scanner_quality_profile(scanner_type, universe)
     dist_thresh = 1.5 if scanner_type == "Breakout" else 5.0
-    vol_thresh = 1.5 if scanner_type == "Breakout" else 0.8
-    rsi_min, rsi_max = (60, 78) if scanner_type == "Breakout" else (40, 65)
+    vol_thresh = 1.0 if scanner_type == "Breakout" else 0.6
+    rsi_min, rsi_max = (50, 85) if scanner_type == "Breakout" else (35, 70)
     
     stats = {
         "tested": 0, "passed": 0,

@@ -438,13 +438,17 @@ def detect_volume_surge(volume: pd.Series, window: int = 10, threshold: float = 
     if len(volume) < window:
         return False
     avg_vol_short = volume.rolling(window).mean().iloc[-2]
-    return float(volume.iloc[-1]) >= (avg_vol_short * threshold)
+    # For Indian markets, also check if volume is above 30-day average for confirmation
+    avg_vol_long = volume.rolling(30).mean().iloc[-2]
+    return float(volume.iloc[-1]) >= (avg_vol_short * threshold) or float(volume.iloc[-1]) >= (avg_vol_long * 1.5)
 
 def detect_candlestick_pattern(df: pd.DataFrame) -> str:
     """Detects simple candlestick patterns for high-conviction entries."""
     if len(df) < 2: return "Neutral"
     last = df.iloc[-1]
     prev = df.iloc[-2]
+    # Fetch third candle for multi-bar patterns like Morning Star
+    prev2 = df.iloc[-3] if len(df) >= 3 else None
 
     body = last['Close'] - last['Open']
     abs_body = abs(body)
@@ -452,10 +456,25 @@ def detect_candlestick_pattern(df: pd.DataFrame) -> str:
     upper_wick = last['High'] - max(last['Open'], last['Close'])
     lower_wick = min(last['Open'], last['Close']) - last['Low']
 
-    # Hammer / Bullish Pin Bar
+    # 1. Morning Star (3-candle bullish reversal)
+    if prev2 is not None:
+        prev2_body = prev2['Open'] - prev2['Close']
+        if (prev2_body > 0 and # 1st: Significant Bearish
+            abs(prev['Open'] - prev['Close']) < prev2_body * 0.5 and # 2nd: Small body "star"
+            body > 0 and # 3rd: Bullish
+            last['Close'] > (prev2['Open'] + prev2['Close']) / 2): # 3rd: Closes > 50% of 1st
+            return "Morning Star"
+
+    # 2. Shooting Star (Bearish reversal - small body, long upper wick)
+    # Occurs when buyers push price to new highs but sellers force a low close
+    if upper_wick > 2 * abs_body and lower_wick < 0.2 * range_ and last['High'] > prev['High']:
+        return "Shooting Star"
+
+    # 3. Hammer / Bullish Pin Bar
     if lower_wick > 2 * abs_body and upper_wick < 0.1 * range_:
         return "Bullish Hammer"
-    # Bullish Engulfing
+
+    # 4. Bullish Engulfing
     if body > 0 and prev['Close'] < prev['Open'] and last['Close'] > prev['Open'] and last['Open'] < prev['Close']:
         return "Bullish Engulfing"
 
@@ -749,6 +768,10 @@ def _process_single_ticker(
         dist_from_ema = (ltp - ema_20) / max(ema_20, 1e-9) * 100
         is_stretched = dist_from_ema > 5.0  # Avoid entry if > 5% away from 20-EMA
 
+        # Hard reject stretched breakouts for short-term entries.
+        if is_stretched:
+            return None
+
         quality_profile = _scanner_quality_profile(scanner_type, universe)
 
         if not _is_finite(ltp, avg_vol, sma_200, sma_50, ema_20, rsi, adx, adx_prev, vwap):
@@ -810,15 +833,24 @@ def _process_single_ticker(
         else:
             min_vol_ratio = float(vol_thresh)
 
-        # Tightened Trend Stack Filter (EMA20 > SMA50 > SMA200)
-        # Matches TRADER_GUIDE.md and Backtest logic
+        # Trend filter: require strong short-term momentum, but allow new breakouts
+        # where the 50-day average is still catching up to the 200-day average.
         trend_stack_ok = (ema_20 > sma_50) and (sma_50 > sma_200)
-        if scanner_type in ["Pre-Breakout", "Pullback"]:
-            # Allow slight pullback below EMA20 for accumulation setups
-            trend_ok = trend_stack_ok and (ltp > ema_20 * 0.985)
-        else:
-            # For Breakout: price should be near or above EMA20
-            trend_ok = trend_stack_ok and (ltp > ema_20 * 0.98)
+        partial_trend_ok = (ema_20 > sma_50) and (sma_50 >= sma_200 * 0.96)
+        if scanner_type == "Breakout":
+            # Breakouts may occur before the long-term stack is fully aligned.
+            trend_ok = (
+                (trend_stack_ok and (ltp > ema_20 * 0.98))
+                or (partial_trend_ok and (ltp > ema_20 * 0.99) and adx > 18)
+            )
+        elif scanner_type == "Pre-Breakout":
+            # Pre-Breakouts can form while the trend stack is building.
+            trend_ok = (
+                (trend_stack_ok and (ltp > ema_20 * 0.985))
+                or (ema_20 > sma_50 and ltp > ema_20 * 0.98)
+            )
+        else:  # Pullback
+            trend_ok = trend_stack_ok and (ltp > ema_20 * 0.99)
 
         if not trend_ok:
             with stats_lock: stats["trend_fail"] += 1
@@ -918,17 +950,39 @@ def _process_single_ticker(
 
         # MACD confirmation (Filter 7)
         macd_bull = macd.iloc[-1] > macd_sig.iloc[-1] and macd_hist.iloc[-1] > 0
+        if not macd_bull:
+            with stats_lock: stats["macd_fail"] += 1
 
         # BB & VWAP confirmation (Filters 8 & 9)
         bb_upper_zone = ltp >= (mid_bb.iloc[-1] + (upper_bb.iloc[-1] - mid_bb.iloc[-1]) * 0.5)
         bb_breakout = ltp > upper_bb.iloc[-1]
         above_vwap = ltp > vwap
         bb_bull = bb_upper_zone or bb_breakout
+        if not bb_bull:
+            with stats_lock: stats["bb_fail"] += 1
 
         bull_div, bear_div = detect_divergence(close, rsi_series)
+        # Calculate risk management levels for short-term trading
         atr = calculate_atr(high, low, close).iloc[-1]
         atr = float(atr) if not pd.isna(atr) and atr > 0 else ltp * 0.015
-        support_breakout, near_support, resistance, support = detect_support_resistance(df)
+
+        # Support levels for risk management
+        support1 = float(mid_bb.iloc[-1]) if pd.notna(mid_bb.iloc[-1]) else ltp * 0.95
+        support2 = float(sma_200) if pd.notna(sma_200) else ltp * 0.90
+
+        # Position sizing: Risk 1% of capital per trade
+        risk_per_trade = 0.01  # 1% of capital
+        stop_loss_distance = atr * 1.5  # 1.5 ATR stop
+        position_size = risk_per_trade / (stop_loss_distance / ltp) if stop_loss_distance > 0 else 0
+
+        # Profit targets for short-term scalping
+        tp1 = ltp + (atr * 1.0)  # Quick profit at 1 ATR
+        tp2 = ltp + (atr * 3.0)  # Main target at 3 ATR
+        tp3 = ltp + (atr * 5.0)  # Extended target at 5 ATR
+
+        # Stop loss levels
+        sl1 = ltp - (atr * 1.5)  # Primary stop at 1.5 ATR
+        sl2 = support1 if support1 < sl1 else sl1 * 0.98  # Support-based stop
 
         # Fundamental Check
         mkt_cap_cr, roe = 0.0, 0.0
@@ -1054,15 +1108,16 @@ def _process_single_ticker(
             "Signal_Strength": strength,
             "Trend": trend_intensity,
             "Candle": "Consolidating" if daily_pcnt < 1.5 else candle_sentiment,
-            "Action": "AVOID: Fakeout" if is_fakeout else (
+            "Action": (
+                "AVOID: Fakeout" if is_fakeout else
                 "⚠️ STRETCHED" if is_stretched else
-                ("💎 VCP Setup" if (scanner_type == "Pre-Breakout" and is_tight and is_dry) else
-                ("🛡️ EMA Support" if (scanner_type == "Pullback" and is_pullback_to_ema) else
-                ("🎯 Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
-                 ("⚡ SuperCoil" if (is_inside_bar and is_nr7) else
-                  ("🚀 Breakaway" if is_breakaway and rvol > 2 else
-                   ("🌀 Tight Coil" if (is_inside_bar and is_tight) else
-                    ("🚀 Ready to Pop" if (strength >= 7.5 and is_tight) else "👀 Monitoring"))))))
+                "💎 VCP Setup" if (scanner_type == "Pre-Breakout" and is_tight and is_dry) else
+                "🛡️ EMA Support" if (scanner_type == "Pullback" and is_pullback_to_ema) else
+                "🎯 Near Breakout" if (scanner_type == "Pre-Breakout" and (is_consolidating_near_20d or is_consolidating_near_52w)) else
+                "⚡ SuperCoil" if (is_inside_bar and is_nr7) else
+                "🚀 Breakaway" if (is_breakaway and rvol > 2) else
+                "🌀 Tight Coil" if (is_inside_bar and is_tight) else
+                "🚀 Ready to Pop" if (strength >= 7.5 and is_tight) else "👀 Monitoring"
             ),
             "Pattern": ", ".join(patterns) if patterns else (
                 "52W Breakout" if broke_52w else
@@ -1241,8 +1296,8 @@ def run_daily_cache_update():
     # Common presets to cache
     for scan_type in ["Breakout", "Pre-Breakout"]:
         sector_map = get_sector_mapping("Nifty 500")
-        rsi_min, rsi_max = (60, 78) if scan_type == "Breakout" else (40, 65)
-        vol_thresh = 1.5 if scan_type == "Breakout" else 0.8
+        rsi_min, rsi_max = (50, 85) if scan_type == "Breakout" else (35, 70)
+        vol_thresh = 1.0 if scan_type == "Breakout" else 0.6
         dist_thresh = 1.5 if scan_type == "Breakout" else 5.0
         results, stats = run_scanner(
             universe="Nifty 500",
