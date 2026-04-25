@@ -237,6 +237,9 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     support_1 = row.get("_Support1", ltp - 2 * atr)
     support_2 = row.get("_Support2", ltp - 4 * atr)
     vol_ratio = float(row.get("Vol_x", 0) or 0)
+    risk_grade = row.get("Risk_Grade", "C")
+    qty_1l = int(row.get("Qty_1L_1pct", 0) or 0)
+    market_health = row.get("Market_Health", "Unknown")
 
     st.markdown(
         f'<div class="trade-card">'
@@ -245,7 +248,8 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
         f'<div style="background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.25);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#00e5ff;">{row.get("Type", "")}</div>'
         f'<div style="background:{"rgba(0,230,118,0.12)" if signal_strength >= 7 else "rgba(255,202,40,0.12)"};border:1px solid {"rgba(0,230,118,0.3)" if signal_strength >= 7 else "rgba(255,202,40,0.3)"};border-radius:20px;padding:2px 10px;font-size:0.75rem;color:{"#00e676" if signal_strength >= 7 else "#ffca28"};">⚡ {signal_strength}/10 Signal</div>'
         f'<div style="background:{sect_color}1a; border:1px solid {sect_color}44; border-radius:20px; padding:2px 10px; font-size:0.75rem; color:{sect_color};">Sector: {sect_label} ({sector_score})</div>'
-        f'<div style="background:rgba(124,77,255,0.1);border:1px solid rgba(124,77,255,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#7c4dff;">RS: {rs_value}</div></div>'
+        f'<div style="background:rgba(124,77,255,0.1);border:1px solid rgba(124,77,255,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#7c4dff;">RS: {rs_value}</div>'
+        f'<div style="background:rgba(255,202,40,0.1);border:1px solid rgba(255,202,40,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#ffca28;">Risk: {risk_grade}</div></div>'
         f'<div class="trade-subtitle" style="color: #94a3b8;">{row.get("Pattern", "")}</div>'
         f'<div class="level-grid">'
         f'<div class="level-box"><div class="level-label" style="color: #94a3b8;">Entry</div><div class="level-value level-entry" style="color: #00e5ff;">₹{entry:,.2f}</div></div>'
@@ -298,6 +302,10 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
         guard_col_2.metric("Target 2 Upside", f"{target_2_pct:.1f}%")
         guard_col_3.metric("Risk / Reward", f"1:{risk_reward:.1f}")
         guard_col_4.metric("Volume Confirmation", f"{vol_ratio:.1f}×")
+        risk_col_1, risk_col_2, risk_col_3 = st.columns(3)
+        risk_col_1.metric("Model Risk Grade", risk_grade)
+        risk_col_2.metric("Qty @ ₹1L / 1% Risk", qty_1l)
+        risk_col_3.metric("Market Breadth", market_health)
 
         checks = [
             ("Risk/reward is at least 1:2", risk_reward >= 2),
@@ -305,6 +313,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
             ("Volume confirms participation", vol_ratio >= 1.5),
             ("Signal strength is high enough for short-term focus", signal_strength >= 7),
             ("Avoid chase if stop is wider than 8%", stop_pct <= 8),
+            ("Market breadth is not risk-off", market_health != "Risk-Off"),
         ]
         checklist = pd.DataFrame(
             {
@@ -371,7 +380,15 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
             show_macd=chart_options.show_macd,
             show_vwap=chart_options.show_vwap,
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(
+            fig,
+            use_container_width=True,
+            config={
+                "scrollZoom": True,
+                "displaylogo": False,
+                "modeBarButtonsToRemove": ["lasso2d", "select2d"],
+            },
+        )
         if st.button("🖥️ View Full Screen Chart", key=f"fs_{ticker}", use_container_width=True):
             show_full_chart(fig)
     else:
@@ -411,6 +428,10 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
         "Pattern",
         "RS_Rating",
         "Vol_x",
+        "Stop_%",
+        "RR",
+        "Risk_Grade",
+        "Market_Health",
         "RSI",
         "Signal_Strength",
         "MACD",
@@ -422,6 +443,9 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
         columns={
             "Signal_Strength": "Strength",
             "Vol_x": "Vol×",
+            "Stop_%": "Stop%",
+            "Risk_Grade": "Risk",
+            "Market_Health": "Breadth",
             "Vol_Spike": "Spike",
             "Type": "Level",
             "RS_Rating": "RS",

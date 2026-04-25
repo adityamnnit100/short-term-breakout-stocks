@@ -6,6 +6,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from alphascanner_ui.charts import apply_trading_layout
+
 
 def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
     st.markdown(
@@ -57,6 +59,17 @@ def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
     win_rate = wins / total * 100 if total > 0 else 0
     realized_r = float(completed["PnL_R"].fillna(0).sum()) if total > 0 else 0.0
     expectancy = realized_r / total if total > 0 else 0.0
+    gross_profit = float(completed.loc[completed["PnL_R"] > 0, "PnL_R"].sum()) if total > 0 else 0.0
+    gross_loss = abs(float(completed.loc[completed["PnL_R"] < 0, "PnL_R"].sum())) if total > 0 else 0.0
+    profit_factor = gross_profit / gross_loss if gross_loss > 0 else 0.0
+
+    bt_sorted = bt_df.sort_values("Date").copy()
+    bt_sorted["PnL_R"] = bt_sorted["PnL_R"].fillna(0)
+    bt_sorted["Cum_R"] = bt_sorted["PnL_R"].cumsum()
+    bt_sorted["Date"] = pd.to_datetime(bt_sorted["Date"])
+    running_peak = bt_sorted["Cum_R"].cummax()
+    drawdown = bt_sorted["Cum_R"] - running_peak
+    max_drawdown = float(drawdown.min()) if not drawdown.empty else 0.0
 
     metrics = st.columns(6)
     metrics[0].metric("Total Signals", len(bt_df))
@@ -65,7 +78,11 @@ def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
     metrics[3].metric("Expectancy", f"{expectancy:+.2f}R")
     metrics[4].metric("Realized R", f"{realized_r:+.1f}R")
     metrics[5].metric("Pending", pending)
-    st.metric("Wins / Losses / Expired", f"{wins} / {losses} / {expired}")
+    risk_metrics = st.columns(4)
+    risk_metrics[0].metric("Wins / Losses / Expired", f"{wins} / {losses} / {expired}")
+    risk_metrics[1].metric("Profit Factor", f"{profit_factor:.2f}" if gross_loss > 0 else "Open")
+    risk_metrics[2].metric("Max Drawdown", f"{max_drawdown:.1f}R")
+    risk_metrics[3].metric("Avg Hold", f"{completed['Holding_Days'].mean():.1f}d" if total > 0 and "Holding_Days" in completed else "N/A")
 
     nifty = load_nifty_history(period="2y")
     if not nifty.empty:
@@ -82,11 +99,6 @@ def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
             alpha_cols[2].metric("Avg R / Completed", f"{expectancy:+.2f}R")
 
     st.divider()
-    bt_sorted = bt_df.sort_values("Date").copy()
-    bt_sorted["PnL_R"] = bt_sorted["PnL_R"].fillna(0)
-    bt_sorted["Cum_R"] = bt_sorted["PnL_R"].cumsum()
-    bt_sorted["Date"] = pd.to_datetime(bt_sorted["Date"])
-
     chart_col_1, chart_col_2 = st.columns(2)
     with chart_col_1:
         outcomes = bt_sorted["Outcome"].value_counts().reindex(["Win", "Loss", "Expired", "Pending"], fill_value=0)
@@ -94,21 +106,14 @@ def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
             go.Bar(
                 x=outcomes.index,
                 y=outcomes.values,
-                marker_color=["#00e676", "#ff5252", "#8fb3ff", "#ffca28"],
+                marker_color=["#16a34a", "#dc2626", "#64748b", "#d97706"],
                 text=outcomes.values,
                 textposition="outside",
+                hovertemplate="%{x}: %{y}<extra></extra>",
             )
         )
-        outcome_fig.update_layout(
-            title="Outcome Distribution",
-            height=300,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(10,22,45,0.6)",
-            font=dict(color="#8899bb"),
-            showlegend=False,
-            margin=dict(t=40, b=20, l=0, r=0),
-        )
-        st.plotly_chart(outcome_fig, use_container_width=True)
+        apply_trading_layout(outcome_fig, height=320, title="Outcome Distribution", show_legend=False)
+        st.plotly_chart(outcome_fig, use_container_width=True, config={"displaylogo": False})
 
     with chart_col_2:
         cumulative_fig = go.Figure(
@@ -116,19 +121,33 @@ def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
                 x=bt_sorted["Date"],
                 y=bt_sorted["Cum_R"],
                 fill="tozeroy",
-                line=dict(color="#00e5ff", width=1.5),
-                fillcolor="rgba(0,229,255,0.07)",
+                line=dict(color="#0284c7", width=2),
+                fillcolor="rgba(2,132,199,0.08)",
+                hovertemplate="%{x|%d %b %Y}<br>Cum R %{y:.2f}<extra></extra>",
             )
         )
-        cumulative_fig.update_layout(
-            title="Cumulative P&L (R)",
-            height=300,
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(10,22,45,0.6)",
-            font=dict(color="#8899bb"),
-            margin=dict(t=40, b=20, l=0, r=0),
+        cumulative_fig.add_trace(
+            go.Scatter(
+                x=bt_sorted["Date"],
+                y=drawdown,
+                name="Drawdown",
+                fill="tozeroy",
+                line=dict(color="#dc2626", width=1),
+                fillcolor="rgba(220,38,38,0.08)",
+                yaxis="y2",
+                hovertemplate="%{x|%d %b %Y}<br>DD %{y:.2f}R<extra></extra>",
+            )
         )
-        st.plotly_chart(cumulative_fig, use_container_width=True)
+        apply_trading_layout(cumulative_fig, height=320, title="Equity Curve & Drawdown")
+        cumulative_fig.update_layout(
+            yaxis2=dict(
+                overlaying="y",
+                side="left",
+                showgrid=False,
+                tickfont=dict(color="#dc2626"),
+            )
+        )
+        st.plotly_chart(cumulative_fig, use_container_width=True, config={"displaylogo": False})
 
     performer_source = bt_sorted[bt_sorted["Outcome"] != "Pending"]
     top_performers = performer_source.groupby("Ticker").agg(

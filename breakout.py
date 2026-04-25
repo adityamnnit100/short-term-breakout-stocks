@@ -53,6 +53,7 @@ _EMPTY_STATS: dict = {
     "trending_sectors": [], "sector_sentiment": {},
     "market_breadth_50": 0.0, "scanner_type": None,
     "timeframe": "1d",
+    "market_health": "Unknown",
 }
 
 
@@ -639,6 +640,28 @@ def _scanner_quality_profile(scanner_type: str, universe: str) -> dict:
     }
 
 
+def _market_breadth_health(breadth_50: float) -> Tuple[str, float]:
+    """Convert percent of stocks above SMA50 into a short-term risk adjustment."""
+    if breadth_50 >= 60:
+        return "Risk-On", 0.7
+    if breadth_50 >= 50:
+        return "Constructive", 0.3
+    if breadth_50 >= 40:
+        return "Caution", -0.4
+    return "Risk-Off", -1.0
+
+
+def _risk_grade(stop_pct: float, risk_reward: float, strength: float, volume_ratio: float, breadth_health: str) -> str:
+    """Simple execution risk label for short-term cash equity trades."""
+    if stop_pct > 8 or risk_reward < 1.95 or breadth_health == "Risk-Off":
+        return "Reduce/Skip"
+    if strength >= 8 and volume_ratio >= 1.5 and stop_pct <= 5 and breadth_health in {"Risk-On", "Constructive"}:
+        return "A"
+    if strength >= 7 and stop_pct <= 6:
+        return "B"
+    return "C"
+
+
 # ---------------------------------------------------------------------------
 # Main scanner
 # ---------------------------------------------------------------------------
@@ -668,21 +691,22 @@ def _extract_ticker(data, ticker):
 def prefetch_metadata(tickers: List[str]):
     """Optimized batch fetching of fundamental metadata to populate cache."""
     logger = logging.getLogger("AlphaScanner.Engine")
-    # Only fetch if cache is missing OR older than 24 hours
-    to_fetch = [t for t in tickers if get_metadata_cache(t, expiry_hours=24)[0] is None]
+    # Batch check cache to avoid 500 individual DB calls
+    cached_data = get_all_metadata_cache(tickers, expiry_hours=24)
+    to_fetch = [t for t in tickers if t not in cached_data]
 
     if not to_fetch:
-        logger.info("Metadata cache is up to date. Skipping prefetch.")
+        logger.debug("Metadata cache is up to date. Skipping prefetch.")
         return
 
-    logger.info(f"Prefetching metadata for {len(to_fetch)} tickers...")
+    logger.info(f"Prefetching missing metadata for {len(to_fetch)} tickers...")
 
     def _fetch_worker(ticker):
         try:
             t_obj = yf.Ticker(ticker)
             # fast_info is high performance; only hit .info if absolutely necessary
             m_cap = t_obj.fast_info.get('marketCap', 0)
-            roe = 0.0
+            roe = 0.0 # ROE is skipped in fast prefetch
             try:
                 roe = t_obj.info.get('returnOnEquity', 0.0)
             except: pass
@@ -742,7 +766,8 @@ def _process_single_ticker(
     sector_sentiment_map: dict,
     market_context: dict,
     stats: dict,
-    stats_lock: Lock
+    stats_lock: Lock,
+    metadata_cache: dict = None
 ) -> Optional[dict]:
     """Internal worker to process a single ticker's logic."""
     try:
@@ -925,6 +950,7 @@ def _process_single_ticker(
         near_52w = prev_h52 * (1 - dist_thresh / 100) <= ltp <= prev_h52 * upper_buffer
         broke_20d = ltp >= prev_h20 * breakout_buffer
         broke_52w = ltp >= prev_h52 * breakout_buffer
+        resistance = prev_h52 if (near_52w or broke_52w) else prev_h20
 
         # Initialize flags to avoid UnboundLocalError
         is_breaking_out = False
@@ -960,6 +986,9 @@ def _process_single_ticker(
 
         # Fakeout detection: price breaks resistance but volume is below threshold
         is_fakeout = is_breaking_out and vol_ratio < min_vol_ratio
+        if scanner_type == "Breakout" and vol_ratio < min_vol_ratio:
+            with stats_lock:
+                stats["volume_fail"] += 1
 
         # Check breakout condition early - core requirement
         if not actual_breakout_condition_met:
@@ -1018,14 +1047,16 @@ def _process_single_ticker(
         # Stop loss levels
         sl1 = ltp - (atr * 1.5)  # Primary stop at 1.5 ATR
         sl2 = support1 if support1 < sl1 else sl1 * 0.98  # Support-based stop
+        risk_reward = (tp2 - ltp) / stop_loss_distance if stop_loss_distance > 0 else 0.0
+        stop_pct = stop_loss_distance / ltp * 100 if ltp > 0 else 0.0
+        position_qty_1l = int((100_000 * 0.01) // stop_loss_distance) if stop_loss_distance > 0 else 0
 
         # Fundamental Check
         mkt_cap_cr, roe = 0.0, 0.0
-        cached_mkt_cap, cached_roe = get_metadata_cache(ticker)
-
-        if cached_mkt_cap is not None:
-            mkt_cap_cr, roe = cached_mkt_cap, cached_roe
-        else:
+        meta_tuple = (metadata_cache or {}).get(ticker)
+        if meta_tuple:
+            mkt_cap_cr, roe = meta_tuple
+        elif not metadata_cache:
             # Fallback if prefetch missed it (should be rare)
             try:
                 t_obj = yf.Ticker(ticker)
@@ -1110,8 +1141,14 @@ def _process_single_ticker(
         market_score = float(market_context.get("market_bias_score", 0.0))
         if scanner_type == "Pre-Breakout":
             market_score *= 0.5
+        breadth_health = market_context.get("market_health", "Unknown")
+        breadth_score = float(market_context.get("market_breadth_score", 0.0) or 0.0)
+        if scanner_type == "Pre-Breakout":
+            breadth_score *= 0.5
         strength += market_score
+        strength += breadth_score
         strength = min(10.0, max(0.0, round(strength, 1)))
+        trade_risk_grade = _risk_grade(stop_pct, risk_reward, strength, vol_ratio, breadth_health)
         # Pre-Breakout and Pullback validated via actual_breakout_condition_met above
 
         return {
@@ -1131,6 +1168,10 @@ def _process_single_ticker(
             "Base_Weeks": base_weeks,
             "Consol_Days": consol_days,
             "Vol_x": round(vol_ratio, 1),
+            "Stop_%": round(stop_pct, 1),
+            "RR": round(risk_reward, 1),
+            "Qty_1L_1pct": position_qty_1l,
+            "Risk_Grade": trade_risk_grade,
             "MACD": "✅" if macd_bull else "—",
             "BB": "✅" if bb_bull else "—",
             "VWAP": "✅" if above_vwap else "—",
@@ -1140,6 +1181,7 @@ def _process_single_ticker(
             "_Support2": round(float(sma_200), 2) if pd.notna(sma_200) else round(ltp * 0.90, 2),
             "_Resistance": round(float(resistance), 2),
             "Market_Bias": market_context.get("market_bias", "Neutral"),
+            "Market_Health": breadth_health,
             "Macro_Score": round(market_context.get("market_bias_score", 0.0), 2),
             "Signal_Strength": strength,
             "Trend": trend_intensity,
@@ -1178,6 +1220,7 @@ def run_scanner(
     universe: str = "Nifty 500",
     timeframe: str = "1d",
     sector_map: Optional[dict] = None,
+    include_news_sentiment: bool = False,
     progress_callback=None,
 ):
     apply_market_cap_filter = min_mkt_cap_cr > 0 or max_mkt_cap_cr > 0
@@ -1204,7 +1247,7 @@ def run_scanner(
     # 1. Download benchmark first to ensure the regime filter is available
     benchmark_period = "2y" if timeframe == "1d" else "60d"
     try:
-        nifty = yf.download("^NSEI", period=benchmark_period, interval=timeframe, progress=False)
+        nifty = yf.download("^NSEI", period=benchmark_period, interval=timeframe, progress=False, auto_adjust=False)
         if isinstance(nifty.columns, pd.MultiIndex):
             nifty.columns = nifty.columns.get_level_values(0)
         nifty_close = nifty["Close"].dropna()
@@ -1219,7 +1262,7 @@ def run_scanner(
 
     # 2. Download ticker data in chunks of 50 to improve stability for large universes (Total Market)
     download_weight = 0.4
-    chunk_size = 50
+    chunk_size = 100
     data_frames = []
     num_chunks = (len(tickers) + chunk_size - 1) // chunk_size
 
@@ -1228,7 +1271,7 @@ def run_scanner(
         try:
             # RS rating and breakout checks need enough history; choose daily 2y or intraday 60d.
             chunk_period = "2y" if timeframe == "1d" else "60d"
-            chunk_data = yf.download(chunk, period=chunk_period, interval=timeframe, progress=False, timeout=45)
+            chunk_data = yf.download(chunk, period=chunk_period, interval=timeframe, progress=False, timeout=45, auto_adjust=False)
             if not chunk_data.empty:
                 data_frames.append(chunk_data)
 
@@ -1259,6 +1302,11 @@ def run_scanner(
         all_sma50 = all_close.rolling(50).mean()
         breadth_50 = (all_close.iloc[-1] > all_sma50.iloc[-1]).mean() * 100
         stats["market_breadth_50"] = round(breadth_50, 1)
+        market_health, market_breadth_score = _market_breadth_health(float(breadth_50))
+        stats["market_health"] = market_health
+        market_context["market_breadth_50"] = round(breadth_50, 1)
+        market_context["market_health"] = market_health
+        market_context["market_breadth_score"] = market_breadth_score
     except: pass
 
     avail = (
@@ -1280,22 +1328,41 @@ def run_scanner(
                 if sect and not pd.isna(ret):
                     sector_perf.setdefault(sect, []).append(ret)
 
+            # Lightweight Financial Keyword Scorer (replaces heavy TextBlob)
+            FIN_BULL = {'up', 'gain', 'strong', 'growth', 'bull', 'surge', 'record', 'high', 'jump', 'profit'}
+            FIN_BEAR = {'down', 'loss', 'weak', 'drop', 'slump', 'bear', 'fall', 'low', 'dip', 'hit'}
+
+            def _get_sect_news_score(s, active=include_news_sentiment):
+                if not active: return s, 2.5 # Neutral fallback
+                
+                cache_key = f"sentiment_{s.replace(' ', '_').lower()}"
+                cached = get_system_cache(cache_key, expiry_hours=6)
+                if cached: return s, float(cached)
+                
+                score = 2.5
+                try:
+                    search = yf.Search(f"{s} sector India news", news_count=5)
+                    if search.news:
+                        hits = []
+                        for n in search.news:
+                            txt = n.get("title", "").lower()
+                            p = sum(1 for w in FIN_BULL if w in txt)
+                            m = sum(1 for w in FIN_BEAR if w in txt)
+                            hits.append(np.clip((p - m) / 2.0, -1, 1))
+                        score = (np.mean(hits) + 1) * 2.5
+                except Exception: pass
+                
+                set_system_cache(cache_key, str(score))
+                return s, score
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as sect_exec:
+                news_scores = dict(sect_exec.map(_get_sect_news_score, sector_perf.keys()))
+
             for s, rets in sector_perf.items():
                 avg_ret = np.mean(rets)
-                # 1. Performance Component (0-5)
                 perf_diff = avg_ret - nifty_ret
                 perf_score = np.clip((perf_diff / 1.5) * 5, 0, 5) if perf_diff > 0 else 0
-
-                # 2. News Sentiment Component (0-5)
-                news_score = 2.5 # Neutral fallback
-                if HAS_TEXTBLOB:
-                    try:
-                        search = yf.Search(f"{s} sector India news", news_count=5)
-                        if search.news:
-                            polarities = [TextBlob(a.get("title", "")).sentiment.polarity for a in search.news]
-                            news_score = ( (sum(polarities) / len(polarities)) + 1 ) * 2.5
-                    except Exception: pass
-
+                news_score = news_scores.get(s, 2.5)
                 sector_sentiment_map[s] = round(perf_score + news_score, 1)
                 if avg_ret > max(0, nifty_ret):
                     trending_sectors.add(s)
@@ -1308,6 +1375,8 @@ def run_scanner(
 
     stats_lock = Lock()
     hits = []
+    # Pre-fetch all metadata once to avoid redundant DB queries in worker threads
+    metadata_cache = get_all_metadata_cache(avail)
 
     # Use ThreadPoolExecutor for concurrent processing
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
@@ -1316,7 +1385,7 @@ def run_scanner(
                 _process_single_ticker,
                 ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh,
                 apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, universe, timeframe,
-                sector_map, trending_sectors, sector_sentiment_map, market_context, stats, stats_lock
+                sector_map, trending_sectors, sector_sentiment_map, market_context, stats, stats_lock, metadata_cache
             ): ticker for ticker in avail
         }
 
@@ -1506,6 +1575,20 @@ def get_metadata_cache(ticker: str, expiry_hours: int = 24) -> Tuple[Optional[fl
     except Exception:
         return None, None
 
+def get_all_metadata_cache(tickers: List[str], expiry_hours: int = 24) -> Dict[str, Tuple[float, float]]:
+    """Fetch all ticker metadata in a single query."""
+    init_db()
+    cutoff = (datetime.now() - timedelta(hours=expiry_hours)).strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        conn = _connect_db()
+        query = "SELECT ticker, market_cap_cr, roe FROM ticker_metadata WHERE updated_at > ?"
+        df = pd.read_sql_query(query, conn, params=(cutoff,))
+        conn.close()
+        df = df[df['ticker'].isin(tickers)]
+        return {row.ticker: (row.market_cap_cr, row.roe) for row in df.itertuples()}
+    except Exception:
+        return {}
+
 
 def update_metadata_cache(ticker: str, market_cap_cr: float, roe: float):
     """Insert or update fundamental metadata in the local cache."""
@@ -1586,8 +1669,8 @@ def run_backtest(
     tickers = get_nifty_500()
     # Fetch Nifty data first to act as a regime filter
     try:
-        data = yf.download(tickers, period="2y", interval="1d", progress=False, timeout=90)
-        nifty = yf.download("^NSEI", period="2y", interval="1d", progress=False)
+        data = yf.download(tickers, period="2y", interval="1d", progress=False, timeout=90, auto_adjust=False)
+        nifty = yf.download("^NSEI", period="2y", interval="1d", progress=False, auto_adjust=False)
         if isinstance(nifty.columns, pd.MultiIndex):
             nifty.columns = nifty.columns.get_level_values(0)
 

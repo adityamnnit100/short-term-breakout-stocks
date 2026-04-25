@@ -3,6 +3,8 @@
 import plotly.graph_objects as go
 import streamlit as st
 
+from alphascanner_ui.charts import apply_trading_layout
+
 
 def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history, logger) -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Global Market Snapshot</div></div>', unsafe_allow_html=True)
@@ -55,23 +57,19 @@ def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history
             name='FII Net',
             x=['T-4', 'T-3', 'T-2', 'T-1', 'Today'],
             y=[1200, -450, -890, 300, fii_dii['fii_net']],
-            marker_color='#00e5ff'
+            marker_color='#0284c7',
+            hovertemplate="FII %{y:,.0f} Cr<extra></extra>",
         ))
         fig_flow.add_trace(go.Bar(
             name='DII Net',
             x=['T-4', 'T-3', 'T-2', 'T-1', 'Today'],
             y=[800, 1100, 1500, 200, fii_dii['dii_net']],
-            marker_color='#ffca28'
+            marker_color='#d97706',
+            hovertemplate="DII %{y:,.0f} Cr<extra></extra>",
         ))
-        fig_flow.update_layout(
-            barmode='group',
-            height=280,
-            margin=dict(t=10, b=10, l=0, r=0),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-        )
-        st.plotly_chart(fig_flow, use_container_width=True)
+        fig_flow.update_layout(barmode='group')
+        apply_trading_layout(fig_flow, height=300, title="5-Day Institutional Trend")
+        st.plotly_chart(fig_flow, use_container_width=True, config={"displaylogo": False})
 
     st.caption(f"Data date: {fii_dii['date']}")
 
@@ -88,18 +86,20 @@ def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history
             x=nifty_df.index,
             y=nifty_df["Close"],
             fill="tozeroy",
-            line=dict(color="#00e5ff", width=1.8),
-            fillcolor="rgba(0,229,255,0.06)",
+            line=dict(color="#0284c7", width=2),
+            fillcolor="rgba(2,132,199,0.08)",
+            hovertemplate="%{x|%d %b %Y}<br>Nifty %{y:,.2f}<extra></extra>",
         )
     )
-    figure.update_layout(
-        height=320,
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(10,22,45,0.6)",
-        font=dict(color="#8899bb"),
-        margin=dict(t=20, b=20, l=0, r=0),
-        showlegend=False,
+    sma50 = nifty_df["Close"].rolling(50).mean()
+    figure.add_trace(
+        go.Scatter(
+            x=nifty_df.index,
+            y=sma50,
+            name="SMA 50",
+            line=dict(color="#d97706", width=1.3),
+            hovertemplate="SMA 50 %{y:,.2f}<extra></extra>",
+        )
     )
-    figure.update_xaxes(gridcolor="rgba(255,255,255,0.04)")
-    figure.update_yaxes(gridcolor="rgba(255,255,255,0.04)")
-    st.plotly_chart(figure, use_container_width=True)
+    apply_trading_layout(figure, height=360, title="Nifty 50 Trend", show_legend=True)
+    st.plotly_chart(figure, use_container_width=True, config={"displaylogo": False, "scrollZoom": True})

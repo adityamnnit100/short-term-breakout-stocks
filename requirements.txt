@@ -2,7 +2,8 @@ streamlit>=1.28.0
 pandas>=2.0.0
 numpy>=1.24.0
 plotly>=5.15.0
-yfinance>=0.2.0
+yfinance>=0.2.0,<1.0.0
+multitasking<0.0.12
 requests>=2.31.0
 ta>=0.10.0
 scipy>=1.11.0

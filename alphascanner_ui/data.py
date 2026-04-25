@@ -46,7 +46,7 @@ def configure_logging() -> logging.Logger:
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_ticker_history(ticker: str, period: str = "1y", interval: str = "1d") -> pd.DataFrame:
     try:
-        df = yf.download(ticker, period=period, interval=interval, progress=False)
+        df = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False)
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
         return df.dropna(subset=["Open", "High", "Low", "Close"]) if not df.empty else pd.DataFrame()
@@ -57,7 +57,7 @@ def load_ticker_history(ticker: str, period: str = "1y", interval: str = "1d") -
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_nifty_history(period: str = "6mo") -> pd.DataFrame:
     try:
-        df = yf.download("^NSEI", period=period, progress=False)
+        df = yf.download("^NSEI", period=period, progress=False, auto_adjust=False)
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
         return df.dropna(subset=["Close"]) if not df.empty else pd.DataFrame()
@@ -168,7 +168,7 @@ def fetch_indices_performance() -> dict:
     output = {}
     for name, symbol in symbols.items():
         try:
-            df = yf.download(symbol, period="5d", progress=False)
+            df = yf.download(symbol, period="5d", progress=False, auto_adjust=False)
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = df.columns.get_level_values(0)
             if len(df) >= 2:
