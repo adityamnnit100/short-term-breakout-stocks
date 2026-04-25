@@ -59,3 +59,8 @@
 2026-04-25 12:34:25,805 ERROR 
 1 Failed download:
 2026-04-25 12:34:25,805 ERROR ['DUMMYALCAR.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")')
+2026-04-25 13:18:02,463 INFO Background metadata worker starting...
+2026-04-25 13:18:02,563 INFO Prefetching missing metadata for 3 tickers...
+2026-04-25 13:18:04,396 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-25 13:18:05,070 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-25 13:18:05,082 INFO Background cache refresh complete for 751 symbols.

@@ -25,6 +25,11 @@ DEFAULT_SESSION_STATE = {
     "notes": [],
     "ticker_cache_refreshed_at": None,
     "backtest_cache_refreshed_at": None,
+    "compact_mode": False,
+    "focus_mode": False,
+    "show_top_picks": True,
+    "show_macro_context": True,
+    "show_watchlist_quick_add": True,
 }
 
 

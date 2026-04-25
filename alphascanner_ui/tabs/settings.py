@@ -23,8 +23,36 @@ def render_tab(load_ticker_history, run_backtest_cached) -> None:
 
     render_user_management()
 
-    st.markdown("### 🎨 Theme & Visibility")
-    st.info("To toggle Light/Dark mode, use the **Settings** option in the top-right menu (⚡ icon or Hamburger menu).")
+    st.markdown("### View & Density")
+    view_col_1, view_col_2 = st.columns(2)
+    with view_col_1:
+        st.session_state.compact_mode = st.toggle(
+            "Compact Mode",
+            value=bool(st.session_state.get("compact_mode", False)),
+            help="Reduces spacing and card padding for a denser trading desk layout.",
+        )
+        st.session_state.focus_mode = st.toggle(
+            "Scanner Focus Mode",
+            value=bool(st.session_state.get("focus_mode", False)),
+            help="Keeps the scanner focused on blotter, setup workspace, chart, and core risk context.",
+        )
+    with view_col_2:
+        st.session_state.show_top_picks = st.toggle(
+            "Show Top Picks",
+            value=bool(st.session_state.get("show_top_picks", True)),
+            disabled=bool(st.session_state.get("focus_mode", False)),
+        )
+        st.session_state.show_macro_context = st.toggle(
+            "Show Macro Context",
+            value=bool(st.session_state.get("show_macro_context", True)),
+            disabled=bool(st.session_state.get("focus_mode", False)),
+        )
+        st.session_state.show_watchlist_quick_add = st.toggle(
+            "Show Watchlist Quick Add",
+            value=bool(st.session_state.get("show_watchlist_quick_add", True)),
+            disabled=bool(st.session_state.get("focus_mode", False)),
+        )
+    st.caption("Focus Mode temporarily hides secondary scanner panels. Your data and watchlists are unchanged.")
 
     st.divider()
     st.markdown("### 🧹 Cache Management")

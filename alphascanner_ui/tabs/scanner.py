@@ -11,14 +11,33 @@ from alphascanner_ui.charts import build_chart, render_top_picks, style_scanner_
 from alphascanner_ui.data import fetch_fii_dii_data, fetch_indices_performance, get_sector_mapping
 
 
+@st.dialog("Full Screen Chart", width="large")
+def show_full_chart(fig) -> None:
+    st.plotly_chart(
+        fig,
+        use_container_width=True,
+        config={
+            "scrollZoom": True,
+            "displaylogo": False,
+            "modeBarButtonsToRemove": ["lasso2d", "select2d"],
+        },
+    )
+
+
 def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
     with st.expander("Refine Visible Results", expanded=False):
         st.caption("These controls only narrow the current scan output. They do not rerun the scanner.")
-        fcol1, fcol2, fcol3, fcol4 = st.columns(4)
+        fcol1, fcol2, fcol3, fcol4, fcol5, fcol6 = st.columns(6)
         min_strength = fcol1.slider("Min Strength", 0, 10, 1)
         min_rsi = fcol2.slider("Min RSI", 0, 100, 50)
         min_vol = fcol3.slider("Min Volume ×", 1.0, 5.0, 1.0)
         min_base = fcol4.slider("Min Base (Weeks)", 0, 20, 0)
+        max_stop = fcol5.slider("Max Stop %", 1.0, 15.0, 8.0, 0.5)
+        risk_choices = fcol6.multiselect(
+            "Risk Grade",
+            ["A", "B", "C", "Reduce/Skip"],
+            default=["A", "B", "C"],
+        )
 
     if results is None or results.empty:
         return results
@@ -29,6 +48,10 @@ def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
 
     if "Base_Weeks" in results.columns:
         mask &= (results["Base_Weeks"] >= min_base)
+    if "Stop_%" in results.columns:
+        mask &= (results["Stop_%"] <= max_stop)
+    if "Risk_Grade" in results.columns and risk_choices:
+        mask &= results["Risk_Grade"].isin(risk_choices)
 
     return results[mask]
 
@@ -240,6 +263,12 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
     risk_grade = row.get("Risk_Grade", "C")
     qty_1l = int(row.get("Qty_1L_1pct", 0) or 0)
     market_health = row.get("Market_Health", "Unknown")
+    execution_label = (
+        "Preferred" if risk_grade == "A" else
+        "Tradable" if risk_grade == "B" else
+        "Small Size" if risk_grade == "C" else
+        "Avoid / Wait"
+    )
 
     st.markdown(
         f'<div class="trade-card">'
@@ -251,6 +280,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
         f'<div style="background:rgba(124,77,255,0.1);border:1px solid rgba(124,77,255,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#7c4dff;">RS: {rs_value}</div>'
         f'<div style="background:rgba(255,202,40,0.1);border:1px solid rgba(255,202,40,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#ffca28;">Risk: {risk_grade}</div></div>'
         f'<div class="trade-subtitle" style="color: #94a3b8;">{row.get("Pattern", "")}</div>'
+        f'<div style="margin-top:8px;padding:8px 10px;border-left:3px solid #0284c7;background:#f8fafc;color:#0f172a;font-size:0.82rem;">Execution stance: <b>{execution_label}</b> · Breadth: <b>{market_health}</b> · Suggested qty for ₹1L / 1% risk: <b>{qty_1l}</b></div>'
         f'<div class="level-grid">'
         f'<div class="level-box"><div class="level-label" style="color: #94a3b8;">Entry</div><div class="level-value level-entry" style="color: #00e5ff;">₹{entry:,.2f}</div></div>'
         f'<div class="level-box"><div class="level-label" style="color: #94a3b8;">Stop Loss  (1.5×ATR)</div><div class="level-value level-sl" style="color: #ff5252;">₹{stop_loss:,.2f}</div><div style="font-size:0.7rem;color:#ff5252;margin-top:2px;">−₹{risk:.2f}</div></div>'
@@ -581,11 +611,15 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
             st.session_state.get("scan_source"), stats,
             timeframe=settings.timeframe,
         )
-        render_top_picks(filtered_results if filtered_results is not None and len(filtered_results) > 0 else results)
+        focus_mode = bool(st.session_state.get("focus_mode", False))
+        if not focus_mode and st.session_state.get("show_top_picks", True):
+            render_top_picks(filtered_results if filtered_results is not None and len(filtered_results) > 0 else results)
         _render_metrics(results, stats, scan_time)
-        _render_macro_context(stats)
+        if not focus_mode and st.session_state.get("show_macro_context", True):
+            _render_macro_context(stats)
         _render_filter_breakdown(stats)
-        _render_watchlist_quick_add(results)
+        if not focus_mode and st.session_state.get("show_watchlist_quick_add", True):
+            _render_watchlist_quick_add(results)
         st.caption("Select one row from the blotter to open the detailed setup, chart, and position sizing workspace.")
 
         if filtered_results is not None and len(filtered_results) == 0:

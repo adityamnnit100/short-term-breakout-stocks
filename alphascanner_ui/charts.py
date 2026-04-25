@@ -102,6 +102,8 @@ def render_top_picks(df: pd.DataFrame):
         rsi = row.get("RSI", 0)
         vol = row.get("Vol_x", 0)
         strength = row.get("Signal_Strength", 0)
+        risk = row.get("Risk_Grade", "C")
+        stop_pct = row.get("Stop_%", 0)
         
         html += (
             f'<div class="top-pick-card">'
@@ -112,6 +114,8 @@ def render_top_picks(df: pd.DataFrame):
             f'<span class="mini-tag">RSI {rsi:.1f}</span>'
             f'<span class="mini-tag">Vol {vol:.1f}x</span>'
             f'<span class="mini-tag">Strength {strength:.1f}</span>'
+            f'<span class="mini-tag">Risk {risk}</span>'
+            f'<span class="mini-tag">Stop {stop_pct:.1f}%</span>'
             f'</div></div>'
         )
     html += '</div>'
@@ -182,6 +186,24 @@ def style_scanner_results(df: pd.DataFrame):
             return "color:#a78bfa;" # Lighter Purple
         return ""
 
+    def _risk(val):
+        value = str(val)
+        if value == "A":
+            return "background-color:rgba(22,163,74,0.14);color:#15803d;font-weight:700;"
+        if value == "B":
+            return "background-color:rgba(2,132,199,0.12);color:#0369a1;font-weight:700;"
+        if value == "Reduce/Skip":
+            return "background-color:rgba(220,38,38,0.12);color:#b91c1c;font-weight:700;"
+        return "background-color:rgba(217,119,6,0.10);color:#92400e;"
+
+    def _breadth(val):
+        value = str(val)
+        if value in {"Risk-On", "Constructive"}:
+            return "color:#15803d;font-weight:700;"
+        if value == "Risk-Off":
+            return "color:#b91c1c;font-weight:700;"
+        return "color:#92400e;"
+
     styled = df.style
     formats = {}
     if "LTP" in df.columns:
@@ -234,6 +256,16 @@ def style_scanner_results(df: pd.DataFrame):
             styled = styled.map(_setup, subset=["Setup"])
         except AttributeError:
             styled = styled.applymap(_setup, subset=["Setup"])
+    if "Risk" in df.columns:
+        try:
+            styled = styled.map(_risk, subset=["Risk"])
+        except AttributeError:
+            styled = styled.applymap(_risk, subset=["Risk"])
+    if "Breadth" in df.columns:
+        try:
+            styled = styled.map(_breadth, subset=["Breadth"])
+        except AttributeError:
+            styled = styled.applymap(_breadth, subset=["Breadth"])
     return styled
 
 

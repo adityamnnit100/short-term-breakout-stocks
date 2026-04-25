@@ -279,7 +279,16 @@ st.markdown("""
     .status-label { font-size: 0.75rem; color: #64748b; }
     .status-value { font-size: 0.9rem; font-weight: bold; color: #0f172a; }
     .metric-value { color: #0f172a; }
+    
+    /* Index/Metric Delta Coloring Fix */
     .metric-delta.neutral { color: #64748b; }
+    .metric-delta.up, [data-testid="stMetricDelta"] > div[aria-label^="Increased"] { 
+        color: #16a34a !important; 
+    }
+    .metric-delta.down, [data-testid="stMetricDelta"] > div[aria-label^="Decreased"] { 
+        color: #dc2626 !important; 
+    }
+
     .panel-title { color: #0f172a; font-weight: 700; }
     .trade-ticker { color: #0f172a; }
 
