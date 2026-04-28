@@ -18,6 +18,7 @@ class SidebarSettings:
     scanner_type: str
     timeframe: str
     use_cache: bool
+    include_news: bool
 
 
 @dataclass(frozen=True)
@@ -48,34 +49,60 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
             )
             scanner_type = st.selectbox(
                 "Scanner Type",
-                ["Breakout", "Pre-Breakout"],
+                ["Breakout", "Pre-Breakout", "FII Accumulation", "Long-Term"],
                 index=0,
-                help="Breakout: Stocks actively breaking out. Pre-Breakout: Stocks consolidating near highs.",
+                help="Breakout: active breakouts. Pre-Breakout: consolidating near highs. FII Accumulation: quarterly institutional holding build-up. Long-Term: large-cap stocks for longer holds.",
             )
-            vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 1.0 if scanner_type == "Breakout" else 0.6, 0.1, help="Lower = more results, Higher = quality filter")
-            timeframe_choice = st.selectbox(
-                "Timeframe",
-                ["Daily", "60m", "30m", "15m"],
-                index=0,
-                help="Choose the analysis timeframe for the scan. Intraday intervals are useful for short-term setups.",
-            )
-            interval_map = {"Daily": "1d", "60m": "60m", "30m": "30m", "15m": "15m"}
-            timeframe = interval_map.get(timeframe_choice, "1d")
-
-            if scanner_type == "Breakout":
-                rsi_range = st.slider("RSI Range", 0, 100, (50, 85), help="Momentum zone for breakouts. Default 50-85 is broader for more scan results.")
-                dist_thresh = st.slider("Breakout Distance (%)", 0.5, 5.0, 1.5, 0.1)
-            else: # Pre-Breakout
-                rsi_range = st.slider("RSI Range", 0, 100, (35, 70), help="RSI range for accumulation phase. Default 35-70 for more setups.")
-                dist_thresh = st.slider("Proximity to High (%)", 0.5, 10.0, 5.0, 0.5, help="How close to 20D/52W high for pre-breakout.")
-            min_mkt_cap, max_mkt_cap = 0, 1000000
-            if universe == "Total Market (Cap Focused)":
-                mkt_cap_range = st.slider(
-                    "Market Cap Range (Cr)",
-                    0, 100000, (500, 20000), 100,
-                    help="Focus on Small Caps (<5k) or Mid Caps (5k-20k).",
+            if scanner_type == "FII Accumulation":
+                st.caption("Quarterly ownership scanner based on FII holding increasing quarter-on-quarter.")
+                universe = "Screener.in FII QoQ"
+                vol_thresh = st.slider("Min FII Increase (%)", 0.1, 10.0, 1.0, 0.1)
+                rsi_range = (0, 100)
+                dist_thresh = 0.0
+                timeframe = "quarterly"
+                min_mkt_cap = st.number_input(
+                    "Min Market Cap (Cr)",
+                    min_value=100,
+                    max_value=500000,
+                    value=1000,
+                    step=100,
+                    help="Default ₹1,000 Cr as requested.",
                 )
-                min_mkt_cap, max_mkt_cap = mkt_cap_range
+                max_mkt_cap = 0
+            elif scanner_type == "Long-Term":
+                st.caption("Long-term investment scanner for large-cap stocks with market cap >1000 Cr.")
+                universe = "Nifty 500"
+                vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 0.5, 0.1, help="Lower = more results, Higher = quality filter")
+                rsi_range = (30, 70)
+                dist_thresh = 0.0
+                timeframe = "1d"
+                min_mkt_cap = 1000
+                max_mkt_cap = 0
+            else:
+                vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 1.0 if scanner_type == "Breakout" else 0.6, 0.1, help="Lower = more results, Higher = quality filter")
+                timeframe_choice = st.selectbox(
+                    "Timeframe",
+                    ["Daily", "60m", "30m", "15m"],
+                    index=0,
+                    help="Choose the analysis timeframe for the scan. Intraday intervals are useful for short-term setups.",
+                )
+                interval_map = {"Daily": "1d", "60m": "60m", "30m": "30m", "15m": "15m"}
+                timeframe = interval_map.get(timeframe_choice, "1d")
+
+                if scanner_type == "Breakout":
+                    rsi_range = st.slider("RSI Range", 0, 100, (50, 85), help="Momentum zone for breakouts. Default 50-85 is broader for more scan results.")
+                    dist_thresh = st.slider("Breakout Distance (%)", 0.5, 5.0, 1.5, 0.1)
+                else: # Pre-Breakout
+                    rsi_range = st.slider("RSI Range", 0, 100, (35, 70), help="RSI range for accumulation phase. Default 35-70 for more setups.")
+                    dist_thresh = st.slider("Proximity to High (%)", 0.5, 10.0, 5.0, 0.5, help="How close to 20D/52W high for pre-breakout.")
+                min_mkt_cap, max_mkt_cap = 0, 1000000
+                if universe == "Total Market (Cap Focused)":
+                    mkt_cap_range = st.slider(
+                        "Market Cap Range (Cr)",
+                        0, 100000, (500, 20000), 100,
+                        help="Focus on Small Caps (<5k) or Mid Caps (5k-20k).",
+                    )
+                    min_mkt_cap, max_mkt_cap = mkt_cap_range
 
         st.divider()
 
@@ -87,6 +114,14 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                 show_rsi=st.checkbox("RSI Panel", value=True),
                 show_macd=st.checkbox("MACD Panel", value=True),
                 show_vwap=st.checkbox("VWAP", value=False),
+            )
+
+        st.divider()
+        with st.expander("🚀 Performance Settings", expanded=False):
+            include_news = st.toggle(
+                "Deep News Sentiment", 
+                value=False, 
+                help="Enable NLP-based sector news analysis. Slows down scan by ~5-10s."
             )
 
         st.divider()
@@ -125,5 +160,6 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         scanner_type=scanner_type,
         timeframe=timeframe,
         use_cache=use_cache,
+        include_news=include_news,
     )
     return settings, chart_options

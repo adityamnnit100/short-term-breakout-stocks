@@ -3,6 +3,7 @@
 import datetime
 import io
 import logging
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -21,15 +22,24 @@ HEADERS = {
 
 def _fetch_nse_csv(url: str) -> pd.DataFrame:
     """Robustly fetch CSV from NSE using a session handshake to bypass bot protection."""
-    session = requests.Session()
-    # Visit home page first to get cookies
-    session.get("https://www.nseindia.com", headers=HEADERS, timeout=10)
-    res = session.get(url, headers=HEADERS, timeout=15)
-    res.raise_for_status()
-    if "text/csv" not in res.headers.get("Content-Type", "").lower() and "octet-stream" not in res.headers.get("Content-Type", "").lower():
-        if "<html>" in res.text.lower():
-            raise ValueError("NSE blocked the request (Splash Page detected)")
-    return pd.read_csv(io.StringIO(res.text))
+    for attempt in range(3):
+        try:
+            session = requests.Session()
+            # Visit home page first to get cookies
+            session.get("https://www.nseindia.com", headers=HEADERS, timeout=10)
+            res = session.get(url, headers=HEADERS, timeout=15)
+            res.raise_for_status()
+            if "text/csv" not in res.headers.get("Content-Type", "").lower() and "octet-stream" not in res.headers.get("Content-Type", "").lower():
+                if "<html>" in res.text.lower():
+                    raise ValueError("NSE blocked the request (Splash Page detected)")
+            return pd.read_csv(io.StringIO(res.text))
+        except Exception as e:
+            if attempt < 2:
+                time.sleep(2 ** attempt)  # Exponential backoff
+            else:
+                logger = configure_logging()
+                logger.error(f"Failed to fetch NSE CSV after 3 attempts: {e}")
+                raise
 
 
 def configure_logging() -> logging.Logger:
@@ -50,7 +60,9 @@ def load_ticker_history(ticker: str, period: str = "1y", interval: str = "1d") -
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
         return df.dropna(subset=["Open", "High", "Low", "Close"]) if not df.empty else pd.DataFrame()
-    except Exception:
+    except Exception as e:
+        logger = configure_logging()
+        logger.error(f"Failed to load ticker history for {ticker}: {e}")
         return pd.DataFrame()
 
 
@@ -61,7 +73,9 @@ def load_nifty_history(period: str = "6mo") -> pd.DataFrame:
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
         return df.dropna(subset=["Close"]) if not df.empty else pd.DataFrame()
-    except Exception:
+    except Exception as e:
+        logger = configure_logging()
+        logger.error(f"Failed to load Nifty history: {e}")
         return pd.DataFrame()
 
 

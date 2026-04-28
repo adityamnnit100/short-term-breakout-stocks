@@ -25,32 +25,34 @@ def show_full_chart(fig) -> None:
 
 
 def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
+    if results is None or results.empty:
+        return results
+
     with st.expander("Refine Visible Results", expanded=False):
         st.caption("These controls only narrow the current scan output. They do not rerun the scanner.")
         fcol1, fcol2, fcol3, fcol4, fcol5, fcol6 = st.columns(6)
         min_strength = fcol1.slider("Min Strength", 0, 10, 1)
-        min_rsi = fcol2.slider("Min RSI", 0, 100, 50)
-        min_vol = fcol3.slider("Min Volume ×", 1.0, 5.0, 1.0)
-        min_base = fcol4.slider("Min Base (Weeks)", 0, 20, 0)
-        max_stop = fcol5.slider("Max Stop %", 1.0, 15.0, 8.0, 0.5)
+        min_rsi = fcol2.slider("Min RSI", 0, 100, 50) if "RSI" in results.columns else None
+        min_vol = fcol3.slider("Min Volume ×", 1.0, 5.0, 1.0) if "Vol_x" in results.columns else None
+        min_base = fcol4.slider("Min Base (Weeks)", 0, 20, 0) if "Base_Weeks" in results.columns else None
+        max_stop = fcol5.slider("Max Stop %", 1.0, 15.0, 8.0, 0.5) if "Stop_%" in results.columns else None
         risk_choices = fcol6.multiselect(
             "Risk Grade",
             ["A", "B", "C", "Reduce/Skip"],
             default=["A", "B", "C"],
-        )
+        ) if "Risk_Grade" in results.columns else None
 
-    if results is None or results.empty:
-        return results
+    mask = results["Signal_Strength"] >= min_strength
 
-    mask = (results["Signal_Strength"] >= min_strength) & \
-           (results["RSI"] >= min_rsi) & \
-           (results["Vol_x"] >= min_vol)
-
-    if "Base_Weeks" in results.columns:
+    if min_rsi is not None:
+        mask &= (results["RSI"] >= min_rsi)
+    if min_vol is not None:
+        mask &= (results["Vol_x"] >= min_vol)
+    if min_base is not None:
         mask &= (results["Base_Weeks"] >= min_base)
-    if "Stop_%" in results.columns:
+    if max_stop is not None:
         mask &= (results["Stop_%"] <= max_stop)
-    if "Risk_Grade" in results.columns and risk_choices:
+    if risk_choices:
         mask &= results["Risk_Grade"].isin(risk_choices)
 
     return results[mask]
@@ -181,7 +183,7 @@ def _render_filter_breakdown(stats: Optional[dict]) -> None:
     if not stats or stats.get("scanned", 0) <= 0:
         return
     with st.expander("📉 Filter Breakdown", expanded=False):
-        columns = st.columns(8)
+        columns = st.columns(9)
         for column, (label, key) in zip(
             columns,
             [
@@ -193,6 +195,7 @@ def _render_filter_breakdown(stats: Optional[dict]) -> None:
                 ("MACD", "macd_fail"),
                 ("B.Bands", "bb_fail"),
                 ("Fakeouts", "fakeout_trap"),
+                ("Errors", "error_fail"),
             ],
         ):
             column.metric(f"❌ {label}", stats.get(key, 0))
@@ -455,6 +458,12 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
         "Sector",
         "Sector_Score",
         "Mkt_Cap_Cr",
+        "FII_Chg_%",
+        "FII_Hold_%",
+        "ROCE",
+        "Profit_Growth_%",
+        "Sales_Growth_%",
+        "PE",
         "Pattern",
         "RS_Rating",
         "Vol_x",
@@ -476,6 +485,11 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
             "Stop_%": "Stop%",
             "Risk_Grade": "Risk",
             "Market_Health": "Breadth",
+            "Mkt_Cap_Cr": "MktCap",
+            "FII_Chg_%": "FII+",
+            "FII_Hold_%": "FII%",
+            "Profit_Growth_%": "Profit%",
+            "Sales_Growth_%": "Sales%",
             "Vol_Spike": "Spike",
             "Type": "Level",
             "RS_Rating": "RS",
@@ -488,12 +502,12 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
 
     def highlight_high_sector(s):
         """Highlight rows where the Sector Score is 8.0 or higher."""
-        is_high = s["Sect.Score"] >= 8.0
+        is_high = "Sect.Score" in s.index and s["Sect.Score"] >= 8.0
         return ['background-color: rgba(0, 255, 170, 0.15)' if is_high else '' for _ in s]
 
     def highlight_long_term_bottom(s):
         """Highlight rows where the Pattern contains 'Base-20W' in gold."""
-        is_base_20 = "Base-20W" in str(s["Pattern"])
+        is_base_20 = "Pattern" in s.index and "Base-20W" in str(s["Pattern"])
         return ['background-color: rgba(255, 215, 0, 0.25)' if is_base_20 else '' for _ in s]
 
     def highlight_setup_type(s):
@@ -585,6 +599,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                     scanner_type=settings.scanner_type,
                     timeframe=settings.timeframe,
                     sector_map=sector_map,
+                    include_news_sentiment=settings.include_news,
                     progress_callback=_progress,
                 )
         finally:

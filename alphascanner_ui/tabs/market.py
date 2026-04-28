@@ -17,7 +17,7 @@ def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history
         for index, (name, data) in enumerate(index_data.items()):
             column = columns[index % 4]
             change = data["change"]
-            column.metric(name, f"{data['price']:,.2f}", f"{change:+.2f}%", delta_color="normal" if change >= 0 else "inverse")
+            column.metric(name, f"{data['price']:,.2f}", f"{change:+.2f}%")
 
     st.divider()
     st.markdown('<div class="panel-title" style="color: #ffca28; border-left-color: #ffca28;">Institutional Flow (FII/DII)</div>', unsafe_allow_html=True)

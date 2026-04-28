@@ -7,7 +7,7 @@ Fixes in this revision
   - calculate_stochastic_rsi: explicit div/0 guard via .replace(0, np.nan)
   - detect_divergence: removed rolling argmin (FutureWarning in pandas >= 2.0)
   - run_scanner / run_backtest: robust multi-index column handling for yfinance >= 0.2
-  - calculate_vwap: window=20 so value is non-NaN for 1-year history
+  - calculate_vwap: window=50 so value is non-NaN for 1-year history
   - get_nifty_500: case-insensitive symbol column detection
   - All error-return branches use consistent dict shape (_EMPTY_STATS)
 """
@@ -50,6 +50,7 @@ _EMPTY_STATS: dict = {
     "breakout_fail": 0, "momentum_fail": 0, "adx_fail": 0,
     "macd_fail": 0, "bb_fail": 0, "rs_fail": 0, "fakeout_trap": 0,
     "liquidity_fail": 0,
+    "error_fail": 0,
     "trending_sectors": [], "sector_sentiment": {},
     "market_breadth_50": 0.0, "scanner_type": None,
     "timeframe": "1d",
@@ -245,7 +246,7 @@ def get_last_market_close_utc() -> datetime:
 
     return close_ist - timedelta(hours=5, minutes=30)
 
-def calculate_vwap(high, low, close, volume, window: int = 20):
+def calculate_vwap(high, low, close, volume, window: int = 50):
     tp = (high + low + close) / 3
     vol_sum = volume.rolling(window=window).sum().replace(0, np.nan)
     return (tp * volume).rolling(window=window).sum() / vol_sum
@@ -277,28 +278,43 @@ def calculate_rsi(close, period: int = 14):
 
 
 def calculate_atr(high, low, close, period: int = 14):
-    tr = pd.concat([
-        high - low,
-        (high - close.shift(1)).abs(),
-        (low  - close.shift(1)).abs(),
-    ], axis=1).max(axis=1)
+    tr = _calculate_true_range(high, low, close)
     return tr.rolling(period).mean()
 
 
 def calculate_adx(high, low, close, period: int = 14):
-    tr = pd.concat([
-        high - low,
-        (high - close.shift(1)).abs(),
-        (low  - close.shift(1)).abs(),
-    ], axis=1).max(axis=1)
+    tr = _calculate_true_range(high, low, close)
     tr_smooth = tr.rolling(period).mean().replace(0, np.nan)
     plus_dm  = high.diff().clip(lower=0)
     minus_dm = low.diff().clip(upper=0).abs()
-    plus_di  = 100 * plus_dm.rolling(period).mean()  / tr_smooth
-    minus_di = 100 * minus_dm.rolling(period).mean() / tr_smooth
+    plus_di  = 100 * plus_dm.rolling(period).mean().div(tr_smooth)
+    minus_di = 100 * minus_dm.rolling(period).mean().div(tr_smooth)
     denom = (plus_di + minus_di).replace(0, np.nan)
     dx = (plus_di - minus_di).abs() / denom * 100
     return dx.rolling(period).mean()
+
+
+def _calculate_true_range(high, low, close):
+    """Return true range for either one ticker Series or multi-ticker DataFrames."""
+    high_low = high - low
+    high_prev_close = (high - close.shift(1)).abs()
+    low_prev_close = (low - close.shift(1)).abs()
+
+    if isinstance(high_low, pd.DataFrame):
+        return pd.DataFrame(
+            np.maximum.reduce([
+                high_low.to_numpy(),
+                high_prev_close.to_numpy(),
+                low_prev_close.to_numpy(),
+            ]),
+            index=high_low.index,
+            columns=high_low.columns,
+        )
+
+    return pd.concat(
+        [high_low, high_prev_close, low_prev_close],
+        axis=1,
+    ).max(axis=1)
 
 
 def calculate_rvol(volume: pd.Series, window: int = 5) -> float:
@@ -319,33 +335,42 @@ def detect_breakaway_gap(df: pd.DataFrame, threshold_pct: float = 0.5) -> bool:
     return bool(gap >= threshold_pct)
 
 
-def calculate_relative_strength(stock_close, index_close):
-    """Calculates Relative Strength Rating vs Benchmark (0-100 scale logic)."""
-    # Require at least 3 months (63 days) of data for a meaningful RS calculation
-    if len(stock_close) < 63 or len(index_close) < 63:
+def calculate_relative_strength(stock_close: pd.Series, index_close: pd.Series) -> float:
+    """Calculates Relative Strength Rating handling leading NaNs for new listings."""
+    # Drop NaNs to find the actual history available for this specific ticker
+    s_clean = stock_close.dropna()
+    if len(s_clean) < 21:  # Minimum 1 month for any RS context
         return 0.0
+    
+    # Aligned index close
+    i_clean = index_close.loc[s_clean.index]
 
-    # Weighted Performance calculation based on available history
-    def get_perf(series):
+    def get_perf_weighted(series: pd.Series) -> float:
         l = len(series)
-        def calc_p(idx):
+        # Windows: 3mo, 6mo, 9mo, 1yr
+        windows = [-63, -126, -189, -252]
+        weights = [0.4, 0.2, 0.2, 0.2]
+        
+        perf_sum = 0.0
+        weight_sum = 0.0
+        last_val = series.iloc[-1]
+        
+        for idx, w in zip(windows, weights):
             if l >= abs(idx):
                 denom = series.iloc[idx]
-                return series.iloc[-1] / denom if denom != 0 else 1.0
-            return None
-
-        p1 = calc_p(-63) or 1.0
-        p2 = calc_p(-126) or p1
-        p3 = calc_p(-189) or p2
-        p4 = calc_p(-252) or p3
-        return (p1 * 0.4) + (p2 * 0.2) + (p3 * 0.2) + (p4 * 0.2)
+                if pd.notna(denom) and denom > 0:
+                    perf_sum += (last_val / denom) * w
+                    weight_sum += w
+        
+        return perf_sum / weight_sum if weight_sum > 0 else 1.0
 
     try:
-        s_perf = get_perf(stock_close)
-        i_perf = get_perf(index_close)
-        rs_ratio = (s_perf / i_perf) * 100
-    except Exception: return 0.0
-    return round(rs_ratio, 1)
+        s_perf = get_perf_weighted(s_clean)
+        i_perf = get_perf_weighted(i_clean)
+        rs_rating = (s_perf / max(i_perf, 0.001)) * 100
+        return round(float(rs_rating), 1)
+    except Exception:
+        return 0.0
 
 
 def calculate_stochastic_rsi(rsi, window: int = 14, smooth_k: int = 3, smooth_d: int = 3):
@@ -619,22 +644,24 @@ def _scanner_quality_profile(scanner_type: str, universe: str) -> dict:
     is_total_market = universe == "Total Market (Cap Focused)"
     is_pre_breakout = scanner_type == "Pre-Breakout"
     is_pullback = scanner_type == "Pullback"
+    is_long_term = scanner_type == "Long-Term"
 
     return {
         "rs_floor": (
-            45 if is_total_market and is_pre_breakout else  # RELAXED
+            40 if is_total_market and is_pre_breakout else  # RELAXED
             50 if is_pullback else                          # Moderate for pullbacks
-            50 if is_total_market else                      # RELAXED
-            50 if is_pre_breakout else                      # RELAXED
-            55                                               # RELAXED
+            45 if is_total_market else                      # RELAXED
+            45 if is_pre_breakout else                      # RELAXED
+            40 if is_long_term else                         # RELAXED for long-term
+            50                                               # RELAXED
         ),
-        "adx_min": 20 if is_pullback else (10 if is_pre_breakout else 16),
-        "breakout_buffer_pct": 0.3 if is_total_market else 0.2,  # REALISTIC: Recent breakouts
+        "adx_min": 20 if is_pullback else (10 if is_pre_breakout else (12 if is_long_term else 16)),
+        "breakout_buffer_pct": 0.15 if is_total_market else 0.1,  # Catch triggers earlier
         "breakout_upper_buffer_pct": 0.50,
         "pre_breakout_upper_buffer_pct": 0.20,  # For consolidating near high
         "min_avg_volume": 75_000 if is_total_market else 50_000,
         "min_price": 20 if is_total_market else 10,
-        "max_daily_extension_pct": 7.0 if is_total_market else 8.0,
+        "max_daily_extension_pct": 10.0 if is_long_term else (7.0 if is_total_market else 8.0),
         "min_close_position": 0.55 if is_pre_breakout else 0.65,
         "accumulation_signal_count_min": 2,
     }
@@ -669,8 +696,17 @@ def _risk_grade(stop_pct: float, risk_reward: float, strength: float, volume_rat
 def _extract_ticker(data, ticker):
     """Safe multi-index extraction for yfinance >= 0.2."""
     if isinstance(data.columns, pd.MultiIndex):
-        return data.xs(ticker, axis=1, level=1).dropna(how="all")
-    return data.copy()
+        df = data.xs(ticker, axis=1, level=1).copy()
+    else:
+        df = data.copy()
+
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(0)
+
+    # Failed/retried chunk downloads can leave duplicate OHLCV columns. Keep the
+    # first complete copy so each ticker field is always a Series, not a DataFrame.
+    df = df.loc[:, ~df.columns.duplicated()].dropna(how="all")
+    return df
 
 
 # =========================
@@ -767,7 +803,8 @@ def _process_single_ticker(
     market_context: dict,
     stats: dict,
     stats_lock: Lock,
-    metadata_cache: dict = None
+    metadata_cache: dict = None,
+    indicators: dict = None
 ) -> Optional[dict]:
     """Internal worker to process a single ticker's logic."""
     try:
@@ -785,26 +822,25 @@ def _process_single_ticker(
         low = df["Low"]
         vol = df["Volume"]
 
-        # Align RS safely
-        close_aligned, nifty_aligned = close.align(nifty_close, join="inner")
-        if close_aligned.empty or nifty_aligned.empty:
-            return None
-
-        # Indicators
-        sma_200 = close.rolling(200).mean().iloc[-1]
-        sma_50 = close.rolling(50).mean().iloc[-1]
-        ema_20 = close.ewm(span=20, adjust=False).mean().iloc[-1]
-
-        avg_vol = vol.rolling(30).mean().iloc[-2]
-        rsi_series = calculate_rsi(close)
+        # Relative Strength (Benchmark alignment now handled globally in run_scanner)
+        rs_rating = calculate_relative_strength(close, nifty_close)
+        # Use Global Vectorized Indicators passed from run_scanner (much faster)
+        sma_200 = indicators['sma_200'][ticker].iloc[-1]
+        sma_50 = indicators['sma_50'][ticker].iloc[-1]
+        ema_20 = indicators['ema_20'][ticker].iloc[-1]
+        avg_vol = indicators['avg_vol'][ticker].iloc[-1]
+        rsi_series = indicators['rsi'][ticker]
         rsi = rsi_series.iloc[-1]
-        adx_series = calculate_adx(high, low, close)
+        adx_series = indicators['adx'][ticker]
         adx = adx_series.iloc[-1]
         adx_prev = adx_series.iloc[-2]
-        macd, macd_sig, macd_hist = calculate_macd(close)
-        upper_bb, mid_bb, lower_bb = calculate_bollinger_bands(close)
-        vwap = calculate_vwap(high, low, close, vol).iloc[-1]
-        
+        vwap = indicators['vwap'][ticker].iloc[-1]
+        atr_val = indicators['atr'][ticker].iloc[-1]
+
+        # MACD and Bollinger Bands series for specific ticker logic
+        macd, macd_sig, macd_hist = indicators['macd'][ticker], indicators['macd_sig'][ticker], indicators['macd_hist'][ticker]
+        upper_bb, mid_bb, lower_bb = indicators['bb_upper'][ticker], indicators['bb_mid'][ticker], indicators['bb_lower'][ticker]
+
         # Short-term Professional Features
         rvol = calculate_rvol(vol) if not vol.empty else 1.0
         is_breakaway = detect_breakaway_gap(df) if len(df) >= 2 else False
@@ -823,13 +859,14 @@ def _process_single_ticker(
         
         # Extension Check: Distance from EMA20
         dist_from_ema = (ltp - ema_20) / max(ema_20, 1e-9) * 100
-        is_stretched = dist_from_ema > 5.0  # Avoid entry if > 5% away from 20-EMA
+        is_stretched = dist_from_ema > 12.0  # Increased threshold to 12% for high-momentum moves
 
-        # Hard reject stretched breakouts for short-term entries.
-        if is_stretched:
+        # Hard reject extremely stretched breakouts to prevent chasing top
+        if dist_from_ema > 15.0:
             return None
 
         quality_profile = _scanner_quality_profile(scanner_type, universe)
+        is_long_term_scan = scanner_type == "Long-Term"
 
         if not _is_finite(ltp, avg_vol, sma_200, sma_50, ema_20, rsi, adx, adx_prev, vwap):
             return None
@@ -909,6 +946,12 @@ def _process_single_ticker(
                 (trend_stack_ok and (ltp > ema_20 * 0.985))
                 or (ema_20 > sma_50 and ltp > ema_20 * 0.98)
             )
+        elif is_long_term_scan:
+            trend_ok = (
+                (ltp > sma_200 * 0.98)
+                and (sma_50 >= sma_200 * 0.95)
+                and (ema_20 >= sma_50 * 0.95)
+            ) or is_minervini_leader
         else:  # Pullback
             trend_ok = trend_stack_ok and (ltp > ema_20 * 0.99)
 
@@ -921,10 +964,7 @@ def _process_single_ticker(
             with stats_lock: stats["momentum_fail"] += 1
             return None
 
-        # RS filter
-        rs_rating = calculate_relative_strength(close_aligned, nifty_aligned)
         rs_floor = quality_profile["rs_floor"]
-
         if rs_rating < rs_floor and not (rs_rating == 0 and rsi > 70):
             with stats_lock: stats["rs_fail"] += 1
             return None
@@ -969,6 +1009,12 @@ def _process_single_ticker(
             was_stretched = (df["Close"].iloc[-5:-1].max() > ema_20 * 1.03)
             is_pullback_to_ema = is_near_ema20 and was_stretched
             actual_breakout_condition_met = is_pullback_to_ema
+        elif is_long_term_scan:
+            actual_breakout_condition_met = (
+                (ltp > sma_200)
+                and (rsi >= 40)
+                and (ma_slope_bull or adx > adx_min or is_minervini_leader)
+            )
         else: # Pre-Breakout (default)
             # Pre-breakout is a tight, constructive base near resistance, not a late chase after expansion.
             is_consolidating_near_20d = near_20d and not broke_20d
@@ -1026,8 +1072,7 @@ def _process_single_ticker(
             with stats_lock: stats["bb_fail"] += 1
 
         bull_div, bear_div = detect_divergence(close, rsi_series)
-        # Calculate risk management levels for short-term trading
-        atr = calculate_atr(high, low, close).iloc[-1]
+        atr = float(atr_val)
         atr = float(atr) if not pd.isna(atr) and atr > 0 else ltp * 0.015
 
         # Support levels for risk management
@@ -1070,7 +1115,9 @@ def _process_single_ticker(
         if apply_market_cap_filter and max_mkt_cap_cr > 0 and mkt_cap_cr > max_mkt_cap_cr:
              return None
 
-        # Market cap sanity check (avoid micro-cap garbage)
+        # Market cap sanity check: skip if fetch failed and filter is applied
+        if mkt_cap_cr == 0 and apply_market_cap_filter:
+            return None
         if mkt_cap_cr > 0 and mkt_cap_cr < 10:  # <10Cr stocks are too illiquid
              return None
 
@@ -1134,7 +1181,12 @@ def _process_single_ticker(
         # FINAL TRIGGER: Simple and clean (no redundancy)
         if scanner_type == "Breakout":
             # Breakout requires: actual break + volume confirmation
-            if not (is_breaking_out and (vol_ratio >= min_vol_ratio)):
+            # Improvement: Allow "Fakeouts" to pass through so the UI can label them "AVOID"
+            # but strictly filter out non-breakouts.
+            if not is_breaking_out:
+                with stats_lock: stats["breakout_fail"] += 1
+                return None
+            if vol_ratio < min_vol_ratio * 0.5: # Extreme low volume rejection
                 with stats_lock: stats["breakout_fail"] += 1
                 return None
 
@@ -1206,6 +1258,8 @@ def _process_single_ticker(
             ),
         }
     except Exception as e:
+        with stats_lock:
+            stats["error_fail"] = stats.get("error_fail", 0) + 1
         logging.getLogger("AlphaScanner.Engine").error(f"Error in {ticker}: {str(e)}")
         return None
 
@@ -1260,27 +1314,34 @@ def run_scanner(
     prefetch_metadata(tickers)
     if progress_callback: progress_callback(0.10)
 
-    # 2. Download ticker data in chunks of 50 to improve stability for large universes (Total Market)
+    # 2. Chunked ticker download. Keep this serial because yfinance mutates shared
+    # state internally and concurrent chunk downloads can corrupt/duplicate columns.
     download_weight = 0.4
     chunk_size = 100
     data_frames = []
-    num_chunks = (len(tickers) + chunk_size - 1) // chunk_size
+    chunk_indices = list(range(0, len(tickers), chunk_size))
+    num_chunks = len(chunk_indices)
+    chunk_period = "2y" if timeframe == "1d" else "60d"
 
-    for i, start_idx in enumerate(range(0, len(tickers), chunk_size)):
+    for i, start_idx in enumerate(chunk_indices):
         chunk = tickers[start_idx : start_idx + chunk_size]
         try:
-            # RS rating and breakout checks need enough history; choose daily 2y or intraday 60d.
-            chunk_period = "2y" if timeframe == "1d" else "60d"
-            chunk_data = yf.download(chunk, period=chunk_period, interval=timeframe, progress=False, timeout=45, auto_adjust=False)
-            if not chunk_data.empty:
+            chunk_data = yf.download(
+                chunk,
+                period=chunk_period,
+                interval=timeframe,
+                progress=False,
+                timeout=45,
+                auto_adjust=False,
+                threads=False,
+            )
+            if chunk_data is not None and not chunk_data.empty:
                 data_frames.append(chunk_data)
-
-            if progress_callback:
-                progress_callback(0.10 + ((i + 1) / num_chunks * download_weight))
         except Exception as exc:
-            logging.getLogger("AlphaScanner.Engine").warning(f"Chunk starting with {chunk[0]} failed: {exc}")
-            if progress_callback:
-                progress_callback((i + 1) / num_chunks * download_weight)
+            first = chunk[0] if chunk else start_idx
+            logging.getLogger("AlphaScanner.Engine").warning(f"Chunk starting with {first} failed: {exc}")
+        if progress_callback:
+            progress_callback(0.10 + ((i + 1) / max(num_chunks, 1) * download_weight))
 
     if not data_frames:
         logging.getLogger("AlphaScanner.Engine").error("No ticker data could be downloaded.")
@@ -1288,12 +1349,43 @@ def run_scanner(
 
     try:
         data = pd.concat(data_frames, axis=1, sort=True)
+        if isinstance(data.columns, pd.MultiIndex):
+            data = data.loc[:, ~data.columns.duplicated()]
     except Exception as exc:
         logging.getLogger("AlphaScanner.Engine").error(f"Data concatenation failed: {exc}")
         return pd.DataFrame(), stats
 
     if data.empty:
         return pd.DataFrame(), stats
+
+    # 2.5 Global Vectorized Technicals: Pre-calculate everything at once
+    try:
+        data, nifty_close = data.align(nifty_close, axis=0, join="inner")
+        if isinstance(data.columns, pd.MultiIndex):
+            data = data.sort_index(axis=1)
+        
+        all_c, all_h, all_l, all_v = data['Close'], data['High'], data['Low'], data['Volume']
+
+        # Pre-calculate complex signals for all tickers to avoid loop overhead
+        macd_line, macd_sig, macd_hist = calculate_macd(all_c)
+        bb_upper, bb_mid, bb_lower = calculate_bollinger_bands(all_c)
+
+        global_inds = {
+            'sma_200': all_c.rolling(200).mean(),
+            'sma_50': all_c.rolling(50).mean(),
+            'ema_20': all_c.ewm(span=20, adjust=False).mean(),
+            'avg_vol': all_v.rolling(30).mean().shift(1),
+            'rsi': calculate_rsi(all_c),
+            'adx': calculate_adx(all_h, all_l, all_c),
+            'vwap': calculate_vwap(all_h, all_l, all_c, all_v),
+            'atr': calculate_atr(all_h, all_l, all_c),
+            'macd': macd_line, 'macd_sig': macd_sig, 'macd_hist': macd_hist,
+            'bb_upper': bb_upper, 'bb_mid': bb_mid, 'bb_lower': bb_lower
+        }
+    except Exception as e:
+        logging.getLogger("AlphaScanner.Engine").error(f"Vectorization failed: {e}")
+        return pd.DataFrame(), stats
+
 
     # 2.5 Market Breadth Calculation (Pro Feature)
     # Successful traders only trade breakouts when Breadth > 50%
@@ -1355,7 +1447,7 @@ def run_scanner(
                 set_system_cache(cache_key, str(score))
                 return s, score
 
-            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as sect_exec:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=20) as sect_exec:
                 news_scores = dict(sect_exec.map(_get_sect_news_score, sector_perf.keys()))
 
             for s, rets in sector_perf.items():
@@ -1379,13 +1471,14 @@ def run_scanner(
     metadata_cache = get_all_metadata_cache(avail)
 
     # Use ThreadPoolExecutor for concurrent processing
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         future_to_ticker = {
             executor.submit(
                 _process_single_ticker,
                 ticker, data, nifty_close, vol_thresh, rsi_min, rsi_max, dist_thresh,
                 apply_market_cap_filter, min_mkt_cap_cr, max_mkt_cap_cr, scanner_type, universe, timeframe,
-                sector_map, trending_sectors, sector_sentiment_map, market_context, stats, stats_lock, metadata_cache
+                sector_map, trending_sectors, sector_sentiment_map, market_context, stats, stats_lock, metadata_cache,
+                global_inds
             ): ticker for ticker in avail
         }
 
@@ -1401,6 +1494,188 @@ def run_scanner(
     df_out = pd.DataFrame(hits).sort_values("Signal_Strength", ascending=False) if hits else pd.DataFrame()
 
     return df_out, stats
+
+
+FII_ACCUMULATION_SCREEN_URL = "https://www.screener.in/screens/1045489/fii-holding-increasing-quarter-on-quarter-basis/"
+
+
+def _clean_numeric(value, default: float = 0.0) -> float:
+    try:
+        text = str(value).replace(",", "").replace("%", "").strip()
+        if text in {"", "-", "nan", "None"}:
+            return default
+        return float(text)
+    except Exception:
+        return default
+
+
+def _extract_screener_symbol_links(html: str) -> List[str]:
+    try:
+        from bs4 import BeautifulSoup
+    except Exception:
+        return []
+
+    soup = BeautifulSoup(html, "html.parser")
+    symbols = []
+    for anchor in soup.find_all("a", href=True):
+        href = anchor["href"]
+        if not href.startswith("/company/"):
+            continue
+        parts = [part for part in href.split("/") if part]
+        if len(parts) >= 2 and parts[0] == "company":
+            symbol = parts[1].strip().upper()
+            if symbol and symbol not in symbols:
+                symbols.append(symbol)
+    return symbols
+
+
+def _fetch_fii_accumulation_page(page: int) -> pd.DataFrame:
+    url = FII_ACCUMULATION_SCREEN_URL if page == 1 else f"{FII_ACCUMULATION_SCREEN_URL}?page={page}"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/123 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    }
+    response = requests.get(url, headers=headers, timeout=20)
+    response.raise_for_status()
+
+    try:
+        from bs4 import BeautifulSoup
+    except Exception as exc:
+        raise RuntimeError("beautifulsoup4 is required for Screener.in parsing") from exc
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    selected_table = None
+    for table_node in soup.find_all("table"):
+        header_text = " ".join(cell.get_text(" ", strip=True) for cell in table_node.find_all("th"))
+        if "FII Hold" in header_text:
+            selected_table = table_node
+            break
+
+    if selected_table is None:
+        return pd.DataFrame()
+
+    headers = [cell.get_text(" ", strip=True) for cell in selected_table.find_all("th")]
+    first_data_row = next((tr for tr in selected_table.find_all("tr") if tr.find_all("td")), None)
+    if first_data_row is not None:
+        headers = headers[: len(first_data_row.find_all("td"))]
+    rows = []
+    symbols = []
+    for tr in selected_table.find_all("tr"):
+        cells = tr.find_all("td")
+        if not cells:
+            continue
+        values = [cell.get_text(" ", strip=True) for cell in cells]
+        if len(values) < len(headers):
+            values.extend([""] * (len(headers) - len(values)))
+        row = dict(zip(headers, values))
+        rows.append(row)
+
+        anchor = tr.find("a", href=True)
+        symbol = ""
+        if anchor and anchor["href"].startswith("/company/"):
+            parts = [part for part in anchor["href"].split("/") if part]
+            if len(parts) >= 2:
+                symbol = parts[1].strip().upper()
+        symbols.append(symbol)
+
+    table = pd.DataFrame(rows)
+    if table.empty:
+        return table
+
+    table = table.copy()
+    table["Screener_Symbol"] = symbols[: len(table)] + [""] * max(0, len(table) - len(symbols))
+    return table
+
+
+def run_fii_accumulation_scanner(
+    min_mkt_cap_cr: float = 1000.0,
+    min_fii_change_pct: float = 1.0,
+    max_pages: int = 3,
+):
+    """Scan stocks where FII holding has increased quarter-on-quarter, then rank quality."""
+    stats = _EMPTY_STATS.copy()
+    stats.update({
+        "scanner_type": "FII Accumulation",
+        "universe": "Screener.in FII QoQ",
+        "timeframe": "quarterly",
+        "source": FII_ACCUMULATION_SCREEN_URL,
+        "min_mkt_cap_cr": min_mkt_cap_cr,
+        "min_fii_change_pct": min_fii_change_pct,
+    })
+
+    frames = []
+    errors = []
+    for page in range(1, max_pages + 1):
+        try:
+            page_df = _fetch_fii_accumulation_page(page)
+            if page_df.empty:
+                break
+            frames.append(page_df)
+        except Exception as exc:
+            errors.append(f"page {page}: {exc}")
+            logging.getLogger("AlphaScanner.Engine").warning("FII accumulation page %s failed: %s", page, exc)
+            break
+
+    if not frames:
+        stats["errors"] = errors
+        return pd.DataFrame(), stats
+
+    raw = pd.concat(frames, ignore_index=True)
+    stats["universe_size"] = len(raw)
+
+    rows = []
+    for _, row in raw.iterrows():
+        mkt_cap = _clean_numeric(row.get("Mar Cap Rs.Cr.", row.get("Mar Cap Rs.Cr", 0)))
+        fii_change = _clean_numeric(row.get("Chg in FII Hold %", 0))
+        fii_hold = _clean_numeric(row.get("FII Hold %", 0))
+        if mkt_cap < min_mkt_cap_cr or fii_change < min_fii_change_pct:
+            continue
+
+        cmp_price = _clean_numeric(row.get("CMP Rs.", 0))
+        pe = _clean_numeric(row.get("P/E", 0))
+        roce = _clean_numeric(row.get("ROCE %", 0))
+        profit_growth = _clean_numeric(row.get("Qtr Profit Var %", 0))
+        sales_growth = _clean_numeric(row.get("Qtr Sales Var %", 0))
+        symbol = str(row.get("Screener_Symbol", "")).strip().upper()
+        ticker = f"{symbol}.NS" if symbol else str(row.get("Name", "")).strip()
+
+        score = 0.0
+        score += min(2.5, fii_change / 2.0)
+        score += min(2.0, fii_hold / 5.0)
+        score += 1.5 if mkt_cap >= 1000 else 0.0
+        score += 1.0 if roce >= 15 else 0.0
+        score += 1.0 if profit_growth > 0 else 0.0
+        score += 1.0 if sales_growth > 0 else 0.0
+        score += 1.0 if 0 < pe <= 40 else 0.3
+        strength = round(min(10.0, score), 1)
+
+        rows.append({
+            "Ticker": ticker,
+            "Name": str(row.get("Name", "")).strip(),
+            "Type": "FII Accumulation",
+            "Action": "FII QoQ Accumulation",
+            "LTP": round(cmp_price, 2),
+            "Mkt_Cap_Cr": round(mkt_cap, 1),
+            "PE": round(pe, 1),
+            "ROCE": round(roce, 1),
+            "FII_Chg_%": round(fii_change, 2),
+            "FII_Hold_%": round(fii_hold, 2),
+            "Profit_Growth_%": round(profit_growth, 1),
+            "Sales_Growth_%": round(sales_growth, 1),
+            "Signal_Strength": strength,
+            "Risk_Grade": "A" if strength >= 8 else ("B" if strength >= 6.5 else "C"),
+            "Market_Health": "Quarterly",
+            "Pattern": "FII holding increased QoQ for 4 quarters",
+            "Source": "Screener.in",
+        })
+
+    output = pd.DataFrame(rows)
+    stats["scanned"] = len(raw)
+    if output.empty:
+        return output, stats
+
+    output = output.sort_values(["Signal_Strength", "FII_Chg_%", "Mkt_Cap_Cr"], ascending=False).reset_index(drop=True)
+    return output, stats
 
 
 def run_daily_cache_update():

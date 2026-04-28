@@ -1,0 +1,268 @@
+2026-04-28 00:00:42,680 INFO Background metadata worker starting...
+2026-04-28 00:00:43,163 INFO Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-04-28 00:00:44,116 INFO Fetched 251 symbols for Nifty Microcap 250 from https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv
+2026-04-28 00:00:44,390 INFO Prefetching missing metadata for 751 tickers...
+2026-04-28 00:00:47,306 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,314 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,326 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,328 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,333 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,333 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,337 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,340 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,344 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,347 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,350 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,351 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,357 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,357 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,359 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,360 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-28 00:00:47,363 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-28 00:00:47,364 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:00:47,455 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:01:09,087 INFO Prefetching missing metadata for 446 tickers...
+2026-04-28 00:02:18,773 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-28 00:03:31,584 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-28 00:03:32,037 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-28 00:03:32,080 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:03:32,379 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-28 00:03:32,607 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:03:32,810 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-28 00:03:33,116 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-28 00:03:33,120 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-28 00:03:33,484 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-04-28 00:03:33,518 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-04-28 00:03:40,294 ERROR 
+85 Failed downloads:
+2026-04-28 00:03:40,294 ERROR ['INDIANB.NS', 'KEI.NS', 'HEXT.NS', 'IOB.NS', 'IFCI.NS', 'HONAUT.NS', 'IRCON.NS', 'HINDALCO.NS', 'IRCTC.NS', 'IOC.NS', 'INFY.NS', 'IKS.NS', 'LTM.NS', 'LTTS.NS', 'JKTYRE.NS', 'LTF.NS', 'HSCL.NS', 'HINDZINC.NS', 'HONASA.NS', 'IRB.NS', 'JMFINANCIL.NS', 'LAURUSLABS.NS', 'INDIACEM.NS', 'HUDCO.NS', 'IGIL.NS', 'IEX.NS', 'INDGN.NS', 'JBMA.NS', 'JSWENERGY.NS', 'IRFC.NS', 'JIOFIN.NS', 'JUBLPHARMA.NS', 'ICICIAMC.NS', 'INDUSTOWER.NS', 'KOTAKBANK.NS', 'ITI.NS', 'IDBI.NS', 'LICHSGFIN.NS', 'ITC.NS', 'KIMS.NS', 'JKCEMENT.NS', 'HAVELLS.NS', 'HINDCOPPER.NS', 'JSWINFRA.NS', 'KPRMILL.NS', 'HINDPETRO.NS', 'THELEELA.NS', 'JINDALSAW.NS', 'HEROMOTOCO.NS', 'LTFOODS.NS', 'JPPOWER.NS', 'JSWSTEEL.NS', 'HDFCBANK.NS', 'KPITTECH.NS', 'JWL.NS', 'KAJARIACER.NS', 'JINDALSTEL.NS', 'KFINTECH.NS', 'HDFCAMC.NS', 'NAUKRI.NS', 'HDFCLIFE.NS', 'LATENTVIEW.NS', 'IREDA.NS', 'LT.NS', 'JSWCEMENT.NS', 'INOXWIND.NS', 'INDIAMART.NS', 'ICICIGI.NS', 'POWERINDIA.NS', 'IGL.NS', 'J&KBANK.NS', 'IPCALAB.NS', 'INDIGO.NS', 'JUBLINGREA.NS', 'JBCHEPHARM.NS', 'JAINREC.NS', 'KARURVYSYA.NS', 'KPIL.NS', 'KEC.NS', 'HFCL.NS', 'JSWDULUX.NS', 'HYUNDAI.NS', 'KALYANKJIL.NS', 'INTELLECT.NS', 'JUBLFOOD.NS']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2026-04-28 00:03:41,700 INFO Background cache refresh complete for 751 symbols.
+2026-04-28 00:05:03,175 ERROR Failed to fetch NSE CSV after 3 attempts: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-28 00:05:03,175 WARNING Sector segment https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-28 00:05:06,587 ERROR Failed to fetch NSE CSV after 3 attempts: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-28 00:05:06,587 WARNING Sector segment https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-04-28 00:05:06,828 INFO Prefetching missing metadata for 247 tickers...
+2026-04-28 00:05:08,640 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-28 00:06:39,622 ERROR 
+1 Failed download:
+2026-04-28 00:06:39,622 ERROR ['DUMMYALCAR.NS']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2026-04-28 00:10:00,810 ERROR 
+1 Failed download:
+2026-04-28 00:10:00,811 ERROR ['^NSEI']: YFPricesMissingError('possibly delisted; no price data found  (period=60d) (Yahoo error = "Invalid input - interval=daily is not supported. Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 4h, 1d, 5d, 1wk, 1mo, 3mo]")')
+2026-04-28 00:10:00,838 INFO Prefetching missing metadata for 4 tickers...
+2026-04-28 00:10:10,124 ERROR 
+100 Failed downloads:
+2026-04-28 00:10:10,125 ERROR ['ACE.NS', 'BANKINDIA.NS', 'ACMESOLAR.NS', 'FIRSTCRY.NS', 'BOSCHLTD.NS', 'BALKRISIND.NS', 'AFCONS.NS', 'BIKAJI.NS', 'ASAHIINDIA.NS', 'BIOCON.NS', 'BAJFINANCE.NS', 'ADANIENT.NS', 'ATUL.NS', 'BAJAJFINSV.NS', 'ANANDRATHI.NS', 'ATGL.NS', '3MINDIA.NS', 'ABBOTINDIA.NS', 'BHARATFORG.NS', 'ADANIGREEN.NS', '360ONE.NS', 'AMBUJACEM.NS', 'BLUEDART.NS', 'AXISBANK.NS', 'AARTIIND.NS', 'BELRISE.NS', 'CGPOWER.NS', 'ASTRAL.NS', 'CESC.NS', 'ASTERDM.NS', 'ABSLAMC.NS', 'AADHARHFC.NS', 'BHARTIHEXA.NS', 'BHEL.NS', 'BAJAJHLDNG.NS', 'BSE.NS', 'BLS.NS', 'BHARTIARTL.NS', 'ARE&M.NS', 'AIAENG.NS', 'ASIANPAINT.NS', 'ABFRL.NS', 'GROWW.NS', 'BANDHANBNK.NS', 'BLUESTARCO.NS', 'APOLLOHOSP.NS', 'BAJAJ-AUTO.NS', 'MAHABANK.NS', 'ABREL.NS', 'AMBER.NS', 'APOLLOTYRE.NS', 'ACC.NS', 'APLAPOLLO.NS', 'AEGISVOPAK.NS', 'CRISIL.NS', 'BSOFT.NS', 'BEL.NS', 'ABCAPITAL.NS', 'ATHERENERG.NS', 'ANANTRAJ.NS', 'CCL.NS', 'BALRAMCHIN.NS', 'AUROPHARMA.NS', 'AUBANK.NS', 'BATAINDIA.NS', 'BLUEJET.NS', 'ADANIPORTS.NS', 'ADANIENSOL.NS', 'BPCL.NS', 'APARINDS.NS', 'AEGISLOG.NS', 'ANTHEM.NS', 'BRITANNIA.NS', 'CPPLUS.NS', 'AWL.NS', 'BERGEPAINT.NS', 'BRIGADE.NS', 'BAJAJHFL.NS', 'ABB.NS', 'BBTC.NS', 'APTUS.NS', 'MAPMYINDIA.NS', 'ALKEM.NS', 'AJANTPHARM.NS', 'AIIL.NS', 'ASHOKLEY.NS', 'AAVAS.NS', 'DMART.NS', 'ADANIPOWER.NS', 'BDL.NS', 'CANFINHOME.NS', 'ANGELONE.NS', 'BEML.NS', 'ACUTAAS.NS', 'BANKBARODA.NS', 'AFFLE.NS', 'BAYERCROP.NS', 'ANURAS.NS', 'ABLBL.NS', 'ABDL.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=60d) (Yahoo error = "Invalid input - interval=daily is not supported. Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 4h, 1d, 5d, 1wk, 1mo, 3mo]")')
+2026-04-28 00:10:17,938 ERROR 
+100 Failed downloads:
+2026-04-28 00:10:17,939 ERROR ['DOMS.NS', 'GRAPHITE.NS', 'HBLENGINE.NS', 'HEG.NS', 'DRREDDY.NS', 'GICRE.NS', 'LALPATHLAB.NS', 'CLEAN.NS', 'GESHIP.NS', 'HCLTECH.NS', 'GLAXO.NS', 'CHENNPETRO.NS', 'FORCEMOT.NS', 'COHANCE.NS', 'COROMANDEL.NS', 'CGCL.NS', 'DIVISLAB.NS', 'CEMPRO.NS', 'CASTROLIND.NS', 'CENTRALBK.NS', 'CUMMINSIND.NS', 'GRSE.NS', 'GVT&D.NS', 'FLUOROCHEM.NS', 'CHAMBLFERT.NS', 'DALBHARAT.NS', 'ELGIEQUIP.NS', 'ELECON.NS', 'EIDPARRY.NS', 'MEDANTA.NS', 'CANHLIFE.NS', 'CIPLA.NS', 'GMRAIRPORT.NS', 'CONCORDBIO.NS', 'ESCORTS.NS', 'DEEPAKNTR.NS', 'ENGINERSIN.NS', 'DELHIVERY.NS', 'COFORGE.NS', 'GODREJIND.NS', 'EMCURE.NS', 'NYKAA.NS', 'FEDERALBNK.NS', 'FINCABLES.NS', 'CEATLTD.NS', 'EMAMILTD.NS', 'ERIS.NS', 'GLAND.NS', 'ETERNAL.NS', 'CHALET.NS', 'GPIL.NS', 'GABRIEL.NS', 'GRAVITA.NS', 'EXIDEIND.NS', 'CHOLAFIN.NS', 'CUB.NS', 'FORTIS.NS', 'CARBORUNIV.NS', 'HDBFS.NS', 'EICHERMOT.NS', 'GLENMARK.NS', 'DEEPAKFERT.NS', 'DIXON.NS', 'CROMPTON.NS', 'GRANULES.NS', 'CHOLAHLDNG.NS', 'GILLETTE.NS', 'GODFRYPHLP.NS', 'CANBK.NS', 'CARTRADE.NS', 'CYIENT.NS', 'CONCOR.NS', 'CHOICEIN.NS', 'CDSL.NS', 'COLPAL.NS', 'FSL.NS', 'GODREJCP.NS', 'DABUR.NS', 'GSPL.NS', 'ENDURANCE.NS', 'FACT.NS', 'DEVYANI.NS', 'GALLANTT.NS', 'DLF.NS', 'COCHINSHIP.NS', 'EIHOTEL.NS', 'CREDITACC.NS', 'CRAFTSMAN.NS', 'GRASIM.NS', 'COALINDIA.NS', 'CAMS.NS', 'GODIGIT.NS', 'GAIL.NS', 'GMDCLTD.NS', 'CAPLIPOINT.NS', 'GODREJPROP.NS', 'FIVESTAR.NS', 'EMMVEE.NS', 'DCMSHRIRAM.NS', 'DATAPATTNS.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=60d) (Yahoo error = "Invalid input - interval=daily is not supported. Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 4h, 1d, 5d, 1wk, 1mo, 3mo]")')
+2026-04-28 00:10:25,614 ERROR 
+100 Failed downloads:
+2026-04-28 00:10:25,614 ERROR ['ICICIBANK.NS', 'HAL.NS', 'KAYNES.NS', 'HOMEFIRST.NS', 'HINDUNILVR.NS', 'JYOTICNC.NS', 'IDFCFIRSTB.NS', 'ITCHOTELS.NS', 'INDIANB.NS', 'IOB.NS', 'HONAUT.NS', 'IRCON.NS', 'IFCI.NS', 'HINDALCO.NS', 'HEXT.NS', 'KALYANKJIL.NS', 'LTM.NS', 'LTF.NS', 'LTTS.NS', 'IKS.NS', 'INFY.NS', 'JKTYRE.NS', 'IOC.NS', 'IRCTC.NS', 'JMFINANCIL.NS', 'IRB.NS', 'HSCL.NS', 'HUDCO.NS', 'INDIACEM.NS', 'HONASA.NS', 'LAURUSLABS.NS', 'HINDZINC.NS', 'INDGN.NS', 'ICICIAMC.NS', 'IEX.NS', 'JIOFIN.NS', 'IRFC.NS', 'JBMA.NS', 'IGIL.NS', 'JSWENERGY.NS', 'JUBLPHARMA.NS', 'IDBI.NS', 'KIMS.NS', 'JKCEMENT.NS', 'ITI.NS', 'INDUSTOWER.NS', 'KOTAKBANK.NS', 'JSWINFRA.NS', 'HAVELLS.NS', 'HINDPETRO.NS', 'LICHSGFIN.NS', 'THELEELA.NS', 'KPRMILL.NS', 'HEROMOTOCO.NS', 'HINDCOPPER.NS', 'ITC.NS', 'LGEINDIA.NS', 'ICICIPRULI.NS', 'INDHOTEL.NS', 'INDUSINDBK.NS', 'JPPOWER.NS', 'LTFOODS.NS', 'JSL.NS', 'JINDALSAW.NS', 'JWL.NS', 'KIRLOSENG.NS', 'KPITTECH.NS', 'KAJARIACER.NS', 'KFINTECH.NS', 'IIFL.NS', 'HDFCBANK.NS', 'JSWSTEEL.NS', 'HDFCLIFE.NS', 'LATENTVIEW.NS', 'JSWCEMENT.NS', 'JINDALSTEL.NS', 'HDFCAMC.NS', 'IREDA.NS', 'NAUKRI.NS', 'INOXWIND.NS', 'LT.NS', 'INDIGO.NS', 'POWERINDIA.NS', 'INDIAMART.NS', 'J&KBANK.NS', 'IGL.NS', 'IPCALAB.NS', 'ICICIGI.NS', 'HFCL.NS', 'HYUNDAI.NS', 'JUBLINGREA.NS', 'KARURVYSYA.NS', 'JBCHEPHARM.NS', 'JAINREC.NS', 'KEI.NS', 'KPIL.NS', 'KEC.NS', 'INTELLECT.NS', 'JUBLFOOD.NS', 'JSWDULUX.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=60d) (Yahoo error = "Invalid input - interval=daily is not supported. Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 4h, 1d, 5d, 1wk, 1mo, 3mo]")')
+2026-04-28 00:10:32,230 ERROR 
+100 Failed downloads:
+2026-04-28 00:10:32,232 ERROR ['SBICARD.NS', 'RPOWER.NS', 'PGEL.NS', 'PERSISTENT.NS', 'POLICYBZR.NS', 'RAINBOW.NS', 'NIVABUPA.NS', 'RKFORGE.NS', 'NEULANDLAB.NS', 'PREMIERENE.NS', 'OLECTRA.NS', 'PNB.NS', 'MOTILALOFS.NS', 'NLCINDIA.NS', 'NAVA.NS', 'POWERGRID.NS', 'NMDC.NS', 'NAVINFLUOR.NS', 'PIRAMALFIN.NS', 'MCX.NS', 'MANAPPURAM.NS', 'NUVAMA.NS', 'PVRINOX.NS', 'RADICO.NS', 'SJVN.NS', 'MGL.NS', 'OIL.NS', 'NHPC.NS', 'ONESOURCE.NS', 'PINELABS.NS', 'LINDEINDIA.NS', 'MEESHO.NS', 'RAILTEL.NS', 'PIIND.NS', 'POLYMED.NS', 'MFSL.NS', 'RHIM.NS', 'M&MFIN.NS', 'NETWEB.NS', 'MUTHOOTFIN.NS', 'POLYCAB.NS', 'LUPIN.NS', 'PETRONET.NS', 'MRF.NS', 'ONGC.NS', 'NSLNISP.NS', 'RBLBANK.NS', 'LODHA.NS', 'MANKIND.NS', 'NTPC.NS', 'LICI.NS', 'PTCIL.NS', 'MRPL.NS', 'PAYTM.NS', 'RRKABEL.NS', 'PFC.NS', 'NEWGEN.NS', 'MAZDOCK.NS', 'PATANJALI.NS', 'LEMONTREE.NS', 'OBEROIRLTY.NS', 'LENSKART.NS', 'MINDACORP.NS', 'NESTLEIND.NS', 'NATCOPHARM.NS', 'MARUTI.NS', 'PHOENIXLTD.NS', 'RECLTD.NS', 'PFIZER.NS', 'RVNL.NS', 'PARADEEP.NS', 'MSUMI.NS', 'OFSS.NS', 'MARICO.NS', 'M&M.NS', 'SBILIFE.NS', 'PIDILITIND.NS', 'RITES.NS', 'NBCC.NS', 'NATIONALUM.NS', 'MAXHEALTH.NS', 'LLOYDSME.NS', 'NTPCGREEN.NS', 'NCC.NS', 'OLAELEC.NS', 'RELIANCE.NS', 'MPHASIS.NS', 'PPLPHARMA.NS', 'REDINGTON.NS', 'NH.NS', 'PWL.NS', 'POONAWALLA.NS', 'NUVOCO.NS', 'PNBHOUSING.NS', 'PAGEIND.NS', 'PCBL.NS', 'PRESTIGE.NS', 'MMTC.NS', 'SBFC.NS', 'NAM-INDIA.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=60d) (Yahoo error = "Invalid input - interval=daily is not supported. Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 4h, 1d, 5d, 1wk, 1mo, 3mo]")')
+2026-04-28 00:10:39,587 ERROR 
+100 Failed downloads:
+2026-04-28 00:10:39,587 ERROR ['SAILIFE.NS', 'TATASTEEL.NS', 'ECLERX.NS', 'TRENT.NS', 'NIACL.NS', 'TIINDIA.NS', 'VIJAYA.NS', 'TEJASNET.NS', 'SAGILITY.NS', 'TEGA.NS', 'SAREGAMA.NS', 'UTIAMC.NS', 'SARDAEN.NS', 'TATACOMM.NS', 'TITAN.NS', 'ZENTEC.NS', 'ZEEL.NS', 'TATAPOWER.NS', 'SAMMAANCAP.NS', 'TORNTPHARM.NS', 'UNITDSPR.NS', 'WELSPUNLIV.NS', 'SUZLON.NS', 'STARHEALTH.NS', 'YESBANK.NS', 'ZFCVINDIA.NS', 'SUNTV.NS', 'SUPREMEIND.NS', 'WELCORP.NS', 'RAMCOCEM.NS', 'SWANCORP.NS', 'TECHM.NS', 'TATACHEM.NS', 'IDEA.NS', 'VMM.NS', 'SAPPHIRE.NS', 'ZYDUSLIFE.NS', 'USHAMART.NS', 'SCHNEIDER.NS', 'TMCV.NS', 'SYNGENE.NS', 'WAAREEENER.NS', 'UPL.NS', 'TATACAP.NS', 'SHYAMMETL.NS', 'TARIL.NS', 'UBL.NS', 'TTML.NS', 'ULTRACEMCO.NS', 'TIMKEN.NS', 'SUNPHARMA.NS', 'TRAVELFOOD.NS', 'SHREECEM.NS', 'UNIONBANK.NS', 'SONACOMS.NS', 'WOCKPHARMA.NS', 'SRF.NS', 'TVSMOTOR.NS', 'SCHAEFFLER.NS', 'TORNTPOWER.NS', 'SPLPETRO.NS', 'TBOTEK.NS', 'TCS.NS', 'TENNIND.NS', 'SYRMA.NS', 'SOLARINDS.NS', 'SOBHA.NS', 'ZYDUSWELL.NS', 'TMPV.NS', 'SONATSOFTW.NS', 'SHRIRAMFIN.NS', 'VOLTAS.NS', 'UNOMINDA.NS', 'TATAELXSI.NS', 'ZENSARTECH.NS', 'TATATECH.NS', 'VBL.NS', 'SBIN.NS', 'TECHNOE.NS', 'VEDL.NS', 'SAIL.NS', 'TATAINVEST.NS', 'UCOBANK.NS', 'MOTHERSON.NS', 'TRITURBINE.NS', 'THERMAX.NS', 'ENRIN.NS', 'SIEMENS.NS', 'TRIDENT.NS', 'WIPRO.NS', 'SUNDARMFIN.NS', 'SWIGGY.NS', 'SCI.NS', 'URBANCO.NS', 'SUMICHEM.NS', 'TITAGARH.NS', 'VTL.NS', 'WHIRLPOOL.NS', 'SIGNATURE.NS', 'TATACONSUM.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=60d) (Yahoo error = "Invalid input - interval=daily is not supported. Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 4h, 1d, 5d, 1wk, 1mo, 3mo]")')
+2026-04-28 00:10:39,624 ERROR No ticker data could be downloaded.
+2026-04-28 00:15:40,859 INFO Background metadata worker starting...
+2026-04-28 00:15:41,069 INFO Prefetching missing metadata for 5 tickers...
+2026-04-28 00:15:42,242 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-28 00:15:44,650 INFO Background cache refresh complete for 751 symbols.
+2026-04-28 00:15:46,248 INFO Prefetching missing metadata for 3 tickers...
+2026-04-28 00:15:46,711 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-04-28 00:15:55,679 ERROR 
+1 Failed download:
+2026-04-28 00:15:55,681 ERROR ['DUMMYALCAR.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")')
+2026-04-28 00:15:55,683 ERROR 
+1 Failed download:
+2026-04-28 00:15:55,683 ERROR ['DUMMYALCAR.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")')
+2026-04-28 00:15:59,515 ERROR Error in ABFRL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:15:59,813 ERROR Error in AADHARHFC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:15:59,817 ERROR Error in AIAENG.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:15:59,828 ERROR Error in ABSLAMC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:15:59,905 ERROR Error in AARTIIND.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,163 ERROR Error in 360ONE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,186 ERROR Error in ANUP.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,229 ERROR Error in 3MINDIA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,255 ERROR Error in ACMESOLAR.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,368 ERROR Error in ARE&M.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,578 ERROR Error in ADANIENT.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,604 ERROR Error in ARVINDFASN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,606 ERROR Error in AFCONS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,695 ERROR Error in AETHER.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,743 ERROR Error in ACE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,758 ERROR Error in AARTIDRUGS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,769 ERROR Error in ARVIND.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,819 ERROR Error in ANANDRATHI.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,914 ERROR Error in ALKYLAMINE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,977 ERROR Error in ADANIGREEN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:00,982 ERROR Error in ASIANPAINT.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,043 ERROR Error in ASTRAMICRO.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,101 ERROR Error in AVANTIFEED.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,265 ERROR Error in APLLTD.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,346 ERROR Error in ASTRAL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,383 ERROR Error in ALOKINDS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,399 ERROR Error in ASTERDM.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,468 ERROR Error in ASKAUTOLTD.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,489 ERROR Error in AXISCADES.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,503 ERROR Error in ASAHIINDIA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,702 ERROR Error in ATGL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,778 ERROR Error in BAJAJHLDNG.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:01,849 ERROR Error in BALUFORGE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,001 ERROR Error in AVALON.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,024 ERROR Error in BELRISE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,022 ERROR Error in AWFIS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,037 ERROR Error in BHARTIHEXA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,147 ERROR Error in AZAD.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,243 ERROR Error in BALKRISIND.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,297 ERROR Error in BHEL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,340 ERROR Error in BIRLACORPN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,342 ERROR Error in BLS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,358 ERROR Error in ATUL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,425 ERROR Error in BAJAJFINSV.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,442 ERROR Error in BAJFINANCE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,514 ERROR Error in BHARATFORG.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,526 ERROR Error in BANCOINDIA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,573 ERROR Error in BANKINDIA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,680 ERROR Error in BBOX.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,772 ERROR Error in COFORGE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,902 ERROR Error in BLACKBUCK.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:02,991 ERROR Error in CESC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,001 ERROR Error in CIPLA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,087 ERROR Error in BLUEDART.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,134 ERROR Error in CONCORDBIO.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,144 ERROR Error in BIOCON.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,155 ERROR Error in BIKAJI.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,201 ERROR Error in DEEPAKNTR.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,204 ERROR Error in BOSCHLTD.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,226 ERROR Error in CHAMBLFERT.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,256 ERROR Error in CGPOWER.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,547 ERROR Error in DCBBANK.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,640 ERROR Error in COHANCE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,697 ERROR Error in DALBHARAT.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,742 ERROR Error in ERIS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,745 ERROR Error in EMCURE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,943 ERROR Error in COROMANDEL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:03,967 ERROR Error in CHENNPETRO.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,018 ERROR Error in ELGIEQUIP.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,039 ERROR Error in CLEAN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,063 ERROR Error in CMSINFO.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,085 ERROR Error in CIGNITITEC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,095 ERROR Error in ELECON.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,103 ERROR Error in FEDERALBNK.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,123 ERROR Error in ENGINERSIN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,320 ERROR Error in ETHOSLTD.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,361 ERROR Error in DRREDDY.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,606 ERROR Error in ECLERX.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,632 ERROR Error in FINPIPE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,659 ERROR Error in EUREKAFORB.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,688 ERROR Error in ESCORTS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,707 ERROR Error in EPL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,900 ERROR Error in GODREJIND.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:04,913 ERROR Error in GLAND.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,017 ERROR Error in GPPL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,139 ERROR Error in DOMS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,255 ERROR Error in GMRAIRPORT.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,343 ERROR Error in FEDFINA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,347 ERROR Error in FIRSTCRY.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,415 ERROR Error in GLAXO.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,442 ERROR Error in HAPPSTMNDS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,468 ERROR Error in GRWRHITECH.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,577 ERROR Error in GODREJAGRO.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,635 ERROR Error in GESHIP.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,655 ERROR Error in GICRE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,665 ERROR Error in FORCEMOT.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,678 ERROR Error in GRAPHITE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,686 ERROR Error in GRSE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,754 ERROR Error in GMRP&UI.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,772 ERROR Error in HBLENGINE.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:05,913 ERROR Error in FIEMIND.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,280 ERROR Error in HONASA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,295 ERROR Error in HAL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,304 ERROR Error in HEXT.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,328 ERROR Error in HEG.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,368 ERROR Error in IDEA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,404 ERROR Error in HINDZINC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,461 ERROR Error in HOMEFIRST.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,499 ERROR Error in HUDCO.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,502 ERROR Error in HINDUNILVR.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,506 ERROR Error in HCG.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,559 ERROR Error in IKS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,598 ERROR Error in HCLTECH.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,613 ERROR Error in IGIL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,620 ERROR Error in HINDALCO.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:06,955 ERROR Error in IEX.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,030 ERROR Error in IMFA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,106 ERROR Error in HONAUT.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,158 ERROR Error in IDFCFIRSTB.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,203 ERROR Error in INDGN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,364 ERROR Error in INDIASHLTR.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,469 ERROR Error in INDUSTOWER.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,477 ERROR Error in IRFC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,503 ERROR Error in ITI.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,522 ERROR Error in ICICIBANK.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,552 ERROR Error in INFY.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,741 ERROR Error in INDIGOPNTS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,925 ERROR Error in IFCI.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:07,987 ERROR Error in ITCHOTELS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,018 ERROR Error in JBMA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,057 ERROR Error in IONEXCHANG.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,110 ERROR Error in INDIANB.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,125 ERROR Error in JUBLPHARMA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,160 ERROR Error in JIOFIN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,267 ERROR Error in IOC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,285 ERROR Error in IRCON.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,471 ERROR Error in IOB.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,565 ERROR Error in JMFINANCIL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,616 ERROR Error in JSWENERGY.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:08,683 ERROR Error in INOXINDIA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,147 ERROR Error in JUSTDIAL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,202 ERROR Error in JYOTICNC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,225 ERROR Error in KIRLPNU.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,241 ERROR Error in LAURUSLABS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,316 ERROR Error in KIRLOSBROS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,334 ERROR Error in KNRCON.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,364 ERROR Error in LINDEINDIA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,534 ERROR Error in M&MFIN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,618 ERROR Error in LTF.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,625 ERROR Error in KPIGREEN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,638 ERROR Error in KAYNES.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,653 ERROR Error in MAHSCOOTER.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,679 ERROR Error in KSCL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,933 ERROR Error in MAHSEAMLES.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,946 ERROR Error in LLOYDSENGG.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:09,954 ERROR Error in MARKSANS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,043 ERROR Error in LTTS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,058 ERROR Error in LALPATHLAB.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,258 ERROR Error in MFSL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,297 ERROR Error in MANAPPURAM.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,356 ERROR Error in MUTHOOTFIN.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,480 ERROR Error in MEDANTA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,525 ERROR Error in NETWEB.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,777 ERROR Error in MGL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,837 ERROR Error in MASTEK.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,863 ERROR Error in NAZARA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:10,907 ERROR Error in MCX.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,018 ERROR Error in NHPC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,170 ERROR Error in MTARTECH.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,210 ERROR Error in NYKAA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,317 ERROR Error in NAVA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,504 ERROR Error in NIVABUPA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,527 ERROR Error in OIL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,587 ERROR Error in POLYMED.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,693 ERROR Error in NAVINFLUOR.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,721 ERROR Error in NEULANDLAB.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,751 ERROR Error in NFL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,753 ERROR Error in NLCINDIA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,759 ERROR Error in MOTILALOFS.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,786 ERROR Error in NMDC.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,808 ERROR Error in V2RETAIL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,813 ERROR Error in TBOTEK.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,839 ERROR Error in NIACL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,862 ERROR Error in POONAWALLA.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,898 ERROR Error in RBLBANK.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,921 ERROR Error in TRIDENT.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,940 ERROR Error in THANGAMAYL.NS: '<' not supported between instances of 'Timestamp' and 'str'
+2026-04-28 00:16:11,956 ERROR Error in VEDL.NS: '<' not supported between instances of 'Timestamp' and 'str'

@@ -40,7 +40,11 @@ def render_tab() -> None:
         selected_symbol = st.selectbox("Select stock", results["Ticker"].tolist(), key="rm_sel")
         row = results[results["Ticker"] == selected_symbol].iloc[0]
         entry_price = float(row["LTP"])
-        atr = float(row["ATR"])
+        atr_value = row.get("ATR")
+        if pd.isna(atr_value) or atr_value <= 0:
+            atr = entry_price * 0.02  # Default 2% of price if ATR missing or invalid
+        else:
+            atr = float(atr_value)
         stop_loss = entry_price - 1.5 * atr
         risk_amount = account_size * risk_per_trade / 100
         quantity = int(risk_amount // (entry_price - stop_loss)) if (entry_price - stop_loss) > 0 else 0
@@ -48,7 +52,7 @@ def render_tab() -> None:
 
         detail_cols = st.columns(4)
         detail_cols[0].metric("Entry", f"₹{entry_price:.2f}")
-        detail_cols[1].metric("Stop Loss", f"₹{stop_loss:.2f}", delta=f"−₹{entry_price - stop_loss:.2f}", delta_color="inverse")
+        detail_cols[1].metric("Stop Loss", f"₹{stop_loss:.2f}", delta=f"−₹{entry_price - stop_loss:.2f}")
         detail_cols[2].metric("Risk Amount", f"₹{risk_amount:,.0f}")
         detail_cols[3].metric("Shares / Value", f"{quantity} · ₹{total_value:,.0f}")
 

@@ -220,6 +220,13 @@ def style_scanner_results(df: pd.DataFrame):
         formats["Stop%"] = "{:.1f}%"
     if "RR" in df.columns:
         formats["RR"] = "{:.1f}"
+    for column in ["FII+", "FII%", "ROCE", "Profit%", "Sales%"]:
+        if column in df.columns:
+            formats[column] = "{:.1f}%"
+    if "PE" in df.columns:
+        formats["PE"] = "{:.1f}"
+    if "MktCap" in df.columns:
+        formats["MktCap"] = "₹{:.0f}Cr"
     if "Setup" in df.columns:
         formats["Setup"] = "{:.1f}"
     if "Tight Days" in df.columns:

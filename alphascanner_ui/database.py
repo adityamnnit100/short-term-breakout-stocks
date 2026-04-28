@@ -1,8 +1,12 @@
 import sqlite3
 import pandas as pd
+import os
 from datetime import datetime
+from pathlib import Path
 
-DB_PATH = "alphascanner_data.db"
+DB_PATH = os.environ.get(
+    "ALPHASCANNER_USER_DB", "alphascanner_data.db"
+)
 
 def get_connection():
     conn = sqlite3.connect(DB_PATH)

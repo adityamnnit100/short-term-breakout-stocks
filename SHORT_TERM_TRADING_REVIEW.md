@@ -45,6 +45,16 @@ Main gaps found:
 - Fixed the undefined `_Resistance` calculation.
 - Counted low-volume breakout candidates under `volume_fail`.
 
+## FII Accumulation Scanner
+
+Added a separate sidebar scanner for stocks where FII holding is reported as increasing quarter-on-quarter. The scanner uses the public Screener.in screen "FII Holding Increasing Quarter on Quarter Basis" as a data source, then applies local filters:
+
+- Market cap at least Rs 1,000 Cr by default.
+- Minimum change in FII holding at least 1% by default.
+- Ranking score combines FII increase, current FII holding, market cap, ROCE, quarterly profit growth, quarterly sales growth, and reasonable valuation.
+
+This should be treated as a medium-term institutional accumulation watchlist, not an intraday trigger. A chart/price-action confirmation is still needed before entry.
+
 ## Suggested Operating Rules
 
 - Prefer `Risk A` and `Risk B` setups.

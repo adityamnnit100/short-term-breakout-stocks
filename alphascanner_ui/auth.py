@@ -16,10 +16,9 @@ from typing import Dict, List, Optional
 
 HASH_ALGORITHM = "pbkdf2_sha256"
 DEFAULT_ITERATIONS = 260_000
-DB_PATH = os.environ.get(
-    "ALPHASCANNER_DB",
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "breakout_history.db"),
-)
+DB_PATH = Path(os.environ.get(
+    "ALPHASCANNER_DB", Path(__file__).resolve().parent.parent / "breakout_history.db"
+))
 WORKSPACE_FIELDS = {
     "watchlist": {"Default": []},
     "trade_journal": [],
@@ -410,6 +409,51 @@ def render_logout_control() -> None:
             logout()
 
 
+def _handle_login_callback() -> None:
+    """Callback for processing login form submission to avoid UI flickering."""
+    import streamlit as st
+    users = load_users()
+    username = st.session_state.get("auth_login_username", "")
+    password = st.session_state.get("auth_login_password", "")
+    
+    clean_username = normalize_username(username)
+    stored_hash = users.get(clean_username)
+    if stored_hash and verify_password(password, stored_hash):
+        st.session_state.authenticated = True
+        st.session_state.auth_user = clean_username
+        st.session_state.auth_is_admin = is_admin_user(clean_username)
+        st.session_state.pop("auth_error", None)
+        load_workspace_into_session(clean_username)
+        st.session_state.workspace_loaded_for = clean_username
+    else:
+        st.session_state.auth_error = "Invalid username or password."
+
+
+def _handle_signup_callback() -> None:
+    """Callback for processing sign-up form submission."""
+    import streamlit as st
+    username = st.session_state.get("auth_signup_username", "")
+    password = st.session_state.get("auth_signup_password", "")
+    confirm = st.session_state.get("auth_signup_confirm", "")
+    invite_code = st.session_state.get("auth_signup_invite", "")
+
+    if password != confirm:
+        st.session_state.auth_error = "Passwords do not match."
+        return
+
+    try:
+        create_signup_user(username, password, invite_code)
+        clean_username = normalize_username(username)
+        st.session_state.authenticated = True
+        st.session_state.auth_user = clean_username
+        st.session_state.auth_is_admin = is_admin_user(clean_username)
+        st.session_state.pop("auth_error", None)
+        load_workspace_into_session(clean_username)
+        st.session_state.workspace_loaded_for = clean_username
+    except ValueError as exc:
+        st.session_state.auth_error = str(exc)
+
+
 def require_login() -> None:
     """Render the login screen and stop execution until the user is authenticated."""
     import streamlit as st
@@ -509,23 +553,9 @@ def require_login() -> None:
 
         with login_tab:
             with st.form("login_form"):
-                username = st.text_input("Username", autocomplete="username")
-                password = st.text_input("Password", type="password", autocomplete="current-password")
-                submitted = st.form_submit_button("Login", use_container_width=True)
-
-            if submitted:
-                clean_username = normalize_username(username)
-                stored_hash = users.get(clean_username)
-                if stored_hash and verify_password(password, stored_hash):
-                    st.session_state.authenticated = True
-                    st.session_state.auth_user = clean_username
-                    st.session_state.auth_is_admin = is_admin_user(clean_username)
-                    st.session_state.pop("auth_error", None)
-                    load_workspace_into_session(clean_username)
-                    st.session_state.workspace_loaded_for = clean_username
-                    st.rerun()
-
-                st.session_state.auth_error = "Invalid username or password."
+                st.text_input("Username", autocomplete="username", key="auth_login_username")
+                st.text_input("Password", type="password", autocomplete="current-password", key="auth_login_password")
+                st.form_submit_button("Login", use_container_width=True, on_click=_handle_login_callback)
 
             if st.session_state.get("auth_error"):
                 st.error(st.session_state.auth_error)
@@ -537,30 +567,12 @@ def require_login() -> None:
                     unsafe_allow_html=True,
                 )
                 with st.form("signup_form"):
-                    signup_username = st.text_input("Choose username", autocomplete="username", key="signup_username")
-                    signup_password = st.text_input("Choose password", type="password", autocomplete="new-password", key="signup_password")
-                    signup_confirm = st.text_input("Confirm password", type="password", autocomplete="new-password", key="signup_confirm")
-                    invite_code = ""
+                    st.text_input("Choose username", autocomplete="username", key="auth_signup_username")
+                    st.text_input("Choose password", type="password", autocomplete="new-password", key="auth_signup_password")
+                    st.text_input("Confirm password", type="password", autocomplete="new-password", key="auth_signup_confirm")
                     if get_signup_code():
-                        invite_code = st.text_input("Invite code", type="password", key="signup_invite")
-                    signup_submitted = st.form_submit_button("Create Account", use_container_width=True)
-
-                if signup_submitted:
-                    if signup_password != signup_confirm:
-                        st.error("Passwords do not match.")
-                    else:
-                        try:
-                            create_signup_user(signup_username, signup_password, invite_code)
-                            clean_username = normalize_username(signup_username)
-                            st.session_state.authenticated = True
-                            st.session_state.auth_user = clean_username
-                            st.session_state.auth_is_admin = is_admin_user(clean_username)
-                            load_workspace_into_session(clean_username)
-                            st.session_state.workspace_loaded_for = clean_username
-                            st.success("Account created.")
-                            st.rerun()
-                        except ValueError as exc:
-                            st.error(str(exc))
+                        st.text_input("Invite code", type="password", key="auth_signup_invite")
+                    st.form_submit_button("Create Account", use_container_width=True, on_click=_handle_signup_callback)
 
     st.stop()
 
