@@ -473,108 +473,105 @@ def require_login() -> None:
     if not users and not signup_enabled():
         _, setup_col, _ = st.columns([1, 1.1, 1])
         with setup_col:
-            st.error("No login users are configured yet.")
-            st.info(
-                "Create a password hash with `python -m alphascanner_ui.auth`, then add it to "
-                "`.streamlit/secrets.toml` or set `ALPHASCANNER_AUTH_USERNAME` and "
-                "`ALPHASCANNER_AUTH_PASSWORD_HASH` in your environment."
-            )
+            st.error("No login users are configured yet. Please set up an admin account.")
+            st.info("To create an admin account, run `python -m alphascanner_ui.auth` in your terminal and follow the prompts. Then, add the generated username and password hash to your `.streamlit/secrets.toml` file under the `[auth]` section, or set them as environment variables `ALPHASCANNER_AUTH_USERNAME` and `ALPHASCANNER_AUTH_PASSWORD_HASH`.")
         st.stop()
 
-    st.markdown(
-        """
-        <style>
-            div[data-testid="stHorizontalBlock"]:has(.auth-anchor) {
-                align-items: center;
-            }
-            .auth-hero {
-                background: linear-gradient(180deg, rgba(13,26,46,0.94) 0%, rgba(11,23,40,0.98) 100%);
-                border: 1px solid rgba(0,229,255,0.18);
-                border-radius: 12px;
-                padding: 22px 24px;
-                margin: 7vh auto 18px;
-                box-shadow: 0 14px 36px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.04);
-            }
-            .auth-kicker {
-                color: #22d3ee;
-                font-family: 'JetBrains Mono', monospace;
-                font-size: 0.72rem;
-                font-weight: 700;
-                letter-spacing: 0.14rem;
-                text-transform: uppercase;
-                border-left: 3px solid #22d3ee;
-                padding-left: 10px;
-                margin-bottom: 18px;
-            }
-            .auth-title {
-                color: #e8f0fe;
-                font-size: 1.75rem;
-                font-weight: 800;
-                letter-spacing: 0;
-                margin-bottom: 8px;
-            }
-            .auth-subtitle {
-                color: #cbd5e1;
-                font-size: 0.92rem;
-                line-height: 1.5;
-            }
-            .auth-help {
-                color: #cbd5e1;
-                font-size: 0.82rem;
-                margin: 8px 0 12px;
-            }
-            @media (max-width: 900px) {
-                .auth-hero { margin-top: 2vh; }
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    _, auth_col, _ = st.columns([1, 0.78, 1])
-    with auth_col:
+    if not st.session_state.authenticated:
         st.markdown(
             """
-            <span class="auth-anchor"></span>
-            <div class="auth-hero">
-                <div class="auth-kicker">Private Workspace</div>
-                <div class="auth-title">AlphaScanner PRO</div>
-                <div class="auth-subtitle">Sign in to access scanner signals, watchlists, portfolio analysis, journal, and risk tools.</div>
-            </div>
+            <style>
+                div[data-testid="stHorizontalBlock"]:has(.auth-anchor) {
+                    align-items: center;
+                }
+                .auth-hero {
+                    background: linear-gradient(180deg, rgba(13,26,46,0.94) 0%, rgba(11,23,40,0.98) 100%);
+                    border: 1px solid rgba(0,229,255,0.18);
+                    border-radius: 12px;
+                    padding: 22px 24px;
+                    margin: 7vh auto 18px;
+                    box-shadow: 0 14px 36px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.04);
+                }
+                .auth-kicker {
+                    color: #22d3ee;
+                    font-family: 'JetBrains Mono', monospace;
+                    font-size: 0.72rem;
+                    font-weight: 700;
+                    letter-spacing: 0.14rem;
+                    text-transform: uppercase;
+                    border-left: 3px solid #22d3ee;
+                    padding-left: 10px;
+                    margin-bottom: 18px;
+                }
+                .auth-title {
+                    color: #e8f0fe;
+                    font-size: 1.75rem;
+                    font-weight: 800;
+                    letter-spacing: 0;
+                    margin-bottom: 8px;
+                }
+                .auth-subtitle {
+                    color: #cbd5e1;
+                    font-size: 0.92rem;
+                    line-height: 1.5;
+                }
+                .auth-help {
+                    color: #cbd5e1;
+                    font-size: 0.82rem;
+                    margin: 8px 0 12px;
+                }
+                @media (max-width: 900px) {
+                    .auth-hero { margin-top: 2vh; }
+                }
+            </style>
             """,
             unsafe_allow_html=True,
         )
-
-        if signup_enabled():
-            login_tab, signup_tab = st.tabs(["Login", "Sign Up"])
-        else:
-            login_tab = st.container()
-            signup_tab = None
-
-        with login_tab:
-            with st.form("login_form"):
-                st.text_input("Username", autocomplete="username", key="auth_login_username")
-                st.text_input("Password", type="password", autocomplete="current-password", key="auth_login_password")
-                st.form_submit_button("Login", use_container_width=True, on_click=_handle_login_callback)
-
-            if st.session_state.get("auth_error"):
-                st.error(st.session_state.auth_error)
-
-        if signup_tab is not None:
-            with signup_tab:
-                st.markdown(
-                    '<div class="auth-help">Create your own account. If an invite code is enabled, ask the site owner for it.</div>',
-                    unsafe_allow_html=True,
-                )
-                with st.form("signup_form"):
-                    st.text_input("Choose username", autocomplete="username", key="auth_signup_username")
-                    st.text_input("Choose password", type="password", autocomplete="new-password", key="auth_signup_password")
-                    st.text_input("Confirm password", type="password", autocomplete="new-password", key="auth_signup_confirm")
-                    if get_signup_code():
-                        st.text_input("Invite code", type="password", key="auth_signup_invite")
-                    st.form_submit_button("Create Account", use_container_width=True, on_click=_handle_signup_callback)
-
-    st.stop()
+    
+        _, auth_col, _ = st.columns([1, 0.78, 1])
+        with auth_col:
+            st.markdown(
+                """
+                <span class="auth-anchor"></span>
+                <div class="auth-hero">
+                    <div class="auth-kicker">Private Workspace</div>
+                    <div class="auth-title">AlphaScanner PRO</div>
+                    <div class="auth-subtitle">Sign in to access scanner signals, watchlists, portfolio analysis, journal, and risk tools.</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+    
+            if signup_enabled():
+                login_tab, signup_tab = st.tabs(["Login", "Sign Up"])
+            else:
+                login_tab = st.container()
+                signup_tab = None
+    
+            with login_tab:
+                with st.form("login_form"):
+                    st.text_input("Username", autocomplete="username", key="auth_login_username")
+                    st.text_input("Password", type="password", autocomplete="current-password", key="auth_login_password")
+                    st.form_submit_button("Login", use_container_width=True, on_click=_handle_login_callback)
+    
+                if st.session_state.get("auth_error"):
+                    st.error(st.session_state.auth_error)
+    
+            if signup_tab is not None:
+                with signup_tab:
+                    st.markdown(
+                        '<div class="auth-help">Create your own account. If an invite code is enabled, ask the site owner for it.</div>',
+                        unsafe_allow_html=True,
+                    )
+                    with st.form("signup_form"):
+                        st.text_input("Choose username", autocomplete="username", key="auth_signup_username")
+                        st.text_input("Choose password", type="password", autocomplete="new-password", key="auth_signup_password")
+                        st.text_input("Confirm password", type="password", autocomplete="new-password", key="auth_signup_confirm")
+                        if get_signup_code():
+                            st.text_input("Invite code", type="password", key="auth_signup_invite")
+                        st.form_submit_button("Create Account", use_container_width=True, on_click=_handle_signup_callback)
+    
+        st.stop()
 
 
 def render_user_management() -> None:

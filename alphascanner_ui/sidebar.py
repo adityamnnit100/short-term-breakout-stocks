@@ -1,6 +1,5 @@
 """Sidebar controls and app configuration models."""
 
-import datetime
 from dataclasses import dataclass
 from typing import Tuple
 
@@ -82,11 +81,11 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                 vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 1.0 if scanner_type == "Breakout" else 0.6, 0.1, help="Lower = more results, Higher = quality filter")
                 timeframe_choice = st.selectbox(
                     "Timeframe",
-                    ["Daily", "60m", "30m", "15m"],
+                    ["Daily", "60m", "30m", "15m", "5m"],
                     index=0,
                     help="Choose the analysis timeframe for the scan. Intraday intervals are useful for short-term setups.",
                 )
-                interval_map = {"Daily": "1d", "60m": "60m", "30m": "30m", "15m": "15m"}
+                interval_map = {"Daily": "1d", "60m": "60m", "30m": "30m", "15m": "15m", "5m": "5m"}
                 timeframe = interval_map.get(timeframe_choice, "1d")
 
                 if scanner_type == "Breakout":
@@ -106,23 +105,17 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
 
         st.divider()
 
-        with st.expander("📊 Chart Overlays", expanded=False):
-            chart_options = ChartOptions(
-                show_sma=st.checkbox("SMA 50 / 200", value=True),
-                show_ema=st.checkbox("EMA 20", value=True),
-                show_bb=st.checkbox("Bollinger Bands", value=True),
-                show_rsi=st.checkbox("RSI Panel", value=True),
-                show_macd=st.checkbox("MACD Panel", value=True),
-                show_vwap=st.checkbox("VWAP", value=False),
-            )
-
-        st.divider()
-        with st.expander("🚀 Performance Settings", expanded=False):
-            include_news = st.toggle(
-                "Deep News Sentiment", 
-                value=False, 
-                help="Enable NLP-based sector news analysis. Slows down scan by ~5-10s."
-            )
+        # Load chart options and news sentiment from session state
+        # (configured in settings tab)
+        chart_options = ChartOptions(
+            show_sma=st.session_state.get("chart_show_sma", True),
+            show_ema=st.session_state.get("chart_show_ema", True),
+            show_bb=st.session_state.get("chart_show_bb", True),
+            show_rsi=st.session_state.get("chart_show_rsi", True),
+            show_macd=st.session_state.get("chart_show_macd", True),
+            show_vwap=st.session_state.get("chart_show_vwap", False),
+        )
+        include_news = st.session_state.get("include_news_sentiment", False)
 
         st.divider()
         cache_choice = st.radio("Data Source", ["🔄 Fresh Scan", "⏱ Use Cache (12h)"], index=0)
@@ -136,19 +129,6 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
             st.session_state.run_scan = True
             if not use_cache:
                 st.session_state.results = None
-
-        st.divider()
-        with st.expander("🧠 Cache Info", expanded=False):
-            st.caption(f"Last scan: {st.session_state.last_scan_time or 'Never'}")
-            st.caption(f"Source: {st.session_state.scan_source or 'None'}")
-            if st.button("🗑 Clear Chart Cache"):
-                load_ticker_history.clear()
-                st.session_state.ticker_cache_refreshed_at = datetime.datetime.now()
-                st.success("Cleared!")
-            if st.button("🗑 Clear Backtest Cache"):
-                run_backtest_cached.clear()
-                st.session_state.backtest_cache_refreshed_at = datetime.datetime.now()
-                st.success("Cleared!")
 
     settings = SidebarSettings(
         universe=universe,

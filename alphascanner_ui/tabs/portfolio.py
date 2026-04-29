@@ -98,6 +98,50 @@ def _analyse_holding(holding: Dict, load_ticker_history) -> Dict:
     }
 
 
+def _add_trailing_stop_position(holding: Dict, load_ticker_history) -> None:
+    ticker = holding.get("ticker", "")
+    history = load_ticker_history(ticker, period="3mo", interval="1d")
+    if history.empty or len(history) < 20:
+        st.error("Not enough price history to start a trailing stop.")
+        return
+
+    close = history["Close"]
+    high = history["High"]
+    low = history["Low"]
+    current_price = float(close.iloc[-1])
+    entry_price = float(holding.get("avg_price", 0.0) or current_price)
+    quantity = int(holding.get("quantity", 0) or 0)
+    atr = float(calculate_atr(high, low, close).iloc[-1])
+    if pd.isna(atr) or atr <= 0:
+        atr = current_price * 0.015
+
+    atr_multiplier = float(st.session_state.get("trailing_stop_atr_multiplier", 1.5) or 1.5)
+    raw_stop = current_price - (atr * atr_multiplier)
+    initial_stop = max(entry_price, raw_stop) if current_price > entry_price else raw_stop
+    positions = st.session_state.setdefault("trailing_stop_positions", [])
+    positions[:] = [position for position in positions if position.get("ticker") != ticker]
+    positions.append(
+        {
+            "ticker": ticker,
+            "entry_price": entry_price,
+            "quantity": quantity,
+            "current_price": current_price,
+            "highest_price": max(entry_price, current_price),
+            "trailing_stop": initial_stop,
+            "atr": atr,
+            "atr_multiplier": atr_multiplier,
+            "pnl": (current_price - entry_price) * quantity,
+            "pnl_pct": ((current_price - entry_price) / entry_price * 100) if entry_price > 0 else 0.0,
+            "distance_to_stop": current_price - initial_stop,
+            "status": "ACTIVE",
+            "alert_sent": False,
+            "date_added": str(datetime.date.today()),
+        }
+    )
+    st.session_state.trailing_stops_enabled = True
+    st.success(f"Started trailing stop for {ticker}.")
+
+
 def _render_analysis(portfolio: Dict, load_ticker_history) -> None:
     holdings = portfolio.get("holdings", [])
     if not holdings:
@@ -143,6 +187,7 @@ def _render_portfolio_tab(index: int, portfolio: Dict, load_ticker_history) -> N
     ticker = _normalise_ticker(add_col_1.text_input("Ticker", key=f"pf_ticker_{index}", placeholder="RELIANCE or RELIANCE.NS"))
     quantity = add_col_2.number_input("Quantity", min_value=1, step=1, key=f"pf_qty_{index}")
     avg_price = add_col_3.number_input("Avg Buy Price", min_value=0.0, step=0.05, key=f"pf_avg_{index}")
+    
     with add_col_4:
         st.write("")
         st.write("")
@@ -180,6 +225,18 @@ def _render_portfolio_tab(index: int, portfolio: Dict, load_ticker_history) -> N
             if remove_ticker != "-" and st.button("Remove Stock", key=f"pf_remove_btn_{index}", use_container_width=True):
                 execute_query("DELETE FROM holdings WHERE portfolio_id = ? AND ticker = ?", (portfolio["id"], remove_ticker))
                 st.rerun()
+
+        if st.session_state.get("trailing_stops_enabled", False):
+            st.caption("Trailing stops use the latest daily ATR and can be monitored from the Alerts tab.")
+            track_ticker = st.selectbox(
+                "Track with trailing stop",
+                ["-"] + [holding["ticker"] for holding in holdings],
+                key=f"pf_trail_{index}",
+            )
+            if track_ticker != "-" and st.button("Start / Refresh Trailing Stop", key=f"pf_trail_btn_{index}", use_container_width=True):
+                holding = next((item for item in holdings if item["ticker"] == track_ticker), None)
+                if holding:
+                    _add_trailing_stop_position(holding, load_ticker_history)
 
         if st.session_state.get(f"portfolio_analysis_{index}"):
             _render_analysis(portfolio, load_ticker_history)

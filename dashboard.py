@@ -11,9 +11,10 @@ from alphascanner_ui.data import (
     load_ticker_history,
     run_backtest_cached,
 )
+from alphascanner_ui.database import init_db as init_user_db
 from alphascanner_ui.sidebar import render_sidebar
 from alphascanner_ui.state import init_session_state
-from alphascanner_ui.tabs import backtest, journal, market, news, portfolio, risk, scanner, settings, watchlist, notes
+from alphascanner_ui.tabs import backtest, journal, market, news, portfolio, risk, scanner, settings, watchlist, notes, alerts
 from alphascanner_ui.theme import apply_global_styles, apply_plotly_theme, render_footer
 
 
@@ -27,6 +28,7 @@ st.set_page_config(
 logger = configure_logging()
 init_session_state()
 require_login()
+init_user_db()
 
 # Only run these after successful login to prevent UI flickering and state errors
 start_background_metadata_worker()
@@ -387,17 +389,7 @@ if st.session_state.get('compact_mode', False):
     </style>
     """, unsafe_allow_html=True)
 
-# Module Status Indicator
-with st.sidebar:
-    st.divider()
-    st.caption("🧩 SYSTEM MODULES")
-    if news.HAS_TEXTBLOB:
-        st.success("Sentiment Engine: ACTIVE", icon="🧠")
-    else:
-        st.warning("Sentiment Engine: INACTIVE", icon="🛑")
-        st.caption("To enable, run: `pip install textblob`")
-
-tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, tab_risk, tab_journal, tab_notes, tab_settings = st.tabs(
+tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, tab_risk, tab_journal, tab_notes, tab_alerts, tab_settings = st.tabs(
     [
         "🎯 Scanner",
         "📈 Backtest",
@@ -408,6 +400,7 @@ tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, t
         "⚠️ Risk Mgmt",
         "📝 Journal",
         "📒 Notes",
+        "🔔 Alerts",
         "⚙️ Settings",
     ]
 )
@@ -446,6 +439,9 @@ with tab_journal:
 
 with tab_notes:
     notes.render_tab()
+
+with tab_alerts:
+    alerts.render_tab(load_ticker_history)
 
 with tab_settings:
     settings.render_tab(load_ticker_history, run_backtest_cached)

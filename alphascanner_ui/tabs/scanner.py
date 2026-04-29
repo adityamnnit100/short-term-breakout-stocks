@@ -9,6 +9,7 @@ import scanner_service
 from alphascanner_ui.auth import save_current_user_workspace
 from alphascanner_ui.charts import build_chart, render_top_picks, style_scanner_results
 from alphascanner_ui.data import fetch_fii_dii_data, fetch_indices_performance, get_sector_mapping
+from alphascanner_ui.services.alerts_service import get_alerts_service
 
 
 @st.dialog("Full Screen Chart", width="large")
@@ -235,7 +236,49 @@ def _render_watchlist_quick_add(results: pd.DataFrame) -> None:
         st.success(f"Added {added} ticker(s) to '{final_wl}'")
 
 
-def _render_detail_view(results, selection, load_ticker_history, chart_options) -> None:
+def _maybe_send_scan_alerts(results: pd.DataFrame, scanner_type: str) -> None:
+    if results is None or results.empty or not st.session_state.get("alerts_enabled"):
+        return
+    has_telegram = st.session_state.get("telegram_token") and st.session_state.get("telegram_chat_id")
+    has_whatsapp = st.session_state.get("whatsapp_webhook_url")
+    if not has_telegram and not has_whatsapp:
+        return
+
+    service = get_alerts_service(
+        st.session_state.get("telegram_token"),
+        st.session_state.get("telegram_chat_id"),
+        st.session_state.get("whatsapp_webhook_url"),
+    )
+    sent_keys = st.session_state.setdefault("sent_alert_keys", set())
+    if not isinstance(sent_keys, set):
+        sent_keys = set(sent_keys)
+        st.session_state.sent_alert_keys = sent_keys
+
+    for _, row in results.head(10).iterrows():
+        ticker = str(row.get("Ticker", ""))
+        if not ticker:
+            continue
+        ltp = float(row.get("LTP", 0) or 0)
+        volume = float(row.get("Vol_x", 0) or 0)
+        resistance = float(row.get("_Resistance", row.get("Entry", ltp)) or ltp)
+        setup_score = row.get("Setup_Score")
+
+        if scanner_type == "Pre-Breakout":
+            if not st.session_state.get("alert_breakout", True):
+                continue
+            threshold = float(st.session_state.get("alert_pre_breakout_score", 7) or 7)
+            if setup_score is None or float(setup_score) < threshold:
+                continue
+            alert_key = f"pre:{ticker}:{setup_score}:{ltp:.2f}"
+            if alert_key not in sent_keys and service.send_breakout_alert(ticker, ltp, resistance, volume, float(setup_score)):
+                sent_keys.add(alert_key)
+        elif scanner_type == "Breakout" and st.session_state.get("alert_breakout", True):
+            alert_key = f"bo:{ticker}:{ltp:.2f}"
+            if alert_key not in sent_keys and service.send_breakout_alert(ticker, ltp, resistance, volume):
+                sent_keys.add(alert_key)
+
+
+def _render_detail_view(results, selection, load_ticker_history, chart_options, timeframe: str = "1d") -> None:
     selected_rows = selection.get("selection", {}).get("rows", [])
     if not selected_rows:
         return False
@@ -400,7 +443,8 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options) 
         st.dataframe(exit_df, use_container_width=True, hide_index=True)
 
     with st.spinner(f"Loading chart for {ticker}…"):
-        df_chart = load_ticker_history(ticker)
+        chart_period = "1y" if timeframe == "1d" else "60d"
+        df_chart = load_ticker_history(ticker, period=chart_period, interval=timeframe)
     if not df_chart.empty:
         fig = build_chart(
             df_chart,
@@ -614,6 +658,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
             run_scan=False,
             scan_source="Live",
         )
+        _maybe_send_scan_alerts(results, settings.scanner_type)
         status_placeholder.success(f"✅ Scan complete · {scan_time}")
     elif settings.use_cache and results is not None and not need_scan:
         status_placeholder.info("ℹ️ Showing previous results. Click Load Cached Scan to refresh from cache.")
@@ -624,7 +669,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
         _render_status_banner(
             results, filtered_results, st.session_state.last_scan_time,
             st.session_state.get("scan_source"), stats,
-            timeframe=settings.timeframe,
+            timeframe=(stats or {}).get("timeframe", settings.timeframe),
         )
         focus_mode = bool(st.session_state.get("focus_mode", False))
         if not focus_mode and st.session_state.get("show_top_picks", True):
@@ -673,7 +718,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                 """,
                 unsafe_allow_html=True,
             )
-            has_selection = _render_detail_view(filtered_results.reset_index(drop=True), selection, load_ticker_history, chart_options)
+            has_selection = _render_detail_view(filtered_results.reset_index(drop=True), selection, load_ticker_history, chart_options, settings.timeframe)
             if not has_selection:
                 st.info("Pick a stock from the blotter to open the setup workspace.")
             st.markdown("</div>", unsafe_allow_html=True)
