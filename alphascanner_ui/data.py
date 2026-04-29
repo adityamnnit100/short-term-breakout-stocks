@@ -189,7 +189,9 @@ def fetch_indices_performance() -> dict:
                 previous = float(df["Close"].iloc[-2])
                 current = float(df["Close"].iloc[-1])
                 change = (current - previous) / previous * 100
-                output[name] = {"price": current, "change": round(change, 2)}
+                if pd.isna(change) or np.isinf(change):
+                    change = 0.0
+                output[name] = {"price": current, "change": round(float(change), 2)}
         except Exception:
             continue
     return output
