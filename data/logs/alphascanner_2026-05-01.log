@@ -1,0 +1,9 @@
+2026-05-01 00:22:58,673 INFO Background metadata worker starting...
+2026-05-01 00:22:59,145 INFO Fetched 504 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-05-01 00:22:59,719 INFO Fetched 251 symbols for Nifty Microcap 250 from https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv
+2026-05-01 00:23:00,142 INFO Prefetching missing metadata for 755 tickers...
+2026-05-01 00:23:54,079 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-05-01 00:23:54,520 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL1.NS"}}}
+2026-05-01 00:23:54,933 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL2.NS"}}}
+2026-05-01 00:23:54,995 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL3.NS"}}}
+2026-05-01 00:23:55,446 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL4.NS"}}}
