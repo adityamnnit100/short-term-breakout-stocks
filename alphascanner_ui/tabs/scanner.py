@@ -12,6 +12,21 @@ from alphascanner_ui.data import fetch_fii_dii_data, fetch_indices_performance, 
 from alphascanner_ui.services.alerts_service import get_alerts_service
 
 
+def _calculate_execution_status(row: dict) -> str:
+    risk_grade = str(row.get("Risk_Grade", "")).strip()
+    market_health = str(row.get("Market_Health", "")).strip()
+    strength = float(row.get("Signal_Strength", 0) or 0)
+    stop_pct = float(row.get("Stop_%", 999) or 999)
+
+    if market_health == "Risk-Off" or risk_grade == "Reduce/Skip" or stop_pct > 8 or strength < 7:
+        return "Caution"
+    if risk_grade in {"A", "B"} and market_health in {"Risk-On", "Constructive"} and stop_pct <= 8 and strength >= 7:
+        return "Ready"
+    if risk_grade == "C":
+        return "Watch"
+    return "Review"
+
+
 @st.dialog("Full Screen Chart", width="large")
 def show_full_chart(fig) -> None:
     st.plotly_chart(
@@ -31,7 +46,7 @@ def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
 
     with st.expander("Refine Visible Results", expanded=False):
         st.caption("These controls only narrow the current scan output. They do not rerun the scanner.")
-        fcol1, fcol2, fcol3, fcol4, fcol5, fcol6 = st.columns(6)
+        fcol1, fcol2, fcol3, fcol4, fcol5, fcol6, fcol7, fcol8 = st.columns(8)
         min_strength = fcol1.slider("Min Strength", 0, 10, 1)
         min_rsi = fcol2.slider("Min RSI", 0, 100, 50) if "RSI" in results.columns else None
         min_vol = fcol3.slider("Min Volume ×", 1.0, 5.0, 1.0) if "Vol_x" in results.columns else None
@@ -42,6 +57,16 @@ def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
             ["A", "B", "C", "Reduce/Skip"],
             default=["A", "B", "C"],
         ) if "Risk_Grade" in results.columns else None
+        breadth_choices = fcol7.multiselect(
+            "Breadth",
+            ["Any", "Risk-On", "Constructive", "Caution", "Risk-Off"],
+            default=["Any"],
+        ) if "Market_Health" in results.columns else None
+        execution_choices = fcol8.multiselect(
+            "Execution",
+            ["Any", "Ready", "Caution", "Watch", "Review"],
+            default=["Any"],
+        ) if {"Risk_Grade", "Market_Health", "Signal_Strength", "Stop_%"}.issubset(results.columns) else None
 
     mask = results["Signal_Strength"] >= min_strength
 
@@ -55,6 +80,16 @@ def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
         mask &= (results["Stop_%"] <= max_stop)
     if risk_choices:
         mask &= results["Risk_Grade"].isin(risk_choices)
+    if breadth_choices and "Any" not in breadth_choices:
+        mask &= results["Market_Health"].isin(breadth_choices)
+
+    if st.session_state.get("only_ready_setups", False) and {"Risk_Grade", "Market_Health", "Signal_Strength", "Stop_%"}.issubset(results.columns):
+        execution_series = results.apply(_calculate_execution_status, axis=1)
+        mask &= execution_series.eq("Ready")
+
+    if execution_choices and "Any" not in execution_choices:
+        execution_series = results.apply(_calculate_execution_status, axis=1)
+        mask &= execution_series.isin(execution_choices)
 
     return results[mask]
 
@@ -82,6 +117,8 @@ def _render_status_banner(
         color = "#00ffaa" if score >= 8 else ("#ffca28" if score >= 5 else "#ff5252")
         pills += f'<span class="mini-tag" style="background:rgba(0,0,0,0.3); color:{color}; border:1px solid {color}66; margin-top:4px; display:inline-block;">{s} ({score})</span>'
 
+    market_health = (stats or {}).get("market_health", "Unknown")
+    market_bias = (stats or {}).get("market_bias", "Neutral")
     sector_section = f'<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(128,128,128,0.2);"><div class="status-label" style="margin-bottom:6px; color:#94a3b8;">🔥 Outperforming Sectors (vs Nifty)</div><div style="display:flex; flex-wrap:wrap; gap:6px;">{pills if pills else "No trending sectors detected"}</div></div>'
 
     st.markdown(
@@ -92,7 +129,9 @@ def _render_status_banner(
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Last Run</div><div class="status-value" style="color: #00e5ff;">{time_label}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Timeframe</div><div class="status-value" style="color: #00e5ff;">{timeframe_label}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Total Results</div><div class="status-value" style="color: #00e5ff;">{total_results}</div></div>'
-        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Visible After Filters</div><div class="status-value" style="color: #00e5ff;">{filtered_count}</div></div></div>'
+        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Visible After Filters</div><div class="status-value" style="color: #00e5ff;">{filtered_count}</div></div>'
+        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Market Breadth</div><div class="status-value" style="color: #00e5ff;">{market_health}</div></div>'
+        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Market Bias</div><div class="status-value" style="color: #00e5ff;">{market_bias}</div></div></div>'
         f'{sector_section}</div>',
         unsafe_allow_html=True,
     )
@@ -309,6 +348,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options, 
     risk_grade = row.get("Risk_Grade", "C")
     qty_1l = int(row.get("Qty_1L_1pct", 0) or 0)
     market_health = row.get("Market_Health", "Unknown")
+    execution_status = _calculate_execution_status(row)
     execution_label = (
         "Preferred" if risk_grade == "A" else
         "Tradable" if risk_grade == "B" else
@@ -326,7 +366,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options, 
         f'<div style="background:rgba(124,77,255,0.1);border:1px solid rgba(124,77,255,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#7c4dff;">RS: {rs_value}</div>'
         f'<div style="background:rgba(255,202,40,0.1);border:1px solid rgba(255,202,40,0.3);border-radius:20px;padding:2px 10px;font-size:0.75rem;color:#ffca28;">Risk: {risk_grade}</div></div>'
         f'<div class="trade-subtitle" style="color: #94a3b8;">{row.get("Pattern", "")}</div>'
-        f'<div style="margin-top:8px;padding:8px 10px;border-left:3px solid #0284c7;background:#f8fafc;color:#0f172a;font-size:0.82rem;">Execution stance: <b>{execution_label}</b> · Breadth: <b>{market_health}</b> · Suggested qty for ₹1L / 1% risk: <b>{qty_1l}</b></div>'
+        f'<div style="margin-top:8px;padding:8px 10px;border-left:3px solid #0284c7;background:#f8fafc;color:#0f172a;font-size:0.82rem;">Execution stance: <b>{execution_label}</b> · Breadth: <b>{market_health}</b> · Short-term status: <b>{execution_status}</b> · Suggested qty for ₹1L / 1% risk: <b>{qty_1l}</b></div>'
         f'<div class="level-grid">'
         f'<div class="level-box"><div class="level-label" style="color: #94a3b8;">Entry</div><div class="level-value level-entry" style="color: #00e5ff;">₹{entry:,.2f}</div></div>'
         f'<div class="level-box"><div class="level-label" style="color: #94a3b8;">Stop Loss  (1.5×ATR)</div><div class="level-value level-sl" style="color: #ff5252;">₹{stop_loss:,.2f}</div><div style="font-size:0.7rem;color:#ff5252;margin-top:2px;">−₹{risk:.2f}</div></div>'
@@ -379,9 +419,13 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options, 
         guard_col_3.metric("Risk / Reward", f"1:{risk_reward:.1f}")
         guard_col_4.metric("Volume Confirmation", f"{vol_ratio:.1f}×")
         risk_col_1, risk_col_2, risk_col_3 = st.columns(3)
+        execution_status = _calculate_execution_status(row)
+
+        risk_col_1, risk_col_2, risk_col_3, risk_col_4 = st.columns(4)
         risk_col_1.metric("Model Risk Grade", risk_grade)
         risk_col_2.metric("Qty @ ₹1L / 1% Risk", qty_1l)
         risk_col_3.metric("Market Breadth", market_health)
+        risk_col_4.metric("Short-Term Status", execution_status)
 
         checks = [
             ("Risk/reward is at least 1:2", risk_reward >= 2),
@@ -390,6 +434,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options, 
             ("Signal strength is high enough for short-term focus", signal_strength >= 7),
             ("Avoid chase if stop is wider than 8%", stop_pct <= 8),
             ("Market breadth is not risk-off", market_health != "Risk-Off"),
+            ("Trade readiness is acceptable for intraday/short-term", execution_status == "Ready"),
         ]
         checklist = pd.DataFrame(
             {
@@ -543,6 +588,26 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
             "Consol_Days": "Tight Days",
         }
     ).copy()
+
+    def _short_term_status(row):
+        risk = str(row.get("Risk", "")).strip()
+        breadth = str(row.get("Breadth", "")).strip()
+        strength = float(row.get("Strength", 0) or 0)
+        stop = float(row.get("Stop%", 999) or 999)
+        if breadth == "Risk-Off" or risk == "Reduce/Skip" or stop > 8 or strength < 7:
+            return "Caution"
+        if risk in {"A", "B"} and breadth in {"Risk-On", "Constructive"} and stop <= 8 and strength >= 7:
+            return "Ready"
+        if risk == "C":
+            return "Watch"
+        return "Review"
+
+    if {"Risk", "Breadth", "Strength", "Stop%"}.issubset(rendered_df.columns):
+        rendered_df["Execution"] = rendered_df.apply(_short_term_status, axis=1)
+        if "Breadth" in rendered_df.columns:
+            cols = list(rendered_df.columns)
+            cols.insert(cols.index("Breadth") + 1, cols.pop(cols.index("Execution")))
+            rendered_df = rendered_df[cols]
 
     def highlight_high_sector(s):
         """Highlight rows where the Sector Score is 8.0 or higher."""

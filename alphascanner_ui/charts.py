@@ -103,6 +103,7 @@ def render_top_picks(df: pd.DataFrame):
         vol = row.get("Vol_x", 0)
         strength = row.get("Signal_Strength", 0)
         risk = row.get("Risk_Grade", "C")
+        breadth = row.get("Market_Health", "Unknown")
         stop_pct = row.get("Stop_%", 0)
         
         html += (
@@ -115,6 +116,7 @@ def render_top_picks(df: pd.DataFrame):
             f'<span class="mini-tag">Vol {vol:.1f}x</span>'
             f'<span class="mini-tag">Strength {strength:.1f}</span>'
             f'<span class="mini-tag">Risk {risk}</span>'
+            f'<span class="mini-tag">Breadth {breadth}</span>'
             f'<span class="mini-tag">Stop {stop_pct:.1f}%</span>'
             f'</div></div>'
         )
@@ -204,6 +206,16 @@ def style_scanner_results(df: pd.DataFrame):
             return "color:#b91c1c;font-weight:700;"
         return "color:#92400e;"
 
+    def _execution(val):
+        value = str(val)
+        if value == "Ready":
+            return "background-color:rgba(16,185,129,0.16);color:#166534;font-weight:700;"
+        if value == "Caution":
+            return "background-color:rgba(245,158,11,0.12);color:#92400e;font-weight:700;"
+        if value == "Watch":
+            return "background-color:rgba(59,130,246,0.12);color:#1d4ed8;font-weight:700;"
+        return "background-color:rgba(220,38,38,0.12);color:#991b1b;font-weight:700;"
+
     styled = df.style
     formats = {}
     if "LTP" in df.columns:
@@ -273,6 +285,11 @@ def style_scanner_results(df: pd.DataFrame):
             styled = styled.map(_breadth, subset=["Breadth"])
         except AttributeError:
             styled = styled.applymap(_breadth, subset=["Breadth"])
+    if "Execution" in df.columns:
+        try:
+            styled = styled.map(_execution, subset=["Execution"])
+        except AttributeError:
+            styled = styled.applymap(_execution, subset=["Execution"])
     return styled
 
 

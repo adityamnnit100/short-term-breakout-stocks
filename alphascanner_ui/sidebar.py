@@ -18,6 +18,7 @@ class SidebarSettings:
     timeframe: str
     use_cache: bool
     include_news: bool
+    only_ready_setups: bool
 
 
 @dataclass(frozen=True)
@@ -124,6 +125,13 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         action_help = "Load the latest cached scan result" if use_cache else "Run a fresh market scan"
 
         st.divider()
+        only_ready_setups = st.checkbox(
+            "Only Ready Setups",
+            value=st.session_state.get("only_ready_setups", False),
+            help="Show only setups that meet the short-term execution readiness criteria.",
+        )
+
+        st.divider()
         st.caption(f"Action: {action_label}")
         if st.button(action_label, use_container_width=True, help=action_help, key="primary_scan_action"):
             st.session_state.run_scan = True
@@ -141,5 +149,6 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         timeframe=timeframe,
         use_cache=use_cache,
         include_news=include_news,
+        only_ready_setups=only_ready_setups,
     )
     return settings, chart_options
