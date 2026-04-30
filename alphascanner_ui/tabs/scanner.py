@@ -204,14 +204,21 @@ def _render_macro_context(stats: Optional[dict]) -> None:
     else:
         bias_label = "Mixed"
 
+    fii_net = fii_dii.get("fii_net", 0)
+    dii_net = fii_dii.get("dii_net", 0)
+    fii_display = "N/A" if fii_net == 0 else f"₹{fii_net:,.0f} Cr"
+    fii_delta = "N/A" if fii_net == 0 else f"{fii_net:+.0f}"
+    dii_display = "N/A" if dii_net == 0 else f"₹{dii_net:,.0f} Cr"
+    dii_delta = "N/A" if dii_net == 0 else f"{dii_net:+.0f}"
+
     st.markdown(
         '<div class="glass-card" style="margin-top: 16px; padding: 14px;">'
         '<div class="panel-title" style="color: #ffca28;">Market Context</div>'
         '<div class="status-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">'
         f'<div class="status-cell"><div class="status-label">Nifty Bias</div><div class="status-value">{bias_label}</div><div class="status-delta">{nifty.get("change", 0):+.2f}%</div></div>'
         f'<div class="status-cell"><div class="status-label">Bank Nifty</div><div class="status-value">{bank_nifty.get("change", 0):+.2f}%</div><div class="status-delta">{bank_nifty.get("price", "N/A")}</div></div>'
-        f'<div class="status-cell"><div class="status-label">FII Net Flow</div><div class="status-value">₹{fii_dii.get("fii_net", 0):,.0f} Cr</div><div class="status-delta">{fii_dii.get("fii_net", 0):+.0f}</div></div>'
-        f'<div class="status-cell"><div class="status-label">DII Net Flow</div><div class="status-value">₹{fii_dii.get("dii_net", 0):,.0f} Cr</div><div class="status-delta">{fii_dii.get("dii_net", 0):+.0f}</div></div>'
+        f'<div class="status-cell"><div class="status-label">FII Net Flow</div><div class="status-value">{fii_display}</div><div class="status-delta">{fii_delta}</div></div>'
+        f'<div class="status-cell"><div class="status-label">DII Net Flow</div><div class="status-value">{dii_display}</div><div class="status-delta">{dii_delta}</div></div>'
         '</div>'
         f'<div style="margin-top: 12px; color: #94a3b8;">Sector Rotation: {sector_rotation}</div>'
         '</div>',

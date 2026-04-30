@@ -1212,7 +1212,7 @@ def _process_single_ticker(
             "RVOL": round(rvol, 1),
             "EMA_Dist": f"{dist_from_ema:.1f}%",
             "RS_Rating": rs_rating,
-            "ROE": round(roe * 100, 1),
+            "ROE": "N/A" if roe == 0.0 else round(roe * 100, 1),
             "Mkt_Cap_Cr": round(mkt_cap_cr, 1),
             "Setup_Score": setup_score if scanner_type == "Pre-Breakout" else 0.0,
             "Sector": ticker_sector,

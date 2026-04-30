@@ -129,3 +129,64 @@
 2026-05-01 04:16:37,101 ERROR 
 4 Failed downloads:
 2026-05-01 04:16:37,101 ERROR ['DUMMYVEDL2.NS', 'DUMMYVEDL4.NS', 'DUMMYVEDL1.NS', 'DUMMYVEDL3.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")')
+2026-05-01 04:17:11,285 INFO Background metadata worker starting...
+2026-05-01 04:17:11,356 INFO Prefetching missing metadata for 7 tickers...
+2026-05-01 04:17:12,870 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:17:12,872 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-05-01 04:17:12,873 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:17:12,985 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-05-01 04:17:13,381 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL1.NS"}}}
+2026-05-01 04:17:13,385 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL4.NS"}}}
+2026-05-01 04:17:13,510 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL2.NS"}}}
+2026-05-01 04:17:13,917 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:17:13,924 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:17:14,078 INFO Background cache refresh complete for 755 symbols.
+2026-05-01 04:17:31,978 ERROR Failed to fetch NSE CSV after 3 attempts: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-05-01 04:17:31,978 WARNING Sector segment https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-05-01 04:17:35,346 ERROR Failed to fetch NSE CSV after 3 attempts: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-05-01 04:17:35,347 WARNING Sector segment https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv failed: 404 Client Error: Not Found for url: https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv
+2026-05-01 04:17:36,102 INFO Prefetching missing metadata for 7 tickers...
+2026-05-01 04:17:36,593 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-05-01 04:17:36,594 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL1.NS"}}}
+2026-05-01 04:17:36,599 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL3.NS"}}}
+2026-05-01 04:17:36,600 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL2.NS"}}}
+2026-05-01 04:17:36,668 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL4.NS"}}}
+2026-05-01 04:18:13,275 ERROR 
+5 Failed downloads:
+2026-05-01 04:18:13,275 ERROR ['DUMMYALCAR.NS', 'DUMMYVEDL2.NS', 'DUMMYVEDL1.NS', 'DUMMYVEDL3.NS', 'DUMMYVEDL4.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")')
+2026-05-01 04:26:25,204 INFO Background metadata worker starting...
+2026-05-01 04:26:25,236 INFO Prefetching missing metadata for 7 tickers...
+2026-05-01 04:26:27,270 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-05-01 04:26:27,276 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:26:27,281 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-05-01 04:26:27,289 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:26:27,785 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-05-01 04:26:27,790 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL1.NS"}}}
+2026-05-01 04:26:27,822 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL2.NS"}}}
+2026-05-01 04:26:28,400 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:26:28,406 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:26:28,407 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:26:28,428 INFO Background cache refresh complete for 755 symbols.
+2026-05-01 04:26:47,775 INFO Prefetching missing metadata for 5 tickers...
+2026-05-01 04:26:48,246 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL2.NS"}}}
+2026-05-01 04:26:48,248 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL3.NS"}}}
+2026-05-01 04:26:48,255 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL4.NS"}}}
+2026-05-01 04:26:48,259 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL1.NS"}}}
+2026-05-01 04:27:18,523 ERROR 
+4 Failed downloads:
+2026-05-01 04:27:18,523 ERROR ['DUMMYVEDL4.NS', 'DUMMYVEDL2.NS', 'DUMMYVEDL3.NS', 'DUMMYVEDL1.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")')
+2026-05-01 04:31:37,709 INFO Background metadata worker starting...
+2026-05-01 04:31:37,812 INFO Prefetching missing metadata for 7 tickers...
+2026-05-01 04:31:39,140 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-05-01 04:31:39,148 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:31:39,150 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-05-01 04:31:39,164 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-05-01 04:31:39,589 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-05-01 04:31:39,602 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL2.NS"}}}
+2026-05-01 04:31:39,629 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL3.NS"}}}
+2026-05-01 04:31:40,526 INFO Background cache refresh complete for 755 symbols.
+2026-05-01 04:31:49,098 INFO Prefetching missing metadata for 5 tickers...
+2026-05-01 04:31:50,183 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL3.NS"}}}
+2026-05-01 04:31:50,185 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL1.NS"}}}
+2026-05-01 04:31:50,192 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL4.NS"}}}
+2026-05-01 04:31:50,198 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL2.NS"}}}

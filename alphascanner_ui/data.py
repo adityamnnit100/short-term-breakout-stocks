@@ -6,6 +6,7 @@ import logging
 import time
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import requests
 import streamlit as st
@@ -186,12 +187,15 @@ def fetch_indices_performance() -> dict:
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = df.columns.get_level_values(0)
             if len(df) >= 2:
-                previous = float(df["Close"].iloc[-2])
-                current = float(df["Close"].iloc[-1])
-                change = (current - previous) / previous * 100
-                if pd.isna(change) or np.isinf(change):
-                    change = 0.0
-                output[name] = {"price": current, "change": round(float(change), 2)}
+                # Find the last non-NaN close
+                close_series = df["Close"].dropna()
+                if len(close_series) >= 2:
+                    previous = float(close_series.iloc[-2])
+                    current = float(close_series.iloc[-1])
+                    change = (current - previous) / previous * 100
+                    if pd.isna(change) or np.isinf(change):
+                        change = 0.0
+                    output[name] = {"price": current, "change": round(float(change), 2)}
         except Exception:
             continue
     return output
