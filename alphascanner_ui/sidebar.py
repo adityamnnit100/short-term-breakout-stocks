@@ -32,6 +32,16 @@ class ChartOptions:
 
 
 def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSettings, ChartOptions]:
+    # Ensure critical session defaults exist to avoid KeyError and keep UI consistent
+    st.session_state.setdefault("only_ready_setups", False)
+    st.session_state.setdefault("chart_show_sma", True)
+    st.session_state.setdefault("chart_show_ema", True)
+    st.session_state.setdefault("chart_show_bb", True)
+    st.session_state.setdefault("chart_show_rsi", True)
+    st.session_state.setdefault("chart_show_macd", True)
+    st.session_state.setdefault("chart_show_vwap", False)
+    st.session_state.setdefault("include_news_sentiment", False)
+
     with st.sidebar:
         # Interactive Brand Section
         if st.button("⚡ ALPHASCANNER PRO\nTerminal Workspace", key="sidebar_brand_btn", use_container_width=True, help="Click to refresh terminal state"):
@@ -47,12 +57,15 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                 index=0,
                 help="Use Nifty 500 for the core scanner, or Total Market when you want market-cap screening.",
             )
+            # persist short-term_sidebar selections
+            st.session_state["sidebar_universe"] = universe
             scanner_type = st.selectbox(
                 "Scanner Type",
                 ["Breakout", "Pre-Breakout", "FII Accumulation", "Long-Term"],
                 index=0,
                 help="Breakout: active breakouts. Pre-Breakout: consolidating near highs. FII Accumulation: quarterly institutional holding build-up. Long-Term: large-cap stocks for longer holds.",
             )
+            st.session_state["sidebar_scanner_type"] = scanner_type
             if scanner_type == "FII Accumulation":
                 st.caption("Quarterly ownership scanner based on FII holding increasing quarter-on-quarter.")
                 universe = "Screener.in FII QoQ"
@@ -88,6 +101,7 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                 )
                 interval_map = {"Daily": "1d", "60m": "60m", "30m": "30m", "15m": "15m", "5m": "5m"}
                 timeframe = interval_map.get(timeframe_choice, "1d")
+                st.session_state["sidebar_timeframe"] = timeframe
 
                 if scanner_type == "Breakout":
                     rsi_range = st.slider("RSI Range", 0, 100, (50, 85), help="Momentum zone for breakouts. Default 50-85 is broader for more scan results.")
@@ -103,6 +117,12 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                         help="Focus on Small Caps (<5k) or Mid Caps (5k-20k).",
                     )
                     min_mkt_cap, max_mkt_cap = mkt_cap_range
+                # persist numeric filters
+                st.session_state["sidebar_min_mkt_cap"] = min_mkt_cap
+                st.session_state["sidebar_max_mkt_cap"] = max_mkt_cap
+                st.session_state["sidebar_vol_thresh"] = vol_thresh
+                st.session_state["sidebar_rsi_range"] = rsi_range
+                st.session_state["sidebar_dist_thresh"] = dist_thresh
 
         st.divider()
 
@@ -118,9 +138,9 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         )
         include_news = st.session_state.get("include_news_sentiment", False)
 
-        st.divider()
         cache_choice = st.radio("Data Source", ["🔄 Fresh Scan", "⏱ Use Cache (12h)"], index=0)
         use_cache = cache_choice == "⏱ Use Cache (12h)"
+        st.session_state["sidebar_use_cache"] = use_cache
         action_label = "Load Cached Scan" if use_cache else "Run Fresh Scan"
         action_help = "Load the latest cached scan result" if use_cache else "Run a fresh market scan"
 
@@ -130,6 +150,7 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
             value=st.session_state.get("only_ready_setups", False),
             help="Show only setups that meet the short-term execution readiness criteria.",
         )
+        st.session_state["only_ready_setups"] = only_ready_setups
 
         st.divider()
         st.caption(f"Action: {action_label}")
@@ -151,4 +172,11 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         include_news=include_news,
         only_ready_setups=only_ready_setups,
     )
+    # Persist last-used settings for other UI components
+    st.session_state["sidebar_last_settings"] = {
+        "universe": settings.universe,
+        "scanner_type": settings.scanner_type,
+        "timeframe": settings.timeframe,
+        "use_cache": settings.use_cache,
+    }
     return settings, chart_options

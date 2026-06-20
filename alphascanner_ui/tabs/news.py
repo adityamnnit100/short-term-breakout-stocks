@@ -6,7 +6,6 @@ import xml.etree.ElementTree as ET
 import urllib.parse
 import requests
 import streamlit as st
-import yfinance as yf
 from dateutil import parser as date_parser
 
 try:
@@ -78,6 +77,8 @@ def fetch_news_cached(query: str, news_count: int = 15):
     # 2. Fallback to Yahoo Finance Search if Google RSS fails or is empty
     if not news_results:
         try:
+            import yfinance as yf
+
             search = yf.Search(query, news_count=news_count)
             news_results = getattr(search, "news", [])
         except Exception:
@@ -131,11 +132,11 @@ def render_tab() -> None:
 
         st.markdown(f"""
             <div class="glass-card" style="padding: 1.2rem; border-left: 4px solid #00e5ff; margin-bottom: 1rem;">
-                <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 0.5rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                    <span>{publisher} • <span style="color: {color}; background: {bg}; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem;">{sentiment}</span></span>
-                    <span>{date_str}</span>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                    <div class="news-publisher">{publisher} • <span style="background: {bg}; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; color: {color};">{sentiment}</span></div>
+                    <div style="color: #94a3b8; font-size:0.82rem;">{date_str}</div>
                 </div>
-                <a href="{link}" target="_blank" style="text-decoration: none; color: #00e5ff; font-weight: 600; font-size: 1.1rem; line-height: 1.4; display: block;">{title}</a>
+                <a class="news-title" href="{link}" target="_blank">{title}</a>
             </div>
         """, unsafe_allow_html=True)
 

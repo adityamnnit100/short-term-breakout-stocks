@@ -97,11 +97,19 @@ footer { visibility: hidden; }
 
 .panel-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--cyan); margin-bottom: 16px; font-weight: 700; border-left: 3px solid var(--cyan); padding-left: 10px; }
 
+/* News / link visibility improvements */
+.glass-card a { color: var(--cyan) !important; text-decoration: none !important; word-break: break-word; display: block; }
+.glass-card a:hover { color: #dffbff !important; text-decoration: underline !important; }
+.glass-card .news-publisher { color: var(--muted) !important; font-size: 0.82rem; margin-bottom: 4px; }
+.glass-card .news-title { color: var(--cyan) !important; font-weight: 700; font-size: 1.05rem; line-height: 1.35; }
+
 .trade-card {
     background: linear-gradient(135deg, rgba(14,32,64,0.95) 0%, rgba(10,25,50,0.95) 100%);
     border: 1px solid rgba(0,229,255,0.25); border-radius: 16px; padding: 24px;
     margin: 20px 0; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
+.trade-card > div:first-child { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.level-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 .trade-ticker { font-size: 1.4rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--cyan); }
 .trade-subtitle { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
 .level-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }

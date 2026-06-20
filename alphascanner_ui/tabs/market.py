@@ -3,27 +3,55 @@
 import plotly.graph_objects as go
 import streamlit as st
 
-from alphascanner_ui.charts import apply_trading_layout
+from alphascanner_ui.charts import apply_trading_layout, plotly_config
 
 
 def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history, logger) -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">Global Market Snapshot</div></div>', unsafe_allow_html=True)
 
     with st.spinner("Fetching indices…"):
-        index_data = fetch_indices_performance()
+        try:
+            index_data = fetch_indices_performance()
+        except Exception as e:
+            st.error(f"Could not fetch index data: {e}")
+            index_data = {}
 
     if index_data:
-        columns = st.columns(min(len(index_data), 4))
-        for index, (name, data) in enumerate(index_data.items()):
-            column = columns[index % 4]
-            change = data["change"]
-            column.metric(name, f"{data['price']:,.2f}", f"{change:+.2f}%")
+        # Render index metrics in rows of up to 4 cards for responsive layout
+        items = list(index_data.items())
+        for i in range(0, len(items), 4):
+            group = items[i : i + 4]
+            cols = st.columns(len(group))
+            for col, (name, data) in zip(cols, group):
+                try:
+                    change = data.get("change", 0)
+                    price = data.get("price", 0)
+                    col.metric(name, f"{price:,.2f}", f"{change:+.2f}%")
+                except Exception:
+                    col.metric(name, "N/A", "—")
+    else:
+        st.info("Index data unavailable")
 
     st.divider()
     st.markdown('<div class="panel-title" style="color: #ffca28; border-left-color: #ffca28;">Institutional Flow (FII/DII)</div>', unsafe_allow_html=True)
 
     with st.spinner("Fetching FII/DII data…"):
-        fii_dii = fetch_fii_dii_data(logger)
+        try:
+            fii_dii = fetch_fii_dii_data(logger) or {}
+        except Exception as e:
+            st.error(f"Could not fetch FII/DII data: {e}")
+            fii_dii = {}
+
+    # Safe defaults
+    fii_dii = {
+        "fii_net": fii_dii.get("fii_net", 0),
+        "fii_buy": fii_dii.get("fii_buy", 0),
+        "fii_sell": fii_dii.get("fii_sell", 0),
+        "dii_net": fii_dii.get("dii_net", 0),
+        "dii_buy": fii_dii.get("dii_buy", 0),
+        "dii_sell": fii_dii.get("dii_sell", 0),
+        "date": fii_dii.get("date", "N/A"),
+    }
 
     # 1. Metric Cards with Tooltips
     col1, col2 = st.columns(2)
@@ -50,8 +78,8 @@ def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history
     # 2. Historical Flow Comparison Chart
     st.write("")
     with st.expander("📊 5-Day Institutional Trend", expanded=True):
-        # Note: In a production app, fetch_fii_dii_data should return a list of history.
-        # Here we demonstrate the UI comparison logic.
+        # Note: In a production app, `fetch_fii_dii_data` may return history.
+        # Here we demonstrate the UI comparison logic with available totals.
         fig_flow = go.Figure()
         fig_flow.add_trace(go.Bar(
             name='FII Net',
@@ -69,13 +97,19 @@ def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history
         ))
         fig_flow.update_layout(barmode='group')
         apply_trading_layout(fig_flow, height=300, title="5-Day Institutional Trend")
-        st.plotly_chart(fig_flow, use_container_width=True, config={"displaylogo": False})
+        st.plotly_chart(fig_flow, use_container_width=True, config=plotly_config())
 
-    st.caption(f"Data date: {fii_dii['date']}")
+    st.caption(f"Data date: {fii_dii.get('date', 'N/A')}")
 
     st.divider()
     st.subheader("Nifty 50 Chart")
-    nifty_df = load_nifty_history(period="1y")
+    # Allow user to change Nifty timeframe for the chart
+    tf = st.selectbox("Nifty timeframe", options=["1y", "6mo", "3mo", "60d"], index=0, help="Choose period for the Nifty chart")
+    try:
+        nifty_df = load_nifty_history(period=tf)
+    except Exception as e:
+        st.error(f"Could not load Nifty history: {e}")
+        nifty_df = None
     if nifty_df.empty:
         st.warning("Nifty chart data unavailable.")
         return
@@ -102,4 +136,4 @@ def render_tab(fetch_indices_performance, fetch_fii_dii_data, load_nifty_history
         )
     )
     apply_trading_layout(figure, height=360, title="Nifty 50 Trend", show_legend=True)
-    st.plotly_chart(figure, use_container_width=True, config={"displaylogo": False, "scrollZoom": True})
+    st.plotly_chart(figure, use_container_width=True, config=plotly_config())

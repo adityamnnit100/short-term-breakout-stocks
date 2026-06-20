@@ -2,8 +2,6 @@
 
 import pandas as pd
 import streamlit as st
-
-from breakout import calculate_atr
 from alphascanner_ui.services.alerts_service import get_alerts_service
 
 
@@ -40,6 +38,9 @@ def _update_trailing_stop_positions(load_ticker_history) -> None:
             continue
 
         current_price = float(history["Close"].iloc[-1])
+        # Lazily import heavy helper to avoid import-time crashes
+        from breakout import calculate_atr
+
         atr = float(calculate_atr(history["High"], history["Low"], history["Close"]).iloc[-1])
         if pd.isna(atr) or atr <= 0:
             atr = current_price * 0.015

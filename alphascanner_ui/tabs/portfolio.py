@@ -7,7 +7,6 @@ import pandas as pd
 import streamlit as st
 
 from alphascanner_ui.auth import get_current_user
-from breakout import calculate_atr, calculate_macd, calculate_rsi
 from alphascanner_ui.database import (get_portfolios_with_holdings, add_holding, 
                                       execute_query)
 
@@ -49,6 +48,9 @@ def _analyse_holding(holding: Dict, load_ticker_history) -> Dict:
     sma20 = float(close.rolling(20).mean().iloc[-1])
     sma50 = float(close.rolling(50).mean().iloc[-1])
     sma200 = float(close.rolling(200).mean().iloc[-1]) if len(close) >= 200 else sma50
+    # Import breakout helpers lazily to avoid importing heavy dependencies at module import time
+    from breakout import calculate_rsi, calculate_macd, calculate_atr
+
     rsi = float(calculate_rsi(close).iloc[-1])
     macd, macd_signal, _ = calculate_macd(close)
     macd_is_bullish = float(macd.iloc[-1]) >= float(macd_signal.iloc[-1])
@@ -111,6 +113,8 @@ def _add_trailing_stop_position(holding: Dict, load_ticker_history) -> None:
     current_price = float(close.iloc[-1])
     entry_price = float(holding.get("avg_price", 0.0) or current_price)
     quantity = int(holding.get("quantity", 0) or 0)
+    from breakout import calculate_atr
+
     atr = float(calculate_atr(high, low, close).iloc[-1])
     if pd.isna(atr) or atr <= 0:
         atr = current_price * 0.015
