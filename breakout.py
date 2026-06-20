@@ -34,6 +34,12 @@ try:
 except ImportError:
     HAS_TEXTBLOB = False
 
+import os
+
+# Tune default max workers based on machine CPU count. This is a conservative
+# formula: allow up to 2 * cpus (capped at 32) but at least 4 workers.
+DEFAULT_MAX_WORKERS = min(32, max(4, (os.cpu_count() or 2) * 2))
+
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -383,6 +389,65 @@ def calculate_stochastic_rsi(rsi, window: int = 14, smooth_k: int = 3, smooth_d:
     return k, d
 
 
+def calculate_keltner_channels(close, high, low, window: int = 20, atr_mult: float = 1.5):
+    """Calculate simple Keltner Channels (EMA ± ATR*mult)."""
+    ema = close.ewm(span=window, adjust=False).mean()
+    atr = calculate_atr(high, low, close, period=window)
+    upper = ema + atr * atr_mult
+    lower = ema - atr * atr_mult
+    return upper, ema, lower
+
+
+def detect_bb_kc_squeeze(close, high, low, window: int = 20, bb_std: float = 2.0, atr_mult: float = 1.5) -> bool:
+    """Detects a Bollinger-Keltner 'squeeze' (volatility contraction).
+
+    Returns True when Bollinger band width is materially narrower than
+    the Keltner channel width (suggesting a volatility squeeze).
+    """
+    if len(close) < window + 2:
+        return False
+    # Bollinger Bands
+    bb_upper, bb_mid, bb_lower = calculate_bollinger_bands(close, window=window, num_std=bb_std)
+    # Keltner Channels
+    kc_upper, kc_mid, kc_lower = calculate_keltner_channels(close, high, low, window=window, atr_mult=atr_mult)
+
+    # Use the most recent widths
+    try:
+        bb_width = float((bb_upper - bb_lower).iloc[-1])
+        kc_width = float((kc_upper - kc_lower).iloc[-1])
+    except Exception:
+        return False
+
+    if kc_width <= 0:
+        return False
+
+    # Squeeze when Bollinger width is significantly (<60%) smaller than Keltner width
+    return bb_width < (kc_width * 0.6)
+
+
+def calculate_obv(close, volume):
+    """Vectorized On-Balance Volume (OBV) series for a single ticker Series."""
+    # OBV: add volume when close up, subtract when close down, else unchanged
+    chg = close.diff().fillna(0)
+    sign = chg.apply(lambda x: 1 if x > 0 else (-1 if x < 0 else 0))
+    return (sign * volume).cumsum()
+
+
+def calculate_mfi(high, low, close, volume, period: int = 14):
+    """Money Flow Index (MFI) series vectorized for a single ticker Series."""
+    tp = (high + low + close) / 3.0
+    mf = tp * volume
+    # Positive / Negative money flow per period
+    pos = mf.where(tp > tp.shift(1), 0.0)
+    neg = mf.where(tp < tp.shift(1), 0.0)
+    pos_sum = pos.rolling(period).sum()
+    neg_sum = neg.rolling(period).sum().replace(0, np.nan)
+    mfr = pos_sum / neg_sum
+    mfi = 100 - (100 / (1 + mfr))
+    mfi = mfi.fillna(50)
+    return mfi
+
+
 def detect_divergence(close, rsi, lookback: int = 20):
     """Improved divergence detection comparing current price action to recent structural peaks."""
     if len(close) < lookback + 5:
@@ -397,6 +462,32 @@ def detect_divergence(close, rsi, lookback: int = 20):
     bull = bool(close.iloc[-1] < prev_min_price and rsi.iloc[-1] > prev_min_rsi)
     bear = bool(close.iloc[-1] > prev_max_price and rsi.iloc[-1] < prev_max_rsi)
     return bull, bear
+
+
+def detect_weekly_trend(df: pd.DataFrame, min_weeks: int = 12) -> bool:
+    """Derive a higher-timeframe (weekly) trend from daily data.
+
+    Returns True when weekly EMA/SMA alignment indicates a constructive trend.
+    If insufficient weekly history, returns True (do not penalize new listings).
+    """
+    try:
+        # Resample to weekly close (Friday close semantics)
+        weekly = df["Close"].resample("W-FRI").last().dropna()
+        if len(weekly) < min_weeks:
+            return True
+
+        # Short weekly trend (10-week EMA) vs medium (20-week SMA)
+        weekly_ema10 = weekly.ewm(span=10, adjust=False).mean()
+        weekly_sma20 = weekly.rolling(window=20).mean()
+
+        # Use latest values
+        w_close = float(weekly.iloc[-1])
+        w_ema10 = float(weekly_ema10.iloc[-1])
+        w_sma20 = float(weekly_sma20.iloc[-1]) if not pd.isna(weekly_sma20.iloc[-1]) else w_ema10
+
+        return (w_close > w_ema10) and (w_ema10 > w_sma20)
+    except Exception:
+        return True
 
 
 def detect_vcp_tightness(close, window: int = 10):
@@ -750,7 +841,7 @@ def prefetch_metadata(tickers: List[str]):
         except Exception:
             pass
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=DEFAULT_MAX_WORKERS) as executor:
         executor.map(_fetch_worker, to_fetch)
 
 
@@ -812,6 +903,9 @@ def _process_single_ticker(
         df = df.dropna(subset=["Close", "High", "Low", "Open", "Volume"])
 
         if len(df) < 200:
+            # Not enough history to evaluate reliably — count as an error for diagnostics
+            with stats_lock:
+                stats["error_fail"] = stats.get("error_fail", 0) + 1
             return None
 
         with stats_lock:
@@ -824,22 +918,43 @@ def _process_single_ticker(
 
         # Relative Strength (Benchmark alignment now handled globally in run_scanner)
         rs_rating = calculate_relative_strength(close, nifty_close)
-        # Use Global Vectorized Indicators passed from run_scanner (much faster)
-        sma_200 = indicators['sma_200'][ticker].iloc[-1]
+        # Use Global Vectorized Indicators passed from run_scanner (lightweight set)
+        # Heavy indicators (sma_200, adx, atr, vwap) are computed on-demand below
         sma_50 = indicators['sma_50'][ticker].iloc[-1]
         ema_20 = indicators['ema_20'][ticker].iloc[-1]
         avg_vol = indicators['avg_vol'][ticker].iloc[-1]
         rsi_series = indicators['rsi'][ticker]
         rsi = rsi_series.iloc[-1]
-        adx_series = indicators['adx'][ticker]
-        adx = adx_series.iloc[-1]
-        adx_prev = adx_series.iloc[-2]
-        vwap = indicators['vwap'][ticker].iloc[-1]
-        atr_val = indicators['atr'][ticker].iloc[-1]
 
         # MACD and Bollinger Bands series for specific ticker logic
         macd, macd_sig, macd_hist = indicators['macd'][ticker], indicators['macd_sig'][ticker], indicators['macd_hist'][ticker]
         upper_bb, mid_bb, lower_bb = indicators['bb_upper'][ticker], indicators['bb_mid'][ticker], indicators['bb_lower'][ticker]
+
+        # Compute heavy indicators lazily for this ticker only (saves global cost)
+        try:
+            sma_200 = close.rolling(200).mean().iloc[-1] if len(close) >= 200 else float('nan')
+        except Exception:
+            sma_200 = float('nan')
+
+        try:
+            adx_series = calculate_adx(high, low, close)
+            adx = adx_series.iloc[-1]
+            adx_prev = adx_series.iloc[-2] if len(adx_series) >= 2 else float('nan')
+        except Exception:
+            adx_series = pd.Series(dtype=float)
+            adx = float('nan')
+            adx_prev = float('nan')
+
+        try:
+            vwap_ser = calculate_vwap(high, low, close, vol)
+            vwap = vwap_ser.iloc[-1] if hasattr(vwap_ser, 'iloc') else float('nan')
+        except Exception:
+            vwap = float('nan')
+
+        try:
+            atr_val = calculate_atr(high, low, close).iloc[-1]
+        except Exception:
+            atr_val = float('nan')
 
         # Short-term Professional Features
         rvol = calculate_rvol(vol) if not vol.empty else 1.0
@@ -890,9 +1005,24 @@ def _process_single_ticker(
         consol_days = calculate_consolidation_days(df)
         is_dry = detect_volume_dryup(vol)
 
-        # Accumulation signal counter for pre-breakout
+        # Squeeze detection (Bollinger vs Keltner) as an additional accumulation signal
+        is_squeeze = detect_bb_kc_squeeze(close, high, low)
+
+        # OBV / MFI based volume momentum confirmation (useful for Pre-Breakout)
+        obv_series = indicators.get('obv', {}).get(ticker) if indicators and 'obv' in indicators else None
+        mfi_series = indicators.get('mfi', {}).get(ticker) if indicators and 'mfi' in indicators else None
+        try:
+            obv_up = bool(obv_series.iloc[-1] > obv_series.iloc[-6]) if obv_series is not None and len(obv_series) >= 6 else False
+        except Exception:
+            obv_up = False
+        try:
+            mfi_val = float(mfi_series.iloc[-1]) if mfi_series is not None else 50.0
+        except Exception:
+            mfi_val = 50.0
+
+        # Accumulation signal counter for pre-breakout (include squeeze and volume momentum)
         accum_signals_count = sum([
-            is_tight, is_dry, is_inside_bar, is_nr7,
+            is_tight, is_dry, is_inside_bar, is_nr7, is_squeeze, obv_up,
             base_weeks >= 2, consol_days >= 5
         ])
 
@@ -904,7 +1034,11 @@ def _process_single_ticker(
         rsi_acc_score = max(0, 5 - abs(rsi - 52.5) / 2.5) if (40 <= rsi <= 65) else 0
         # 2. Tightness Score: Max points if ratio <= 0.5 (Max 5 pts)
         t_acc_score = max(0, min(5.0, (0.75 - tightness_ratio) / 0.25 * 5)) if tightness_ratio < 0.75 else 0
-        setup_score = round(min(10.0, rsi_acc_score + t_acc_score), 1)
+        # Add squeeze + OBV/MFI bonuses to favor constructive accumulation setups
+        squeeze_bonus = 1.0 if is_squeeze else 0.0
+        obv_bonus = 1.0 if obv_up else 0.0
+        mfi_bonus = 1.0 if mfi_val >= 60 else (0.5 if mfi_val >= 50 else 0.0)
+        setup_score = round(min(10.0, rsi_acc_score + t_acc_score + squeeze_bonus + obv_bonus + mfi_bonus), 1)
 
         # Volume Surge is validated only if the stock belongs to a trending/outperforming sector
         is_surge = detect_volume_surge(vol)
@@ -946,6 +1080,11 @@ def _process_single_ticker(
                 (trend_stack_ok and (ltp > ema_20 * 0.985))
                 or (ema_20 > sma_50 and ltp > ema_20 * 0.98)
             )
+            # Require higher-timeframe (weekly) constructive trend for Pre-Breakout setups
+            multi_tf_ok = detect_weekly_trend(df)
+            if not multi_tf_ok:
+                with stats_lock: stats["trend_fail"] += 1
+                return None
         elif is_long_term_scan:
             trend_ok = (
                 (ltp > sma_200 * 0.98)
@@ -1131,6 +1270,9 @@ def _process_single_ticker(
         if is_nr7: patterns.append("NR7")
         if is_tight: patterns.append("VCP-Tight")
         if is_dry: patterns.append("Vol-Dryup")
+        if is_squeeze: patterns.append("BB-KC Squeeze")
+        if obv_up: patterns.append("OBV-Up")
+        if mfi_val >= 60: patterns.append("MFI>60")
         if is_surge: patterns.append("Vol-Surge")
         if base_weeks >= 4:
             patterns.append(f"Base-{base_weeks}W")
@@ -1188,6 +1330,32 @@ def _process_single_ticker(
                 return None
             if vol_ratio < min_vol_ratio * 0.5: # Extreme low volume rejection
                 with stats_lock: stats["breakout_fail"] += 1
+                return None
+            # Strict volume confirmation: require demand confirmation to consider execution-ready
+            # Condition: (OBV rising OR RVOL >= 1.5) AND (MFI >= 60 OR Vol surge)
+            obv_up_conf = False
+            try:
+                obv_df = indicators.get('obv') if indicators and 'obv' in indicators else None
+                if obv_df is not None and ticker in obv_df:
+                    obv_ser = obv_df[ticker]
+                    if len(obv_ser) >= 6:
+                        obv_up_conf = bool(obv_ser.iloc[-1] > obv_ser.iloc[-6])
+            except Exception:
+                obv_up_conf = False
+
+            mfi_val_conf = None
+            try:
+                mfi_df = indicators.get('mfi') if indicators and 'mfi' in indicators else None
+                if mfi_df is not None and ticker in mfi_df:
+                    mfi_val_conf = float(mfi_df[ticker].iloc[-1])
+            except Exception:
+                mfi_val_conf = None
+
+            rvol_val = float(rvol) if not pd.isna(rvol) else 0.0
+            vol_confirmation = (obv_up_conf or (rvol_val >= 1.5)) and ((mfi_val_conf is not None and mfi_val_conf >= 60) or is_surge)
+            if not vol_confirmation:
+                with stats_lock:
+                    stats["volume_fail"] += 1
                 return None
 
         market_score = float(market_context.get("market_bias_score", 0.0))
@@ -1276,6 +1444,7 @@ def run_scanner(
     sector_map: Optional[dict] = None,
     include_news_sentiment: bool = False,
     progress_callback=None,
+    incremental_fetch: bool = False,
 ):
     apply_market_cap_filter = min_mkt_cap_cr > 0 or max_mkt_cap_cr > 0
 
@@ -1301,7 +1470,9 @@ def run_scanner(
     # 1. Download benchmark first to ensure the regime filter is available
     benchmark_period = "2y" if timeframe == "1d" else "60d"
     try:
-        nifty = yf.download("^NSEI", period=benchmark_period, interval=timeframe, progress=False, auto_adjust=False)
+        from utils.yf_cache import cached_download
+
+        nifty = cached_download("^NSEI", period=benchmark_period, interval=timeframe, progress=False, auto_adjust=False)
         if isinstance(nifty.columns, pd.MultiIndex):
             nifty.columns = nifty.columns.get_level_values(0)
         nifty_close = nifty["Close"].dropna()
@@ -1317,24 +1488,37 @@ def run_scanner(
     # 2. Chunked ticker download. Keep this serial because yfinance mutates shared
     # state internally and concurrent chunk downloads can corrupt/duplicate columns.
     download_weight = 0.4
-    chunk_size = 100
+    # Chunk size tuned to balance single-request payload and memory — larger chunks reduce roundtrips
+    chunk_size = 200 if len(tickers) > 400 else 100
     data_frames = []
     chunk_indices = list(range(0, len(tickers), chunk_size))
     num_chunks = len(chunk_indices)
     chunk_period = "2y" if timeframe == "1d" else "60d"
 
+    # If incremental_fetch is requested, try to read last scan time and
+    # instruct the downloader to fetch only new candles since then.
+    start_date = None
+    if incremental_fetch:
+        try:
+            from utils.yf_cache import get_last_scan_time
+            last = get_last_scan_time(timeframe)
+            if last is not None:
+                start_date = (last - pd.Timedelta(days=1)).strftime('%Y-%m-%d')
+        except Exception:
+            start_date = None
+
     for i, start_idx in enumerate(chunk_indices):
         chunk = tickers[start_idx : start_idx + chunk_size]
         try:
-            chunk_data = yf.download(
-                chunk,
-                period=chunk_period,
-                interval=timeframe,
-                progress=False,
-                timeout=45,
-                auto_adjust=False,
-                threads=False,
-            )
+            # Use cached_download to avoid re-requesting the same chunk within
+            # a single process run. `threads=True` is passed to yfinance to
+            # enable internal parallelization for the chunk request.
+            from utils.yf_cache import incremental_cached_download
+
+            kwargs = dict(period=chunk_period, interval=timeframe, progress=False, timeout=45, auto_adjust=False)
+            if start_date:
+                kwargs['start_date'] = start_date
+            chunk_data = incremental_cached_download(chunk, **kwargs)
             if chunk_data is not None and not chunk_data.empty:
                 data_frames.append(chunk_data)
         except Exception as exc:
@@ -1382,6 +1566,29 @@ def run_scanner(
             'macd': macd_line, 'macd_sig': macd_sig, 'macd_hist': macd_hist,
             'bb_upper': bb_upper, 'bb_mid': bb_mid, 'bb_lower': bb_lower
         }
+
+        # OBV and MFI: compute per-ticker series by applying functions columnwise
+        try:
+            # Vectorized OBV: sign of close diff * volume, cumulative sum
+            close_diff = all_c.diff().fillna(0)
+            sign = close_diff.apply(np.sign)
+            obv_df = (sign * all_v).cumsum()
+
+            # Vectorized MFI approximation (14-period) using typical price
+            tp = (all_h + all_l + all_c) / 3.0
+            money_flow = tp * all_v
+            # positive / negative money flow
+            tp_diff = tp.diff().fillna(0)
+            pos_flow = money_flow.where(tp_diff > 0, 0.0).rolling(14).sum()
+            neg_flow = money_flow.where(tp_diff < 0, 0.0).rolling(14).sum().abs()
+            # avoid div0
+            mfi_df = 100 - (100 / (1 + (pos_flow / neg_flow.replace(0, np.nan))))
+
+            global_inds['obv'] = obv_df
+            global_inds['mfi'] = mfi_df
+        except Exception:
+            # Best-effort: skip OBV/MFI if vectorization fails
+            pass
     except Exception as e:
         logging.getLogger("AlphaScanner.Engine").error(f"Vectorization failed: {e}")
         return pd.DataFrame(), stats
@@ -1447,7 +1654,7 @@ def run_scanner(
                 set_system_cache(cache_key, str(score))
                 return s, score
 
-            with concurrent.futures.ThreadPoolExecutor(max_workers=20) as sect_exec:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=DEFAULT_MAX_WORKERS) as sect_exec:
                 news_scores = dict(sect_exec.map(_get_sect_news_score, sector_perf.keys()))
 
             for s, rets in sector_perf.items():
@@ -1471,7 +1678,7 @@ def run_scanner(
     metadata_cache = get_all_metadata_cache(avail)
 
     # Use ThreadPoolExecutor for concurrent processing
-    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=DEFAULT_MAX_WORKERS) as executor:
         future_to_ticker = {
             executor.submit(
                 _process_single_ticker,
@@ -1492,6 +1699,13 @@ def run_scanner(
                 progress_callback(0.50 + ((i + 1) / len(avail) * 0.50))
 
     df_out = pd.DataFrame(hits).sort_values("Signal_Strength", ascending=False) if hits else pd.DataFrame()
+
+    # Record the last successful scan time for this timeframe (used by incremental fetch)
+    try:
+        from utils.yf_cache import set_last_scan_time
+        set_last_scan_time(timeframe)
+    except Exception:
+        pass
 
     return df_out, stats
 
@@ -1550,10 +1764,12 @@ def _fetch_fii_accumulation_page(page: int) -> pd.DataFrame:
         if "FII Hold" in header_text:
             selected_table = table_node
             break
-
     if selected_table is None:
         return pd.DataFrame()
 
+    if selected_table is None:
+        return pd.DataFrame()
+    
     headers = [cell.get_text(" ", strip=True) for cell in selected_table.find_all("th")]
     first_data_row = next((tr for tr in selected_table.find_all("tr") if tr.find_all("td")), None)
     if first_data_row is not None:
@@ -1585,6 +1801,7 @@ def _fetch_fii_accumulation_page(page: int) -> pd.DataFrame:
     table = table.copy()
     table["Screener_Symbol"] = symbols[: len(table)] + [""] * max(0, len(table) - len(symbols))
     return table
+
 
 
 def run_fii_accumulation_scanner(

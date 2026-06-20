@@ -1,12 +1,11 @@
 """Streamlit entrypoint for AlphaScanner PRO."""
 
 import streamlit as st
-
-from breakout import fetch_fii_dii_data, start_background_metadata_worker
 from alphascanner_ui.auth import render_logout_control, require_login
 from alphascanner_ui.data import (
     configure_logging,
     fetch_indices_performance,
+    fetch_fii_dii_data,
     load_nifty_history,
     load_ticker_history,
     run_backtest_cached,
@@ -14,7 +13,7 @@ from alphascanner_ui.data import (
 from alphascanner_ui.database import init_db as init_user_db
 from alphascanner_ui.sidebar import render_sidebar
 from alphascanner_ui.state import init_session_state
-from alphascanner_ui.tabs import backtest, journal, market, news, portfolio, risk, scanner, settings, watchlist, notes, alerts
+from alphascanner_ui.tabs import backtest, journal, market, news, portfolio, risk, scanner, settings, watchlist, notes, alerts, performance
 from alphascanner_ui.theme import apply_global_styles, apply_plotly_theme, render_footer
 
 
@@ -31,7 +30,14 @@ require_login()
 init_user_db()
 
 # Only run these after successful login to prevent UI flickering and state errors
-start_background_metadata_worker()
+try:
+    # Defer heavy imports (yfinance/multitasking) until after core UI is ready.
+    # This prevents import-time crashes in environments where those libs aren't compatible.
+    from breakout import start_background_metadata_worker
+
+    start_background_metadata_worker()
+except Exception:
+    logger.exception("Failed to start background metadata worker; continuing without it.")
 apply_global_styles()
 apply_plotly_theme()
 
@@ -389,7 +395,7 @@ if st.session_state.get('compact_mode', False):
     </style>
     """, unsafe_allow_html=True)
 
-tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, tab_risk, tab_journal, tab_notes, tab_alerts, tab_settings = st.tabs(
+tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, tab_risk, tab_journal, tab_notes, tab_alerts, tab_settings, tab_performance = st.tabs(
     [
         "🎯 Scanner",
         "📈 Backtest",
@@ -402,6 +408,7 @@ tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, t
         "📒 Notes",
         "🔔 Alerts",
         "⚙️ Settings",
+        "📊 Performance",
     ]
 )
 
@@ -445,5 +452,8 @@ with tab_alerts:
 
 with tab_settings:
     settings.render_tab(load_ticker_history, run_backtest_cached)
+
+with tab_performance:
+    performance.render()
 
 render_footer(st.session_state.last_scan_time)

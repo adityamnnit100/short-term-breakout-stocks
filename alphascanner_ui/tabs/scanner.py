@@ -4,12 +4,37 @@ from typing import Optional
 
 import pandas as pd
 import streamlit as st
+import uuid
 
 import scanner_service
 from alphascanner_ui.auth import save_current_user_workspace
-from alphascanner_ui.charts import build_chart, render_top_picks, style_scanner_results
+from alphascanner_ui.charts import build_chart, render_top_picks, style_scanner_results, plotly_config
 from alphascanner_ui.data import fetch_fii_dii_data, fetch_indices_performance, get_sector_mapping
 from alphascanner_ui.services.alerts_service import get_alerts_service
+
+
+def _filter_chart_range(df: pd.DataFrame, selected_range: str) -> pd.DataFrame:
+    """Return the candles for a user-selected chart range."""
+    if df is None or df.empty or selected_range == "All":
+        return df
+
+    data = df.sort_index()
+    latest = data.index.max()
+    if selected_range == "1D":
+        # 1D denotes candle interval: retain the full daily history so each
+        # candle is one trading day rather than treating 1D as a date range.
+        return data
+    elif selected_range == "1M":
+        start = latest - pd.DateOffset(months=1)
+    elif selected_range == "YTD":
+        start = pd.Timestamp(year=latest.year, month=1, day=1, tz=latest.tz)
+    elif selected_range == "1Y":
+        start = latest - pd.DateOffset(years=1)
+    else:
+        return data
+
+    filtered = data.loc[data.index >= start]
+    return filtered if not filtered.empty else data.tail(1)
 
 
 def _calculate_execution_status(row: dict) -> str:
@@ -29,14 +54,16 @@ def _calculate_execution_status(row: dict) -> str:
 
 @st.dialog("Full Screen Chart", width="large")
 def show_full_chart(fig) -> None:
+    # prefer an explicitly set active theme for the full-chart (set by the caller),
+    # otherwise fall back to the global/default chart theme
+    theme = st.session_state.pop("active_full_chart_theme", st.session_state.get("chart_theme", "dark"))
+    # Use a unique key to avoid StreamlitDuplicateElementId when multiple charts render
+    unique_key = f"full_chart_{uuid.uuid4().hex}"
     st.plotly_chart(
         fig,
         use_container_width=True,
-        config={
-            "scrollZoom": True,
-            "displaylogo": False,
-            "modeBarButtonsToRemove": ["lasso2d", "select2d"],
-        },
+        config=plotly_config(theme),
+        key=unique_key,
     )
 
 
@@ -47,28 +74,37 @@ def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
     with st.expander("Refine Visible Results", expanded=False):
         st.caption("These controls only narrow the current scan output. They do not rerun the scanner.")
         fcol1, fcol2, fcol3, fcol4, fcol5, fcol6, fcol7, fcol8 = st.columns(8)
-        min_strength = fcol1.slider("Min Strength", 0, 10, 1)
-        min_rsi = fcol2.slider("Min RSI", 0, 100, 50) if "RSI" in results.columns else None
-        min_vol = fcol3.slider("Min Volume ×", 1.0, 5.0, 1.0) if "Vol_x" in results.columns else None
-        min_base = fcol4.slider("Min Base (Weeks)", 0, 20, 0) if "Base_Weeks" in results.columns else None
-        max_stop = fcol5.slider("Max Stop %", 1.0, 15.0, 8.0, 0.5) if "Stop_%" in results.columns else None
+        min_strength = fcol1.slider("Min Strength", 0, 10, st.session_state.get("filter_min_strength", 1), key="filter_min_strength")
+        min_rsi = fcol2.slider("Min RSI", 0, 100, st.session_state.get("filter_min_rsi", 50), key="filter_min_rsi") if "RSI" in results.columns else None
+        min_vol = fcol3.slider("Min Volume ×", 1.0, 5.0, st.session_state.get("filter_min_vol", 1.0), key="filter_min_vol") if "Vol_x" in results.columns else None
+        min_base = fcol4.slider("Min Base (Weeks)", 0, 20, st.session_state.get("filter_min_base", 0), key="filter_min_base") if "Base_Weeks" in results.columns else None
+        max_stop = fcol5.slider("Max Stop %", 1.0, 15.0, st.session_state.get("filter_max_stop", 8.0), 0.5, key="filter_max_stop") if "Stop_%" in results.columns else None
         risk_choices = fcol6.multiselect(
             "Risk Grade",
             ["A", "B", "C", "Reduce/Skip"],
-            default=["A", "B", "C"],
+            default=st.session_state.get("filter_risk_choices", ["A", "B", "C"]),
+            key="filter_risk_choices",
         ) if "Risk_Grade" in results.columns else None
         breadth_choices = fcol7.multiselect(
             "Breadth",
             ["Any", "Risk-On", "Constructive", "Caution", "Risk-Off"],
-            default=["Any"],
+            default=st.session_state.get("filter_breadth_choices", ["Any"]),
+            key="filter_breadth_choices",
         ) if "Market_Health" in results.columns else None
         execution_choices = fcol8.multiselect(
             "Execution",
             ["Any", "Ready", "Caution", "Watch", "Review"],
-            default=["Any"],
+            default=st.session_state.get("filter_execution_choices", ["Any"]),
+            key="filter_execution_choices",
         ) if {"Risk_Grade", "Market_Health", "Signal_Strength", "Stop_%"}.issubset(results.columns) else None
 
-    mask = results["Signal_Strength"] >= min_strength
+    # guard: if Signal_Strength missing, treat as zeros so filters still work
+    if "Signal_Strength" in results.columns:
+        base_strength = results["Signal_Strength"]
+    else:
+        base_strength = pd.Series(0, index=results.index)
+
+    mask = base_strength >= min_strength
 
     if min_rsi is not None:
         mask &= (results["RSI"] >= min_rsi)
@@ -494,12 +530,41 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options, 
         )
         st.dataframe(exit_df, use_container_width=True, hide_index=True)
 
-    with st.spinner(f"Loading chart for {ticker}…"):
-        chart_period = "1y" if timeframe == "1d" else "60d"
-        df_chart = load_ticker_history(ticker, period=chart_period, interval=timeframe)
+    # Chart display is separate from the scanner's analysis interval. Here 1D
+    # means daily candles across historical data, not a one-day viewing window.
+    tcol1, tcol2 = st.columns([1, 3])
+    theme_key = f"chart_theme_{ticker}"
+    with tcol1:
+        st.session_state.setdefault(theme_key, "dark")
+        default_idx = 0 if st.session_state.get(theme_key, "dark") == "dark" else 1
+        theme_choice = st.selectbox("Chart theme", ["dark", "light"], index=default_idx, key=theme_key, help="Choose chart theme for this chart")
+    with tcol2:
+        chart_range = st.radio(
+            "Chart range",
+            ["1D", "1M", "YTD", "1Y", "All"],
+            horizontal=True,
+            key=f"chart_range_{ticker}",
+        )
+
+    period_interval = {
+        "1D": ("1y", "1d"),
+        "1M": ("1mo", "1d"),
+        "YTD": ("ytd", "1d"),
+        "1Y": ("1y", "1d"),
+        "All": ("5y", "1d"),
+    }
+    chart_period, chart_interval = period_interval[chart_range]
+    with st.spinner(f"Loading {chart_range} chart for {ticker}…"):
+        df_chart = load_ticker_history(ticker, period=chart_period, interval=chart_interval)
+
+    last_err = st.session_state.get("last_data_error")
+    if last_err:
+        st.error(f"Chart data error: {last_err}")
+
     if not df_chart.empty:
+        df_chart_view = _filter_chart_range(df_chart, chart_range)
         fig = build_chart(
-            df_chart,
+            df_chart_view,
             ticker,
             row,
             show_sma=chart_options.show_sma,
@@ -508,17 +573,17 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options, 
             show_rsi=chart_options.show_rsi,
             show_macd=chart_options.show_macd,
             show_vwap=chart_options.show_vwap,
+            theme=theme_choice,
         )
         st.plotly_chart(
             fig,
             use_container_width=True,
-            config={
-                "scrollZoom": True,
-                "displaylogo": False,
-                "modeBarButtonsToRemove": ["lasso2d", "select2d"],
-            },
+            config=plotly_config(theme_choice),
+            key=f"chart_v5_{ticker}_{chart_range}_{chart_interval}",
         )
         if st.button("🖥️ View Full Screen Chart", key=f"fs_{ticker}", use_container_width=True):
+            # record the active theme for the full-screen dialog and open it
+            st.session_state["active_full_chart_theme"] = theme_choice
             show_full_chart(fig)
     else:
         st.warning("Chart data unavailable for this ticker.")
@@ -662,6 +727,8 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
     scan_time = st.session_state.last_scan_time
     need_scan = st.session_state.get("run_scan", False)
     status_placeholder = st.empty()
+
+    # Chart theme selector moved to the per-ticker detail view (near the chart)
 
     if settings.use_cache and need_scan:
         results, stats, scan_time = scanner_service.fetch_cached_data(

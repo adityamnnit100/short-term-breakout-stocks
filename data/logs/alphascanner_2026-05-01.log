@@ -190,3 +190,6 @@
 2026-05-01 04:31:50,185 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL1.NS"}}}
 2026-05-01 04:31:50,192 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL4.NS"}}}
 2026-05-01 04:31:50,198 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYVEDL2.NS"}}}
+2026-05-01 04:32:28,604 ERROR 
+4 Failed downloads:
+2026-05-01 04:32:28,604 ERROR ['DUMMYVEDL3.NS', 'DUMMYVEDL4.NS', 'DUMMYVEDL2.NS', 'DUMMYVEDL1.NS']: YFPricesMissingError('possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")')

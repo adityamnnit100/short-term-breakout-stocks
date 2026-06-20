@@ -10,9 +10,9 @@ import numpy as np
 import pandas as pd
 import requests
 import streamlit as st
-import yfinance as yf
 
-from breakout import run_backtest # This import is fine, no circular dependency with HEADERS
+# Defer heavy third-party imports (yfinance, breakout) to function scope to avoid
+# import-time failures in environments where those packages are incompatible.
 
 
 HEADERS = {
@@ -57,20 +57,39 @@ def configure_logging() -> logging.Logger:
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_ticker_history(ticker: str, period: str = "1y", interval: str = "1d") -> pd.DataFrame:
     try:
-        df = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False)
+        # Use the shared in-memory cached downloader to avoid repeated network
+        # calls for the same ticker/period/interval during a session.
+        from utils.yf_cache import cached_download
+
+        df = cached_download(ticker, period=period, interval=interval, progress=False, auto_adjust=False)
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
-        return df.dropna(subset=["Open", "High", "Low", "Close"]) if not df.empty else pd.DataFrame()
+        valid = df.dropna(subset=["Open", "High", "Low", "Close"]) if not df.empty else pd.DataFrame()
+        # Clear any previous data error for this ticker
+        try:
+            import streamlit as st
+            st.session_state.pop("last_data_error", None)
+        except Exception:
+            pass
+        return valid
     except Exception as e:
         logger = configure_logging()
         logger.error(f"Failed to load ticker history for {ticker}: {e}")
+        # Surface a short explanation to the UI so users can diagnose data failures
+        try:
+            import streamlit as st
+            st.session_state["last_data_error"] = f"{ticker}: {str(e)}"
+        except Exception:
+            pass
         return pd.DataFrame()
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_nifty_history(period: str = "6mo") -> pd.DataFrame:
     try:
-        df = yf.download("^NSEI", period=period, progress=False, auto_adjust=False)
+        from utils.yf_cache import cached_download
+
+        df = cached_download("^NSEI", period=period, progress=False, auto_adjust=False)
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
         return df.dropna(subset=["Close"]) if not df.empty else pd.DataFrame()
@@ -82,6 +101,9 @@ def load_nifty_history(period: str = "6mo") -> pd.DataFrame:
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def run_backtest_cached(**kwargs):
+    # Import breakout.run_backtest lazily to avoid import-time dependency on yfinance/multitasking
+    from breakout import run_backtest
+
     return run_backtest(**kwargs)
 
 
@@ -183,6 +205,8 @@ def fetch_indices_performance() -> dict:
     output = {}
     for name, symbol in symbols.items():
         try:
+            import yfinance as yf
+
             df = yf.download(symbol, period="5d", progress=False, auto_adjust=False)
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = df.columns.get_level_values(0)

@@ -23,20 +23,38 @@ def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
         st.write("")
         run_backtest = st.button("🚀 Run Backtest", use_container_width=True)
 
-    if run_backtest:
-        with st.spinner("Analysing 2 years of historical data…"):
-            bt_df, error = run_backtest_cached(
-                start_date=start_date,
-                end_date=end_date,
-                vol_thresh=settings.vol_thresh,
-                rsi_min=settings.rsi_range[0],
-                rsi_max=settings.rsi_range[1],
-                dist_thresh=settings.dist_thresh,
-            )
-        if error:
-            st.error(f"❌ {error}")
-        else:
-            st.session_state.bt_results = bt_df
+    # Run backtest in background thread to keep UI responsive
+    if run_backtest and not st.session_state.get("bt_running"):
+        import threading
+
+        def _bt_worker(start_date, end_date, settings):
+            try:
+                st.session_state.bt_running = True
+                bt_df, error = run_backtest_cached(
+                    start_date=start_date,
+                    end_date=end_date,
+                    vol_thresh=settings.vol_thresh,
+                    rsi_min=settings.rsi_range[0],
+                    rsi_max=settings.rsi_range[1],
+                    dist_thresh=settings.dist_thresh,
+                )
+                st.session_state.bt_results = bt_df
+                st.session_state.bt_error = error
+            except Exception as exc:
+                st.session_state.bt_results = None
+                st.session_state.bt_error = str(exc)
+            finally:
+                st.session_state.bt_running = False
+
+        threading.Thread(target=_bt_worker, args=(start_date, end_date, settings), daemon=True).start()
+
+    if st.session_state.get("bt_running"):
+        st.info("Backtest running in background — results will appear when complete.")
+    elif st.session_state.get("bt_error"):
+        st.error(f"❌ {st.session_state.get('bt_error')}")
+    elif st.session_state.get("bt_results") is None:
+        # No results yet; show nothing
+        pass
 
     if st.session_state.bt_results is None:
         return

@@ -4,33 +4,51 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 from plotly.subplots import make_subplots
+from typing import Optional
 
 
-CHART_BG = "#ffffff"
-PLOT_BG = "#ffffff"
-GRID = "rgba(15, 23, 42, 0.08)"
-TEXT = "#334155"
-MUTED = "#64748b"
-UP = "#16a34a"
-DOWN = "#dc2626"
-CYAN = "#0284c7"
-AMBER = "#d97706"
-PURPLE = "#7c3aed"
+CHART_BG = "#051725"
+PLOT_BG = "#03121a"
+GRID = "rgba(255,255,255,0.035)"
+TEXT = "#d7e9f5"
+MUTED = "#92a9bf"
+UP = "#07b285"  # rising candle border (hollow)
+DOWN = "#ff3b30"  # falling candle fill
+CYAN = "#22d3ee"
+AMBER = "#ffb430"
+PURPLE = "#8b5cf6"
 
 
-def apply_trading_layout(fig: go.Figure, *, height: int, title: str = "", show_legend: bool = True) -> go.Figure:
-    """Apply a TradingView/Zerodha-inspired chart shell to Plotly figures."""
+def apply_trading_layout(
+    fig: go.Figure, *, height: int, title: str = "", subtitle: Optional[str] = None, show_legend: bool = True, theme: str = "dark"
+) -> go.Figure:
+    """Apply a TradingView/Zerodha-inspired chart shell to Plotly figures.
+
+    theme: 'dark' or 'light' — controls background and color choices.
+    """
+    dark = theme == "dark"
+    paper_bg = CHART_BG if dark else "#ffffff"
+    plot_bg = PLOT_BG if dark else "#ffffff"
+    text_color = TEXT if dark else "#0f172a"
+
+    # Combine title and subtitle into a single HTML title to avoid layout overlap
+    title_text = title
+    if subtitle:
+        # use muted color for subtitle
+        title_text = f"{title}<br><span style=\"font-size:11px;color:{MUTED};\">{subtitle}</span>"
+
     fig.update_layout(
-        title=dict(text=title, x=0.01, xanchor="left", font=dict(size=14, color="#0f172a")),
+        title=dict(text=title_text, x=0.01, xanchor="left", font=dict(size=13, color=text_color), ),
         height=height,
-        paper_bgcolor=CHART_BG,
-        plot_bgcolor=PLOT_BG,
-        font=dict(family="JetBrains Mono, monospace", color=TEXT, size=11),
+        paper_bgcolor=paper_bg,
+        plot_bgcolor=plot_bg,
+        font=dict(family="Inter, Arial, sans-serif", color=text_color, size=12),
         hovermode="x unified",
         hoverlabel=dict(
-            bgcolor="#0f172a",
-            bordercolor="#334155",
-            font=dict(color="#f8fafc", family="JetBrains Mono, monospace", size=11),
+            bgcolor=("rgba(6,20,37,0.96)" if dark else "#ffffff"),
+            bordercolor=("rgba(255,255,255,0.06)" if dark else "rgba(15,23,42,0.06)"),
+            font=dict(color=("#d7e9f5" if dark else "#0f172a"), family="Inter, Arial, sans-serif", size=11),
+            align="left",
         ),
         legend=dict(
             orientation="h",
@@ -38,49 +56,121 @@ def apply_trading_layout(fig: go.Figure, *, height: int, title: str = "", show_l
             y=1.01,
             xanchor="right",
             x=1,
-            bgcolor="rgba(255,255,255,0.88)",
-            bordercolor="rgba(15,23,42,0.10)",
+            bgcolor=("rgba(4,8,12,0.16)" if dark else "rgba(255,255,255,0.88)"),
+            bordercolor=("rgba(255,255,255,0.03)" if dark else "rgba(15,23,42,0.10)"),
             borderwidth=1,
-            font=dict(size=10, color=TEXT),
+            font=dict(size=10, color=text_color),
         ),
-        margin=dict(l=8, r=64, t=42 if title else 30, b=26),
+        # Leave room for the title, legend and the single range selector.
+        margin=dict(l=8, r=64, t=96 if title else 42, b=34),
         showlegend=show_legend,
         dragmode="pan",
         modebar=dict(
             orientation="v",
-            bgcolor="rgba(255,255,255,0.85)",
+            bgcolor=("rgba(0,0,0,0.12)" if dark else "rgba(255,255,255,0.85)"),
             color=MUTED,
             activecolor=CYAN,
+            remove=["zoomIn2d", "zoomOut2d", "select2d"],
         ),
     )
     fig.update_xaxes(
-        showgrid=True,
+        showgrid=False if dark else True,
         gridcolor=GRID,
         zeroline=False,
         showspikes=True,
         spikemode="across",
         spikesnap="cursor",
-        spikecolor="rgba(15,23,42,0.35)",
-        spikethickness=1,
+        spikecolor=("rgba(255,255,255,0.14)" if dark else "rgba(15,23,42,0.12)"),
+        spikethickness=1.2,
+        # Subplots share their x range, but each still owns an x-axis object. Keep
+        # navigation off those axes here; it is added once below.
         rangeslider_visible=False,
-        rangebreaks=[dict(bounds=["sat", "mon"])],
-        linecolor="rgba(15,23,42,0.16)",
-        tickfont=dict(color=MUTED),
+        rangeselector_visible=False,
+        linecolor=("rgba(255,255,255,0.03)" if dark else "rgba(15,23,42,0.16)"),
+        tickfont=dict(color=MUTED, size=11),
     )
+    datetime_indexes = []
+    for trace in fig.data:
+        trace_x = getattr(trace, "x", None)
+        if trace_x is None:
+            continue
+        trace_index = pd.Index(trace_x)
+        if pd.api.types.is_datetime64_any_dtype(trace_index.dtype):
+            datetime_indexes.append(pd.DatetimeIndex(trace_index))
+
+    has_time_axis = bool(datetime_indexes) or any(trace.type == "candlestick" for trace in fig.data)
+    uses_daily_points = any(
+        len(index) > 1
+        and index.to_series().diff().dropna().median() >= pd.Timedelta(days=1)
+        for index in datetime_indexes
+    )
+    one_day_count = 5 if uses_daily_points else 1
+
+    range_selector = dict(
+        visible=True,
+        x=0.99,
+        xanchor="right",
+        y=1.14,
+        yanchor="bottom",
+        bgcolor=("#0b2535" if dark else "#f1f5f9"),
+        activecolor=("#0e7490" if dark else "#bae6fd"),
+        bordercolor=("#24475b" if dark else "#cbd5e1"),
+        font=dict(size=11, color=("#f8fafc" if dark else "#0f172a")),
+        buttons=[
+            # A one-day viewport can contain only one daily point, for which a
+            # candlestick has no useful width. Keep the requested 1D option but
+            # retain enough daily observations to render visible candles.
+            dict(count=one_day_count, label="1D", step="day", stepmode="backward"),
+            dict(count=1, label="1M", step="month", stepmode="backward"),
+            dict(count=1, label="YTD", step="year", stepmode="todate"),
+            dict(count=1, label="1Y", step="year", stepmode="backward"),
+            dict(step="all", label="All"),
+        ],
+    )
+    # Address axes by layout name rather than row/column. This helper is also
+    # used by ordinary go.Figure charts, which do not have a subplot grid.
+    xaxis_names = sorted(
+        (name for name in fig.layout if name.startswith("xaxis")),
+        key=lambda name: int(name[5:] or 1),
+    )
+    if has_time_axis:
+        for xaxis_name in xaxis_names or ["xaxis"]:
+            fig.layout[xaxis_name].type = "date"
+        # Attach the selector to the first time-series axis. In the price chart
+        # this is the axis that owns the candlestick trace; putting short ranges
+        # on an indicator axis can leave the matched candle layer unpainted.
+        candle_xaxis = xaxis_names[0] if xaxis_names else "xaxis"
+        fig.layout[candle_xaxis].rangeselector = range_selector
     fig.update_yaxes(
-        showgrid=True,
+        showgrid=False if dark else True,
         gridcolor=GRID,
         zeroline=False,
         showspikes=True,
         spikemode="across",
         spikesnap="cursor",
-        spikecolor="rgba(15,23,42,0.35)",
-        spikethickness=1,
+        spikecolor=("rgba(255,255,255,0.14)" if dark else "rgba(15,23,42,0.12)"),
+        spikethickness=1.2,
         side="right",
-        linecolor="rgba(15,23,42,0.16)",
-        tickfont=dict(color=MUTED),
+        linecolor=("rgba(255,255,255,0.03)" if dark else "rgba(15,23,42,0.16)"),
+        tickfont=dict(color=MUTED, size=11),
     )
+    # subtitle is embedded in the title HTML to avoid overlap with plot elements
     return fig
+
+
+def plotly_config(theme: str = "dark") -> dict:
+    """Return a Plotly `config` dict suitable for Streamlit's `st.plotly_chart`.
+
+    Usage: `st.plotly_chart(fig, config=plotly_config())`
+    """
+    remove = ["zoomIn2d", "zoomOut2d", "select2d", "lasso2d", "toggleSpikelines"]
+    conf = {
+        "modeBarButtonsToRemove": remove,
+        "displaylogo": False,
+        "scrollZoom": True,
+        "toImageButtonOptions": {"format": "png", "filename": "chart", "height": 800, "width": 1400, "scale": 1},
+    }
+    return conf
 
 
 def render_top_picks(df: pd.DataFrame):
@@ -304,10 +394,30 @@ def build_chart(
     show_rsi: bool = True,
     show_macd: bool = True,
     show_vwap: bool = False,
+    theme: str = "dark",
 ) -> go.Figure:
     row_count = 2 + show_rsi + show_macd
     row_heights = [0.60, 0.14] + [0.13] * (row_count - 2)
-    subplot_titles = [ticker, "Volume"] + (["RSI (14)"] if show_rsi else []) + (["MACD"] if show_macd else [])
+    subplot_titles = ["Price", "Volume"] + (["RSI (14)"] if show_rsi else []) + (["MACD"] if show_macd else [])
+    # Rows: Price, Volume, PVT, (optional) RSI, (optional) MACD
+    row_count = 3 + (1 if show_rsi else 0) + (1 if show_macd else 0)
+    # Give most space to price, then compact rows for indicators
+    row_heights = [0.56, 0.12, 0.10] + [0.11] * (row_count - 3)
+    subplot_titles = ["Price", "Volume", "PVT"] + (["RSI (14)"] if show_rsi else []) + (["MACD"] if show_macd else [])
+
+    # Defensive: ensure datetime index and sorted order for Plotly candlesticks
+    if df is None or df.empty:
+        # return an empty figure with title to avoid crashes upstream
+        fig = go.Figure()
+        # infer timeframe label not possible for empty df
+        return apply_trading_layout(fig, height=480, title=ticker, subtitle=None, theme=theme)
+
+    if not isinstance(df.index, pd.DatetimeIndex):
+        try:
+            df.index = pd.to_datetime(df.index)
+        except Exception:
+            pass
+    df = df.sort_index()
 
     fig = make_subplots(
         rows=row_count,
@@ -328,9 +438,11 @@ def build_chart(
             name="Price",
             increasing_line_color=UP,
             decreasing_line_color=DOWN,
-            increasing_fillcolor="rgba(22, 163, 74, 0.72)",
-            decreasing_fillcolor="rgba(220, 38, 38, 0.72)",
-            whiskerwidth=0.35,
+            increasing_fillcolor="rgba(7, 178, 133, 0.72)",
+            decreasing_fillcolor="rgba(220, 38, 38, 0.85)",
+            increasing_line_width=1.1,
+            decreasing_line_width=1.1,
+            whiskerwidth=0.25,
             hovertemplate=(
                 "<b>%{x|%d %b %Y}</b><br>"
                 "Open %{open:.2f}<br>"
@@ -343,8 +455,29 @@ def build_chart(
         col=1,
     )
 
+    # Small buy/sell markers per candle (compact markers to reduce clutter)
+    try:
+        bs_colors = [UP if c >= o else DOWN for c, o in zip(df['Close'], df['Open'])]
+        bs_symbols = ['triangle-up' if c >= o else 'triangle-down' for c, o in zip(df['Close'], df['Open'])]
+        # place markers slightly above the high for sells and slightly below the low for buys
+        marker_y = [h * 1.002 if c < o else l * 0.998 for c, o, h, l in zip(df['Close'], df['Open'], df['High'], df['Low'])]
+        fig.add_trace(
+            go.Scatter(
+                x=df.index,
+                y=marker_y,
+                mode='markers',
+                marker=dict(color=bs_colors, size=6, symbol=bs_symbols, opacity=0.65),
+                hoverinfo='skip',
+                showlegend=False,
+            ),
+            row=1,
+            col=1,
+        )
+    except Exception:
+        pass
+
     colors = [
-        "rgba(16, 185, 129, 0.35)" if float(close) >= float(open_) else "rgba(244, 63, 94, 0.35)"
+        UP if float(close) >= float(open_) else DOWN
         for close, open_ in zip(df["Close"], df["Open"])
     ]
     fig.add_trace(
@@ -380,7 +513,7 @@ def build_chart(
     if show_ema:
         ema20 = close.ewm(span=20, adjust=False).mean()
         fig.add_trace(
-            go.Scatter(x=df.index, y=ema20, name="EMA 20", line=dict(color=CYAN, width=1.5), hovertemplate="EMA 20 %{y:.2f}<extra></extra>"),
+            go.Scatter(x=df.index, y=ema20, name="EMA 20", line=dict(color=CYAN, width=1.1), hovertemplate="EMA 20 %{y:.2f}<extra></extra>"),
             row=1,
             col=1,
         )
@@ -480,6 +613,19 @@ def build_chart(
             )
 
     current_row = 3
+    # PVT: Price-Volume Trend (cumulative)
+    try:
+        prev_close = df["Close"].shift(1)
+        pct_change = (df["Close"] - prev_close) / prev_close.replace(0, float("nan"))
+        pvt = (pct_change.fillna(0) * df["Volume"]).cumsum()
+        fig.add_trace(
+            go.Scatter(x=df.index, y=pvt, name="PVT", line=dict(color=CYAN, width=1.2), hovertemplate="PVT %{y:.2f}<extra></extra>"),
+            row=3,
+            col=1,
+        )
+    except Exception:
+        pvt = None
+    current_row += 1
     if show_rsi:
         delta = close.diff()
         gain = delta.where(delta > 0, 0).rolling(14).mean()
@@ -521,7 +667,38 @@ def build_chart(
             col=1,
         )
 
-    apply_trading_layout(fig, height=760, title=f"{ticker} · Price Action")
+    # The timeframe already exists in the chart controls; repeating it beneath
+    # the title wastes header space and makes it look like a second selector.
+    fig = apply_trading_layout(fig, height=760, title=f"{ticker} · Price Action", theme=theme)
+    # Scanner charts use an explicit Streamlit range control. Hide Plotly's
+    # client-side selector, which is unreliable with matched subplot axes.
+    fig.update_xaxes(rangeselector_visible=False, rangeslider_visible=False)
     fig.update_yaxes(title_text="Price", row=1, col=1)
     fig.update_yaxes(title_text="Vol", row=2, col=1, showgrid=False)
+    # Compact header: show ticker and last-traded price as a small badge (paper coords)
+    try:
+        last_close = float(df['Close'].iloc[-1])
+        prev_close = float(df['Close'].iloc[-2]) if len(df) > 1 else last_close
+        pct = (last_close - prev_close) / max(prev_close, 1e-9) * 100
+        ltp_text = f"{ticker} · ₹{last_close:,.2f} · {pct:+.2f}%"
+        ltp_color = CYAN if pct >= 0 else DOWN
+        fig.add_annotation(xref='paper', yref='paper', x=0.005, y=1.015, align='left', showarrow=False,
+                           text=ltp_text, font=dict(size=11, color=ltp_color, family='Inter'),
+                           bgcolor=('rgba(0,0,0,0.0)' if theme=='dark' else '#ffffffcc'), borderpad=6)
+    except Exception:
+        pass
+
+    # BUY/SELL badge near latest candle (heuristic: green if last close>open else red)
+    try:
+        last_open = float(df['Open'].iloc[-1])
+        last_close = float(df['Close'].iloc[-1])
+        tag = 'BUY' if last_close >= last_open else 'SELL'
+        tag_color = UP if tag == 'BUY' else DOWN
+        # place compact badge slightly above the last candle
+        x_pos = df.index[-1]
+        y_pos = df['High'].iloc[-1] * 1.006
+        fig.add_annotation(x=x_pos, y=y_pos, text=tag, showarrow=False, font=dict(color='#000000', size=9, family='Inter'),
+                           align='center', bgcolor=tag_color, borderpad=3, opacity=0.98)
+    except Exception:
+        pass
     return fig
