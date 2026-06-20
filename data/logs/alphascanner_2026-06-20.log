@@ -255,3 +255,9 @@
 2026-06-20 20:33:19,834 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
 2026-06-20 20:33:19,940 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
 2026-06-20 20:33:21,037 INFO Background cache refresh complete for 753 symbols.
+2026-06-20 21:06:37,936 INFO Background metadata worker starting...
+2026-06-20 21:06:38,334 INFO Prefetching missing metadata for 3 tickers...
+2026-06-20 21:06:40,804 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-20 21:06:41,423 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-06-20 21:06:41,797 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-06-20 21:06:41,802 INFO Background cache refresh complete for 753 symbols.
