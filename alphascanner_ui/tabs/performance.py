@@ -18,8 +18,20 @@ def _run_scan(universe: str, vol_thresh: float, rsi_min: int, rsi_max: int, dist
             scanner_type='Pre-Breakout',
             universe=universe,
             incremental_fetch=True,
-        )
+    )
     return results, stats
+
+
+def _score_column(df: pd.DataFrame) -> str:
+    for column in ("Signal_Strength", "Setup_Score", "Entry Score", "Watchlist Score", "Total Score"):
+        if column in df.columns:
+            return column
+    return ""
+
+
+def _safe_display_columns(df: pd.DataFrame):
+    preferred = ["Ticker", "RS_Rating", "Setup_Score", "Signal_Strength", "Entry Score", "Watchlist Score", "RVOL", "Vol_x", "Pattern", "Action", "Trade Quality", "Recommendation"]
+    return [column for column in preferred if column in df.columns]
 
 
 def _summarize_backtest(df: pd.DataFrame):
@@ -56,17 +68,35 @@ def render():
 
     if results is not None and not results.empty:
         st.subheader('Watchlist')
+        score_col = _score_column(results)
+        if not score_col:
+            st.warning("The scan returned results, but none of the expected score columns were found.")
+            return
+
         # Filters
-        min_setup = st.slider('Min Setup_Score', 0.0, 10.0, 7.0, 0.1)
-        min_strength = st.slider('Min Signal_Strength', 0.0, 10.0, 7.0, 0.1)
+        if score_col == "Setup_Score":
+            min_setup = st.slider('Min Setup_Score', 0.0, 10.0, 7.0, 0.1)
+            min_strength = st.slider('Min Signal_Strength', 0.0, 10.0, 7.0, 0.1)
+        else:
+            min_setup = st.slider(f'Min {score_col}', 0.0, 100.0, 0.0, 1.0)
+            min_strength = 0.0
+
         df = results.copy()
-        for c in ['Setup_Score', 'Signal_Strength', 'RS_Rating']:
+        for c in ['Setup_Score', 'Signal_Strength', 'RS_Rating', 'Entry Score', 'Watchlist Score', 'Total Score']:
             if c in df.columns:
                 df[c] = pd.to_numeric(df[c], errors='coerce')
 
-        filtered = df[(df.get('Setup_Score', 0) >= min_setup) & (df.get('Signal_Strength', 0) >= min_strength)]
+        if score_col == "Setup_Score":
+            filtered = df[(df.get('Setup_Score', 0) >= min_setup) & (df.get('Signal_Strength', 0) >= min_strength)]
+        else:
+            filtered = df[df.get(score_col, 0) >= min_setup]
+
         st.write(f'{len(filtered)} setups match filters')
-        st.dataframe(filtered[['Ticker','RS_Rating','Setup_Score','Signal_Strength','RVOL','Pattern','Action']].reset_index(drop=True))
+        display_cols = _safe_display_columns(filtered)
+        if display_cols:
+            st.dataframe(filtered[display_cols].reset_index(drop=True))
+        else:
+            st.dataframe(filtered.reset_index(drop=True))
 
         if st.button('Export Watchlist CSV'):
             fn = f'tools/watchlist_{"total" if universe.startswith("Total") else "nifty"}.csv'
@@ -74,7 +104,11 @@ def render():
             st.success(f'Wrote {fn}')
 
         # Per-ticker detail: show chart for selected
-        sel = st.selectbox('Select ticker for detail', options=filtered['Ticker'].tolist())
+        if 'Ticker' in filtered.columns and not filtered.empty:
+            sel = st.selectbox('Select ticker for detail', options=filtered['Ticker'].astype(str).tolist())
+        else:
+            sel = None
+
         if sel:
             with st.spinner('Loading chart...'):
                 df_t = breakout.fetch_history(sel, period='1y') if hasattr(breakout, 'fetch_history') else None

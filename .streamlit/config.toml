@@ -1,0 +1,4 @@
+[server]
+# Disable filesystem watching to avoid inotify exhaustion in large workspaces.
+fileWatcherType = "none"
+runOnSave = false

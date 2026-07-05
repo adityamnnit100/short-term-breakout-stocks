@@ -39,7 +39,7 @@ def render_tab() -> None:
     if results is not None and len(results) > 0:
         selected_symbol = st.selectbox("Select stock", results["Ticker"].tolist(), key="rm_sel")
         row = results[results["Ticker"] == selected_symbol].iloc[0]
-        entry_price = float(row["LTP"])
+        entry_price = float(row.get("LTP", row.get("Entry Price", row.get("Entry", 0))))
         atr_value = row.get("ATR")
         if pd.isna(atr_value) or atr_value <= 0:
             atr = entry_price * 0.02  # Default 2% of price if ATR missing or invalid

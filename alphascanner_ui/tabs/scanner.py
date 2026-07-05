@@ -9,7 +9,7 @@ import uuid
 import scanner_service
 from alphascanner_ui.auth import save_current_user_workspace
 from alphascanner_ui.charts import build_chart, render_top_picks, style_scanner_results, plotly_config
-from alphascanner_ui.data import fetch_fii_dii_data, fetch_indices_performance, get_sector_mapping
+from alphascanner_ui.data import get_sector_mapping
 from alphascanner_ui.services.alerts_service import get_alerts_service
 
 
@@ -71,61 +71,102 @@ def _apply_result_filters(results: pd.DataFrame) -> pd.DataFrame:
     if results is None or results.empty:
         return results
 
-    with st.expander("Refine Visible Results", expanded=False):
-        st.caption("These controls only narrow the current scan output. They do not rerun the scanner.")
+    modular_results = _is_modular_results(results)
+
+    with st.expander("Post-Scan Filters", expanded=False):
         fcol1, fcol2, fcol3, fcol4, fcol5, fcol6, fcol7, fcol8 = st.columns(8)
-        min_strength = fcol1.slider("Min Strength", 0, 10, st.session_state.get("filter_min_strength", 1), key="filter_min_strength")
-        min_rsi = fcol2.slider("Min RSI", 0, 100, st.session_state.get("filter_min_rsi", 50), key="filter_min_rsi") if "RSI" in results.columns else None
-        min_vol = fcol3.slider("Min Volume ×", 1.0, 5.0, st.session_state.get("filter_min_vol", 1.0), key="filter_min_vol") if "Vol_x" in results.columns else None
-        min_base = fcol4.slider("Min Base (Weeks)", 0, 20, st.session_state.get("filter_min_base", 0), key="filter_min_base") if "Base_Weeks" in results.columns else None
-        max_stop = fcol5.slider("Max Stop %", 1.0, 15.0, st.session_state.get("filter_max_stop", 8.0), 0.5, key="filter_max_stop") if "Stop_%" in results.columns else None
-        risk_choices = fcol6.multiselect(
-            "Risk Grade",
-            ["A", "B", "C", "Reduce/Skip"],
-            default=st.session_state.get("filter_risk_choices", ["A", "B", "C"]),
-            key="filter_risk_choices",
-        ) if "Risk_Grade" in results.columns else None
-        breadth_choices = fcol7.multiselect(
-            "Breadth",
-            ["Any", "Risk-On", "Constructive", "Caution", "Risk-Off"],
-            default=st.session_state.get("filter_breadth_choices", ["Any"]),
-            key="filter_breadth_choices",
-        ) if "Market_Health" in results.columns else None
-        execution_choices = fcol8.multiselect(
-            "Execution",
-            ["Any", "Ready", "Caution", "Watch", "Review"],
-            default=st.session_state.get("filter_execution_choices", ["Any"]),
-            key="filter_execution_choices",
-        ) if {"Risk_Grade", "Market_Health", "Signal_Strength", "Stop_%"}.issubset(results.columns) else None
+        if modular_results:
+            score_column = "Watchlist Score" if "Watchlist Score" in results.columns else "Entry Score"
+            min_score = fcol1.slider(
+                "Min Score",
+                0.0,
+                100.0,
+                float(st.session_state.get("filter_min_modular_score", 0.0)),
+                0.5,
+                key="filter_min_modular_score",
+            )
+            quality_choices = fcol2.multiselect(
+                "Trade Quality",
+                ["A+", "A", "B", "C", "Reject"],
+                default=st.session_state.get("filter_trade_quality", ["A+", "A", "B", "C", "Reject"]),
+                key="filter_trade_quality",
+            ) if "Trade Quality" in results.columns else None
+            recommendation_choices = fcol3.multiselect(
+                "Recommendation",
+                ["Buy", "Watch Closely", "Watch", "Reject"],
+                default=st.session_state.get("filter_recommendation", ["Buy", "Watch Closely", "Watch", "Reject"]),
+                key="filter_recommendation",
+            ) if "Recommendation" in results.columns else None
+            sector_choices = fcol4.multiselect(
+                "Sector",
+                sorted(results["Sector"].dropna().astype(str).unique().tolist()) if "Sector" in results.columns else [],
+                default=st.session_state.get("filter_sector", []),
+                key="filter_sector",
+            ) if "Sector" in results.columns else None
+            # keep the remaining columns empty to preserve the 8-column layout
+            min_rsi = min_vol = min_base = max_stop = risk_choices = breadth_choices = execution_choices = None
+        else:
+            min_strength = fcol1.slider("Min Strength", 0, 10, st.session_state.get("filter_min_strength", 1), key="filter_min_strength")
+            min_rsi = fcol2.slider("Min RSI", 0, 100, st.session_state.get("filter_min_rsi", 50), key="filter_min_rsi") if "RSI" in results.columns else None
+            min_vol = fcol3.slider("Min Volume ×", 1.0, 5.0, st.session_state.get("filter_min_vol", 1.0), key="filter_min_vol") if "Vol_x" in results.columns else None
+            min_base = fcol4.slider("Min Base (Weeks)", 0, 20, st.session_state.get("filter_min_base", 0), key="filter_min_base") if "Base_Weeks" in results.columns else None
+            max_stop = fcol5.slider("Max Stop %", 1.0, 15.0, st.session_state.get("filter_max_stop", 8.0), 0.5, key="filter_max_stop") if "Stop_%" in results.columns else None
+            risk_choices = fcol6.multiselect(
+                "Risk Grade",
+                ["A", "B", "C", "Reduce/Skip"],
+                default=st.session_state.get("filter_risk_choices", ["A", "B", "C"]),
+                key="filter_risk_choices",
+            ) if "Risk_Grade" in results.columns else None
+            breadth_choices = fcol7.multiselect(
+                "Breadth",
+                ["Any", "Risk-On", "Constructive", "Caution", "Risk-Off"],
+                default=st.session_state.get("filter_breadth_choices", ["Any"]),
+                key="filter_breadth_choices",
+            ) if "Market_Health" in results.columns else None
+            execution_choices = fcol8.multiselect(
+                "Execution",
+                ["Any", "Ready", "Caution", "Watch", "Review"],
+                default=st.session_state.get("filter_execution_choices", ["Any"]),
+                key="filter_execution_choices",
+            ) if {"Risk_Grade", "Market_Health", "Signal_Strength", "Stop_%"}.issubset(results.columns) else None
 
-    # guard: if Signal_Strength missing, treat as zeros so filters still work
-    if "Signal_Strength" in results.columns:
-        base_strength = results["Signal_Strength"]
+    if modular_results:
+        mask = pd.to_numeric(results[score_column], errors="coerce").fillna(0) >= min_score
+        if quality_choices:
+            mask &= results["Trade Quality"].isin(quality_choices)
+        if recommendation_choices:
+            mask &= results["Recommendation"].isin(recommendation_choices)
+        if sector_choices:
+            mask &= results["Sector"].isin(sector_choices)
     else:
-        base_strength = pd.Series(0, index=results.index)
+        # guard: if Signal_Strength missing, treat as zeros so filters still work
+        if "Signal_Strength" in results.columns:
+            base_strength = results["Signal_Strength"]
+        else:
+            base_strength = pd.Series(0, index=results.index)
 
-    mask = base_strength >= min_strength
+        mask = base_strength >= min_strength
 
-    if min_rsi is not None:
-        mask &= (results["RSI"] >= min_rsi)
-    if min_vol is not None:
-        mask &= (results["Vol_x"] >= min_vol)
-    if min_base is not None:
-        mask &= (results["Base_Weeks"] >= min_base)
-    if max_stop is not None:
-        mask &= (results["Stop_%"] <= max_stop)
-    if risk_choices:
-        mask &= results["Risk_Grade"].isin(risk_choices)
-    if breadth_choices and "Any" not in breadth_choices:
-        mask &= results["Market_Health"].isin(breadth_choices)
+        if min_rsi is not None:
+            mask &= (results["RSI"] >= min_rsi)
+        if min_vol is not None:
+            mask &= (results["Vol_x"] >= min_vol)
+        if min_base is not None:
+            mask &= (results["Base_Weeks"] >= min_base)
+        if max_stop is not None:
+            mask &= (results["Stop_%"] <= max_stop)
+        if risk_choices:
+            mask &= results["Risk_Grade"].isin(risk_choices)
+        if breadth_choices and "Any" not in breadth_choices:
+            mask &= results["Market_Health"].isin(breadth_choices)
 
-    if st.session_state.get("only_ready_setups", False) and {"Risk_Grade", "Market_Health", "Signal_Strength", "Stop_%"}.issubset(results.columns):
-        execution_series = results.apply(_calculate_execution_status, axis=1)
-        mask &= execution_series.eq("Ready")
+        if st.session_state.get("only_ready_setups", False) and {"Risk_Grade", "Market_Health", "Signal_Strength", "Stop_%"}.issubset(results.columns):
+            execution_series = results.apply(_calculate_execution_status, axis=1)
+            mask &= execution_series.eq("Ready")
 
-    if execution_choices and "Any" not in execution_choices:
-        execution_series = results.apply(_calculate_execution_status, axis=1)
-        mask &= execution_series.isin(execution_choices)
+        if execution_choices and "Any" not in execution_choices:
+            execution_series = results.apply(_calculate_execution_status, axis=1)
+            mask &= execution_series.isin(execution_choices)
 
     return results[mask]
 
@@ -137,12 +178,14 @@ def _render_status_banner(
     scan_source: Optional[str],
     stats: Optional[dict] = None,
     timeframe: Optional[str] = None,
+    scan_mode: Optional[str] = None,
 ) -> None:
     total_results = 0 if results is None else len(results)
     filtered_count = 0 if filtered_results is None else len(filtered_results)
     source_label = scan_source or "None"
     time_label = scan_time or "Never"
     timeframe_label = "Daily" if timeframe == "1d" else (timeframe or "Daily")
+    scan_mode_label = scan_mode or "Modular Scan"
 
     trending = (stats or {}).get("trending_sectors", [])
     sector_scores = (stats or {}).get("sector_sentiment", {})
@@ -167,6 +210,7 @@ def _render_status_banner(
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Total Results</div><div class="status-value" style="color: #00e5ff;">{total_results}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Visible After Filters</div><div class="status-value" style="color: #00e5ff;">{filtered_count}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Market Breadth</div><div class="status-value" style="color: #00e5ff;">{market_health}</div></div>'
+        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Scan Mode</div><div class="status-value" style="color: #00e5ff;">{scan_mode_label}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Market Bias</div><div class="status-value" style="color: #00e5ff;">{market_bias}</div></div></div>'
         f'{sector_section}</div>',
         unsafe_allow_html=True,
@@ -178,15 +222,29 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
     scanned = (stats or {}).get("scanned", 0)
     universe_size = (stats or {}).get("universe_size") or scanned
     universe_label = (stats or {}).get("universe") or "Universe"
-    avg_rsi = results["RSI"].mean() if "RSI" in results else 0
-    avg_strength = results["Signal_Strength"].mean() if "Signal_Strength" in results else 0
+    modular_results = _is_modular_results(results)
+    if modular_results:
+        score_col = "Watchlist Score" if "Watchlist Score" in results.columns else "Entry Score"
+        avg_score = pd.to_numeric(results[score_col], errors="coerce").mean() if score_col in results.columns else 0
+        top_quality = results["Trade Quality"].value_counts().idxmax() if "Trade Quality" in results.columns and not results["Trade Quality"].empty else "N/A"
+        primary_label = "Avg Score"
+        primary_value = f"{avg_score:.0f}"
+        primary_color = "#00e676" if avg_score >= 80 else "#ffca28" if avg_score >= 60 else "#f97316"
+        primary_delta = "score quality"
+        secondary_label = "Top Quality"
+        secondary_value = top_quality
+        secondary_delta = "best ranked setup"
+    else:
+        avg_rsi = results["RSI"].mean() if "RSI" in results else 0
+        avg_strength = results["Signal_Strength"].mean() if "Signal_Strength" in results else 0
+        primary_label = "Avg RSI"
+        primary_value = f"{avg_rsi:.0f}"
+        primary_color = "#ffca28" if avg_rsi > 70 else "#00e676"
+        primary_delta = "momentum zone"
+        secondary_label = "Avg Strength"
+        secondary_value = f"{avg_strength:.1f}/10"
+        secondary_delta = "Strong" if avg_strength >= 6 else "Moderate"
     pass_rate = total_hits / max(scanned, 1) * 100
-
-    sector_scores = (stats or {}).get("sector_sentiment", {})
-    best_sector = "Neutral"
-    if sector_scores:
-        bs = max(sector_scores, key=sector_scores.get)
-        if sector_scores[bs] > 6: best_sector = f"{bs} ({sector_scores[bs]})"
 
     st.markdown(
         f'<div class="metric-row">'
@@ -199,65 +257,18 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
         f'<div class="metric-value" style="color: #00e5ff;">{pass_rate:.1f}<span style="font-size:0.9rem;">%</span></div>'
         f'<div class="metric-delta neutral" style="color: #64748b;">quality filter</div></div>'
         f'<div class="metric-card">'
-        f'<div class="metric-label" style="color: #94a3b8;">Avg RSI</div>'
-        f'<div class="metric-value" style="color:{"#ffca28" if avg_rsi > 70 else "#00e676"};">{avg_rsi:.0f}</div>'
-        f'<div class="metric-delta neutral" style="color: #64748b;">momentum zone</div></div>'
+        f'<div class="metric-label" style="color: #94a3b8;">{primary_label}</div>'
+        f'<div class="metric-value" style="color:{primary_color};">{primary_value}</div>'
+        f'<div class="metric-delta neutral" style="color: #64748b;">{primary_delta}</div></div>'
         f'<div class="metric-card">'
-        f'<div class="metric-label" style="color: #94a3b8;">Avg Strength</div>'
-        f'<div class="metric-value" style="color: #00e5ff;">{avg_strength:.1f}<span style="font-size:0.9rem;">/10</span></div>'
-        f'<div class="metric-delta {"up" if avg_strength >= 6 else "down"}">{"Strong" if avg_strength >= 6 else "Moderate"}</div></div>'
-        f'<div class="metric-card">'
-        f'<div class="metric-label" style="color: #94a3b8;">Market Context</div>'
-        f'<div class="metric-value" style="color:#00ffaa; font-size:1.1rem;">{best_sector}</div>'
-        f'<div class="metric-delta neutral" style="color: #64748b;">trending sectors</div></div>'
+        f'<div class="metric-label" style="color: #94a3b8;">{secondary_label}</div>'
+        f'<div class="metric-value" style="color: #00e5ff;">{secondary_value}</div>'
+        f'<div class="metric-delta {"neutral" if modular_results else ("up" if avg_strength >= 6 else "down")}">{secondary_delta}</div></div>'
         f'<div class="metric-card">'
         f'<div class="metric-label" style="color: #94a3b8;">Scan Time</div>'
         f'<div class="metric-value" style="font-size:0.9rem; color: #00e5ff;">{(scan_time or "–")[-8:]}</div>'
         f'<div class="metric-delta neutral" style="color: #64748b;">{(scan_time or "–")[:10]}</div></div>'
         f'</div>',
-        unsafe_allow_html=True,
-    )
-
-
-def _render_macro_context(stats: Optional[dict]) -> None:
-    if not stats:
-        return
-
-    fii_dii = fetch_fii_dii_data()
-    indices = fetch_indices_performance()
-    nifty = indices.get("Nifty 50", {})
-    bank_nifty = indices.get("Bank Nifty", {})
-    trending = stats.get("trending_sectors", [])
-    sector_rotation = ", ".join(trending[:3]) if trending else "No strong rotation"
-    if len(trending) > 3:
-        sector_rotation += f" +{len(trending) - 3} more"
-
-    bias_label = "Neutral"
-    if nifty.get("change", 0) > 0 and bank_nifty.get("change", 0) > 0:
-        bias_label = "Bullish"
-    elif nifty.get("change", 0) < 0 and bank_nifty.get("change", 0) < 0:
-        bias_label = "Bearish"
-    else:
-        bias_label = "Mixed"
-
-    fii_net = fii_dii.get("fii_net", 0)
-    dii_net = fii_dii.get("dii_net", 0)
-    fii_display = "N/A" if fii_net == 0 else f"₹{fii_net:,.0f} Cr"
-    fii_delta = "N/A" if fii_net == 0 else f"{fii_net:+.0f}"
-    dii_display = "N/A" if dii_net == 0 else f"₹{dii_net:,.0f} Cr"
-    dii_delta = "N/A" if dii_net == 0 else f"{dii_net:+.0f}"
-
-    st.markdown(
-        '<div class="glass-card" style="margin-top: 16px; padding: 14px;">'
-        '<div class="panel-title" style="color: #ffca28;">Market Context</div>'
-        '<div class="status-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">'
-        f'<div class="status-cell"><div class="status-label">Nifty Bias</div><div class="status-value">{bias_label}</div><div class="status-delta">{nifty.get("change", 0):+.2f}%</div></div>'
-        f'<div class="status-cell"><div class="status-label">Bank Nifty</div><div class="status-value">{bank_nifty.get("change", 0):+.2f}%</div><div class="status-delta">{bank_nifty.get("price", "N/A")}</div></div>'
-        f'<div class="status-cell"><div class="status-label">FII Net Flow</div><div class="status-value">{fii_display}</div><div class="status-delta">{fii_delta}</div></div>'
-        f'<div class="status-cell"><div class="status-label">DII Net Flow</div><div class="status-value">{dii_display}</div><div class="status-delta">{dii_delta}</div></div>'
-        '</div>'
-        f'<div style="margin-top: 12px; color: #94a3b8;">Sector Rotation: {sector_rotation}</div>'
-        '</div>',
         unsafe_allow_html=True,
     )
 
@@ -721,6 +732,133 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
         )
 
 
+def _is_modular_results(results: pd.DataFrame) -> bool:
+    if results is None or results.empty:
+        return False
+    return "Watchlist Score" in results.columns or "Entry Score" in results.columns
+
+
+def _render_modular_results_blotter(filtered_results: pd.DataFrame):
+    if filtered_results is None or filtered_results.empty:
+        return None
+
+    if "Watchlist Score" in filtered_results.columns:
+        display_columns = [
+            "Ticker",
+            "Watchlist Score",
+            "Sector",
+            "Trend",
+            "Base Score",
+            "Volume Score",
+            "Relative Strength",
+            "ATR Contraction",
+            "Days in Consolidation",
+            "Trade Quality",
+            "Setup ID",
+            "Recommendation",
+        ]
+    else:
+        display_columns = [
+            "Ticker",
+            "Entry Score",
+            "Sector",
+            "Entry Price",
+            "Stop Loss",
+            "Risk %",
+            "Target 1",
+            "Target 2",
+            "Risk Reward",
+            "Breakout Date",
+            "Breakout Volume Ratio",
+            "Trade Quality",
+            "Setup ID",
+            "Recommendation",
+        ]
+
+    available_columns = [column for column in display_columns if column in filtered_results.columns]
+    rendered_df = filtered_results[available_columns].copy()
+
+    try:
+        return st.dataframe(
+            rendered_df,
+            use_container_width=True,
+            hide_index=True,
+            on_select="rerun",
+            selection_mode="single-row",
+        )
+    except Exception:
+        return st.dataframe(
+            rendered_df,
+            use_container_width=True,
+            hide_index=True,
+            on_select="rerun",
+            selection_mode="single-row",
+        )
+
+
+def _render_modular_detail_view(results, selection, load_ticker_history, chart_options, timeframe: str = "1d") -> bool:
+    selected_rows = selection.get("selection", {}).get("rows", [])
+    if not selected_rows:
+        return False
+
+    row = results.iloc[selected_rows[0]].to_dict()
+    ticker = row.get("Ticker", "")
+    if not ticker:
+        return False
+
+    score_label = "Watchlist Score" if "Watchlist Score" in row else "Entry Score"
+    score_value = row.get(score_label, 0)
+    recommendation = row.get("Recommendation", "")
+    quality = row.get("Trade Quality", "")
+    setup_id = row.get("Setup ID", "")
+    reason_text = row.get("Reason Text", "")
+    sector = row.get("Sector", "Unknown")
+    trend = row.get("Trend", "")
+
+    st.markdown(
+        f'<div class="glass-card" style="margin-bottom: 12px; padding: 16px;">'
+        f'<div class="panel-title" style="color: #00e5ff;">{ticker} — {score_label}</div>'
+        f'<div style="color: #94a3b8; margin-bottom: 10px;">Mode: {"Watchlist" if score_label == "Watchlist Score" else "Entry"} · Recommendation: {recommendation} · Quality: {quality} · Setup: {setup_id}</div>'
+        f'<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">'
+        f'<div><div class="metric-label">Score</div><div class="metric-value">{score_value}</div></div>'
+        f'<div><div class="metric-label">Sector</div><div class="metric-value">{sector}</div></div>'
+        f'<div><div class="metric-label">Trend</div><div class="metric-value">{trend}</div></div>'
+        f'</div>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    if score_label == "Watchlist Score":
+        st.markdown(
+            f'<div class="glass-card" style="margin-bottom: 12px; padding: 16px;">'
+            f'<div class="panel-title" style="color: #00e5ff;">Watchlist Context</div>'
+            f'<div><b>Base Score:</b> {row.get("Base Score", "-")}</div>'
+            f'<div><b>Volume Score:</b> {row.get("Volume Score", "-")}</div>'
+            f'<div><b>Relative Strength:</b> {row.get("Relative Strength", "-")}</div>'
+            f'<div><b>ATR Contraction:</b> {row.get("ATR Contraction", "-")}</div>'
+            f'<div><b>Days in Consolidation:</b> {row.get("Days in Consolidation", "-")}</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            f'<div class="glass-card" style="margin-bottom: 12px; padding: 16px;">'
+            f'<div class="panel-title" style="color: #00e5ff;">Entry Context</div>'
+            f'<div><b>Entry Price:</b> {row.get("Entry Price", "-")}</div>'
+            f'<div><b>Stop Loss:</b> {row.get("Stop Loss", "-")}</div>'
+            f'<div><b>Risk %:</b> {row.get("Risk %", "-")}</div>'
+            f'<div><b>Targets:</b> {row.get("Target 1", "-")} / {row.get("Target 2", "-")}</div>'
+            f'<div><b>Breakout Volume Ratio:</b> {row.get("Breakout Volume Ratio", "-")}</div>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    if reason_text:
+        st.expander("Why this candidate passed", expanded=False).write(reason_text)
+
+    return True
+
+
 def render_tab(settings, chart_options, load_ticker_history, fetch_indices_performance) -> None:
     results = st.session_state.results
     stats = st.session_state.stats
@@ -736,6 +874,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
             universe=settings.universe,
             scanner_type=settings.scanner_type,
             timeframe=settings.timeframe,
+            scan_mode=settings.scan_mode,
         )
         if results is not None:
             st.session_state.update(
@@ -752,6 +891,10 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
 
     if not settings.use_cache and results is not None and not need_scan:
         status_placeholder.info("ℹ️ Showing previous scan. Click Run Fresh Scan to refresh.")
+
+    if not need_scan and results is None:
+        status_placeholder.info("No scan loaded yet. Click Run Fresh Scan to start a modular scan.")
+        return
 
     if not settings.use_cache and need_scan:
         st.session_state.scan_running = True
@@ -780,6 +923,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                     min_mkt_cap_cr=min_cap,
                     max_mkt_cap_cr=max_cap,
                     scanner_type=settings.scanner_type,
+                    scan_mode=settings.scan_mode,
                     timeframe=settings.timeframe,
                     sector_map=sector_map,
                     include_news_sentiment=settings.include_news,
@@ -809,13 +953,12 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
             results, filtered_results, st.session_state.last_scan_time,
             st.session_state.get("scan_source"), stats,
             timeframe=(stats or {}).get("timeframe", settings.timeframe),
+            scan_mode=settings.scan_mode,
         )
         focus_mode = bool(st.session_state.get("focus_mode", False))
         if not focus_mode and st.session_state.get("show_top_picks", True):
             render_top_picks(filtered_results if filtered_results is not None and len(filtered_results) > 0 else results)
         _render_metrics(results, stats, scan_time)
-        if not focus_mode and st.session_state.get("show_macro_context", True):
-            _render_macro_context(stats)
         _render_filter_breakdown(stats)
         if not focus_mode and st.session_state.get("show_watchlist_quick_add", True):
             _render_watchlist_quick_add(results)
@@ -833,14 +976,17 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                     <div class="terminal-head">
                         <div>
                             <div class="terminal-title" style="color: #00e5ff;">Signal Blotter</div>
-                            <div class="terminal-subtitle" style="color: #94a3b8;">Ranked breakout candidates after post-scan filtering</div>
+                            <div class="terminal-subtitle" style="color: #94a3b8;">Ranked candidates after post-scan filtering</div>
                         </div>
                         <div class="terminal-badge" style="background: #00e5ff; color: #000000; font-weight: bold; padding: 2px 8px; border-radius: 4px;">{len(filtered_results)} MATCHES</div>
                     </div>
                 """,
                 unsafe_allow_html=True,
             )
-            selection = _render_results_blotter(filtered_results)
+            if _is_modular_results(filtered_results):
+                selection = _render_modular_results_blotter(filtered_results)
+            else:
+                selection = _render_results_blotter(filtered_results)
             st.markdown("</div>", unsafe_allow_html=True)
 
         with workspace_col:
@@ -857,7 +1003,10 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                 """,
                 unsafe_allow_html=True,
             )
-            has_selection = _render_detail_view(filtered_results.reset_index(drop=True), selection, load_ticker_history, chart_options, settings.timeframe)
+            if _is_modular_results(filtered_results):
+                has_selection = _render_modular_detail_view(filtered_results.reset_index(drop=True), selection, load_ticker_history, chart_options, settings.timeframe)
+            else:
+                has_selection = _render_detail_view(filtered_results.reset_index(drop=True), selection, load_ticker_history, chart_options, settings.timeframe)
             if not has_selection:
                 st.info("Pick a stock from the blotter to open the setup workspace.")
             st.markdown("</div>", unsafe_allow_html=True)

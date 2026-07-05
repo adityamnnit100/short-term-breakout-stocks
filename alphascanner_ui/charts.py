@@ -178,11 +178,23 @@ def render_top_picks(df: pd.DataFrame):
     Fixes the UI issue by rendering Top Picks using unsafe_allow_html.
     Automatically identifies the top 3 high-conviction signals.
     """
-    if df is None or df.empty or "Signal_Strength" not in df.columns:
+    if df is None or df.empty:
         return
 
     st.markdown("### ⭐ Top Breakout Picks")
-    top_3 = df.nlargest(3, "Signal_Strength")
+    if "Signal_Strength" in df.columns:
+        score_col = "Signal_Strength"
+        score_label = "Signal Strength"
+    elif "Watchlist Score" in df.columns:
+        score_col = "Watchlist Score"
+        score_label = "Watchlist Score"
+    elif "Entry Score" in df.columns:
+        score_col = "Entry Score"
+        score_label = "Entry Score"
+    else:
+        return
+
+    top_3 = df.nlargest(3, score_col)
     
     html = '<div class="top-picks-grid">'
     for _, row in top_3.iterrows():
@@ -191,7 +203,7 @@ def render_top_picks(df: pd.DataFrame):
         pattern = row.get("Pattern", "Rounding")
         rsi = row.get("RSI", 0)
         vol = row.get("Vol_x", 0)
-        strength = row.get("Signal_Strength", 0)
+        strength = row.get(score_col, 0)
         risk = row.get("Risk_Grade", "C")
         breadth = row.get("Market_Health", "Unknown")
         stop_pct = row.get("Stop_%", 0)
@@ -204,7 +216,7 @@ def render_top_picks(df: pd.DataFrame):
             f'<div class="top-pick-tags">'
             f'<span class="mini-tag">RSI {rsi:.1f}</span>'
             f'<span class="mini-tag">Vol {vol:.1f}x</span>'
-            f'<span class="mini-tag">Strength {strength:.1f}</span>'
+            f'<span class="mini-tag">{score_label} {strength:.1f}</span>'
             f'<span class="mini-tag">Risk {risk}</span>'
             f'<span class="mini-tag">Breadth {breadth}</span>'
             f'<span class="mini-tag">Stop {stop_pct:.1f}%</span>'

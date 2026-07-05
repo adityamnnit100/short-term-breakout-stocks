@@ -3,7 +3,6 @@
 import base64
 import hashlib
 import hmac
-import json
 import os
 import re
 import secrets
@@ -12,20 +11,13 @@ import sys
 from getpass import getpass
 from pathlib import Path
 from typing import Dict, List, Optional
-
+from . import database
 
 HASH_ALGORITHM = "pbkdf2_sha256"
 DEFAULT_ITERATIONS = 260_000
 DB_PATH = Path(os.environ.get(
     "ALPHASCANNER_DB", Path(__file__).resolve().parent.parent / "breakout_history.db"
 ))
-WORKSPACE_FIELDS = {
-    "watchlist": {"Default": []},
-    "trade_journal": [],
-    "portfolio_positions": [],
-    "portfolios": [],
-    "notes": [],
-}
 USERNAME_PATTERN = re.compile(r"^[a-z0-9_.-]{3,32}$")
 
 
@@ -91,26 +83,6 @@ def init_auth_db() -> None:
         )
         """
     )
-    conn.execute(
-        """
-        CREATE TABLE IF NOT EXISTS user_workspace (
-            username                 TEXT PRIMARY KEY,
-            watchlist_json           TEXT NOT NULL DEFAULT '[]',
-            trade_journal_json       TEXT NOT NULL DEFAULT '[]',
-            portfolio_positions_json TEXT NOT NULL DEFAULT '[]',
-            portfolios_json          TEXT NOT NULL DEFAULT '[]',
-            notes_json               TEXT NOT NULL DEFAULT '[]',
-            updated_at               DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-        """
-    )
-    columns = {
-        row[1] for row in conn.execute("PRAGMA table_info(user_workspace)").fetchall()
-    }
-    if "portfolios_json" not in columns:
-        conn.execute("ALTER TABLE user_workspace ADD COLUMN portfolios_json TEXT NOT NULL DEFAULT '[]'")
-    if "notes_json" not in columns:
-        conn.execute("ALTER TABLE user_workspace ADD COLUMN notes_json TEXT NOT NULL DEFAULT '[]'")
     conn.commit()
     conn.close()
 
@@ -278,8 +250,7 @@ def delete_user(username: str) -> None:
     username = normalize_username(username)
     init_auth_db()
     conn = _connect_db()
-    conn.execute("DELETE FROM auth_users WHERE username = ?", (username,))
-    conn.execute("DELETE FROM user_workspace WHERE username = ?", (username,))
+    conn.execute("DELETE FROM auth_users WHERE username = ?", (username,))    
     conn.commit()
     conn.close()
 
@@ -287,43 +258,29 @@ def delete_user(username: str) -> None:
 def load_user_workspace(username: str) -> dict:
     username = normalize_username(username)
     init_auth_db()
-    conn = _connect_db()
-    row = conn.execute(
-        """
-        SELECT watchlist_json, trade_journal_json, portfolio_positions_json, portfolios_json, notes_json
-        FROM user_workspace
-        WHERE username = ?
-        """,
-        (username,),
-    ).fetchone()
-    conn.close()
+    database.init_db()
 
-    if not row:
-        return {
-            field: (list(default_value) if isinstance(default_value, list) else dict(default_value))
-            for field, default_value in WORKSPACE_FIELDS.items()
+    # Map the database-backed stores back onto the session keys used by the UI.
+    risk_positions = [
+        {
+            key: value
+            for key, value in position.items()
+            if key != "username"
         }
-
-    values = {}
-    for field, raw_value in zip(WORKSPACE_FIELDS, row):
-        try:
-            loaded = json.loads(raw_value)
-            if field == "watchlist" and isinstance(loaded, list):
-                values[field] = {"Default": loaded}
-            elif isinstance(loaded, type(WORKSPACE_FIELDS[field])):
-                values[field] = loaded
-            else:
-                default_value = WORKSPACE_FIELDS[field]
-                values[field] = list(default_value) if isinstance(default_value, list) else dict(default_value)
-        except (TypeError, json.JSONDecodeError):
-            default_value = WORKSPACE_FIELDS[field]
-            values[field] = list(default_value) if isinstance(default_value, list) else dict(default_value)
-    return values
+        for position in database.get_risk_positions(username)
+    ]
+    return {
+        "watchlist": database.get_watchlist_data(username),
+        "trade_journal": database.get_journal(username),
+        "portfolios": database.get_portfolios_with_holdings(username),
+        "notes": database.get_all_notes(username),
+        "portfolio_positions": risk_positions,
+        "risk_positions": risk_positions,
+    }
 
 
 def load_workspace_into_session(username: str) -> None:
     import streamlit as st
-
     for field, value in load_user_workspace(username).items():
         st.session_state[field] = value
 
@@ -331,42 +288,36 @@ def load_workspace_into_session(username: str) -> None:
 def save_user_workspace(username: str, workspace: dict) -> None:
     username = normalize_username(username)
     init_auth_db()
-    payload = {
-        field: json.dumps(workspace.get(field, []), ensure_ascii=False)
-        for field in WORKSPACE_FIELDS
-    }
-    conn = _connect_db()
-    conn.execute(
-        """
-        INSERT INTO user_workspace (
+    database.init_db()
+
+    watchlist = workspace.get("watchlist", {}) or {}
+    portfolio_positions = workspace.get("portfolio_positions", workspace.get("risk_positions", [])) or []
+
+    # Persist watchlist categories by replacing the user's current rows.
+    database.execute_query("DELETE FROM watchlist WHERE username = ?", (username,))
+    if isinstance(watchlist, dict):
+        for category, tickers in watchlist.items():
+            for ticker in tickers or []:
+                database.add_watchlist_ticker(username, str(category), str(ticker))
+
+    # Persist risk positions by replacing the user's current rows.
+    database.execute_query("DELETE FROM risk_positions WHERE username = ?", (username,))
+    for position in portfolio_positions:
+        ticker = str(position.get("ticker", "")).strip()
+        if not ticker:
+            continue
+        database.add_risk_position(
             username,
-            watchlist_json,
-            trade_journal_json,
-            portfolio_positions_json,
-            portfolios_json,
-            notes_json,
-            updated_at
+            {
+                "ticker": ticker,
+                "entry": float(position.get("entry", 0) or 0),
+                "stop": float(position.get("stop", 0) or 0),
+                "shares": int(position.get("shares", 0) or 0),
+                "risk_amount": float(position.get("risk_amount", 0) or 0),
+                "total_value": float(position.get("total_value", 0) or 0),
+                "date_added": str(position.get("date_added", "")),
+            },
         )
-        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-        ON CONFLICT(username) DO UPDATE SET
-            watchlist_json = excluded.watchlist_json,
-            trade_journal_json = excluded.trade_journal_json,
-            portfolio_positions_json = excluded.portfolio_positions_json,
-            portfolios_json = excluded.portfolios_json,
-            notes_json = excluded.notes_json,
-            updated_at = CURRENT_TIMESTAMP
-        """,
-        (
-            username,
-            payload["watchlist"],
-            payload["trade_journal"],
-            payload["portfolio_positions"],
-            payload["portfolios"],
-            payload["notes"],
-        ),
-    )
-    conn.commit()
-    conn.close()
 
 
 def save_current_user_workspace() -> None:
@@ -377,7 +328,11 @@ def save_current_user_workspace() -> None:
         return
     save_user_workspace(
         username,
-        {field: st.session_state.get(field, []) for field in WORKSPACE_FIELDS},
+        {
+            "watchlist": st.session_state.get("watchlist", {}),
+            "portfolio_positions": st.session_state.get("portfolio_positions", []),
+            "risk_positions": st.session_state.get("risk_positions", []),
+        },
     )
 
 
@@ -588,20 +543,27 @@ def render_user_management() -> None:
     if current_user in load_config_users():
         st.info("Your owner/admin account is managed from secrets or environment variables.")
     else:
-        with st.form("auth_change_own_password"):
-            current_password = st.text_input("Current password", type="password", key="auth_current_password")
-            new_password = st.text_input("New password", type="password", key="auth_own_new_password")
-            submitted = st.form_submit_button("Change My Password", use_container_width=True)
-        if submitted:
-            stored_hash = load_users().get(current_user)
-            if not stored_hash or not verify_password(current_password, stored_hash):
-                st.error("Current password is incorrect.")
-            else:
-                try:
-                    update_user_password(current_user, new_password)
-                    st.success("Password updated.")
-                except ValueError as exc:
-                    st.error(str(exc))
+        st.session_state.setdefault("show_update_password", False)
+        if st.button("Update My Password", use_container_width=True):
+            st.session_state.show_update_password = not st.session_state.show_update_password
+
+        if st.session_state.show_update_password:
+            with st.form("auth_change_own_password"):
+                st.caption("Change your password below. This only applies to accounts created through the sign-up form.")
+                current_password = st.text_input("Current password", type="password", key="auth_current_password")
+                new_password = st.text_input("New password", type="password", key="auth_own_new_password")
+                submitted = st.form_submit_button("Change My Password", use_container_width=True)
+            if submitted:
+                stored_hash = load_users().get(current_user)
+                if not stored_hash or not verify_password(current_password, stored_hash):
+                    st.error("Current password is incorrect.")
+                else:
+                    try:
+                        update_user_password(current_user, new_password)
+                        st.success("Password updated successfully.")
+                        st.session_state.show_update_password = False
+                    except ValueError as exc:
+                        st.error(str(exc))
 
     if not is_current_user_admin():
         return

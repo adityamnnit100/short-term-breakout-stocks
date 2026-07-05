@@ -19,6 +19,20 @@ def confirm_reset_dialog(action_fn, label):
         st.rerun()
 
 
+@st.dialog("Enable Deep News Sentiment")
+def confirm_enable_news_dialog():
+    st.write("Enabling deep news sentiment will slow scans and may use more network resources.")
+    st.warning("Only enable this if you want richer context and accept the extra scan time.")
+    col_1, col_2 = st.columns(2)
+    with col_1:
+        if st.button("Enable", type="primary", use_container_width=True):
+            st.session_state.include_news_sentiment = True
+            st.rerun()
+    with col_2:
+        if st.button("Cancel", use_container_width=True):
+            st.rerun()
+
+
 def render_tab(load_ticker_history, run_backtest_cached) -> None:
     st.markdown('<div class="glass-card"><div class="panel-title" style="color: #00e5ff;">System Settings</div></div>', unsafe_allow_html=True)
 
@@ -98,9 +112,7 @@ def render_tab(load_ticker_history, run_backtest_cached) -> None:
             st.success("Deep News Sentiment disabled.")
     else:
         if st.button("Enable Deep News Sentiment (may slow scans)"):
-            if st.confirm("Enabling deep news sentiment will increase scan time and may use more network resources. Continue?"):
-                st.session_state.include_news_sentiment = True
-                st.success("Deep News Sentiment enabled.")
+            confirm_enable_news_dialog()
     st.caption("Enable advanced features to enhance scan quality; use with caution in live scans.")
 
     st.divider()

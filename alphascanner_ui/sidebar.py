@@ -15,6 +15,7 @@ class SidebarSettings:
     min_mkt_cap: int
     max_mkt_cap: int
     scanner_type: str
+    scan_mode: str
     timeframe: str
     use_cache: bool
     include_news: bool
@@ -51,24 +52,35 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         st.divider()
 
         with st.expander("🎯 Filter Parameters", expanded=True):
-            universe = st.selectbox(
+            selected_universe = st.selectbox(
                 "Universe",
                 ["Nifty 500", "Total Market (Cap Focused)"],
                 index=0,
                 help="Use Nifty 500 for the core scanner, or Total Market when you want market-cap screening.",
             )
-            # persist short-term_sidebar selections
-            st.session_state["sidebar_universe"] = universe
             scanner_type = st.selectbox(
                 "Scanner Type",
-                ["Breakout", "Pre-Breakout", "FII Accumulation", "Long-Term"],
+                ["Breakout", "Pre-Breakout", "Modular Momentum", "FII Accumulation", "Long-Term"],
                 index=0,
-                help="Breakout: active breakouts. Pre-Breakout: consolidating near highs. FII Accumulation: quarterly institutional holding build-up. Long-Term: large-cap stocks for longer holds.",
+                help="Breakout: active breakouts. Pre-Breakout: consolidating near highs. Modular Momentum: trend/structure/volume/sector/risk-based technical setups. FII Accumulation: quarterly institutional holding build-up. Long-Term: large-cap stocks for longer holds.",
             )
             st.session_state["sidebar_scanner_type"] = scanner_type
+            if scanner_type == "Modular Momentum":
+                modular_scan_mode = st.session_state.get("sidebar_modular_scan_mode", st.session_state.get("sidebar_scan_mode", "Entry Scanner"))
+                modular_scan_index = 0 if modular_scan_mode != "Watchlist Scanner" else 1
+                scan_mode = st.selectbox(
+                    "Scan Mode",
+                    ["Entry Scanner", "Watchlist Scanner"],
+                    index=modular_scan_index,
+                    help="Entry Scanner shows actionable setups. Watchlist Scanner shows earlier-stage momentum candidates.",
+                )
+                st.session_state["sidebar_modular_scan_mode"] = scan_mode
+            else:
+                scan_mode = "Entry Scanner"
+            st.session_state["sidebar_scan_mode"] = scan_mode
             if scanner_type == "FII Accumulation":
                 st.caption("Quarterly ownership scanner based on FII holding increasing quarter-on-quarter.")
-                universe = "Screener.in FII QoQ"
+                effective_universe = "Screener.in FII QoQ"
                 vol_thresh = st.slider("Min FII Increase (%)", 0.1, 10.0, 1.0, 0.1)
                 rsi_range = (0, 100)
                 dist_thresh = 0.0
@@ -84,14 +96,43 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                 max_mkt_cap = 0
             elif scanner_type == "Long-Term":
                 st.caption("Long-term investment scanner for large-cap stocks with market cap >1000 Cr.")
-                universe = "Nifty 500"
+                effective_universe = "Nifty 500"
                 vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 0.5, 0.1, help="Lower = more results, Higher = quality filter")
                 rsi_range = (30, 70)
                 dist_thresh = 0.0
                 timeframe = "1d"
                 min_mkt_cap = 1000
                 max_mkt_cap = 0
+            elif scanner_type == "Modular Momentum":
+                st.caption("Technical momentum scanner using trend, structure, volume, sector strength, and risk filters.")
+                effective_universe = selected_universe
+                vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 0.6, 0.1, help="Lower = more results, Higher = quality filter")
+                rsi_range = st.slider("RSI Range", 0, 100, (35, 75), help="Momentum zone for the modular engine. Default 35-75 gives broader coverage.")
+                dist_thresh = st.slider("Proximity to High (%)", 0.5, 10.0, 5.0, 0.5, help="How close to the recent high for the modular setup.")
+                timeframe_choice = st.selectbox(
+                    "Timeframe",
+                    ["Daily", "60m", "30m", "15m", "5m"],
+                    index=0,
+                    help="Choose the analysis timeframe for the modular momentum scan.",
+                )
+                interval_map = {"Daily": "1d", "60m": "60m", "30m": "30m", "15m": "15m", "5m": "5m"}
+                timeframe = interval_map.get(timeframe_choice, "1d")
+                st.session_state["sidebar_timeframe"] = timeframe                
+                min_mkt_cap, max_mkt_cap = 0, 1000000
+                if selected_universe == "Total Market (Cap Focused)":
+                    mkt_cap_range = st.slider(
+                        "Market Cap Range (Cr)",
+                        0, 100000, (500, 20000), 100,
+                        help="Focus on Small Caps (<5k) or Mid Caps (5k-20k).",
+                    )
+                    min_mkt_cap, max_mkt_cap = mkt_cap_range
+                st.session_state["sidebar_min_mkt_cap"] = min_mkt_cap
+                st.session_state["sidebar_max_mkt_cap"] = max_mkt_cap
+                st.session_state["sidebar_vol_thresh"] = vol_thresh
+                st.session_state["sidebar_rsi_range"] = rsi_range
+                st.session_state["sidebar_dist_thresh"] = dist_thresh
             else:
+                effective_universe = selected_universe
                 vol_thresh = st.slider("Min Volume Ratio (×avg)", 0.1, 5.0, 1.0 if scanner_type == "Breakout" else 0.6, 0.1, help="Lower = more results, Higher = quality filter")
                 timeframe_choice = st.selectbox(
                     "Timeframe",
@@ -110,7 +151,7 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                     rsi_range = st.slider("RSI Range", 0, 100, (35, 70), help="RSI range for accumulation phase. Default 35-70 for more setups.")
                     dist_thresh = st.slider("Proximity to High (%)", 0.5, 10.0, 5.0, 0.5, help="How close to 20D/52W high for pre-breakout.")
                 min_mkt_cap, max_mkt_cap = 0, 1000000
-                if universe == "Total Market (Cap Focused)":
+                if selected_universe == "Total Market (Cap Focused)":
                     mkt_cap_range = st.slider(
                         "Market Cap Range (Cr)",
                         0, 100000, (500, 20000), 100,
@@ -123,6 +164,10 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
                 st.session_state["sidebar_vol_thresh"] = vol_thresh
                 st.session_state["sidebar_rsi_range"] = rsi_range
                 st.session_state["sidebar_dist_thresh"] = dist_thresh
+
+            st.session_state["sidebar_universe"] = effective_universe
+            st.session_state["sidebar_effective_universe"] = effective_universe
+            st.session_state["sidebar_effective_scan_mode"] = scan_mode
 
         st.divider()
 
@@ -156,17 +201,20 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         st.caption(f"Action: {action_label}")
         if st.button(action_label, use_container_width=True, help=action_help, key="primary_scan_action"):
             st.session_state.run_scan = True
+            st.session_state.last_scan_time = None
             if not use_cache:
                 st.session_state.results = None
+                st.session_state.stats = None
 
     settings = SidebarSettings(
-        universe=universe,
+        universe=effective_universe,
         vol_thresh=vol_thresh,
         rsi_range=rsi_range,
         dist_thresh=dist_thresh,
         min_mkt_cap=min_mkt_cap,
         max_mkt_cap=max_mkt_cap,
         scanner_type=scanner_type,
+        scan_mode=scan_mode,
         timeframe=timeframe,
         use_cache=use_cache,
         include_news=include_news,
@@ -176,6 +224,7 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
     st.session_state["sidebar_last_settings"] = {
         "universe": settings.universe,
         "scanner_type": settings.scanner_type,
+        "scan_mode": settings.scan_mode,
         "timeframe": settings.timeframe,
         "use_cache": settings.use_cache,
     }

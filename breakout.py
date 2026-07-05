@@ -1240,7 +1240,7 @@ def _process_single_ticker(
         meta_tuple = (metadata_cache or {}).get(ticker)
         if meta_tuple:
             mkt_cap_cr, roe = meta_tuple
-        elif not metadata_cache:
+        elif apply_market_cap_filter:
             # Fallback if prefetch missed it (should be rare)
             try:
                 t_obj = yf.Ticker(ticker)
@@ -1480,10 +1480,17 @@ def run_scanner(
         logging.getLogger("AlphaScanner.Engine").error(f"Benchmark download error: {exc}")
         return pd.DataFrame(), stats
 
-    # 1.5 Prefetch Metadata (Background Batch Task)
-    if progress_callback: progress_callback(0.05)
-    prefetch_metadata(tickers)
-    if progress_callback: progress_callback(0.10)
+    # 1.5 Prefetch Metadata only when a market-cap gate is actually needed.
+    # For the common Breakout/Nifty 500 path, skipping this avoids a long stall
+    # at the start of the scan and keeps the UI progress bar moving.
+    if progress_callback:
+        progress_callback(0.05)
+    metadata_cache = {}
+    if apply_market_cap_filter or scanner_type == "Long-Term":
+        prefetch_metadata(tickers)
+        metadata_cache = get_all_metadata_cache(tickers)
+    if progress_callback:
+        progress_callback(0.10)
 
     # 2. Chunked ticker download. Keep this serial because yfinance mutates shared
     # state internally and concurrent chunk downloads can corrupt/duplicate columns.
@@ -1675,7 +1682,8 @@ def run_scanner(
     stats_lock = Lock()
     hits = []
     # Pre-fetch all metadata once to avoid redundant DB queries in worker threads
-    metadata_cache = get_all_metadata_cache(avail)
+    if not metadata_cache and (apply_market_cap_filter or scanner_type == "Long-Term"):
+        metadata_cache = get_all_metadata_cache(avail)
 
     # Use ThreadPoolExecutor for concurrent processing
     with concurrent.futures.ThreadPoolExecutor(max_workers=DEFAULT_MAX_WORKERS) as executor:

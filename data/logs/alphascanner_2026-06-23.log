@@ -1,0 +1,41 @@
+2026-06-23 22:59:51,424 INFO Background metadata worker starting...
+2026-06-23 22:59:51,634 INFO Fetched 501 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-06-23 22:59:52,656 INFO Fetched 251 symbols for Nifty Microcap 250 from https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv
+2026-06-23 22:59:53,202 INFO Prefetching missing metadata for 752 tickers...
+2026-06-23 22:59:54,395 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 22:59:54,622 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 22:59:55,577 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:00:35,297 ERROR HTTP Error 404: {"quoteSummary":{"result":null,"error":{"code":"Not Found","description":"Quote not found for symbol: DUMMYALCAR.NS"}}}
+2026-06-23 23:01:18,270 INFO Background cache refresh complete for 752 symbols.
+2026-06-23 23:02:54,134 INFO Background metadata worker starting...
+2026-06-23 23:02:54,224 INFO Prefetching missing metadata for 285 tickers...
+2026-06-23 23:02:54,434 ERROR 
+1 Failed download:
+2026-06-23 23:02:54,440 ERROR ['^NSEI']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2026-06-23 23:02:54,888 ERROR 
+1 Failed download:
+2026-06-23 23:02:54,891 ERROR ['^NSEBANK']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2026-06-23 23:02:55,288 ERROR 
+1 Failed download:
+2026-06-23 23:02:55,288 ERROR ['^GSPC']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')
+2026-06-23 23:02:56,189 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:02:56,384 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:03:04,783 INFO Background cache refresh complete for 752 symbols.
+2026-06-23 23:06:40,714 INFO Prefetching missing metadata for 153 tickers...
+2026-06-23 23:06:41,607 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:06:41,635 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:06:41,646 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:14:12,082 INFO Background metadata worker starting...
+2026-06-23 23:14:12,167 INFO Prefetching missing metadata for 110 tickers...
+2026-06-23 23:14:13,586 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:14:14,442 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:14:14,444 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:14:14,448 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:14:14,450 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-06-23 23:14:14,454 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:14:14,456 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-06-23 23:14:14,460 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-06-23 23:14:14,462 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"Invalid Crumb"}}}
+2026-06-23 23:14:14,474 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-06-23 23:14:16,701 ERROR HTTP Error 401: {"finance":{"result":null,"error":{"code":"Unauthorized","description":"User is unable to access this feature - https://bit.ly/yahoo-finance-api-feedback"}}}
+2026-06-23 23:14:46,453 INFO Background cache refresh complete for 752 symbols.
