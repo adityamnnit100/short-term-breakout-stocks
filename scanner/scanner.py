@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import logging
 from math import ceil
+import os
 from typing import Dict, List, Optional
+import concurrent.futures
+from threading import Lock
 
 import pandas as pd
 
@@ -88,6 +91,7 @@ def run_dual_mode_scan(
     _update_progress(progress_callback, 0.05)
     watchlist_rows: List[Dict[str, object]] = []
     entry_rows: List[Dict[str, object]] = []
+    rows_lock = Lock()
     watchlist_scanner = WatchlistScanner(config)
     entry_scanner = EntryScanner(config)
 
@@ -110,27 +114,32 @@ def run_dual_mode_scan(
             len(chunk_map),
         )
 
-        for ticker in chunk:
+        def _process_ticker(ticker: str) -> None:
             try:
                 df = chunk_map.get(ticker)
                 if df is None or df.empty:
                     df = download_history(ticker, config, use_cache=use_cache)
-                if df.empty or len(df) < config.min_candles:
-                    continue
+                if df is None or df.empty or len(df) < config.min_candles:
+                    return
 
                 # Sector logic can be enhanced here later
                 sector = "Unknown"
 
                 watch_result = watchlist_scanner.evaluate(df, ticker=ticker, sector=sector)
                 if watch_result.get("passed"):
-                    watchlist_rows.append(watch_result)
+                    with rows_lock:
+                        watchlist_rows.append(watch_result)
 
                 entry_result = entry_scanner.evaluate(df, ticker=ticker, sector=sector)
                 if entry_result.get("passed"):
-                    entry_rows.append(entry_result)
+                    with rows_lock:
+                        entry_rows.append(entry_result)
 
             except Exception as exc:
                 logger.exception("Scanner failed for %s: %s", ticker, exc)
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
+            executor.map(_process_ticker, chunk)
 
         _update_progress(progress_callback, 0.05 + (0.75 * chunk_index / total_chunks))
         logger.debug(

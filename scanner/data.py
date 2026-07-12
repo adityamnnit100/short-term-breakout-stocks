@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from typing import Dict, Iterable, List, Optional
+import concurrent.futures
 
 import pandas as pd
 from breakout import get_nifty_500, get_nifty_total_market
@@ -70,49 +71,31 @@ def download_history_batch(tickers: Iterable[str], config: ScannerConfig, use_ca
         use_cache,
         tickers_list[:5],
     )
-
-    try:
-        df = cached_download(
-            tickers_list,
-            period=config.lookback_period,
-            interval=config.interval,
-            use_cache=use_cache,
-            progress=False,
-            auto_adjust=False,
-            threads=True,
-        )
-    except Exception as exc:  # pragma: no cover - network/path dependent
-        logger.warning("Batch download failed: %s", exc)
-        return {}
-
-    if not isinstance(df, pd.DataFrame) or df.empty:
-        return {}
-
+    
     result: Dict[str, pd.DataFrame] = {}
-    if isinstance(df.columns, pd.MultiIndex):
-        level0 = [str(value) for value in df.columns.get_level_values(0)]
-        level1 = [str(value) for value in df.columns.get_level_values(1)]
-        for ticker in tickers_list:
+    # Use a controlled ThreadPoolExecutor to parallelize single-ticker downloads.
+    # This is a more stable approach than relying on yfinance's internal threading.
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        # We are calling `download_history` which is already configured for single tickers
+        # and has threading disabled internally.
+        future_to_ticker = {
+            executor.submit(download_history, ticker, config, use_cache): ticker
+            for ticker in tickers_list
+        }
+        for future in concurrent.futures.as_completed(future_to_ticker):
+            ticker = future_to_ticker[future]
             try:
-                if ticker in level1:
-                    sub_df = df.xs(ticker, axis=1, level=1).copy()
-                elif ticker in level0:
-                    sub_df = df.xs(ticker, axis=1, level=0).copy()
-                else:
-                    continue
-                sub_df = normalize_columns(sub_df)
-                if not sub_df.empty and all(col in sub_df.columns for col in config.required_columns):
-                    result[ticker] = sub_df.dropna(subset=config.required_columns).copy()
-            except Exception:
-                continue
-        logger.debug("download_history_batch split result count=%s", len(result))
-        return result
+                df = future.result()
+                if df is not None and not df.empty:
+                    result[ticker] = df
+            except Exception as exc:
+                logger.warning(
+                    "Failed to download %s during batch operation: %s", ticker, exc
+                )
 
-    # Single-ticker style frame. Return it for the first requested symbol.
-    normalized = normalize_columns(df)
-    if not normalized.empty and all(col in normalized.columns for col in config.required_columns):
-        result[tickers_list[0]] = normalized.dropna(subset=config.required_columns).copy()
-    logger.debug("download_history_batch single-frame result count=%s", len(result))
+    logger.debug(
+        "download_history_batch (ThreadPool) result count=%s", len(result)
+    )
     return result
 
 
