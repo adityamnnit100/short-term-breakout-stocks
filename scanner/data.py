@@ -72,44 +72,55 @@ def download_history(ticker: str, config: ScannerConfig, use_cache: bool = True)
 
 
 def download_history_batch(tickers: Iterable[str], config: ScannerConfig, use_cache: bool = True) -> Dict[str, pd.DataFrame]:
-    """Download a batch of ticker histories in one request and split them per symbol."""
-    tickers_list = [ticker for ticker in tickers if isinstance(ticker, str) and ticker]
+    """Download a batch of ticker histories, preferably in a single bulk request for efficiency and stability."""
+    tickers_list = sorted([ticker for ticker in tickers if isinstance(ticker, str) and ticker])
     if not tickers_list:
         return {}
 
     logger.debug(
-        "download_history_batch(size=%s, period=%s, interval=%s, use_cache=%s, head=%s)",
+        "download_history_batch(size=%d, period=%s, interval=%s, use_cache=%s, head=%s)",
         len(tickers_list),
         config.lookback_period,
         config.interval,
         use_cache,
         tickers_list[:5],
     )
-    
-    result: Dict[str, pd.DataFrame] = {}
-    # Use a controlled ThreadPoolExecutor to parallelize single-ticker downloads.
-    # This is a more stable approach than relying on yfinance's internal threading.
-    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
-        # We are calling `download_history` which is already configured for single tickers
-        # and has threading disabled internally.
-        future_to_ticker = {
-            executor.submit(download_history, ticker, config, use_cache): ticker
-            for ticker in tickers_list
-        }
-        for future in concurrent.futures.as_completed(future_to_ticker):
-            ticker = future_to_ticker[future]
-            try:
-                df = future.result()
-                if df is not None and not df.empty:
-                    result[ticker] = df
-            except Exception as exc:
-                logger.warning(
-                    "Failed to download %s during batch operation: %s", ticker, exc
-                )
 
-    logger.debug(
-        "download_history_batch (ThreadPool) result count=%s", len(result)
-    )
+    with _YFINANCE_LOCK:
+        try:
+            # A single bulk download is more efficient and stable than parallel single-ticker calls.
+            # yfinance is optimized for this. `threads=False` is critical for stability.
+            df_batch = cached_download(
+                tickers_list,
+                period=config.lookback_period,
+                interval=config.interval,
+                use_cache=use_cache,
+                progress=False,
+                auto_adjust=False,
+                threads=False,
+            )
+        except Exception as exc:
+            logger.error("Critical error during batch download: %s", exc)
+            return {}
+
+    if df_batch is None or df_batch.empty:
+        logger.warning("Batch download for %d tickers returned no data.", len(tickers_list))
+        return {}
+
+    result: Dict[str, pd.DataFrame] = {}
+    # yfinance returns a multi-index DataFrame for multiple tickers. We split it into a dict.
+    for ticker in tickers_list:
+        try:
+            df_ticker = df_batch.xs(ticker, axis=1, level=1)
+            df_normalized = normalize_columns(df_ticker)
+            if not df_normalized.empty and all(col in df_normalized.columns for col in config.required_columns):
+                result[ticker] = df_normalized.dropna(subset=config.required_columns).copy()
+        except KeyError:
+            logger.debug("No data for ticker %s in batch result.", ticker)
+        except Exception as exc:
+            logger.warning("Failed to process ticker %s from batch: %s", ticker, exc)
+
+    logger.debug("download_history_batch result count=%d", len(result))
     return result
 
 

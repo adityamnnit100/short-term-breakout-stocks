@@ -180,7 +180,12 @@ def incremental_cached_download(tickers: Iterable[str], period: str = '1y', inte
 
     # First attempt a bulk chunk download (fewer network roundtrips, less rate-limiting)
     try:
-        bulk = yf.download(tickers_list, period=period, interval=interval, progress=False, auto_adjust=False, threads=True, **yf_kwargs)
+        # yfinance's internal threading (`threads=True`) is a known source of instability and
+        # segmentation faults in complex applications. It must be disabled globally.
+        # The `threads=False` argument here ensures stability, overriding any value
+        # that might be passed in yf_kwargs.
+        yf_kwargs['threads'] = False
+        bulk = yf.download(tickers_list, period=period, interval=interval, progress=False, auto_adjust=False, **yf_kwargs)
     except Exception:
         bulk = pd.DataFrame()
 
