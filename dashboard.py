@@ -1,6 +1,7 @@
 """Streamlit entrypoint for AlphaScanner PRO."""
 
 import streamlit as st
+import os
 from alphascanner_ui.auth import render_logout_control, require_login
 from alphascanner_ui.data import (
     configure_logging,
@@ -30,14 +31,15 @@ require_login()
 init_user_db()
 
 # Only run these after successful login to prevent UI flickering and state errors
-try:
-    # Defer heavy imports (yfinance/multitasking) until after core UI is ready.
-    # This prevents import-time crashes in environments where those libs aren't compatible.
-    from breakout import start_background_metadata_worker
+if os.environ.get("ALPHASCANNER_ENABLE_BACKGROUND_METADATA_WORKER", "0") == "1":
+    try:
+        # Defer heavy imports (yfinance/multitasking) until after core UI is ready.
+        # This prevents import-time crashes in environments where those libs aren't compatible.
+        from breakout import start_background_metadata_worker
 
-    start_background_metadata_worker()
-except Exception:
-    logger.exception("Failed to start background metadata worker; continuing without it.")
+        start_background_metadata_worker()
+    except Exception:
+        logger.exception("Failed to start background metadata worker; continuing without it.")
 apply_global_styles()
 apply_plotly_theme()
 
@@ -413,7 +415,7 @@ tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, t
 )
 
 with tab_scanner:
-    scanner.render_tab(sidebar_settings, chart_options, load_ticker_history, fetch_indices_performance) # scanner_type is now part of sidebar_settings
+    scanner.render_tab(sidebar_settings, chart_options, load_ticker_history, load_nifty_history, fetch_indices_performance) # scanner_type is now part of sidebar_settings
     # Smooth UI interaction: notify user when scan results are fresh
     if (
         st.session_state.get('last_scan_time')

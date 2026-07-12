@@ -1,16 +1,22 @@
 """Scanner tab UI."""
 
 from typing import Optional
+import math
 
 import pandas as pd
 import streamlit as st
 import uuid
+import logging
 
+from breakout_readiness import rank_breakout_readiness
+from multi_timeframe import rank_multi_timeframe_candidates
 import scanner_service
 from alphascanner_ui.auth import save_current_user_workspace
-from alphascanner_ui.charts import build_chart, render_top_picks, style_scanner_results, plotly_config
+from alphascanner_ui.charts import build_chart, style_scanner_results, plotly_config
 from alphascanner_ui.data import get_sector_mapping
 from alphascanner_ui.services.alerts_service import get_alerts_service
+
+logger = logging.getLogger("AlphaScanner.UI.Scanner")
 
 
 def _filter_chart_range(df: pd.DataFrame, selected_range: str) -> pd.DataFrame:
@@ -197,7 +203,6 @@ def _render_status_banner(
         pills += f'<span class="mini-tag" style="background:rgba(0,0,0,0.3); color:{color}; border:1px solid {color}66; margin-top:4px; display:inline-block;">{s} ({score})</span>'
 
     market_health = (stats or {}).get("market_health", "Unknown")
-    market_bias = (stats or {}).get("market_bias", "Neutral")
     sector_section = f'<div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(128,128,128,0.2);"><div class="status-label" style="margin-bottom:6px; color:#94a3b8;">🔥 Outperforming Sectors (vs Nifty)</div><div style="display:flex; flex-wrap:wrap; gap:6px;">{pills if pills else "No trending sectors detected"}</div></div>'
 
     st.markdown(
@@ -205,13 +210,11 @@ def _render_status_banner(
         f'<div class="panel-title" style="color: #00e5ff;">Scanner Status</div>'
         f'<div class="status-grid">'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Source</div><div class="status-value" style="color: #00e5ff;">{source_label}</div></div>'
-        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Last Run</div><div class="status-value" style="color: #00e5ff;">{time_label}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Timeframe</div><div class="status-value" style="color: #00e5ff;">{timeframe_label}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Total Results</div><div class="status-value" style="color: #00e5ff;">{total_results}</div></div>'
-        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Visible After Filters</div><div class="status-value" style="color: #00e5ff;">{filtered_count}</div></div>'
         f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Market Breadth</div><div class="status-value" style="color: #00e5ff;">{market_health}</div></div>'
-        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Scan Mode</div><div class="status-value" style="color: #00e5ff;">{scan_mode_label}</div></div>'
-        f'<div class="status-cell"><div class="status-label" style="color: #94a3b8;">Market Bias</div><div class="status-value" style="color: #00e5ff;">{market_bias}</div></div></div>'
+        f'</div>'
+        f'<div style="margin-top:8px;color:#64748b;font-size:0.82rem;">Last run: {time_label} · Mode: {scan_mode_label} · Visible after filters: {filtered_count}</div>'
         f'{sector_section}</div>',
         unsafe_allow_html=True,
     )
@@ -264,69 +267,9 @@ def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Opt
         f'<div class="metric-label" style="color: #94a3b8;">{secondary_label}</div>'
         f'<div class="metric-value" style="color: #00e5ff;">{secondary_value}</div>'
         f'<div class="metric-delta {"neutral" if modular_results else ("up" if avg_strength >= 6 else "down")}">{secondary_delta}</div></div>'
-        f'<div class="metric-card">'
-        f'<div class="metric-label" style="color: #94a3b8;">Scan Time</div>'
-        f'<div class="metric-value" style="font-size:0.9rem; color: #00e5ff;">{(scan_time or "–")[-8:]}</div>'
-        f'<div class="metric-delta neutral" style="color: #64748b;">{(scan_time or "–")[:10]}</div></div>'
         f'</div>',
         unsafe_allow_html=True,
     )
-
-
-def _render_filter_breakdown(stats: Optional[dict]) -> None:
-    if not stats or stats.get("scanned", 0) <= 0:
-        return
-    with st.expander("📉 Filter Breakdown", expanded=False):
-        columns = st.columns(9)
-        for column, (label, key) in zip(
-            columns,
-            [
-                ("Trend", "trend_fail"),
-                ("Liquidity", "liquidity_fail"),
-                ("Volume", "volume_fail"),
-                ("Momentum", "momentum_fail"),
-                ("ADX", "adx_fail"),
-                ("MACD", "macd_fail"),
-                ("B.Bands", "bb_fail"),
-                ("Fakeouts", "fakeout_trap"),
-                ("Errors", "error_fail"),
-            ],
-        ):
-            column.metric(f"❌ {label}", stats.get(key, 0))
-
-
-def _render_watchlist_quick_add(results: pd.DataFrame) -> None:
-    if isinstance(st.session_state.get("watchlist"), list):
-        st.session_state.watchlist = {"Default": st.session_state.watchlist}
-    elif not isinstance(st.session_state.get("watchlist"), dict):
-        st.session_state.watchlist = {"Default": []}
-
-    watchlist_names = list(st.session_state.watchlist.keys())
-
-    col1, col2 = st.columns([1, 1])
-    target_wl = col1.selectbox("Target Watchlist", options=watchlist_names, help="Select an existing list")
-    new_wl_name = col2.text_input("OR Create New", placeholder="New list name...", help="Type to create and add")
-
-    top_3 = results.head(3)["Ticker"].tolist() if not results.empty else []
-    selected_tickers = st.multiselect(
-        "Quick-add to Watchlist",
-        options=results["Ticker"].tolist(),
-        default=top_3,
-    )
-
-    if st.button("➕ Add to Watchlist", key="qk_add", use_container_width=True):
-        final_wl = new_wl_name.strip() if new_wl_name.strip() else target_wl
-        if final_wl not in st.session_state.watchlist:
-            st.session_state.watchlist[final_wl] = []
-
-        added = 0
-        for ticker in selected_tickers:
-            if ticker not in st.session_state.watchlist[final_wl]:
-                st.session_state.watchlist[final_wl].append(ticker)
-                added += 1
-        if added:
-            save_current_user_workspace()
-        st.success(f"Added {added} ticker(s) to '{final_wl}'")
 
 
 def _maybe_send_scan_alerts(results: pd.DataFrame, scanner_type: str) -> None:
@@ -618,7 +561,7 @@ def _render_detail_view(results, selection, load_ticker_history, chart_options, 
     return True
 
 
-def _render_results_blotter(filtered_results: pd.DataFrame):
+def _render_results_blotter(filtered_results: pd.DataFrame, use_rich_style: bool = True):
     display_columns = [
         "Ticker",
         "LTP",
@@ -711,31 +654,124 @@ def _render_results_blotter(filtered_results: pd.DataFrame):
             return ['background-color: rgba(34, 211, 238, 0.15)'] * len(s) # Cyan tint for Near Breakout
         return ['' for _ in s]
 
-    # Chain the sector highlight, long-term bottom (gold), and setup type highlights
-    styled = style_scanner_results(rendered_df).apply(highlight_high_sector, axis=1).apply(highlight_long_term_bottom, axis=1).apply(highlight_setup_type, axis=1)
+    if use_rich_style:
+        # Chain the sector highlight, long-term bottom (gold), and setup type highlights
+        styled = style_scanner_results(rendered_df).apply(highlight_high_sector, axis=1).apply(highlight_long_term_bottom, axis=1).apply(highlight_setup_type, axis=1)
 
-    try:
-        return st.dataframe(
-            styled,
-            use_container_width=True,
-            hide_index=True,
-            on_select="rerun",
-            selection_mode="single-row",
-        )
-    except Exception:
-        return st.dataframe(
-            rendered_df,
-            use_container_width=True,
-            hide_index=True,
-            on_select="rerun",
-            selection_mode="single-row",
-        )
+        try:
+            return st.dataframe(
+                styled,
+                use_container_width=True,
+                hide_index=True,
+                on_select="rerun",
+                selection_mode="single-row",
+            )
+        except Exception:
+            return st.dataframe(
+                rendered_df,
+                use_container_width=True,
+                hide_index=True,
+                on_select="rerun",
+                selection_mode="single-row",
+            )
+
+    return st.dataframe(
+        rendered_df,
+        use_container_width=True,
+        hide_index=True,
+        on_select="rerun",
+        selection_mode="single-row",
+    )
 
 
 def _is_modular_results(results: pd.DataFrame) -> bool:
     if results is None or results.empty:
         return False
     return "Watchlist Score" in results.columns or "Entry Score" in results.columns
+
+
+def _results_signature(results: pd.DataFrame, stats: Optional[dict], scan_time: Optional[str]) -> str:
+    if results is None or results.empty:
+        return "empty"
+    head = tuple(str(x) for x in results.get("Ticker", pd.Series(dtype=str)).head(3).tolist())
+    tail = tuple(str(x) for x in results.get("Ticker", pd.Series(dtype=str)).tail(3).tolist())
+    return "|".join(
+        [
+            str(len(results)),
+            str((stats or {}).get("scanned", len(results))),
+            str((stats or {}).get("universe", "")),
+            str((stats or {}).get("timeframe", "")),
+            str(scan_time or ""),
+            ",".join(head),
+            ",".join(tail),
+        ]
+    )
+
+
+def _get_cached_breakout_readiness(results: pd.DataFrame, load_ticker_history, load_nifty_history) -> pd.DataFrame:
+    if results is None or results.empty or "Ticker" not in results.columns:
+        return pd.DataFrame()
+
+    cache_key = _results_signature(results, st.session_state.get("stats"), st.session_state.get("last_scan_time"))
+    cached_key = st.session_state.get("breakout_readiness_cache_key")
+    cached_frame = st.session_state.get("breakout_readiness_cache")
+    if cached_key == cache_key and isinstance(cached_frame, pd.DataFrame):
+        return cached_frame
+
+    readiness = rank_breakout_readiness(
+        results,
+        history_loader=load_ticker_history,
+        benchmark_loader=load_nifty_history,
+        max_candidates=min(8, len(results)),
+        min_score=45.0,
+    )
+    if readiness is None:
+        readiness = pd.DataFrame()
+
+    st.session_state["breakout_readiness_cache_key"] = cache_key
+    st.session_state["breakout_readiness_cache"] = readiness
+    return readiness
+
+
+def _paginate_results(results: pd.DataFrame, page_size: int, page: int) -> tuple:
+    if results is None or results.empty:
+        return results, 1, 1
+
+    page_size = max(1, int(page_size or 20))
+    total_pages = max(1, math.ceil(len(results) / page_size))
+    page = max(1, min(int(page or 1), total_pages))
+    start = (page - 1) * page_size
+    end = start + page_size
+    return results.iloc[start:end].copy(), page, total_pages
+
+
+def _scanner_pager_key(settings) -> str:
+    scanner_type = str(getattr(settings, "scanner_type", "scanner")).replace(" ", "_").lower()
+    scan_mode = str(getattr(settings, "scan_mode", "")).replace(" ", "_").lower()
+    universe = str(getattr(settings, "universe", "")).replace(" ", "_").lower()
+    timeframe = str(getattr(settings, "timeframe", "")).replace(" ", "_").lower()
+    return f"scanner_blotter_{scanner_type}_{scan_mode}_{universe}_{timeframe}"
+
+
+def _scanner_detail_key(settings) -> str:
+    return f"{_scanner_pager_key(settings)}_detail_ticker"
+
+
+def _scanner_detail_suppress_key(settings) -> str:
+    return f"{_scanner_pager_key(settings)}_detail_suppress_ticker"
+
+
+def _selection_to_ticker(results: pd.DataFrame, selection) -> Optional[str]:
+    if results is None or results.empty or not isinstance(selection, dict):
+        return None
+    selected_rows = selection.get("selection", {}).get("rows", [])
+    if not selected_rows:
+        return None
+    row_idx = selected_rows[0]
+    if row_idx < 0 or row_idx >= len(results):
+        return None
+    ticker = str(results.iloc[row_idx].get("Ticker", "")).strip()
+    return ticker or None
 
 
 def _render_modular_results_blotter(filtered_results: pd.DataFrame):
@@ -794,6 +830,101 @@ def _render_modular_results_blotter(filtered_results: pd.DataFrame):
             on_select="rerun",
             selection_mode="single-row",
         )
+
+
+def _render_breakout_readiness_panel(results: pd.DataFrame, load_ticker_history, load_nifty_history, nested: bool = False) -> None:
+    if results is None or results.empty or "Ticker" not in results.columns:
+        return
+
+    readiness = _get_cached_breakout_readiness(results, load_ticker_history, load_nifty_history)
+    if readiness is None or readiness.empty:
+        return
+
+    display_cols = [
+        "ticker",
+        "breakout_readiness_score",
+        "current_price",
+        "nearest_resistance",
+        "resistance_gap_pct",
+        "compression_score",
+        "breakout_distance_score",
+        "volume_dryup_score",
+        "candle_tightness_score",
+        "rs_acceleration_score",
+        "breakout_pressure_score",
+        "confluence_bonus",
+        "sector",
+        "reasons",
+    ]
+    rendered = readiness[[col for col in display_cols if col in readiness.columns]].rename(
+        columns={
+            "ticker": "Ticker",
+            "breakout_readiness_score": "Readiness Score",
+            "current_price": "Price",
+            "nearest_resistance": "Resistance",
+            "resistance_gap_pct": "Gap %",
+            "compression_score": "Compression",
+            "breakout_distance_score": "Distance",
+            "volume_dryup_score": "Volume Dry-up",
+            "candle_tightness_score": "Candle Tightness",
+            "rs_acceleration_score": "RS Accel",
+            "breakout_pressure_score": "Pressure",
+            "confluence_bonus": "Bonus",
+            "sector": "Sector",
+            "reasons": "Why",
+        }
+    )
+
+    if nested:
+        st.markdown("#### Breakout Readiness Engine")
+        st.caption("This ranks the current scanner output again and keeps only the strongest imminent-breakout candidates.")
+        st.dataframe(rendered, use_container_width=True, hide_index=True)
+        return
+
+    with st.expander("Breakout Readiness Engine", expanded=True):
+        st.caption("This ranks the current scanner output again and keeps only the strongest imminent-breakout candidates.")
+        st.dataframe(rendered, use_container_width=True, hide_index=True)
+
+
+def _render_multi_timeframe_panel(results: pd.DataFrame, load_ticker_history, regime_result: dict, settings, nested: bool = False) -> None:
+    if results is None or results.empty or not getattr(settings, "enable_multi_timeframe_confirmation", False):
+        return
+
+    try:
+        ranking = rank_multi_timeframe_candidates(
+            results,
+            history_loader=load_ticker_history,
+            regime_result=regime_result,
+            config=None,
+            max_candidates=min(8, len(results)),
+        )
+    except Exception:
+        return
+    if ranking is None or ranking.empty:
+        return
+
+    display_cols = [
+        "Ticker",
+        "Weekly Score",
+        "Daily Score",
+        "1H Score",
+        "Raw Score",
+        "Final Score",
+        "Weekly State",
+        "Market Regime",
+        "Recommendation",
+        "Sector",
+    ]
+    rendered = ranking[[col for col in display_cols if col in ranking.columns]].copy()
+    if nested:
+        st.markdown("#### Multi-Timeframe Confirmation Engine")
+        st.caption("Weekly trend has veto power. This panel is intentionally optional until you are satisfied with the regime filter.")
+        st.dataframe(rendered, use_container_width=True, hide_index=True)
+        return
+
+    with st.expander("Multi-Timeframe Confirmation Engine", expanded=True):
+        st.caption("Weekly trend has veto power. This panel is intentionally optional until you are satisfied with the regime filter.")
+        st.dataframe(rendered, use_container_width=True, hide_index=True)
 
 
 def _render_modular_detail_view(results, selection, load_ticker_history, chart_options, timeframe: str = "1d") -> bool:
@@ -859,7 +990,16 @@ def _render_modular_detail_view(results, selection, load_ticker_history, chart_o
     return True
 
 
-def render_tab(settings, chart_options, load_ticker_history, fetch_indices_performance) -> None:
+def render_tab(settings, chart_options, load_ticker_history, load_nifty_history, fetch_indices_performance) -> None:
+    logger.debug(
+        "render_tab(scan_type=%s, universe=%s, scan_mode=%s, timeframe=%s, use_cache=%s, run_scan=%s)",
+        settings.scanner_type,
+        settings.universe,
+        settings.scan_mode,
+        settings.timeframe,
+        settings.use_cache,
+        st.session_state.get("run_scan", False),
+    )
     results = st.session_state.results
     stats = st.session_state.stats
     scan_time = st.session_state.last_scan_time
@@ -914,6 +1054,12 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                 min_cap = settings.min_mkt_cap if is_total_market else 0
                 max_cap = settings.max_mkt_cap if is_total_market else 0
                 sector_map = get_sector_mapping(settings.universe)
+                logger.debug(
+                    "Starting fresh scan with min_cap=%s max_cap=%s sector_map_size=%s",
+                    min_cap,
+                    max_cap,
+                    len(sector_map) if isinstance(sector_map, dict) else 0,
+                )
                 results, stats, scan_time = scanner_service.perform_fresh_scan(
                     universe=settings.universe,
                     vol_thresh=settings.vol_thresh,
@@ -928,6 +1074,7 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                     sector_map=sector_map,
                     include_news_sentiment=settings.include_news,
                     progress_callback=_progress,
+                    use_cache=settings.use_cache,
                 )
         finally:
             progress_bar.empty()
@@ -948,6 +1095,13 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
 
     filtered_results = _apply_result_filters(results)
 
+    if results is not None and len(results) == 0:
+        pager_key = _scanner_pager_key(settings)
+        st.session_state.pop(f"{pager_key}_page", None)
+        st.session_state.pop(f"{pager_key}_page_size", None)
+        st.info("No high-conviction opportunities match current scan parameters.", icon="ℹ️")
+        return
+
     if results is not None and len(results) > 0:
         _render_status_banner(
             results, filtered_results, st.session_state.last_scan_time,
@@ -955,21 +1109,83 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
             timeframe=(stats or {}).get("timeframe", settings.timeframe),
             scan_mode=settings.scan_mode,
         )
-        focus_mode = bool(st.session_state.get("focus_mode", False))
-        if not focus_mode and st.session_state.get("show_top_picks", True):
-            render_top_picks(filtered_results if filtered_results is not None and len(filtered_results) > 0 else results)
-        _render_metrics(results, stats, scan_time)
-        _render_filter_breakdown(stats)
-        if not focus_mode and st.session_state.get("show_watchlist_quick_add", True):
-            _render_watchlist_quick_add(results)
-        st.caption("Select one row from the blotter to open the detailed setup, chart, and position sizing workspace.")
-
         if filtered_results is not None and len(filtered_results) == 0:
             st.warning("Your current post-scan filters hide all results. Relax Min Strength, RSI, or Volume × to see matches.")
             return
 
-        blotter_col, workspace_col = st.columns([1.15, 0.85], gap="medium")
-        with blotter_col:
+        pager_key = _scanner_pager_key(settings)
+        page_size_key = f"{pager_key}_page_size"
+        page_key = f"{pager_key}_page"
+        page_sizes = [10, 20, 30, 50]
+        if page_size_key not in st.session_state or int(st.session_state.get(page_size_key, 20) or 20) not in page_sizes:
+            st.session_state[page_size_key] = 20
+        blotter_page = int(st.session_state.get(page_key, 1) or 1)
+        page_size = int(st.session_state.get(page_size_key, 20) or 20)
+        page_results, blotter_page, total_pages = _paginate_results(filtered_results, page_size, blotter_page)
+        st.session_state[page_key] = blotter_page
+
+        detail_key = _scanner_detail_key(settings)
+        suppress_key = _scanner_detail_suppress_key(settings)
+        selected_detail_ticker = st.session_state.get(detail_key)
+
+        filtered_lookup = {
+            str(row.get("Ticker", "")).strip(): idx
+            for idx, row in filtered_results.reset_index(drop=True).iterrows()
+        }
+
+        if selected_detail_ticker and selected_detail_ticker not in filtered_lookup:
+            st.session_state.pop(detail_key, None)
+            st.session_state.pop(suppress_key, None)
+            selected_detail_ticker = None
+
+        if selected_detail_ticker:
+            detail_results = filtered_results.reset_index(drop=True)
+            detail_index = filtered_lookup.get(selected_detail_ticker)
+            if detail_index is not None:
+                detail_selection = {"selection": {"rows": [detail_index]}}
+                selected_row = detail_results.iloc[detail_index].to_dict()
+                selected_label = str(selected_row.get("Ticker", selected_detail_ticker)).strip() or selected_detail_ticker
+                breadcrumb_left, breadcrumb_right = st.columns([0.24, 0.76])
+                with breadcrumb_left:
+                    if st.button("← Signal Blotter", use_container_width=True, key=f"{detail_key}_back"):
+                        st.session_state.pop(detail_key, None)
+                        st.session_state[suppress_key] = selected_detail_ticker
+                        st.rerun()
+                with breadcrumb_right:
+                    st.markdown(
+                        f"""
+                        <div style="padding: 0.35rem 0 0.15rem; color:#64748b; font-size:0.82rem; letter-spacing:0.04em;">
+                            Scanner <span style="color:#94a3b8;">/</span>
+                            <span style="color:#00e5ff; font-weight:600;">Signal Blotter</span> <span style="color:#94a3b8;">/</span>
+                            <span style="color:#00e5ff; font-weight:600;">{selected_label}</span>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                st.markdown(
+                    f"""
+                    <div class="terminal-panel">
+                        <div class="terminal-head" style="margin-bottom: 8px;">
+                            <div>
+                                <div class="terminal-title" style="color: #00e5ff;">Setup Workspace</div>
+                                <div class="terminal-subtitle" style="color: #94a3b8; margin-top: 2px;">Levels, confirmations, chart context, and sizing</div>
+                            </div>
+                            <div class="terminal-badge" style="background: #94a3b8; color: #000000; font-weight: bold; padding: 2px 8px; border-radius: 4px;">DETAIL</div>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+                if _is_modular_results(detail_results):
+                    _render_modular_detail_view(detail_results, detail_selection, load_ticker_history, chart_options, settings.timeframe)
+                else:
+                    _render_detail_view(detail_results, detail_selection, load_ticker_history, chart_options, settings.timeframe)
+            else:
+                st.session_state.pop(detail_key, None)
+                st.session_state.pop(suppress_key, None)
+                selected_detail_ticker = None
+
+        if not selected_detail_ticker:
             st.markdown(
                 f"""
                 <div class="terminal-panel">
@@ -977,47 +1193,73 @@ def render_tab(settings, chart_options, load_ticker_history, fetch_indices_perfo
                         <div>
                             <div class="terminal-title" style="color: #00e5ff;">Signal Blotter</div>
                             <div class="terminal-subtitle" style="color: #94a3b8;">Ranked candidates after post-scan filtering</div>
+                            <div style="display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:4px 10px;border-radius:999px;border:1px solid rgba(0,229,255,0.22);background:rgba(0,229,255,0.08);color:#00e5ff;font-size:0.78rem;font-weight:600;">
+                                <span>↳</span><span>Click any row to open the detail page</span>
+                            </div>
                         </div>
                         <div class="terminal-badge" style="background: #00e5ff; color: #000000; font-weight: bold; padding: 2px 8px; border-radius: 4px;">{len(filtered_results)} MATCHES</div>
                     </div>
                 """,
                 unsafe_allow_html=True,
             )
-            if _is_modular_results(filtered_results):
-                selection = _render_modular_results_blotter(filtered_results)
+            if _is_modular_results(page_results):
+                selection = _render_modular_results_blotter(page_results)
             else:
-                selection = _render_results_blotter(filtered_results)
+                use_rich_style = len(page_results) <= 120
+                selection = _render_results_blotter(page_results, use_rich_style=use_rich_style)
             st.markdown("</div>", unsafe_allow_html=True)
 
-        with workspace_col:
-            st.markdown(
-                """
-                <div class="terminal-panel">
-                    <div class="terminal-head">
-                        <div>
-                            <div class="terminal-title" style="color: #00e5ff;">Setup Workspace</div>
-                            <div class="terminal-subtitle" style="color: #94a3b8;">Levels, confirmations, chart context, and sizing</div>
-                        </div>
-                        <div class="terminal-badge" style="background: #94a3b8; color: #000000; font-weight: bold; padding: 2px 8px; border-radius: 4px;">DETAIL</div>
-                    </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            if _is_modular_results(filtered_results):
-                has_selection = _render_modular_detail_view(filtered_results.reset_index(drop=True), selection, load_ticker_history, chart_options, settings.timeframe)
-            else:
-                has_selection = _render_detail_view(filtered_results.reset_index(drop=True), selection, load_ticker_history, chart_options, settings.timeframe)
-            if not has_selection:
-                st.info("Pick a stock from the blotter to open the setup workspace.")
-            st.markdown("</div>", unsafe_allow_html=True)
-    elif results is not None and len(results) == 0:
-        st.info("No high-conviction opportunities match current filters. Try relaxing the parameters.", icon="ℹ️")
+            clicked_ticker = _selection_to_ticker(page_results.reset_index(drop=True), selection)
+            suppressed_ticker = st.session_state.get(suppress_key)
+            if clicked_ticker and clicked_ticker != suppressed_ticker:
+                st.session_state[detail_key] = clicked_ticker
+                st.session_state.pop(suppress_key, None)
+                st.rerun()
+
+            pager_col_1, pager_col_2, pager_col_3, pager_col_4 = st.columns([1.5, 0.75, 0.75, 2.0])
+            with pager_col_1:
+                page_size = int(st.selectbox("Rows / page", page_sizes, key=page_size_key))
+            with pager_col_2:
+                if st.button("◀ Prev", use_container_width=True, disabled=blotter_page <= 1):
+                    st.session_state[page_key] = max(1, blotter_page - 1)
+                    st.rerun()
+            with pager_col_3:
+                if st.button("Next ▶", use_container_width=True, disabled=blotter_page >= total_pages):
+                    st.session_state[page_key] = min(total_pages, blotter_page + 1)
+                    st.rerun()
+            with pager_col_4:
+                st.markdown(
+                    f"<div style='padding-top: 0.45rem; color:#64748b; font-size:0.9rem; text-align:right;'>"
+                    f"Showing page <b>{blotter_page}</b> of <b>{total_pages}</b> · {len(page_results)} visible rows"
+                    f"</div>",
+                    unsafe_allow_html=True,
+                )
+
+            _render_metrics(results, stats, scan_time)
+
+            with st.expander("Advanced Analysis", expanded=False):
+                _render_breakout_readiness_panel(
+                    filtered_results if filtered_results is not None and len(filtered_results) > 0 else results,
+                    load_ticker_history,
+                    load_nifty_history,
+                    nested=True,
+                )
+                _render_multi_timeframe_panel(
+                    filtered_results if filtered_results is not None and len(filtered_results) > 0 else results,
+                    load_ticker_history,
+                    {},
+                    settings,
+                    nested=True,
+                )
     else:
         st.markdown(
             '<div class="glass-card" style="text-align:center;padding:48px 24px;">'
             '<div style="font-size:3rem;margin-bottom:12px;">⚡</div>'
             '<div style="font-size:1.1rem;font-weight:600;color:#00e5ff;margin-bottom:8px;">Scanner is standing by</div>'
             '<div style="color:#8899bb;font-size:0.9rem;">Choose Fresh Scan or Use Cache in the sidebar, then click the action button to start.</div>'
+            '<div style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:4px 10px;border-radius:999px;border:1px solid rgba(0,229,255,0.22);background:rgba(0,229,255,0.08);color:#00e5ff;font-size:0.78rem;font-weight:600;">'
+            '<span>↳</span><span>Click any row in Signal Blotter to open the detail page</span>'
+            '</div>'
             '</div>',
             unsafe_allow_html=True,
         )

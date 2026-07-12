@@ -11,7 +11,7 @@ from breakout import get_nifty_500, get_nifty_total_market
 from .config import ScannerConfig
 from utils.yf_cache import cached_download
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("AlphaScanner.Data")
 
 
 def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -32,10 +32,17 @@ def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     return cleaned
 
 
-def download_history(ticker: str, config: ScannerConfig) -> pd.DataFrame:
+def download_history(ticker: str, config: ScannerConfig, use_cache: bool = True) -> pd.DataFrame:
     """Download daily history for a ticker with basic validation."""
+    logger.debug(
+        "download_history(ticker=%s, period=%s, interval=%s, use_cache=%s)",
+        ticker,
+        config.lookback_period,
+        config.interval,
+        use_cache,
+    )
     try:
-        df = cached_download(ticker, period=config.lookback_period, interval=config.interval, progress=False, auto_adjust=False, threads=False)
+        df = cached_download(ticker, period=config.lookback_period, interval=config.interval, use_cache=use_cache, progress=False, auto_adjust=False, threads=False)
     except Exception as exc:  # pragma: no cover - network/path dependent
         logger.warning("Failed to download %s: %s", ticker, exc)
         return pd.DataFrame()
@@ -43,21 +50,33 @@ def download_history(ticker: str, config: ScannerConfig) -> pd.DataFrame:
     if isinstance(df, pd.DataFrame):
         df = normalize_columns(df)
         if not df.empty and all(col in df.columns for col in config.required_columns):
+            logger.debug("download_history success for %s rows=%s cols=%s", ticker, len(df), list(df.columns))
             return df.dropna(subset=["Open", "High", "Low", "Close", "Volume"]).copy()
+    logger.debug("download_history returned empty/invalid frame for %s", ticker)
     return pd.DataFrame()
 
 
-def download_history_batch(tickers: Iterable[str], config: ScannerConfig) -> Dict[str, pd.DataFrame]:
+def download_history_batch(tickers: Iterable[str], config: ScannerConfig, use_cache: bool = True) -> Dict[str, pd.DataFrame]:
     """Download a batch of ticker histories in one request and split them per symbol."""
     tickers_list = [ticker for ticker in tickers if isinstance(ticker, str) and ticker]
     if not tickers_list:
         return {}
+
+    logger.debug(
+        "download_history_batch(size=%s, period=%s, interval=%s, use_cache=%s, head=%s)",
+        len(tickers_list),
+        config.lookback_period,
+        config.interval,
+        use_cache,
+        tickers_list[:5],
+    )
 
     try:
         df = cached_download(
             tickers_list,
             period=config.lookback_period,
             interval=config.interval,
+            use_cache=use_cache,
             progress=False,
             auto_adjust=False,
             threads=True,
@@ -86,17 +105,20 @@ def download_history_batch(tickers: Iterable[str], config: ScannerConfig) -> Dic
                     result[ticker] = sub_df.dropna(subset=config.required_columns).copy()
             except Exception:
                 continue
+        logger.debug("download_history_batch split result count=%s", len(result))
         return result
 
     # Single-ticker style frame. Return it for the first requested symbol.
     normalized = normalize_columns(df)
     if not normalized.empty and all(col in normalized.columns for col in config.required_columns):
         result[tickers_list[0]] = normalized.dropna(subset=config.required_columns).copy()
+    logger.debug("download_history_batch single-frame result count=%s", len(result))
     return result
 
 
 def download_benchmark(config: ScannerConfig) -> pd.Series:
     """Download benchmark index close prices for relative strength comparisons."""
+    logger.debug("download_benchmark(period=%s, interval=%s)", config.lookback_period, config.interval)
     try:
         import yfinance as yf
 
@@ -108,7 +130,9 @@ def download_benchmark(config: ScannerConfig) -> pd.Series:
     if isinstance(benchmark, pd.DataFrame):
         benchmark = normalize_columns(benchmark)
         if "Close" in benchmark.columns:
+            logger.debug("download_benchmark success rows=%s", len(benchmark))
             return benchmark["Close"].dropna()
+    logger.debug("download_benchmark returned empty series")
     return pd.Series(dtype=float)
 
 
@@ -119,6 +143,8 @@ def get_universe(config: ScannerConfig) -> List[str]:
             symbols = get_nifty_total_market()
         else:
             symbols = get_nifty_500()
+
+        logger.debug("get_universe(%s) -> %s symbols", getattr(config, "universe", None), len(symbols) if symbols else 0)
 
         return [symbol for symbol in symbols if isinstance(symbol, str) and symbol.endswith(".NS")]
     except Exception as exc:

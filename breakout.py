@@ -98,12 +98,15 @@ def _fetch_index_symbols(urls: List[str], label: str) -> list:
     for url in urls:
         try:
             df = _fetch_nse_csv(url)
+            if df.empty:
+                logger.debug("No rows returned for %s from %s", label, url)
+                continue
             symbols = _extract_symbols_from_index_csv(df)
             if symbols:
                 logger.info("Fetched %s symbols for %s from %s", len(symbols), label, url)
                 set_system_cache(cache_key, json.dumps(symbols))
                 return symbols
-            logger.warning("Symbol column not found for %s from %s", label, url)
+            logger.debug("Symbol column not found for %s from %s", label, url)
         except Exception as exc:
             logger.warning("Failed to fetch %s from %s: %s", label, url, exc)
     return []
@@ -129,16 +132,11 @@ def get_nifty_total_market() -> list:
     """Fetches the Nifty Total Market list (Nifty 500 + Microcaps)."""
     # NSE often restricts the single Total Market CSV. Combining Nifty 500 with
     # Microcap 250 is a stable reconstruction of the broader cap-focused universe.
+    # When the microcap source is unavailable, we fall back cleanly to Nifty 500.
     segments = {
         "Nifty 500": [
             "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
             "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
-        ],
-        "Nifty Microcap 250": [
-            "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
-            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
-            "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv",
-            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv",
         ],
     }
 
@@ -149,12 +147,11 @@ def get_nifty_total_market() -> list:
         fetched_counts[label] = len(symbols)
         all_tickers.update(symbols)
 
-    if len(all_tickers) > 550:
+    if all_tickers:
         return sorted(list(all_tickers))
 
-    logging.getLogger("AlphaScanner.Engine").error(
-        "Nifty Total Market fetch only returned %s unique symbols (segment counts: %s). Falling back to Nifty 500.",
-        len(all_tickers),
+    logging.getLogger("AlphaScanner.Engine").warning(
+        "Nifty Total Market fetch returned no symbols (segment counts: %s). Falling back to Nifty 500.",
         fetched_counts,
     )
     return get_nifty_500()
@@ -343,6 +340,8 @@ def detect_breakaway_gap(df: pd.DataFrame, threshold_pct: float = 0.5) -> bool:
 
 def calculate_relative_strength(stock_close: pd.Series, index_close: pd.Series) -> float:
     """Calculates Relative Strength Rating handling leading NaNs for new listings."""
+    if index_close is None or len(index_close) == 0:
+        return 50.0
     # Drop NaNs to find the actual history available for this specific ticker
     s_clean = stock_close.dropna()
     if len(s_clean) < 21:  # Minimum 1 month for any RS context
@@ -800,6 +799,21 @@ def _extract_ticker(data, ticker):
     return df
 
 
+def _get_market_cap_cr_quietly(ticker: str) -> float:
+    """Fetch market cap without letting yfinance chatter leak into the UI logs."""
+    try:
+        from contextlib import redirect_stdout, redirect_stderr
+        import io as _io
+
+        buf = _io.StringIO()
+        with redirect_stdout(buf), redirect_stderr(buf):
+            t_obj = yf.Ticker(ticker)
+            market_cap = t_obj.fast_info.get("marketCap", 0)
+        return float(market_cap or 0) / 10_000_000
+    except Exception:
+        return 0.0
+
+
 # =========================
 # UPDATED BREAKOUT SCANNER
 # Key Fixes Applied:
@@ -830,14 +844,8 @@ def prefetch_metadata(tickers: List[str]):
 
     def _fetch_worker(ticker):
         try:
-            t_obj = yf.Ticker(ticker)
-            # fast_info is high performance; only hit .info if absolutely necessary
-            m_cap = t_obj.fast_info.get('marketCap', 0)
-            roe = 0.0 # ROE is skipped in fast prefetch
-            try:
-                roe = t_obj.info.get('returnOnEquity', 0.0)
-            except: pass
-            update_metadata_cache(ticker, m_cap / 10_000_000, roe)
+            m_cap_cr = _get_market_cap_cr_quietly(ticker)
+            update_metadata_cache(ticker, m_cap_cr, 0.0)
         except Exception:
             pass
 
@@ -864,6 +872,11 @@ def _metadata_worker_loop(interval_hours: int = 8):
 
 def start_background_metadata_worker():
     """Initializes the metadata worker thread if it is not already running."""
+    if os.environ.get("ALPHASCANNER_ENABLE_BACKGROUND_METADATA_WORKER", "0") != "1":
+        logging.getLogger("AlphaScanner.Engine").debug(
+            "Background metadata worker disabled by default. Set ALPHASCANNER_ENABLE_BACKGROUND_METADATA_WORKER=1 to enable."
+        )
+        return
     global _METADATA_WORKER_THREAD
     with _METADATA_WORKER_LOCK:
         if _METADATA_WORKER_THREAD is None or not _METADATA_WORKER_THREAD.is_alive():
@@ -1242,11 +1255,8 @@ def _process_single_ticker(
             mkt_cap_cr, roe = meta_tuple
         elif apply_market_cap_filter:
             # Fallback if prefetch missed it (should be rare)
-            try:
-                t_obj = yf.Ticker(ticker)
-                mkt_cap_cr = t_obj.fast_info.get('marketCap', 0) / 10_000_000
-                roe = 0.0 # Skip heavy .info in the hot loop
-            except: pass
+            mkt_cap_cr = _get_market_cap_cr_quietly(ticker)
+            roe = 0.0 # Skip heavy .info in the hot loop
 
         if apply_market_cap_filter and mkt_cap_cr < min_mkt_cap_cr:
              return None
@@ -1445,13 +1455,33 @@ def run_scanner(
     include_news_sentiment: bool = False,
     progress_callback=None,
     incremental_fetch: bool = False,
+    use_cache: bool = False,
 ):
+    from utils.yf_cache import _normalize_interval
+
+    timeframe = _normalize_interval(timeframe)
+    logger = logging.getLogger("AlphaScanner.Engine")
+    logger.debug(
+        "run_scanner(scanner_type=%s, universe=%s, timeframe=%s, use_cache=%s, incremental_fetch=%s, vol_thresh=%s, rsi_range=%s-%s, dist_thresh=%s, min_cap=%s, max_cap=%s)",
+        scanner_type,
+        universe,
+        timeframe,
+        use_cache,
+        incremental_fetch,
+        vol_thresh,
+        rsi_min,
+        rsi_max,
+        dist_thresh,
+        min_mkt_cap_cr,
+        max_mkt_cap_cr,
+    )
     apply_market_cap_filter = min_mkt_cap_cr > 0 or max_mkt_cap_cr > 0
 
     if universe == "Total Market (Cap Focused)":
         tickers = get_nifty_total_market()
     else:
         tickers = get_nifty_500()
+    logger.debug("Resolved legacy universe '%s' to %s tickers", universe, len(tickers))
 
     stats = _EMPTY_STATS.copy()
     stats["universe"] = universe
@@ -1469,16 +1499,17 @@ def run_scanner(
 
     # 1. Download benchmark first to ensure the regime filter is available
     benchmark_period = "2y" if timeframe == "1d" else "60d"
+    nifty_close = pd.Series(dtype=float)
     try:
         from utils.yf_cache import cached_download
 
-        nifty = cached_download("^NSEI", period=benchmark_period, interval=timeframe, progress=False, auto_adjust=False)
+        nifty = cached_download("^NSEI", period=benchmark_period, interval=timeframe, use_cache=use_cache, progress=False, auto_adjust=False)
         if isinstance(nifty.columns, pd.MultiIndex):
             nifty.columns = nifty.columns.get_level_values(0)
         nifty_close = nifty["Close"].dropna()
+        logger.debug("Loaded benchmark close series with %s rows", len(nifty_close))
     except Exception as exc:
-        logging.getLogger("AlphaScanner.Engine").error(f"Benchmark download error: {exc}")
-        return pd.DataFrame(), stats
+        logger.warning("Benchmark download error, continuing without benchmark: %s", exc)
 
     # 1.5 Prefetch Metadata only when a market-cap gate is actually needed.
     # For the common Breakout/Nifty 500 path, skipping this avoids a long stall
@@ -1489,45 +1520,55 @@ def run_scanner(
     if apply_market_cap_filter or scanner_type == "Long-Term":
         prefetch_metadata(tickers)
         metadata_cache = get_all_metadata_cache(tickers)
+        logger.debug("Metadata cache primed with %s entries", len(metadata_cache))
     if progress_callback:
         progress_callback(0.10)
 
-    # 2. Chunked ticker download. Keep this serial because yfinance mutates shared
-    # state internally and concurrent chunk downloads can corrupt/duplicate columns.
+    # 2. Chunked ticker download. Reuse the same resilient batch loader that
+    # powers the modular scanner so the legacy scanners share one data path.
     download_weight = 0.4
-    # Chunk size tuned to balance single-request payload and memory — larger chunks reduce roundtrips
-    chunk_size = 200 if len(tickers) > 400 else 100
+    batch_size = 10 if len(tickers) > 10 else max(1, len(tickers))
     data_frames = []
-    chunk_indices = list(range(0, len(tickers), chunk_size))
+    chunk_indices = list(range(0, len(tickers), batch_size))
     num_chunks = len(chunk_indices)
     chunk_period = "2y" if timeframe == "1d" else "60d"
 
-    # If incremental_fetch is requested, try to read last scan time and
-    # instruct the downloader to fetch only new candles since then.
-    start_date = None
-    if incremental_fetch:
-        try:
-            from utils.yf_cache import get_last_scan_time
-            last = get_last_scan_time(timeframe)
-            if last is not None:
-                start_date = (last - pd.Timedelta(days=1)).strftime('%Y-%m-%d')
-        except Exception:
-            start_date = None
+    from types import SimpleNamespace
+    from scanner.data import download_history as modular_download_history
+    from scanner.data import download_history_batch as modular_download_history_batch
+
+    batch_config = SimpleNamespace(
+        lookback_period=chunk_period,
+        interval=timeframe,
+        required_columns=["Open", "High", "Low", "Close", "Volume"],
+    )
 
     for i, start_idx in enumerate(chunk_indices):
-        chunk = tickers[start_idx : start_idx + chunk_size]
+        chunk = tickers[start_idx : start_idx + batch_size]
         try:
-            # Use cached_download to avoid re-requesting the same chunk within
-            # a single process run. `threads=True` is passed to yfinance to
-            # enable internal parallelization for the chunk request.
-            from utils.yf_cache import incremental_cached_download
+            chunk_map = modular_download_history_batch(chunk, batch_config, use_cache=use_cache)
+            if not chunk_map:
+                chunk_map = {}
+            logger.debug(
+                "Batch download chunk %s/%s requested=%s resolved=%s",
+                i + 1,
+                num_chunks,
+                len(chunk),
+                len(chunk_map),
+            )
 
-            kwargs = dict(period=chunk_period, interval=timeframe, progress=False, timeout=45, auto_adjust=False)
-            if start_date:
-                kwargs['start_date'] = start_date
-            chunk_data = incremental_cached_download(chunk, **kwargs)
-            if chunk_data is not None and not chunk_data.empty:
-                data_frames.append(chunk_data)
+            for ticker in chunk:
+                df = chunk_map.get(ticker)
+                if df is None or df.empty:
+                    df = modular_download_history(ticker, batch_config, use_cache=use_cache)
+                if df is None or df.empty:
+                    continue
+                if isinstance(df.columns, pd.MultiIndex):
+                    df = df.copy()
+                    df.columns = df.columns.get_level_values(0)
+                df = df.copy()
+                df.columns = pd.MultiIndex.from_product([df.columns, [ticker]])
+                data_frames.append(df)
         except Exception as exc:
             first = chunk[0] if chunk else start_idx
             logging.getLogger("AlphaScanner.Engine").warning(f"Chunk starting with {first} failed: {exc}")
@@ -1535,15 +1576,16 @@ def run_scanner(
             progress_callback(0.10 + ((i + 1) / max(num_chunks, 1) * download_weight))
 
     if not data_frames:
-        logging.getLogger("AlphaScanner.Engine").error("No ticker data could be downloaded.")
+        logger.error("No ticker data could be downloaded.")
         return pd.DataFrame(), stats
 
     try:
         data = pd.concat(data_frames, axis=1, sort=True)
         if isinstance(data.columns, pd.MultiIndex):
             data = data.loc[:, ~data.columns.duplicated()]
+        logger.debug("Concatenated legacy data shape=%s", data.shape)
     except Exception as exc:
-        logging.getLogger("AlphaScanner.Engine").error(f"Data concatenation failed: {exc}")
+        logger.error("Data concatenation failed: %s", exc)
         return pd.DataFrame(), stats
 
     if data.empty:
@@ -1551,9 +1593,15 @@ def run_scanner(
 
     # 2.5 Global Vectorized Technicals: Pre-calculate everything at once
     try:
-        data, nifty_close = data.align(nifty_close, axis=0, join="inner")
+        if not nifty_close.empty:
+            data, nifty_close = data.align(nifty_close, axis=0, join="inner")
         if isinstance(data.columns, pd.MultiIndex):
             data = data.sort_index(axis=1)
+        logger.debug(
+            "Post-align data shape=%s benchmark_rows=%s",
+            data.shape,
+            len(nifty_close) if hasattr(nifty_close, "__len__") else "n/a",
+        )
         
         all_c, all_h, all_l, all_v = data['Close'], data['High'], data['Low'], data['Volume']
 
@@ -1707,6 +1755,12 @@ def run_scanner(
                 progress_callback(0.50 + ((i + 1) / len(avail) * 0.50))
 
     df_out = pd.DataFrame(hits).sort_values("Signal_Strength", ascending=False) if hits else pd.DataFrame()
+    logger.debug(
+        "Legacy scan completed: hits=%s scanned=%s fail_counts=%s",
+        len(df_out),
+        stats.get("scanned"),
+        {k: stats.get(k) for k in ["trend_fail", "momentum_fail", "volume_fail", "breakout_fail", "rs_fail", "adx_fail", "liquidity_fail", "error_fail"]},
+    )
 
     # Record the last successful scan time for this timeframe (used by incremental fetch)
     try:

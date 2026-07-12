@@ -90,3 +90,30 @@ def test_run_dual_mode_scan_uses_batch_download(monkeypatch):
     assert fallback_calls == []
     assert results["watchlist"].empty
     assert results["entry"].empty
+
+
+def test_run_dual_mode_scan_processes_full_universe(monkeypatch):
+    tickers = [f"T{i}.NS" for i in range(160)]
+    monkeypatch.setattr(scanner_module, "get_universe", lambda config: tickers)
+
+    def fake_batch_download(chunk, config, use_cache=True):
+        frame = pd.DataFrame(
+            {
+                "Open": [1, 2, 3],
+                "High": [2, 3, 4],
+                "Low": [0.5, 1.5, 2.5],
+                "Close": [1.5, 2.5, 3.5],
+                "Volume": [100, 110, 120],
+            }
+        )
+        return {ticker: frame for ticker in chunk}
+
+    monkeypatch.setattr(scanner_module, "download_history_batch", fake_batch_download)
+    monkeypatch.setattr(scanner_module, "download_history", lambda ticker, config, use_cache=True: pd.DataFrame())
+    monkeypatch.setattr(scanner_module.WatchlistScanner, "evaluate", lambda self, df, ticker, sector="Unknown": {"passed": True, "score": 65.0, "ticker": ticker})
+    monkeypatch.setattr(scanner_module.EntryScanner, "evaluate", lambda self, df, ticker, sector="Unknown": {"passed": True, "score": 75.0, "ticker": ticker})
+
+    results = scanner_module.run_dual_mode_scan(ScannerConfig(min_candles=3))
+
+    assert len(results["watchlist"]) == 160
+    assert len(results["entry"]) == 160

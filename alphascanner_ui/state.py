@@ -30,6 +30,7 @@ DEFAULT_SESSION_STATE = {
     "show_top_picks": True,
     "show_macro_context": True,
     "show_watchlist_quick_add": True,
+    "enable_multi_timeframe_confirmation": False,
     # Chart display settings
     "chart_show_sma": True,
     "chart_show_ema": True,

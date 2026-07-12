@@ -14,7 +14,7 @@ from .indicators import pct_change
 from .modes import EntryScanner, WatchlistScanner, FilterResult
 from .report import format_results, save_results
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("AlphaScanner.Scanner")
 
 
 WATCHLIST_EXPORT_RENAMES = {
@@ -66,15 +66,24 @@ def run_dual_mode_scan(
     config: Optional[ScannerConfig] = None,
     output_path: Optional[str] = None,
     progress_callback=None,
+    use_cache: bool = False,
 ) -> Dict[str, pd.DataFrame]:
     """Run both watchlist and entry scanners and return two separate DataFrames."""
     config = config or ScannerConfig()
     logger.info("Starting dual-mode scanner with config %s", config.as_dict())
+    logger.debug(
+        "Dual-mode scan requested with universe=%s interval=%s min_candles=%s use_cache=%s",
+        config.universe,
+        config.interval,
+        config.min_candles,
+        use_cache,
+    )
 
     universe = get_universe(config)
     if not universe:
         logger.warning("Universe resolution returned no tickers")
         return {"watchlist": pd.DataFrame(), "entry": pd.DataFrame()}
+    logger.debug("Resolved universe size=%s head=%s", len(universe), universe[:5])
 
     _update_progress(progress_callback, 0.05)
     watchlist_rows: List[Dict[str, object]] = []
@@ -84,7 +93,7 @@ def run_dual_mode_scan(
 
     # Batch download the scan universe in chunks so the UI can report progress
     # while we wait on network-bound history fetches.
-    scan_universe = universe[:150]
+    scan_universe = universe
     # Small chunks keep the UI responsive and make progress visible while
     # the network-bound history fetch is in flight.
     chunk_size = min(5, max(1, len(scan_universe)))
@@ -92,13 +101,20 @@ def run_dual_mode_scan(
     for chunk_index, start in enumerate(range(0, len(scan_universe), chunk_size), start=1):
         chunk = scan_universe[start:start + chunk_size]
         _update_progress(progress_callback, 0.05 + (0.65 * (chunk_index - 1) / total_chunks))
-        chunk_map = download_history_batch(chunk, config)
+        chunk_map = download_history_batch(chunk, config, use_cache=use_cache)
+        logger.debug(
+            "Downloaded chunk %s/%s size=%s resolved=%s",
+            chunk_index,
+            total_chunks,
+            len(chunk),
+            len(chunk_map),
+        )
 
         for ticker in chunk:
             try:
                 df = chunk_map.get(ticker)
                 if df is None or df.empty:
-                    df = download_history(ticker, config)
+                    df = download_history(ticker, config, use_cache=use_cache)
                 if df.empty or len(df) < config.min_candles:
                     continue
 
@@ -117,9 +133,21 @@ def run_dual_mode_scan(
                 logger.exception("Scanner failed for %s: %s", ticker, exc)
 
         _update_progress(progress_callback, 0.05 + (0.75 * chunk_index / total_chunks))
+        logger.debug(
+            "Chunk %s/%s complete: watchlist=%s entry=%s",
+            chunk_index,
+            total_chunks,
+            len(watchlist_rows),
+            len(entry_rows),
+        )
 
     watch_results = pd.DataFrame(watchlist_rows).sort_values(by=["score"], ascending=False) if watchlist_rows else pd.DataFrame()
     entry_results = pd.DataFrame(entry_rows).sort_values(by=["score"], ascending=False) if entry_rows else pd.DataFrame()
+    logger.debug(
+        "Dual-mode scan finished: watchlist_rows=%s entry_rows=%s",
+        len(watch_results),
+        len(entry_results),
+    )
 
     # Rename columns for UI and CSV consistency
     if not watch_results.empty:

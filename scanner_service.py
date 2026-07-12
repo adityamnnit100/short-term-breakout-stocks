@@ -10,10 +10,23 @@ import pandas as pd
 
 from scanner.config import ScannerConfig
 from scanner.scanner import run_dual_mode_scan
+from utils.yf_cache import _normalize_interval
+
+import logging
+
+logger = logging.getLogger("AlphaScanner.Service")
 
 
 def fetch_cached_data(use_cache: bool, universe: str = None, scanner_type: str = None, timeframe: str = "1d", scan_mode: str = None):
     """Return cached scan data when available; otherwise return None values."""
+    logger.debug(
+        "fetch_cached_data(use_cache=%s, universe=%s, scanner_type=%s, timeframe=%s, scan_mode=%s)",
+        use_cache,
+        universe,
+        scanner_type,
+        timeframe,
+        scan_mode,
+    )
     if not use_cache:
         return None, None, None
 
@@ -37,18 +50,34 @@ def perform_fresh_scan(
     sector_map=None,
     include_news_sentiment: bool = False,
     progress_callback=None,
-    force_fresh=True,  # pylint: disable=unused-argument
+    force_fresh=True,
+    use_cache: bool = False,
 ):
     """Run the modular scanner and return dashboard-compatible output."""
+    logger.debug(
+        "perform_fresh_scan(scanner_type=%s, universe=%s, timeframe=%s, scan_mode=%s, use_cache=%s, vol_thresh=%s, rsi_min=%s, rsi_max=%s, dist_thresh=%s, min_mkt_cap_cr=%s, max_mkt_cap_cr=%s)",
+        scanner_type,
+        universe,
+        timeframe,
+        scan_mode,
+        use_cache,
+        vol_thresh,
+        rsi_min,
+        rsi_max,
+        dist_thresh,
+        min_mkt_cap_cr,
+        max_mkt_cap_cr,
+    )
     if scanner_type == "Modular Momentum":
         config = ScannerConfig()
         config.universe = universe or config.universe
-        config.interval = timeframe or config.interval
+        config.interval = _normalize_interval(timeframe or config.interval)
+        logger.debug("Routing to modular scanner with config=%s", config.as_dict())
 
         if progress_callback:
             progress_callback(0.15)
 
-        dual_results = run_dual_mode_scan(config=config, progress_callback=progress_callback)
+        dual_results = run_dual_mode_scan(config=config, progress_callback=progress_callback, use_cache=use_cache)
         results = dual_results.get("watchlist" if scan_mode == "Watchlist Scanner" else "entry", pd.DataFrame())
 
         if progress_callback:
@@ -72,11 +101,14 @@ def perform_fresh_scan(
         return pd.DataFrame(), stats, datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if scanner_type == "FII Accumulation":
+        logger.debug("Routing to legacy FII accumulation scanner")
         results, stats = breakout.run_fii_accumulation_scanner(
             min_mkt_cap_cr=min_mkt_cap_cr or 1000.0,
             min_fii_change_pct=max(vol_thresh or 1.0, 0.1),
         )
     else:
+        timeframe = _normalize_interval(timeframe)
+        logger.debug("Routing to legacy breakout scanner with normalized timeframe=%s", timeframe)
         results, stats = breakout.run_scanner(
             vol_thresh=vol_thresh,
             rsi_min=rsi_min,
@@ -91,6 +123,7 @@ def perform_fresh_scan(
             include_news_sentiment=include_news_sentiment,
             progress_callback=progress_callback,
             incremental_fetch=force_fresh is False,
+            use_cache=use_cache,
         )
 
     if progress_callback:
@@ -98,6 +131,11 @@ def perform_fresh_scan(
 
     if results is None:
         results = pd.DataFrame()
+    logger.debug(
+        "perform_fresh_scan completed: rows=%s stats_keys=%s",
+        len(results),
+        sorted(stats.keys()) if isinstance(stats, dict) else type(stats).__name__,
+    )
     scan_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if isinstance(stats, dict):
         stats.setdefault("universe", universe)

@@ -10,9 +10,11 @@ import scanner_service
 def test_modular_scan_routes_to_modular_engine(monkeypatch):
     calls = []
     progress_updates = []
+    captured = {}
 
-    def fake_run_dual_mode_scan(config=None, output_path=None, progress_callback=None):
+    def fake_run_dual_mode_scan(config=None, output_path=None, progress_callback=None, **kwargs):
         calls.append(config)
+        captured.update(kwargs)
         if progress_callback:
             progress_callback(0.5)
             progress_callback(1.0)
@@ -41,6 +43,7 @@ def test_modular_scan_routes_to_modular_engine(monkeypatch):
     assert list(results["Ticker"]) == ["AAA.NS"]
     assert stats["scan_mode"] == "Watchlist Scanner"
     assert progress_updates[-1] == 1.0
+    assert captured.get("use_cache") is False
     assert scan_time
 
 
@@ -69,8 +72,39 @@ def test_legacy_scan_routes_to_breakout_engine(monkeypatch):
     )
 
     assert captured["scanner_type"] == "Breakout"
+    assert captured["use_cache"] is False
     assert list(results["Ticker"]) == ["LEGACY.NS"]
     assert stats["scanner_type"] == "Breakout"
+    assert scan_time
+
+
+def test_fii_scan_keeps_quarterly_timeframe(monkeypatch):
+    import breakout
+
+    captured = {}
+
+    def fake_run_fii_accumulation_scanner(**kwargs):
+        captured.update(kwargs)
+        return pd.DataFrame([{"Ticker": "FII.NS"}]), {"scanner_type": "FII Accumulation"}
+
+    monkeypatch.setattr(breakout, "run_fii_accumulation_scanner", fake_run_fii_accumulation_scanner)
+
+    results, stats, scan_time = scanner_service.perform_fresh_scan(
+        universe="Screener.in FII QoQ",
+        vol_thresh=1.0,
+        rsi_min=50,
+        rsi_max=85,
+        dist_thresh=1.5,
+        min_mkt_cap_cr=1000,
+        max_mkt_cap_cr=0,
+        scanner_type="FII Accumulation",
+        scan_mode="Entry Scanner",
+        timeframe="quarterly",
+    )
+
+    assert captured == {"min_mkt_cap_cr": 1000, "min_fii_change_pct": 1.0}
+    assert list(results["Ticker"]) == ["FII.NS"]
+    assert stats["scanner_type"] == "FII Accumulation"
     assert scan_time
 
 

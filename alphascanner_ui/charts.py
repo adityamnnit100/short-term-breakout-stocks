@@ -194,12 +194,26 @@ def render_top_picks(df: pd.DataFrame):
     else:
         return
 
+    def _resolve_price(row: pd.Series) -> float:
+        """Return the most likely live price across legacy and modular schemas."""
+        for key in ("LTP", "Entry Price", "current_price", "Price", "Close", "CMP Rs."):
+            value = row.get(key, None)
+            try:
+                if value is None or pd.isna(value):
+                    continue
+                price = float(value)
+            except Exception:
+                continue
+            if price > 0:
+                return price
+        return 0.0
+
     top_3 = df.nlargest(3, score_col)
     
     html = '<div class="top-picks-grid">'
     for _, row in top_3.iterrows():
         symbol = row.get("Ticker", "N/A")
-        price = row.get("LTP", 0)
+        price = _resolve_price(row)
         pattern = row.get("Pattern", "Rounding")
         rsi = row.get("RSI", 0)
         vol = row.get("Vol_x", 0)

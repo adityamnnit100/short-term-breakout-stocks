@@ -188,6 +188,18 @@ div[data-testid="stMetricDelta"]  { font-family: 'JetBrains Mono', monospace; }
     border-radius: 14px;
     overflow: hidden;
 }
+[data-testid="stDataFrame"] [role="row"] {
+    cursor: pointer;
+}
+[data-testid="stDataFrame"] [role="row"]:hover {
+    background: rgba(0,229,255,0.08) !important;
+}
+[data-testid="stDataFrame"] [role="gridcell"] {
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+[data-testid="stDataFrame"] [role="row"]:hover [role="gridcell"] {
+    background: rgba(0,229,255,0.04) !important;
+}
 .stButton > button {
     background: linear-gradient(135deg, rgba(17,47,92,0.95), rgba(25,66,120,0.95)) !important;
     color: #e8f7ff !important; border: 1px solid rgba(0,229,255,0.12) !important;
@@ -536,6 +548,12 @@ hr, .stDivider                    { border-color: var(--border) !important; }
     .stDataFrame thead th {
         background: #e8f4ff !important;
         color: #0f172a !important;
+    }
+    [data-testid="stDataFrame"] [role="row"]:hover {
+        background: rgba(14,165,233,0.08) !important;
+    }
+    [data-testid="stDataFrame"] [role="row"]:hover [role="gridcell"] {
+        background: rgba(14,165,233,0.03) !important;
     }
 
     .stSelectbox > div > div,

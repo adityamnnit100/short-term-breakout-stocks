@@ -23,6 +23,7 @@ HEADERS = {
 
 def _fetch_nse_csv(url: str) -> pd.DataFrame:
     """Robustly fetch CSV from NSE using a session handshake to bypass bot protection."""
+    logger = configure_logging()
     for attempt in range(3):
         try:
             session = requests.Session()
@@ -34,24 +35,48 @@ def _fetch_nse_csv(url: str) -> pd.DataFrame:
                 if "<html>" in res.text.lower():
                     raise ValueError("NSE blocked the request (Splash Page detected)")
             return pd.read_csv(io.StringIO(res.text))
+        except requests.HTTPError as e:
+            status_code = getattr(e.response, "status_code", None)
+            if status_code == 404:
+                logger.debug("NSE CSV not found at %s", url)
+                return pd.DataFrame()
+            if attempt < 2:
+                time.sleep(2 ** attempt)
+                continue
+            logger.warning("Failed to fetch NSE CSV from %s after 3 attempts: %s", url, e)
+            return pd.DataFrame()
         except Exception as e:
             if attempt < 2:
                 time.sleep(2 ** attempt)  # Exponential backoff
             else:
-                logger = configure_logging()
-                logger.error(f"Failed to fetch NSE CSV after 3 attempts: {e}")
-                raise
+                logger.warning("Failed to fetch NSE CSV from %s after 3 attempts: %s", url, e)
+                return pd.DataFrame()
 
 
 def configure_logging() -> logging.Logger:
     """Ensure the app log directory and logger are ready before rendering."""
     Path("data/logs").mkdir(parents=True, exist_ok=True)
-    logging.basicConfig(
-        filename=f"data/logs/alphascanner_{datetime.date.today()}.log",
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(message)s",
-    )
-    return logging.getLogger("AlphaScanner")
+    logger = logging.getLogger("AlphaScanner")
+    if getattr(logger, "_configured", False):
+        return logger
+
+    logger.setLevel(logging.DEBUG)
+    logger.propagate = False
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
+
+    file_handler = logging.FileHandler(f"data/logs/alphascanner_{datetime.date.today()}.log")
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+    stream_handler.setFormatter(formatter)
+
+    logger.handlers.clear()
+    logger.addHandler(file_handler)
+    logger.addHandler(stream_handler)
+    logger._configured = True  # type: ignore[attr-defined]
+    return logger
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -120,10 +145,6 @@ def get_sector_mapping(universe_type: str = "Nifty 500") -> dict:
         urls = [
             "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
             "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
-            "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
-            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
-            "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250list.csv",
-            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250list.csv",
         ]
     else:
         return {}  # Should not happen with current universe options

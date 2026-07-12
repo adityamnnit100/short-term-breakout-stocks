@@ -2,7 +2,7 @@
 
 ## Overview
 
-AlphaScanner PRO is a Streamlit-based stock scanning and analysis system for Indian equities. It combines a legacy breakout scanner with a newer modular momentum scanner, plus supporting UI tabs for watchlists, risk, journal, backtests, and market context.
+AlphaScanner PRO is a Streamlit-based stock scanning and analysis system for Indian equities. It combines a legacy breakout scanner with a newer modular momentum scanner, plus independent quality layers for market regime, breakout readiness, and multi-timeframe confirmation.
 
 The canonical implementation in this repo is the modular scanner pipeline under `scanner/`, with the Streamlit UI adapting to either modular or legacy result schemas.
 
@@ -22,7 +22,10 @@ The canonical implementation in this repo is the modular scanner pipeline under 
 3. `scanner/scanner.py` orchestrates the universe scan, ranks results, and writes CSV outputs.
 4. `scanner/report.py` handles CSV persistence and CLI summaries.
 5. `scanner_service.py` bridges the dashboard to either modular or legacy scan engines and cache paths.
-6. `alphascanner_ui/` renders the Streamlit dashboard, including modular scanner results and scan-mode aware sidebar controls.
+6. `breakout_readiness/` re-ranks scanner output for imminent breakout quality.
+7. `market_regime/` scores the broader market environment and applies a confidence multiplier.
+8. `multi_timeframe/` confirms candidates across weekly, daily, and 1H structure.
+9. `alphascanner_ui/` renders the Streamlit dashboard, including scanner results and scan-mode aware sidebar controls.
 
 ## Scanner Modules
 
@@ -118,6 +121,49 @@ Reporting and CLI formatting.
 - Prints a concise console summary
 - Supports both modular and legacy result schemas
 
+### `breakout_readiness/`
+
+Independent engine that re-scores the current scanner output for near-term breakout potential.
+
+Signals emphasize:
+
+- Compression and volatility contraction
+- Distance to nearest resistance
+- Volume dry-up
+- Candle tightness
+- Relative strength acceleration
+- Breakout pressure and confluence
+
+### `market_regime/`
+
+Independent market filter that scores the broader environment using:
+
+- NIFTY 50 trend and momentum
+- NIFTY 500 breadth
+- Market volatility and volume behavior
+
+Output includes:
+
+- Market regime score from 0 to 100
+- Regime classification: `BULLISH`, `NEUTRAL`, `CAUTION`, `BEARISH`
+- Buy-floor adjustment and score multiplier for downstream scanners
+
+### `multi_timeframe/`
+
+Independent confirmation layer that evaluates:
+
+- Weekly trend and structure
+- Daily scanner output without duplicating calculations
+- 1H entry timing and consolidation
+
+Output includes:
+
+- Weekly score
+- Daily score
+- 1H score
+- Final score from 0 to 100
+- Recommendation: `Strong Buy`, `Buy`, `Watch`, `Wait`, `Avoid`
+
 ## UI Architecture
 
 ### Streamlit Entry Point
@@ -130,6 +176,9 @@ Reporting and CLI formatting.
 
 - Modular results
 - Legacy breakout-style results
+- Market Regime Engine panel
+- Breakout Readiness panel
+- Multi-Timeframe Confirmation panel
 - Filter controls that branch based on schema
 - A status banner
 - Summary metrics
@@ -168,6 +217,7 @@ Legacy paths still use fields like:
 4. `scanner_service.py` also reads modular cache files from `data/entry.csv` or `data/watchlist.csv`.
 5. Results are saved to CSV and returned to the UI.
 6. The scanner tab filters and renders the final results.
+7. Optional overlays in the UI run the breakout readiness, market regime, and multi-timeframe engines against the current scan output.
 
 ## Output Files
 
@@ -218,10 +268,11 @@ Watchlist and risk positions are persisted through the database-backed workspace
 ## Current Limitations
 
 - Sector mapping is still simplified in the modular scanner path.
-- The modular scanner scans a bounded subset of the universe for performance.
+- The modular scanner now scans the full configured universe, so runtime depends on universe size and data availability.
 - Some legacy UI tabs still expect breakout-era fields.
 - Intraday scanning is not implemented here; the system is daily-bar focused.
 - `Scan Mode` is intentionally modular-only; legacy scanners always behave like entry-style scans.
+- Market Regime and Multi-Timeframe are independent overlays and can be enabled without changing the core scanner pipeline.
 
 ## Canonical Files
 
@@ -232,5 +283,8 @@ Use these files as the source of truth for the current modular system:
 - `scanner/modes.py`
 - `scanner/scanner.py`
 - `scanner/report.py`
+- `breakout_readiness/`
+- `market_regime/`
+- `multi_timeframe/`
 - `alphascanner_ui/tabs/scanner.py`
 - `alphascanner_ui/charts.py`

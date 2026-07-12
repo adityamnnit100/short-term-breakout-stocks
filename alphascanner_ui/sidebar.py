@@ -20,6 +20,7 @@ class SidebarSettings:
     use_cache: bool
     include_news: bool
     only_ready_setups: bool
+    enable_multi_timeframe_confirmation: bool
 
 
 @dataclass(frozen=True)
@@ -197,6 +198,13 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         )
         st.session_state["only_ready_setups"] = only_ready_setups
 
+        enable_multi_timeframe_confirmation = st.checkbox(
+            "Enable Multi-Timeframe",
+            value=st.session_state.get("enable_multi_timeframe_confirmation", False),
+            help="Use weekly, daily, and 1H confirmation for final ranking. Keep off initially if you want to validate Market Regime first.",
+        )
+        st.session_state["enable_multi_timeframe_confirmation"] = enable_multi_timeframe_confirmation
+
         st.divider()
         st.caption(f"Action: {action_label}")
         if st.button(action_label, use_container_width=True, help=action_help, key="primary_scan_action"):
@@ -219,6 +227,7 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         use_cache=use_cache,
         include_news=include_news,
         only_ready_setups=only_ready_setups,
+        enable_multi_timeframe_confirmation=enable_multi_timeframe_confirmation,
     )
     # Persist last-used settings for other UI components
     st.session_state["sidebar_last_settings"] = {
@@ -227,5 +236,6 @@ def render_sidebar(load_ticker_history, run_backtest_cached) -> Tuple[SidebarSet
         "scan_mode": settings.scan_mode,
         "timeframe": settings.timeframe,
         "use_cache": settings.use_cache,
+        "enable_multi_timeframe_confirmation": settings.enable_multi_timeframe_confirmation,
     }
     return settings, chart_options
