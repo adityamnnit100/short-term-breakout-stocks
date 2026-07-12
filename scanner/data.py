@@ -7,8 +7,9 @@ from typing import Dict, Iterable, List, Optional
 import concurrent.futures
 
 import pandas as pd
-from breakout import get_nifty_500, get_nifty_total_market, _YFINANCE_LOCK
+from breakout import get_nifty_500, get_nifty_total_market
 
+from utils.threading import _YFINANCE_LOCK
 from .config import ScannerConfig
 from utils.yf_cache import cached_download
 
