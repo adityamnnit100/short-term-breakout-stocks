@@ -5,18 +5,14 @@ from __future__ import annotations
 import logging
 from typing import Dict, Iterable, List, Optional
 import concurrent.futures
-import threading
 
 import pandas as pd
-from breakout import get_nifty_500, get_nifty_total_market
+from breakout import get_nifty_500, get_nifty_total_market, _YFINANCE_LOCK
 
 from .config import ScannerConfig
 from utils.yf_cache import cached_download
 
 logger = logging.getLogger("AlphaScanner.Data")
-
-_YFINANCE_LOCK = threading.Lock()
-
 
 def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Normalize column casing and preserve the OHLCV schema expected by the scanner."""
@@ -120,9 +116,10 @@ def download_benchmark(config: ScannerConfig) -> pd.Series:
     """Download benchmark index close prices for relative strength comparisons."""
     logger.debug("download_benchmark(period=%s, interval=%s)", config.lookback_period, config.interval)
     try:
-        import yfinance as yf
+        with _YFINANCE_LOCK:
+            import yfinance as yf
 
-        benchmark = yf.download("^NSEI", period=config.lookback_period, interval=config.interval, progress=False, auto_adjust=False, threads=False)
+            benchmark = yf.download("^NSEI", period=config.lookback_period, interval=config.interval, progress=False, auto_adjust=False, threads=False)
     except Exception as exc:  # pragma: no cover - network/path dependent
         logger.warning("Benchmark download failed: %s", exc)
         return pd.Series(dtype=float)
