@@ -95,60 +95,48 @@ def run_dual_mode_scan(
     watchlist_scanner = WatchlistScanner(config)
     entry_scanner = EntryScanner(config)
 
-    # Batch download the scan universe in chunks so the UI can report progress
-    # while we wait on network-bound history fetches.
-    scan_universe = universe
-    # Small chunks keep the UI responsive and make progress visible while
-    # the network-bound history fetch is in flight.
-    chunk_size = min(5, max(1, len(scan_universe)))
-    total_chunks = max(1, ceil(len(scan_universe) / chunk_size))
-    for chunk_index, start in enumerate(range(0, len(scan_universe), chunk_size), start=1):
-        chunk = scan_universe[start:start + chunk_size]
-        _update_progress(progress_callback, 0.05 + (0.65 * (chunk_index - 1) / total_chunks))
-        chunk_map = download_history_batch(chunk, config, use_cache=use_cache)
-        logger.debug(
-            "Downloaded chunk %s/%s size=%s resolved=%s",
-            chunk_index,
-            total_chunks,
-            len(chunk),
-            len(chunk_map),
-        )
+    _update_progress(progress_callback, 0.1)
+    logger.info("Downloading history for %d tickers...", len(universe))
+    # Download all history in one go. The underlying cache and batching will handle efficiency.
+    history_map = download_history_batch(universe, config, use_cache=use_cache)
+    logger.info("Downloaded history for %d tickers.", len(history_map))
+    _update_progress(progress_callback, 0.75)
 
-        def _process_ticker(ticker: str) -> None:
-            try:
-                df = chunk_map.get(ticker)
-                if df is None or df.empty:
-                    df = download_history(ticker, config, use_cache=use_cache)
-                if df is None or df.empty or len(df) < config.min_candles:
-                    return
+    processed_count = 0
+    total_tickers = len(history_map)
 
-                # Sector logic can be enhanced here later
-                sector = "Unknown"
+    def _process_ticker(ticker: str) -> None:
+        nonlocal processed_count
+        try:
+            df = history_map.get(ticker)
+            if df is None or df.empty or len(df) < config.min_candles:
+                return
 
-                watch_result = watchlist_scanner.evaluate(df, ticker=ticker, sector=sector)
-                if watch_result.get("passed"):
-                    with rows_lock:
-                        watchlist_rows.append(watch_result)
+            # Sector logic can be enhanced here later
+            sector = "Unknown"
 
-                entry_result = entry_scanner.evaluate(df, ticker=ticker, sector=sector)
-                if entry_result.get("passed"):
-                    with rows_lock:
-                        entry_rows.append(entry_result)
+            watch_result = watchlist_scanner.evaluate(df, ticker=ticker, sector=sector)
+            if watch_result.get("passed"):
+                with rows_lock:
+                    watchlist_rows.append(watch_result)
 
-            except Exception as exc:
-                logger.exception("Scanner failed for %s: %s", ticker, exc)
+            entry_result = entry_scanner.evaluate(df, ticker=ticker, sector=sector)
+            if entry_result.get("passed"):
+                with rows_lock:
+                    entry_rows.append(entry_result)
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
-            executor.map(_process_ticker, chunk)
+        except Exception as exc:
+            logger.exception("Scanner failed for %s: %s", ticker, exc)
+        finally:
+            with rows_lock:
+                processed_count += 1
+            if progress_callback and total_tickers > 0:
+                _update_progress(progress_callback, 0.75 + (0.20 * (processed_count / total_tickers)))
 
-        _update_progress(progress_callback, 0.05 + (0.75 * chunk_index / total_chunks))
-        logger.debug(
-            "Chunk %s/%s complete: watchlist=%s entry=%s",
-            chunk_index,
-            total_chunks,
-            len(watchlist_rows),
-            len(entry_rows),
-        )
+    logger.info("Processing %d tickers...", total_tickers)
+    # Use a single ThreadPoolExecutor to process all tickers in parallel.
+    with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
+        executor.map(_process_ticker, history_map.keys())
 
     watch_results = pd.DataFrame(watchlist_rows).sort_values(by=["score"], ascending=False) if watchlist_rows else pd.DataFrame()
     entry_results = pd.DataFrame(entry_rows).sort_values(by=["score"], ascending=False) if entry_rows else pd.DataFrame()

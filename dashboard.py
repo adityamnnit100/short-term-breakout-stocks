@@ -1,5 +1,14 @@
 """Streamlit entrypoint for AlphaScanner PRO."""
 
+# IMPORTANT: Set thread limits for BLAS libraries BEFORE importing numpy.
+# This is a critical step to prevent segmentation faults in multi-threaded
+# applications (like Streamlit) that use numpy/pandas. These libraries
+# (OpenBLAS, MKL, etc.) can otherwise cause race conditions at the C-level.
+import os
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
+os.environ['MKL_NUM_THREADS'] = '1'
+os.environ['OMP_NUM_THREADS'] = '1'
+
 import urllib.request
 import streamlit as st
 import os

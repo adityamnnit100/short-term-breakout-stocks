@@ -1,4 +1,89 @@
 Ticker,Watchlist Score,Sector,Trend,Base Score,Volume Score,Relative Strength,ATR Contraction,Days in Consolidation,Trade Quality,Setup ID,Recommendation,Confidence,Reason Text
+ATGL.NS,79.0,Unknown,Bullish,100.0,100.0,100.0,-26.22,29,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 79.0
+Reasons:
+✔ Price above 200 EMA (723.90 > 633.85)
+✔ 200 EMA flat/slightly rising
+✔ ATR contracting (-26.2%)
+✔ Bollinger width contracting (-52.1%)
+✔ Tight base range (4.9%)
+✔ Consolidation building (29 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.7x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+INDHOTEL.NS,75.5,Unknown,Bullish,90.0,100.0,100.0,-3.37,36,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 75.5
+Reasons:
+✔ Price above 200 EMA (752.30 > 690.22)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-33.5%)
+✔ Tight base range (8.3%)
+✔ Consolidation building (36 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+SOBHA.NS,75.5,Unknown,Bullish,90.0,100.0,100.0,3.01,31,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 75.5
+Reasons:
+✔ Price above 200 EMA (1511.30 > 1425.48)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-31.2%)
+✔ Tight base range (9.0%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.3x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+HAL.NS,75.5,Unknown,Bullish,90.0,100.0,100.0,-0.05,27,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 75.5
+Reasons:
+✔ Price above 200 EMA (4506.80 > 4356.14)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-31.7%)
+✔ Tight base range (5.8%)
+✔ Consolidation building (27 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.4x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+HDFCAMC.NS,75.5,Unknown,Bullish,90.0,100.0,100.0,-1.15,29,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 75.5
+Reasons:
+✔ Price above 200 EMA (2761.20 > 2617.61)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-47.2%)
+✔ Tight base range (7.0%)
+✔ Consolidation building (29 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+MOTILALOFS.NS,75.5,Unknown,Bullish,90.0,100.0,100.0,-8.05,31,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 75.5
+Reasons:
+✔ Price above 200 EMA (979.35 > 844.84)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-66.6%)
+✔ Tight base range (7.1%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.6x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ENDURANCE.NS,75.5,Unknown,Bullish,90.0,100.0,100.0,2.07,27,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 75.5
+Reasons:
+✔ Price above 200 EMA (2686.40 > 2547.82)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-53.2%)
+✔ Tight base range (4.7%)
+✔ Consolidation building (27 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.6x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
 TBOTEK.NS,75.5,Unknown,Bullish,90.0,100.0,100.0,-4.79,36,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 75.5
 Reasons:
 ✔ Price above 200 EMA (1504.90 > 1375.33)
@@ -11,6 +96,75 @@ Reasons:
 ✔ Volume holding (1.2x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
+ARE&M.NS,75.5,Unknown,Bullish,90.0,100.0,100.0,-4.02,23,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 75.5
+Reasons:
+✔ Price above 200 EMA (890.05 > 885.62)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-32.3%)
+✔ Tight base range (7.6%)
+✔ Consolidation building (23 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.6x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+TATAINVEST.NS,75.5,Unknown,Bullish,90.0,100.0,100.0,-14.3,21,C,S1 Early Accumulation + S2 Tight Base,Watch,Medium,"Score: 75.5
+Reasons:
+✔ Price above 200 EMA (693.75 > 680.73)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-26.2%)
+✔ Tight base range (4.5%)
+✔ Consolidation building (21 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.2x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+CONCORDBIO.NS,74.0,Unknown,Bullish,100.0,100.0,100.0,-19.66,35,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 74.0
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ ATR contracting (-19.7%)
+✔ Bollinger width contracting (-54.5%)
+✔ Tight base range (9.2%)
+✔ Consolidation building (35 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.2x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+360ONE.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,-1.12,21,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (1129.00 > 1089.32)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.5%)
+✔ Consolidation building (21 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.9x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BANKINDIA.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,-1.76,21,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (144.90 > 141.88)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (8.7%)
+✔ Consolidation building (21 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.6x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BAJAJ-AUTO.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,-3.1,31,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (10156.00 > 9595.57)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (5.5%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.0x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
 BANDHANBNK.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,3.5,22,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
 Reasons:
 ✔ Price above 200 EMA (210.00 > 179.37)
@@ -20,6 +174,138 @@ Reasons:
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
 ✔ Volume holding (2.0x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+PNBHOUSING.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,-0.32,28,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (1110.60 > 950.46)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.7%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BIOCON.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,12.35,26,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (418.50 > 387.64)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.1%)
+✔ Consolidation building (26 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ASAHIINDIA.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,1.55,23,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (914.90 > 874.34)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (8.3%)
+✔ Consolidation building (23 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.5x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+GLENMARK.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,-13.17,28,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (2282.90 > 2095.03)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (6.4%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+MANKIND.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,2.4,27,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (2525.10 > 2322.29)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.5%)
+✔ Consolidation building (27 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.2x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+LICHSGFIN.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,-8.96,16,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (549.15 > 548.82)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (6.1%)
+✔ Consolidation building (16 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+SOLARINDS.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,12.45,19,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (18236.00 > 15241.15)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.9%)
+✔ Consolidation building (19 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.4x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+PREMIERENE.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,-2.13,23,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (1117.20 > 966.03)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (8.4%)
+✔ Consolidation building (23 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+UNOMINDA.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,-0.6,23,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (1166.10 > 1135.25)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (6.7%)
+✔ Consolidation building (23 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+TORNTPHARM.NS,72.0,Unknown,Bullish,80.0,100.0,100.0,-12.15,31,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 72.0
+Reasons:
+✔ Price above 200 EMA (4901.50 > 4132.16)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.6%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.8x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+LLOYDSME.NS,71.5,Unknown,Bullish,90.0,100.0,100.0,5.47,25,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 71.5
+Reasons:
+✔ Price above 200 EMA (1799.60 > 1493.25)
+✔ Bollinger width contracting (-27.4%)
+✔ Tight base range (6.0%)
+✔ Consolidation building (25 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.4x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+SAILIFE.NS,71.5,Unknown,Bullish,90.0,100.0,100.0,-6.06,26,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 71.5
+Reasons:
+✔ Price above 200 EMA (1265.00 > 1012.23)
+✔ Bollinger width contracting (-32.4%)
+✔ Tight base range (5.0%)
+✔ Consolidation building (26 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.1x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
 RBLBANK.NS,71.5,Unknown,Bullish,90.0,100.0,100.0,-0.86,34,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 71.5
@@ -45,15 +331,94 @@ Reasons:
 ✔ Volume dry-up (-100.0%)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
-BLUESTARCO.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-5.5,23,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+BOSCHLTD.NS,71.0,Unknown,Bullish,100.0,60.0,100.0,-15.98,36,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 71.0
 Reasons:
+✔ Price above 200 EMA (41815.00 > 36705.90)
 ✔ 200 EMA flat/slightly rising
-✔ Bollinger width contracting (-20.0%)
-✔ Tight base range (7.9%)
-✔ Consolidation building (23 days)
+✔ ATR contracting (-16.0%)
+✔ Bollinger width contracting (-22.9%)
+✔ Tight base range (7.6%)
+✔ Consolidation building (36 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
-✔ Volume holding (1.0x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+CCL.NS,71.0,Unknown,Bullish,100.0,60.0,100.0,-18.52,33,C,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 71.0
+Reasons:
+✔ Price above 200 EMA (1214.00 > 1029.12)
+✔ 200 EMA flat/slightly rising
+✔ ATR contracting (-18.5%)
+✔ Bollinger width contracting (-21.6%)
+✔ Tight base range (8.2%)
+✔ Consolidation building (33 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+JIOFIN.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-2.63,19,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-21.8%)
+✔ Tight base range (6.0%)
+✔ Consolidation building (19 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+CRISIL.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,4.87,24,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-24.2%)
+✔ Tight base range (8.6%)
+✔ Consolidation building (24 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ERIS.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-4.73,27,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-23.8%)
+✔ Tight base range (6.3%)
+✔ Consolidation building (27 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.7x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+HEG.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,10.02,34,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-32.2%)
+✔ Tight base range (5.8%)
+✔ Consolidation building (34 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (4.8x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+NEWGEN.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-10.74,31,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-36.1%)
+✔ Tight base range (10.0%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (11.7x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+NUVOCO.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-14.49,19,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-38.8%)
+✔ Tight base range (6.0%)
+✔ Consolidation building (19 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.3x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
 AFFLE.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-18.72,16,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
@@ -67,6 +432,72 @@ Reasons:
 ✔ Volume holding (1.3x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
+CHOLAHLDNG.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-13.05,33,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-48.5%)
+✔ Tight base range (8.0%)
+✔ Consolidation building (33 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.5x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+SBICARD.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,4.61,23,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-28.9%)
+✔ Tight base range (7.0%)
+✔ Consolidation building (23 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.0x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+JSL.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-13.69,26,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-37.4%)
+✔ Tight base range (6.4%)
+✔ Consolidation building (26 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BLUESTARCO.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-5.5,23,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-20.0%)
+✔ Tight base range (7.9%)
+✔ Consolidation building (23 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.0x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ICICIPRULI.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,4.0,27,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-40.5%)
+✔ Tight base range (8.2%)
+✔ Consolidation building (27 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.7x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+SUNDARMFIN.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-1.25,31,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-50.0%)
+✔ Tight base range (8.2%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.7x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
 IREDA.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-11.16,25,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
 Reasons:
 ✔ 200 EMA flat/slightly rising
@@ -76,6 +507,39 @@ Reasons:
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
 ✔ Volume holding (1.4x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+KFINTECH.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,5.42,25,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-32.6%)
+✔ Tight base range (7.5%)
+✔ Consolidation building (25 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.6x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BALKRISIND.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-7.68,22,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-60.4%)
+✔ Tight base range (3.9%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.2x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+JKTYRE.NS,70.5,Unknown,Bullish,90.0,100.0,100.0,-6.03,28,C,S2 Tight Base + S3 VCP,Reject,Low,"Score: 70.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-45.4%)
+✔ Tight base range (7.2%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.2x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
 FORTIS.NS,68.0,Unknown,Bullish,90.0,100.0,50.0,-6.4,24,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 68.0
@@ -89,13 +553,23 @@ Reasons:
 ✔ Volume dry-up (-100.0%)
 ✔ Volume holding (1.1x)
 ✔ Short-term momentum positive"
-BHARTIARTL.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,0.85,27,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+ADANIENT.NS,68.0,Unknown,Bullish,80.0,100.0,100.0,6.01,28,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 68.0
 Reasons:
-✔ Price above 200 EMA (1920.40 > 1894.65)
+✔ Price above 200 EMA (3157.30 > 2515.45)
+✔ Tight base range (8.5%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.0x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+AARTIIND.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,3.13,26,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (484.10 > 441.07)
 ✔ 200 EMA flat/slightly rising
-✔ Bollinger width contracting (-20.8%)
-✔ Tight base range (4.7%)
-✔ Consolidation building (27 days)
+✔ Bollinger width contracting (-43.7%)
+✔ Tight base range (8.5%)
+✔ Consolidation building (26 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
 ✔ Relative strength improving
@@ -111,14 +585,223 @@ Reasons:
 ✔ Volume dry-up (-100.0%)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
-AWL.NS,67.0,Unknown,Bullish,80.0,100.0,100.0,9.58,23,Reject,S2 Tight Base,Reject,Low,"Score: 67.0
+FLUOROCHEM.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,2.24,32,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
 Reasons:
+✔ Price above 200 EMA (3941.50 > 3581.21)
 ✔ 200 EMA flat/slightly rising
-✔ Tight base range (8.3%)
-✔ Consolidation building (23 days)
+✔ Bollinger width contracting (-21.2%)
+✔ Tight base range (7.6%)
+✔ Consolidation building (32 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
-✔ Volume holding (1.0x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+KARURVYSYA.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-4.24,19,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (305.65 > 273.13)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-32.6%)
+✔ Tight base range (5.3%)
+✔ Consolidation building (19 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ACE.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-2.72,32,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (989.00 > 959.18)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-39.7%)
+✔ Tight base range (9.6%)
+✔ Consolidation building (32 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ICICIBANK.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-4.39,37,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1401.20 > 1337.11)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-29.9%)
+✔ Tight base range (7.1%)
+✔ Consolidation building (37 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+IDFCFIRSTB.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-4.23,36,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (80.83 > 73.68)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-60.8%)
+✔ Tight base range (4.7%)
+✔ Consolidation building (36 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+LICI.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,5.37,31,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (443.05 > 421.14)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-31.7%)
+✔ Tight base range (8.4%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+HOMEFIRST.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,2.03,30,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1222.70 > 1132.43)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-26.0%)
+✔ Tight base range (8.8%)
+✔ Consolidation building (30 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+AUBANK.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-4.33,28,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1072.10 > 940.07)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-45.2%)
+✔ Tight base range (4.8%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+AAVAS.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-14.58,36,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1525.90 > 1447.54)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-49.9%)
+✔ Tight base range (8.7%)
+✔ Consolidation building (36 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ASTERDM.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-4.64,25,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (808.90 > 679.05)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-42.9%)
+✔ Tight base range (5.4%)
+✔ Consolidation building (25 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+NHPC.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-9.63,26,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (79.82 > 79.44)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-20.1%)
+✔ Tight base range (9.0%)
+✔ Consolidation building (26 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+LALPATHLAB.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-0.93,22,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1692.80 > 1516.67)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-43.9%)
+✔ Tight base range (4.5%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+SHRIRAMFIN.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-3.56,35,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1044.10 > 915.40)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-46.0%)
+✔ Tight base range (7.1%)
+✔ Consolidation building (35 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BHARTIARTL.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,0.85,27,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1920.40 > 1894.65)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-20.8%)
+✔ Tight base range (4.7%)
+✔ Consolidation building (27 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+KAJARIACER.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,2.78,38,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1218.00 > 1089.41)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-31.1%)
+✔ Tight base range (9.2%)
+✔ Consolidation building (38 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+DOMS.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-0.58,28,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (2376.20 > 2365.38)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-50.2%)
+✔ Tight base range (6.1%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+NIVABUPA.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-7.33,22,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (86.51 > 79.66)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-25.1%)
+✔ Tight base range (4.3%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+RAINBOW.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,6.05,33,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1470.40 > 1328.90)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-50.2%)
+✔ Tight base range (5.2%)
+✔ Consolidation building (33 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BAJFINANCE.NS,67.5,Unknown,Bullish,90.0,60.0,100.0,-1.59,36,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 67.5
+Reasons:
+✔ Price above 200 EMA (1020.50 > 941.43)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-27.9%)
+✔ Tight base range (9.8%)
+✔ Consolidation building (36 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ABBOTINDIA.NS,67.0,Unknown,Bullish,80.0,100.0,100.0,-2.51,32,Reject,S2 Tight Base,Reject,Low,"Score: 67.0
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (6.9%)
+✔ Consolidation building (32 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.3x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
 PFIZER.NS,67.0,Unknown,Bullish,80.0,100.0,100.0,-3.77,27,Reject,S2 Tight Base,Reject,Low,"Score: 67.0
@@ -129,6 +812,16 @@ Reasons:
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
 ✔ Volume holding (1.3x)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+UTIAMC.NS,67.0,Unknown,Bullish,80.0,100.0,100.0,16.78,23,Reject,S2 Tight Base,Reject,Low,"Score: 67.0
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.7%)
+✔ Consolidation building (23 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.7x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
 SAGILITY.NS,67.0,Unknown,Bullish,80.0,100.0,100.0,9.84,22,Reject,S2 Tight Base,Reject,Low,"Score: 67.0
@@ -151,52 +844,32 @@ Reasons:
 ✔ Volume holding (1.2x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
-MEDANTA.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-3.31,33,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+AWL.NS,67.0,Unknown,Bullish,80.0,100.0,100.0,9.58,23,Reject,S2 Tight Base,Reject,Low,"Score: 67.0
 Reasons:
-✔ Price above 200 EMA (1336.90 > 1200.51)
 ✔ 200 EMA flat/slightly rising
-✔ Tight base range (9.8%)
-✔ Consolidation building (33 days)
+✔ Tight base range (8.3%)
+✔ Consolidation building (23 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.0x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
-KIMS.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-6.94,25,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+JSWSTEEL.NS,64.5,Unknown,Bullish,80.0,100.0,50.0,-5.38,29,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.5
 Reasons:
-✔ Price above 200 EMA (814.90 > 709.18)
+✔ Price above 200 EMA (1245.40 > 1196.94)
 ✔ 200 EMA flat/slightly rising
-✔ Tight base range (9.9%)
-✔ Consolidation building (25 days)
+✔ Tight base range (6.4%)
+✔ Consolidation building (29 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
-✔ Relative strength improving
+✔ Volume holding (1.1x)
 ✔ Short-term momentum positive"
-TVSMOTOR.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,6.9,30,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+NESTLEIND.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-6.65,22,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
 Reasons:
-✔ Price above 200 EMA (3623.10 > 3461.00)
+✔ Price above 200 EMA (1455.20 > 1321.55)
 ✔ 200 EMA flat/slightly rising
-✔ Tight base range (7.7%)
-✔ Consolidation building (30 days)
-✔ Not extended from base high
-✔ Volume dry-up (-100.0%)
-✔ Relative strength improving
-✔ Short-term momentum positive"
-BAJAJFINSV.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,9.95,32,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
-Reasons:
-✔ Price above 200 EMA (1916.00 > 1866.63)
-✔ 200 EMA flat/slightly rising
-✔ Tight base range (8.7%)
-✔ Consolidation building (32 days)
-✔ Not extended from base high
-✔ Volume dry-up (-100.0%)
-✔ Relative strength improving
-✔ Short-term momentum positive"
-AMBER.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-8.17,21,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
-Reasons:
-✔ Price above 200 EMA (7779.00 > 7329.79)
-✔ 200 EMA flat/slightly rising
-✔ Tight base range (7.2%)
-✔ Consolidation building (21 days)
+✔ Tight base range (6.8%)
+✔ Consolidation building (22 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
 ✔ Relative strength improving
@@ -211,6 +884,358 @@ Reasons:
 ✔ Volume dry-up (-100.0%)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
+SUNPHARMA.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,4.01,33,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1935.50 > 1768.39)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.1%)
+✔ Consolidation building (33 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+SHREECEM.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,5.95,28,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (26615.00 > 26097.16)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.3%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+TVSMOTOR.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,6.9,30,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (3623.10 > 3461.00)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.7%)
+✔ Consolidation building (30 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+MFSL.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,0.44,22,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1633.10 > 1609.34)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.9%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+KIMS.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-6.94,25,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (814.90 > 709.18)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.9%)
+✔ Consolidation building (25 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+TITAN.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-8.28,33,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (4584.40 > 4081.83)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.1%)
+✔ Consolidation building (33 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+SRF.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,0.14,22,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (2774.60 > 2745.01)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (6.0%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+MARICO.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,3.33,24,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (852.50 > 773.64)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (6.5%)
+✔ Consolidation building (24 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+MANAPPURAM.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,1.12,24,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (341.30 > 291.28)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.0%)
+✔ Consolidation building (24 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+USHAMART.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-7.1,24,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (510.10 > 443.09)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.6%)
+✔ Consolidation building (24 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+LUPIN.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,17.56,35,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (2496.30 > 2223.94)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.3%)
+✔ Consolidation building (35 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+NH.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-6.8,19,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (2027.30 > 1826.84)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.1%)
+✔ Consolidation building (19 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ZYDUSLIFE.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-0.02,32,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1150.80 > 986.43)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (8.5%)
+✔ Consolidation building (32 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ANURAS.NS,64.0,Unknown,Neutral,100.0,100.0,0.0,-32.55,33,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1268.00 > 1235.81)
+✔ 200 EMA flat/slightly rising
+✔ ATR contracting (-32.6%)
+✔ Bollinger width contracting (-67.9%)
+✔ Tight base range (2.7%)
+✔ Consolidation building (33 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)"
+EMCURE.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-9.76,29,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1814.40 > 1570.71)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.6%)
+✔ Consolidation building (29 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+APOLLOHOSP.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-9.12,34,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (8841.00 > 7780.33)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (5.7%)
+✔ Consolidation building (34 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+APTUS.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-6.16,30,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (283.80 > 271.67)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.2%)
+✔ Consolidation building (30 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BEML.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-2.68,24,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1862.60 > 1803.63)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (8.5%)
+✔ Consolidation building (24 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+DIVISLAB.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-5.36,24,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (6836.00 > 6418.44)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (4.6%)
+✔ Consolidation building (24 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+MEDANTA.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-3.31,33,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1336.90 > 1200.51)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.8%)
+✔ Consolidation building (33 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+GRASIM.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-3.16,28,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (3213.60 > 2887.55)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (4.2%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BAJAJFINSV.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,9.95,32,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1916.00 > 1866.63)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (8.7%)
+✔ Consolidation building (32 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BALRAMCHIN.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-5.55,19,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (566.90 > 508.34)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.9%)
+✔ Consolidation building (19 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+AMBER.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-8.17,21,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (7779.00 > 7329.79)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (7.2%)
+✔ Consolidation building (21 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ALKEM.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,-13.59,28,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (5669.50 > 5448.28)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (5.9%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+CANFINHOME.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,13.82,31,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (921.50 > 854.12)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.1%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+COFORGE.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,0.15,22,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1503.80 > 1469.38)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (9.7%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+CIPLA.NS,64.0,Unknown,Bullish,80.0,60.0,100.0,7.97,32,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 64.0
+Reasons:
+✔ Price above 200 EMA (1439.40 > 1403.19)
+✔ 200 EMA flat/slightly rising
+✔ Tight base range (8.4%)
+✔ Consolidation building (32 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BHARATFORG.NS,63.5,Unknown,Bullish,90.0,60.0,100.0,6.28,37,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.5
+Reasons:
+✔ Price above 200 EMA (2117.00 > 1718.42)
+✔ Bollinger width contracting (-29.1%)
+✔ Tight base range (7.5%)
+✔ Consolidation building (37 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+NAM-INDIA.NS,63.5,Unknown,Bullish,90.0,60.0,100.0,-9.64,31,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.5
+Reasons:
+✔ Price above 200 EMA (1212.70 > 966.71)
+✔ Bollinger width contracting (-33.5%)
+✔ Tight base range (6.5%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+NAVINFLUOR.NS,63.5,Unknown,Bullish,90.0,60.0,100.0,1.93,26,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.5
+Reasons:
+✔ Price above 200 EMA (7712.00 > 6312.90)
+✔ Bollinger width contracting (-32.6%)
+✔ Tight base range (5.7%)
+✔ Consolidation building (26 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+JBMA.NS,63.5,Unknown,Neutral,100.0,60.0,50.0,-16.43,28,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.5
+Reasons:
+✔ Price above 200 EMA (684.70 > 638.31)
+✔ 200 EMA flat/slightly rising
+✔ ATR contracting (-16.4%)
+✔ Bollinger width contracting (-25.4%)
+✔ Tight base range (9.7%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving"
+FEDERALBNK.NS,63.5,Unknown,Bullish,90.0,60.0,100.0,-14.97,38,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.5
+Reasons:
+✔ Price above 200 EMA (329.85 > 275.01)
+✔ Bollinger width contracting (-58.0%)
+✔ Tight base range (4.4%)
+✔ Consolidation building (38 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+HSCL.NS,63.5,Unknown,Bullish,90.0,60.0,100.0,-13.31,33,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.5
+Reasons:
+✔ Price above 200 EMA (660.45 > 540.86)
+✔ Bollinger width contracting (-37.0%)
+✔ Tight base range (9.4%)
+✔ Consolidation building (33 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ABSLAMC.NS,63.5,Unknown,Bullish,90.0,60.0,100.0,1.88,29,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.5
+Reasons:
+✔ Price above 200 EMA (1146.60 > 950.08)
+✔ Bollinger width contracting (-46.4%)
+✔ Tight base range (8.8%)
+✔ Consolidation building (29 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
 ADANIGREEN.NS,63.5,Unknown,Bullish,90.0,60.0,100.0,-2.42,23,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.5
 Reasons:
 ✔ Price above 200 EMA (1536.60 > 1191.73)
@@ -219,6 +1244,17 @@ Reasons:
 ✔ Consolidation building (23 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+CAMS.NS,63.25,Unknown,Bullish,55.0,100.0,100.0,-4.76,22,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.2
+Reasons:
+✔ Price above 200 EMA (790.50 > 757.20)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-32.4%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.2x)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
 CDSL.NS,63.25,Unknown,Bullish,55.0,100.0,100.0,17.1,33,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 63.2
@@ -242,32 +1278,122 @@ Reasons:
 ✔ Volume dry-up (-100.0%)
 ✔ Volume holding (3.7x)
 ✔ Relative strength improving"
-MUTHOOTFIN.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-7.29,27,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+HAVELLS.NS,63.0,Unknown,Bullish,90.0,100.0,50.0,1.29,22,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 63.0
 Reasons:
 ✔ 200 EMA flat/slightly rising
-✔ Bollinger width contracting (-29.2%)
+✔ Bollinger width contracting (-27.5%)
+✔ Tight base range (5.8%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (2.5x)
+✔ Short-term momentum positive"
+SBILIFE.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,5.75,29,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-23.0%)
+✔ Tight base range (6.3%)
+✔ Consolidation building (29 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+APOLLOTYRE.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,7.98,33,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-29.1%)
 ✔ Tight base range (9.6%)
+✔ Consolidation building (33 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+TATACHEM.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-15.67,27,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ ATR contracting (-15.7%)
+✔ Tight base range (8.3%)
 ✔ Consolidation building (27 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
-JKCEMENT.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,3.97,31,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+TECHM.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-4.84,17,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
 Reasons:
 ✔ 200 EMA flat/slightly rising
-✔ Bollinger width contracting (-64.5%)
-✔ Tight base range (7.4%)
-✔ Consolidation building (31 days)
+✔ Bollinger width contracting (-29.5%)
+✔ Tight base range (6.9%)
+✔ Consolidation building (17 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
-GILLETTE.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-14.14,24,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+BAJAJHLDNG.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-0.7,21,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
 Reasons:
 ✔ 200 EMA flat/slightly rising
-✔ Bollinger width contracting (-24.1%)
-✔ Tight base range (3.8%)
-✔ Consolidation building (24 days)
+✔ Bollinger width contracting (-32.9%)
+✔ Tight base range (7.4%)
+✔ Consolidation building (21 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+AMBUJACEM.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-5.57,22,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-32.6%)
+✔ Tight base range (6.5%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ULTRACEMCO.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-6.33,27,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-48.4%)
+✔ Tight base range (4.0%)
+✔ Consolidation building (27 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+CENTRALBK.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,3.5,27,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-43.7%)
+✔ Tight base range (8.0%)
+✔ Consolidation building (27 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+HYUNDAI.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-8.48,26,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-20.6%)
+✔ Tight base range (6.9%)
+✔ Consolidation building (26 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+RVNL.NS,62.5,Unknown,Neutral,100.0,100.0,50.0,-19.45,34,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ ATR contracting (-19.5%)
+✔ Bollinger width contracting (-29.2%)
+✔ Tight base range (9.8%)
+✔ Consolidation building (34 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.2x)
+✔ Relative strength improving"
+ESCORTS.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-3.18,31,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-22.6%)
+✔ Tight base range (6.2%)
+✔ Consolidation building (31 days)
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
 ✔ Relative strength improving
@@ -282,6 +1408,116 @@ Reasons:
 ✔ Volume dry-up (-100.0%)
 ✔ Relative strength improving
 ✔ Short-term momentum positive"
+LTFOODS.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-13.01,21,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-32.5%)
+✔ Tight base range (5.7%)
+✔ Consolidation building (21 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+ICICIGI.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-8.83,23,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-26.2%)
+✔ Tight base range (7.4%)
+✔ Consolidation building (23 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+M&M.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-2.81,22,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-26.3%)
+✔ Tight base range (5.2%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+GILLETTE.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-14.14,24,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-24.1%)
+✔ Tight base range (3.8%)
+✔ Consolidation building (24 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+JKCEMENT.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,3.97,31,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-64.5%)
+✔ Tight base range (7.4%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+MUTHOOTFIN.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-7.29,27,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-29.2%)
+✔ Tight base range (9.6%)
+✔ Consolidation building (27 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+EIHOTEL.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,16.68,34,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-46.8%)
+✔ Tight base range (9.5%)
+✔ Consolidation building (34 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+DALBHARAT.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,3.14,22,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-33.5%)
+✔ Tight base range (6.1%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+PCBL.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,0.79,32,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-38.1%)
+✔ Tight base range (8.2%)
+✔ Consolidation building (32 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+DCMSHRIRAM.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,2.19,31,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-24.8%)
+✔ Tight base range (4.7%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+COROMANDEL.NS,62.5,Unknown,Bullish,90.0,60.0,100.0,-2.18,29,Reject,S2 Tight Base + S3 VCP,Reject,Low,"Score: 62.5
+Reasons:
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-59.1%)
+✔ Tight base range (7.8%)
+✔ Consolidation building (29 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
 HINDCOPPER.NS,60.5,Unknown,Neutral,90.0,100.0,0.0,-11.06,34,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.5
 Reasons:
 ✔ Price above 200 EMA (498.65 > 473.69)
@@ -292,3 +1528,99 @@ Reasons:
 ✔ Not extended from base high
 ✔ Volume dry-up (-100.0%)
 ✔ Volume holding (2.0x)"
+LINDEINDIA.NS,60.5,Unknown,Neutral,90.0,100.0,0.0,-3.16,25,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.5
+Reasons:
+✔ Price above 200 EMA (7033.00 > 6823.94)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-22.6%)
+✔ Tight base range (7.5%)
+✔ Consolidation building (25 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Volume holding (1.1x)"
+SBIN.NS,60.0,Unknown,Bullish,90.0,60.0,50.0,-3.22,35,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.0
+Reasons:
+✔ Price above 200 EMA (1036.00 > 998.06)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-54.8%)
+✔ Tight base range (3.5%)
+✔ Consolidation building (35 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Short-term momentum positive"
+EICHERMOT.NS,60.0,Unknown,Neutral,90.0,60.0,50.0,1.83,31,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.0
+Reasons:
+✔ Price above 200 EMA (7365.50 > 7016.30)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-20.9%)
+✔ Tight base range (7.7%)
+✔ Consolidation building (31 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving"
+MINDACORP.NS,60.0,Unknown,Bullish,80.0,60.0,100.0,-1.8,37,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.0
+Reasons:
+✔ Price above 200 EMA (698.90 > 576.59)
+✔ Tight base range (9.4%)
+✔ Consolidation building (37 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+GAIL.NS,60.0,Unknown,Bullish,90.0,60.0,50.0,-11.03,28,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.0
+Reasons:
+✔ Price above 200 EMA (173.73 > 168.64)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-51.1%)
+✔ Tight base range (4.6%)
+✔ Consolidation building (28 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Short-term momentum positive"
+ANGELONE.NS,60.0,Unknown,Bullish,80.0,60.0,100.0,-9.04,17,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.0
+Reasons:
+✔ Price above 200 EMA (346.05 > 288.12)
+✔ Tight base range (7.5%)
+✔ Consolidation building (17 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+BHEL.NS,60.0,Unknown,Bullish,80.0,60.0,100.0,-2.1,23,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.0
+Reasons:
+✔ Price above 200 EMA (395.25 > 318.73)
+✔ Tight base range (9.6%)
+✔ Consolidation building (23 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+CIEINDIA.NS,60.0,Unknown,Bullish,90.0,60.0,50.0,-2.52,22,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.0
+Reasons:
+✔ Price above 200 EMA (464.30 > 449.74)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-41.9%)
+✔ Tight base range (5.0%)
+✔ Consolidation building (22 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Short-term momentum positive"
+VIJAYA.NS,60.0,Unknown,Bullish,80.0,60.0,100.0,-4.05,20,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.0
+Reasons:
+✔ Price above 200 EMA (1389.10 > 1118.74)
+✔ Tight base range (8.2%)
+✔ Consolidation building (20 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Relative strength improving
+✔ Short-term momentum positive"
+PIDILITIND.NS,60.0,Unknown,Bullish,90.0,60.0,50.0,-1.87,36,Reject,S1 Early Accumulation + S2 Tight Base,Reject,Low,"Score: 60.0
+Reasons:
+✔ Price above 200 EMA (1598.50 > 1476.48)
+✔ 200 EMA flat/slightly rising
+✔ Bollinger width contracting (-62.6%)
+✔ Tight base range (3.5%)
+✔ Consolidation building (36 days)
+✔ Not extended from base high
+✔ Volume dry-up (-100.0%)
+✔ Short-term momentum positive"
