@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Dict, Iterable, List, Optional
 import concurrent.futures
+import threading
 
 import pandas as pd
 from breakout import get_nifty_500, get_nifty_total_market
@@ -13,6 +14,8 @@ from .config import ScannerConfig
 from utils.yf_cache import cached_download
 
 logger = logging.getLogger("AlphaScanner.Data")
+
+_YFINANCE_LOCK = threading.Lock()
 
 
 def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -55,11 +58,12 @@ def download_history(ticker: str, config: ScannerConfig, use_cache: bool = True)
         config.interval,
         use_cache,
     )
-    try:
-        df = cached_download(ticker, period=config.lookback_period, interval=config.interval, use_cache=use_cache, progress=False, auto_adjust=False, threads=False)
-    except Exception as exc:  # pragma: no cover - network/path dependent
-        logger.warning("Failed to download %s: %s", ticker, exc)
-        return pd.DataFrame()
+    with _YFINANCE_LOCK:
+        try:
+            df = cached_download(ticker, period=config.lookback_period, interval=config.interval, use_cache=use_cache, progress=False, auto_adjust=False, threads=False)
+        except Exception as exc:  # pragma: no cover - network/path dependent
+            logger.warning("Failed to download %s: %s", ticker, exc)
+            return pd.DataFrame()
 
     if isinstance(df, pd.DataFrame):
         df = normalize_columns(df)
