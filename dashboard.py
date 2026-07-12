@@ -1,5 +1,6 @@
 """Streamlit entrypoint for AlphaScanner PRO."""
 
+import urllib.request
 import streamlit as st
 import os
 from alphascanner_ui.auth import render_logout_control, require_login
@@ -25,6 +26,17 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# There is a known race condition in Python's native `urllib` library that can
+# cause a "dictionary changed size during iteration" error when multiple threads
+# (like the ones used for downloading market data) try to access system proxy
+# settings simultaneously.
+# By calling `getproxies()` once at startup, we populate a cache that subsequent
+# calls will use, avoiding the race condition.
+try:
+    urllib.request.getproxies()
+except Exception:
+    pass
+
 logger = configure_logging()
 init_session_state()
 require_login()
@@ -36,7 +48,6 @@ if os.environ.get("ALPHASCANNER_ENABLE_BACKGROUND_METADATA_WORKER", "0") == "1":
         # Defer heavy imports (yfinance/multitasking) until after core UI is ready.
         # This prevents import-time crashes in environments where those libs aren't compatible.
         from breakout import start_background_metadata_worker
-
         start_background_metadata_worker()
     except Exception:
         logger.exception("Failed to start background metadata worker; continuing without it.")
@@ -415,7 +426,7 @@ tab_scanner, tab_backtest, tab_watchlist, tab_portfolio, tab_market, tab_news, t
 )
 
 with tab_scanner:
-    scanner.render_tab(sidebar_settings, chart_options, load_ticker_history, load_nifty_history, fetch_indices_performance) # scanner_type is now part of sidebar_settings
+    scanner.render_tab(sidebar_settings, chart_options, load_ticker_history, load_nifty_history, fetch_indices_performance)
     # Smooth UI interaction: notify user when scan results are fresh
     if (
         st.session_state.get('last_scan_time')
