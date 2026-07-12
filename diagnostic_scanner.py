@@ -29,7 +29,7 @@ def test_scanner_logic(universe="Nifty 500", scanner_type="Breakout", sample_siz
     
     # Get Nifty for RS
     try:
-        nifty = yf.download("^NSEI", period="2y", interval="1d", progress=False, auto_adjust=False)
+        nifty = yf.download("^NSEI", period="2y", interval="1d", progress=False, auto_adjust=False, threads=False)
         if isinstance(nifty.columns, pd.MultiIndex):
             nifty.columns = nifty.columns.get_level_values(0)
         nifty_close = nifty["Close"].dropna()
@@ -53,7 +53,7 @@ def test_scanner_logic(universe="Nifty 500", scanner_type="Breakout", sample_siz
     for i, ticker in enumerate(tickers[:sample_size]):
         try:
             stats["tested"] += 1
-            df = yf.download(ticker, period="2y", interval="1d", progress=False, auto_adjust=False)
+            df = yf.download(ticker, period="2y", interval="1d", progress=False, auto_adjust=False, threads=False)
             
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = df.columns.get_level_values(0)

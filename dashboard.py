@@ -42,15 +42,6 @@ init_session_state()
 require_login()
 init_user_db()
 
-# Only run these after successful login to prevent UI flickering and state errors
-if os.environ.get("ALPHASCANNER_ENABLE_BACKGROUND_METADATA_WORKER", "0") == "1":
-    try:
-        # Defer heavy imports (yfinance/multitasking) until after core UI is ready.
-        # This prevents import-time crashes in environments where those libs aren't compatible.
-        from breakout import start_background_metadata_worker
-        start_background_metadata_worker()
-    except Exception:
-        logger.exception("Failed to start background metadata worker; continuing without it.")
 apply_global_styles()
 apply_plotly_theme()
 
@@ -389,6 +380,21 @@ st.markdown("""
 
 sidebar_settings, chart_options = render_sidebar(load_ticker_history, run_backtest_cached)
 render_logout_control()
+
+# Start background worker once, after the main app setup and within the session context.
+# This avoids starting threads before a potential server fork, which can cause segfaults.
+if 'metadata_worker_started' not in st.session_state:
+    if os.environ.get("ALPHASCANNER_ENABLE_BACKGROUND_METADATA_WORKER", "0") == "1":
+        try:
+            from breakout import start_background_metadata_worker
+            start_background_metadata_worker()
+            logger.info("Background metadata worker started for this session.")
+            st.session_state.metadata_worker_started = True
+        except Exception:
+            logger.exception("Failed to start background metadata worker; continuing without it.")
+            st.session_state.metadata_worker_started = False # Don't retry
+    else:
+        st.session_state.metadata_worker_started = False
 
 # Apply 'Compact Mode' styles if enabled in Settings
 if st.session_state.get('compact_mode', False):
