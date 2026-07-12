@@ -21,15 +21,28 @@ def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
         return df
 
     cleaned = df.copy()
+    # Flatten multi-index headers if they exist, which can happen with yfinance
     if isinstance(cleaned.columns, pd.MultiIndex):
         cleaned.columns = cleaned.columns.get_level_values(0)
 
-    renamed = {}
-    for column in ["Open", "High", "Low", "Close", "Volume"]:
-        matches = [c for c in cleaned.columns if str(c).lower() == str(column).lower()]
-        if matches:
-            renamed[matches[0]] = column
-    cleaned.rename(columns=renamed, inplace=True)
+    # Standardize all columns to lowercase to handle casing differences robustly
+    # (e.g., 'open' vs 'Open').
+    cleaned.columns = [str(c).lower() for c in cleaned.columns]
+
+    # After lowercasing, duplicates might exist (e.g., 'adj close' and 'close'
+    # from different sources). Remove duplicates, keeping the first occurrence,
+    # which is typically the most reliable column.
+    cleaned = cleaned.loc[:, ~cleaned.columns.duplicated(keep='first')]
+
+    # Capitalize the essential columns to the expected 'TitleCase' format.
+    rename_map = {
+        'open': 'Open',
+        'high': 'High',
+        'low': 'Low',
+        'close': 'Close',
+        'volume': 'Volume'
+    }
+    cleaned.rename(columns=rename_map, inplace=True)
     return cleaned
 
 
