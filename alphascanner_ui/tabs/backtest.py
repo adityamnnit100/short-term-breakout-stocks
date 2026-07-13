@@ -1,12 +1,41 @@
 """Backtest tab UI."""
 
 import datetime
+import threading
 
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
 from alphascanner_ui.charts import apply_trading_layout
+
+
+def _attach_streamlit_context_to_current_thread() -> None:
+    try:
+        from streamlit.runtime.scriptrunner import add_script_run_ctx, get_script_run_ctx
+    except Exception:
+        try:
+            from streamlit.runtime.scriptrunner_utils.script_run_context import add_script_run_ctx, get_script_run_ctx
+        except Exception:
+            return
+
+    try:
+        ctx = get_script_run_ctx(suppress_warning=True)
+    except TypeError:
+        try:
+            ctx = get_script_run_ctx()
+        except Exception:
+            ctx = None
+    except Exception:
+        ctx = None
+
+    if ctx is None:
+        return
+
+    try:
+        add_script_run_ctx(threading.current_thread(), ctx)
+    except Exception:
+        return
 
 
 def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
@@ -25,9 +54,8 @@ def render_tab(settings, run_backtest_cached, load_nifty_history) -> None:
 
     # Run backtest in background thread to keep UI responsive
     if run_backtest and not st.session_state.get("bt_running"):
-        import threading
-
         def _bt_worker(start_date, end_date, settings):
+            _attach_streamlit_context_to_current_thread()
             try:
                 st.session_state.bt_running = True
                 bt_df, error = run_backtest_cached(

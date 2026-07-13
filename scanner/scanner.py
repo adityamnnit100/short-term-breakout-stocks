@@ -54,10 +54,42 @@ def _in_streamlit_runtime() -> bool:
 def _suppress_streamlit_context_warning() -> None:
     """Mute the noisy ScriptRunContext warning in bare/CLI execution."""
     for name in (
-        "streamlit.runtime.scriptrunner_utils.script_run_context",
+        "streamlit",
+        "streamlit.runtime",
         "streamlit.runtime.scriptrunner",
+        "streamlit.runtime.scriptrunner_utils",
+        "streamlit.runtime.scriptrunner_utils.script_run_context",
     ):
         logging.getLogger(name).setLevel(logging.ERROR)
+
+
+def _attach_streamlit_context_to_current_thread() -> None:
+    """Propagate the active Streamlit context into worker threads when available."""
+    try:
+        from streamlit.runtime.scriptrunner import add_script_run_ctx, get_script_run_ctx
+    except Exception:
+        try:
+            from streamlit.runtime.scriptrunner_utils.script_run_context import add_script_run_ctx, get_script_run_ctx
+        except Exception:
+            return
+
+    try:
+        ctx = get_script_run_ctx(suppress_warning=True)
+    except TypeError:
+        try:
+            ctx = get_script_run_ctx()
+        except Exception:
+            ctx = None
+    except Exception:
+        ctx = None
+
+    if ctx is None:
+        return
+
+    try:
+        add_script_run_ctx(threading.current_thread(), ctx)
+    except Exception:
+        return
 
 
 def run_dual_mode_scan(
@@ -115,6 +147,9 @@ def run_dual_mode_scan(
     def _process_ticker(ticker: str) -> None:
         nonlocal processed_count
         try:
+            if _in_streamlit_runtime():
+                _attach_streamlit_context_to_current_thread()
+
             df = history_map.get(ticker)
             if df is None or df.empty or len(df) < config.min_candles:
                 return
