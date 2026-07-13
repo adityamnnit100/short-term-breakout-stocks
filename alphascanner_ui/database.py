@@ -186,85 +186,100 @@ def append_setup_analysis_rows(rows):
     if not rows:
         return
     init_db()
-    for row in rows:
-        execute_query(
+    payload = [
+        (
+            row.get("analysis_date"),
+            row.get("ticker"),
+            row.get("scan_mode"),
+            float(row.get("setup_score", 0) or 0),
+            float(row.get("base_score", 0) or 0),
+            float(row.get("compression_score", 0) or 0),
+            float(row.get("volume_score", 0) or 0),
+            float(row.get("resistance_score", 0) or 0),
+            float(row.get("structure_score", 0) or 0),
+            float(row.get("risk_score", 0) or 0),
+            row.get("category"),
+            json.dumps(row.get("reasons", [])),
+            json.dumps(row.get("weaknesses", [])),
+        )
+        for row in rows
+    ]
+    with get_connection() as conn:
+        conn.executemany(
             '''INSERT INTO setup_analyses (
                 analysis_date, ticker, scan_mode, setup_score, base_score, compression_score,
                 volume_score, resistance_score, structure_score, risk_score, category, reasons, weaknesses
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-            (
-                row.get("analysis_date"),
-                row.get("ticker"),
-                row.get("scan_mode"),
-                float(row.get("setup_score", 0) or 0),
-                float(row.get("base_score", 0) or 0),
-                float(row.get("compression_score", 0) or 0),
-                float(row.get("volume_score", 0) or 0),
-                float(row.get("resistance_score", 0) or 0),
-                float(row.get("structure_score", 0) or 0),
-                float(row.get("risk_score", 0) or 0),
-                row.get("category"),
-                json.dumps(row.get("reasons", [])),
-                json.dumps(row.get("weaknesses", [])),
-            ),
+            payload,
         )
+        conn.commit()
 
 def append_transition_analysis_rows(rows):
     if not rows:
         return
     init_db()
-    for row in rows:
-        execute_query(
+    payload = [
+        (
+            row.get("analysis_date"),
+            row.get("ticker"),
+            row.get("scan_mode"),
+            float(row.get("transition_score", 0) or 0),
+            float(row.get("transition_setup_velocity_score", 0) or 0),
+            float(row.get("transition_rs_acceleration_score", 0) or 0),
+            float(row.get("transition_volume_transition_score", 0) or 0),
+            float(row.get("transition_compression_evolution_score", 0) or 0),
+            float(row.get("transition_resistance_pressure_score", 0) or 0),
+            float(row.get("transition_price_acceptance_score", 0) or 0),
+            float(row.get("transition_opportunity_velocity_score", 0) or 0),
+            row.get("transition_category"),
+            1 if row.get("transition_qualifies") else 0,
+            json.dumps(row.get("transition_reasons", [])),
+            json.dumps(row.get("transition_weaknesses", [])),
+            json.dumps(row.get("transition_metrics", {})),
+        )
+        for row in rows
+    ]
+    with get_connection() as conn:
+        conn.executemany(
             '''INSERT INTO transition_analyses (
                 analysis_date, ticker, scan_mode, transition_score, setup_velocity_score,
                 rs_acceleration_score, volume_transition_score, compression_evolution_score,
                 resistance_pressure_score, price_acceptance_score, opportunity_velocity_score,
                 category, qualifies, reasons, weaknesses, metrics
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-            (
-                row.get("analysis_date"),
-                row.get("ticker"),
-                row.get("scan_mode"),
-                float(row.get("transition_score", 0) or 0),
-                float(row.get("transition_setup_velocity_score", 0) or 0),
-                float(row.get("transition_rs_acceleration_score", 0) or 0),
-                float(row.get("transition_volume_transition_score", 0) or 0),
-                float(row.get("transition_compression_evolution_score", 0) or 0),
-                float(row.get("transition_resistance_pressure_score", 0) or 0),
-                float(row.get("transition_price_acceptance_score", 0) or 0),
-                float(row.get("transition_opportunity_velocity_score", 0) or 0),
-                row.get("transition_category"),
-                1 if row.get("transition_qualifies") else 0,
-                json.dumps(row.get("transition_reasons", [])),
-                json.dumps(row.get("transition_weaknesses", [])),
-                json.dumps(row.get("transition_metrics", {})),
-            ),
+            payload,
         )
+        conn.commit()
 
 def append_trigger_analysis_rows(rows):
     if not rows:
         return
     init_db()
-    for row in rows:
-        execute_query(
+    payload = [
+        (
+            row.get("analysis_date"),
+            row.get("ticker"),
+            row.get("scan_mode"),
+            row.get("trigger_decision"),
+            row.get("trigger_confidence"),
+            float(row.get("trigger_score", 0) or 0),
+            1 if row.get("trigger_qualifies") else 0,
+            json.dumps(row.get("trigger_reasons", [])),
+            json.dumps(row.get("trigger_weaknesses", [])),
+            json.dumps(row.get("trigger_module_results", {})),
+            json.dumps(row.get("trigger_metrics", {})),
+        )
+        for row in rows
+    ]
+    with get_connection() as conn:
+        conn.executemany(
             '''INSERT INTO trigger_analyses (
                 analysis_date, ticker, scan_mode, trigger_decision, trigger_confidence,
                 trigger_score, qualifies, reasons, weaknesses, module_results, metrics
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-            (
-                row.get("analysis_date"),
-                row.get("ticker"),
-                row.get("scan_mode"),
-                row.get("trigger_decision"),
-                row.get("trigger_confidence"),
-                float(row.get("trigger_score", 0) or 0),
-                1 if row.get("trigger_qualifies") else 0,
-                json.dumps(row.get("trigger_reasons", [])),
-                json.dumps(row.get("trigger_weaknesses", [])),
-                json.dumps(row.get("trigger_module_results", {})),
-                json.dumps(row.get("trigger_metrics", {})),
-            ),
+            payload,
         )
+        conn.commit()
 
 def remove_risk_position(username, ticker):
     execute_query("DELETE FROM risk_positions WHERE username = ? AND ticker = ?", (username, ticker))

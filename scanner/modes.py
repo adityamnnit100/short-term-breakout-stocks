@@ -42,7 +42,14 @@ class BaseScanner:
         self.trigger_engine = trigger_engine or TriggerEngine(self.config)
         self.scan_mode = scan_mode
 
-    def evaluate(self, df: pd.DataFrame, ticker: str, sector: str = "Unknown") -> Dict[str, object]:
+    def evaluate(
+        self,
+        df: pd.DataFrame,
+        ticker: str,
+        sector: str = "Unknown",
+        prepared: Optional[pd.DataFrame] = None,
+        context: Optional[QualityContext] = None,
+    ) -> Dict[str, object]:
         raise NotImplementedError("Subclasses must implement the 'evaluate' method.")
 
     def _prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -105,12 +112,19 @@ class BaseScanner:
 class WatchlistScanner(BaseScanner):
     """Early-detection scanner for stocks building a base."""
 
-    def evaluate(self, df: pd.DataFrame, ticker: str, sector: str = "Unknown") -> Dict[str, object]:
-        prepared = self._prepare_df(df)
+    def evaluate(
+        self,
+        df: pd.DataFrame,
+        ticker: str,
+        sector: str = "Unknown",
+        prepared: Optional[pd.DataFrame] = None,
+        context: Optional[QualityContext] = None,
+    ) -> Dict[str, object]:
+        prepared = prepared if prepared is not None else self._prepare_df(df)
         if prepared.empty or len(prepared) < self.config.min_candles:
             return {"ticker": ticker, "passed": False, "score": 0.0, "reasons": [], "reason_label": "Insufficient data"}
 
-        context = self._build_quality_context(prepared, ticker, sector)
+        context = context if context is not None else self._build_quality_context(prepared, ticker, sector)
         if context is None:
             return {"ticker": ticker, "passed": False, "score": 0.0, "reasons": [], "reason_label": "Insufficient data"}
 
@@ -298,12 +312,19 @@ class WatchlistScanner(BaseScanner):
 class EntryScanner(BaseScanner):
     """Actionable entry scanner for confirmed breakouts and retests."""
 
-    def evaluate(self, df: pd.DataFrame, ticker: str, sector: str = "Unknown") -> Dict[str, object]:
-        prepared = self._prepare_df(df)
+    def evaluate(
+        self,
+        df: pd.DataFrame,
+        ticker: str,
+        sector: str = "Unknown",
+        prepared: Optional[pd.DataFrame] = None,
+        context: Optional[QualityContext] = None,
+    ) -> Dict[str, object]:
+        prepared = prepared if prepared is not None else self._prepare_df(df)
         if prepared.empty or len(prepared) < self.config.min_candles:
             return {"ticker": ticker, "passed": False, "score": 0.0, "reasons": [], "reason_label": "Insufficient data"}
 
-        context = self._build_quality_context(prepared, ticker, sector)
+        context = context if context is not None else self._build_quality_context(prepared, ticker, sector)
         if context is None:
             return {"ticker": ticker, "passed": False, "score": 0.0, "reasons": [], "reason_label": "Insufficient data"}
 

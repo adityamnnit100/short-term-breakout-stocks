@@ -108,8 +108,16 @@ def test_run_dual_mode_scan_uses_batch_download(monkeypatch):
         return {"AAA.NS": history_a, "BBB.NS": history_b}
 
     monkeypatch.setattr(scanner_module, "download_history_batch", fake_batch_download)
-    monkeypatch.setattr(scanner_module.WatchlistScanner, "evaluate", lambda self, df, ticker, sector="Unknown": {"passed": False, "score": 0.0})
-    monkeypatch.setattr(scanner_module.EntryScanner, "evaluate", lambda self, df, ticker, sector="Unknown": {"passed": False, "score": 0.0})
+    monkeypatch.setattr(
+        scanner_module.WatchlistScanner,
+        "evaluate",
+        lambda self, df, ticker, sector="Unknown", **kwargs: {"passed": False, "score": 0.0},
+    )
+    monkeypatch.setattr(
+        scanner_module.EntryScanner,
+        "evaluate",
+        lambda self, df, ticker, sector="Unknown", **kwargs: {"passed": False, "score": 0.0},
+    )
 
     results = scanner_module.run_dual_mode_scan(ScannerConfig(min_candles=3))
 
@@ -137,8 +145,17 @@ def test_run_dual_mode_scan_processes_full_universe(monkeypatch, tmp_path):
         return {ticker: frame for ticker in chunk}
 
     monkeypatch.setattr(scanner_module, "download_history_batch", fake_batch_download)
-    monkeypatch.setattr(scanner_module.WatchlistScanner, "evaluate", lambda self, df, ticker, sector="Unknown": {"passed": True, "score": 65.0, "ticker": ticker})
-    monkeypatch.setattr(scanner_module.EntryScanner, "evaluate", lambda self, df, ticker, sector="Unknown": {"passed": True, "score": 75.0, "ticker": ticker})
+    monkeypatch.setattr(
+        scanner_module.WatchlistScanner,
+        "evaluate",
+        lambda self, df, ticker, sector="Unknown", **kwargs: {"passed": True, "score": 65.0, "ticker": ticker},
+    )
+    monkeypatch.setattr(
+        scanner_module.EntryScanner,
+        "evaluate",
+        lambda self, df, ticker, sector="Unknown", **kwargs: {"passed": True, "score": 75.0, "ticker": ticker, "trigger_qualifies": True, "trigger_module_results": {}},
+    )
+    monkeypatch.setattr(scanner_module.TriggerEngine, "rank_candidate_rows", lambda self, rows: rows)
 
     results = scanner_module.run_dual_mode_scan(ScannerConfig(min_candles=3))
 

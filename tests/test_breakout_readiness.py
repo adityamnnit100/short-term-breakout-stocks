@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 import scanner_service
+import breakout
 from breakout_readiness import rank_breakout_readiness
 from scanner.indicators import safe_pct_change
 
@@ -63,3 +64,18 @@ def test_breakout_readiness_engine_ranks_candidates():
 def test_safe_pct_change_reused_by_compression_logic():
     assert safe_pct_change(5.0, 0.0) == 0.0
     assert safe_pct_change(11.0, 10.0) == pytest.approx(10.0)
+
+
+def test_total_market_universe_includes_microcaps(monkeypatch):
+    def fake_fetch_index_symbols(urls, label):
+        if label == "Nifty 500":
+            return ["AAA.NS", "BBB.NS"]
+        if label == "Nifty Microcap 250":
+            return ["BBB.NS", "CCC.NS"]
+        return []
+
+    monkeypatch.setattr(breakout, "_fetch_index_symbols", fake_fetch_index_symbols)
+
+    symbols = breakout.get_nifty_total_market()
+
+    assert symbols == ["AAA.NS", "BBB.NS", "CCC.NS"]

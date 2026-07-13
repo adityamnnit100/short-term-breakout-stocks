@@ -145,6 +145,8 @@ def get_sector_mapping(universe_type: str = "Nifty 500") -> dict:
         urls = [
             "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
             "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
+            "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
+            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
         ]
     else:
         return {}  # Should not happen with current universe options

@@ -138,6 +138,10 @@ def get_nifty_total_market() -> list:
             "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
             "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
         ],
+        "Nifty Microcap 250": [
+            "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
+            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
+        ],
     }
 
     all_tickers = set()

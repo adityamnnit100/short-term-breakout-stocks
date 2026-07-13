@@ -121,8 +121,14 @@ def run_dual_mode_scan(
 
             # Sector logic can be enhanced here later
             sector = "Unknown"
+            prepared = watchlist_scanner._prepare_df(df)
+            if prepared.empty or len(prepared) < config.min_candles:
+                return
+            context = quality_engine.build_context(prepared, ticker=ticker, sector=sector)
+            if context is None:
+                return
 
-            watch_result = watchlist_scanner.evaluate(df, ticker=ticker, sector=sector)
+            watch_result = watchlist_scanner.evaluate(df, ticker=ticker, sector=sector, prepared=prepared, context=context)
             if watch_result.get("passed"):
                 with rows_lock:
                     watchlist_rows.append(watch_result)
@@ -173,7 +179,7 @@ def run_dual_mode_scan(
                         "trigger_metrics": watch_result.get("trigger_metrics", {}),
                     })
 
-            entry_result = entry_scanner.evaluate(df, ticker=ticker, sector=sector)
+            entry_result = entry_scanner.evaluate(df, ticker=ticker, sector=sector, prepared=prepared, context=context)
             with rows_lock:
                 entry_candidate_rows.append(entry_result)
 
@@ -187,7 +193,8 @@ def run_dual_mode_scan(
 
     logger.info("Processing %d tickers...", total_tickers)
     # Use a single ThreadPoolExecutor to process all tickers in parallel.
-    with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as executor:
+    max_workers = max(1, int(getattr(config, "scan_max_workers", 8) or 8))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         executor.map(_process_ticker, history_map.keys())
 
     watch_results = pd.DataFrame(watchlist_rows).sort_values(by=["score"], ascending=False) if watchlist_rows else pd.DataFrame()
