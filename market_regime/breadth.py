@@ -15,8 +15,6 @@ def _normalize_history(df: pd.DataFrame) -> pd.DataFrame:
     if df is None or df.empty:
         return df
     cleaned = df.copy()
-    if isinstance(cleaned.columns, pd.MultiIndex):
-        cleaned.columns = cleaned.columns.get_level_values(0)
     return cleaned
 
 

@@ -1,6 +1,7 @@
 import sqlite3
 import pandas as pd
 import os
+import json
 from datetime import datetime
 from pathlib import Path
 
@@ -49,6 +50,59 @@ def init_db():
         conn.execute('''CREATE TABLE IF NOT EXISTS risk_positions (
             username TEXT, ticker TEXT, entry REAL, stop REAL, shares INTEGER, 
             risk_amount REAL, total_value REAL, date_added TEXT, PRIMARY KEY(username, ticker)
+        )''')
+
+        # Append-only setup analysis history
+        conn.execute('''CREATE TABLE IF NOT EXISTS setup_analyses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            analysis_date TEXT,
+            ticker TEXT,
+            scan_mode TEXT,
+            setup_score REAL,
+            base_score REAL,
+            compression_score REAL,
+            volume_score REAL,
+            resistance_score REAL,
+            structure_score REAL,
+            risk_score REAL,
+            category TEXT,
+            reasons TEXT,
+            weaknesses TEXT
+        )''')
+
+        conn.execute('''CREATE TABLE IF NOT EXISTS transition_analyses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            analysis_date TEXT,
+            ticker TEXT,
+            scan_mode TEXT,
+            transition_score REAL,
+            setup_velocity_score REAL,
+            rs_acceleration_score REAL,
+            volume_transition_score REAL,
+            compression_evolution_score REAL,
+            resistance_pressure_score REAL,
+            price_acceptance_score REAL,
+            opportunity_velocity_score REAL,
+            category TEXT,
+            qualifies INTEGER,
+            reasons TEXT,
+            weaknesses TEXT,
+            metrics TEXT
+        )''')
+
+        conn.execute('''CREATE TABLE IF NOT EXISTS trigger_analyses (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            analysis_date TEXT,
+            ticker TEXT,
+            scan_mode TEXT,
+            trigger_decision TEXT,
+            trigger_confidence TEXT,
+            trigger_score REAL,
+            qualifies INTEGER,
+            reasons TEXT,
+            weaknesses TEXT,
+            module_results TEXT,
+            metrics TEXT
         )''')
 
 def execute_query(query, params=(), is_select=False):
@@ -127,6 +181,90 @@ def add_risk_position(username, data):
     execute_query('''INSERT OR REPLACE INTO risk_positions (username, ticker, entry, stop, shares, risk_amount, total_value, date_added)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
                   (username, data['ticker'], data['entry'], data['stop'], data['shares'], data['risk_amount'], data['total_value'], data['date_added']))
+
+def append_setup_analysis_rows(rows):
+    if not rows:
+        return
+    init_db()
+    for row in rows:
+        execute_query(
+            '''INSERT INTO setup_analyses (
+                analysis_date, ticker, scan_mode, setup_score, base_score, compression_score,
+                volume_score, resistance_score, structure_score, risk_score, category, reasons, weaknesses
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+            (
+                row.get("analysis_date"),
+                row.get("ticker"),
+                row.get("scan_mode"),
+                float(row.get("setup_score", 0) or 0),
+                float(row.get("base_score", 0) or 0),
+                float(row.get("compression_score", 0) or 0),
+                float(row.get("volume_score", 0) or 0),
+                float(row.get("resistance_score", 0) or 0),
+                float(row.get("structure_score", 0) or 0),
+                float(row.get("risk_score", 0) or 0),
+                row.get("category"),
+                json.dumps(row.get("reasons", [])),
+                json.dumps(row.get("weaknesses", [])),
+            ),
+        )
+
+def append_transition_analysis_rows(rows):
+    if not rows:
+        return
+    init_db()
+    for row in rows:
+        execute_query(
+            '''INSERT INTO transition_analyses (
+                analysis_date, ticker, scan_mode, transition_score, setup_velocity_score,
+                rs_acceleration_score, volume_transition_score, compression_evolution_score,
+                resistance_pressure_score, price_acceptance_score, opportunity_velocity_score,
+                category, qualifies, reasons, weaknesses, metrics
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+            (
+                row.get("analysis_date"),
+                row.get("ticker"),
+                row.get("scan_mode"),
+                float(row.get("transition_score", 0) or 0),
+                float(row.get("transition_setup_velocity_score", 0) or 0),
+                float(row.get("transition_rs_acceleration_score", 0) or 0),
+                float(row.get("transition_volume_transition_score", 0) or 0),
+                float(row.get("transition_compression_evolution_score", 0) or 0),
+                float(row.get("transition_resistance_pressure_score", 0) or 0),
+                float(row.get("transition_price_acceptance_score", 0) or 0),
+                float(row.get("transition_opportunity_velocity_score", 0) or 0),
+                row.get("transition_category"),
+                1 if row.get("transition_qualifies") else 0,
+                json.dumps(row.get("transition_reasons", [])),
+                json.dumps(row.get("transition_weaknesses", [])),
+                json.dumps(row.get("transition_metrics", {})),
+            ),
+        )
+
+def append_trigger_analysis_rows(rows):
+    if not rows:
+        return
+    init_db()
+    for row in rows:
+        execute_query(
+            '''INSERT INTO trigger_analyses (
+                analysis_date, ticker, scan_mode, trigger_decision, trigger_confidence,
+                trigger_score, qualifies, reasons, weaknesses, module_results, metrics
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+            (
+                row.get("analysis_date"),
+                row.get("ticker"),
+                row.get("scan_mode"),
+                row.get("trigger_decision"),
+                row.get("trigger_confidence"),
+                float(row.get("trigger_score", 0) or 0),
+                1 if row.get("trigger_qualifies") else 0,
+                json.dumps(row.get("trigger_reasons", [])),
+                json.dumps(row.get("trigger_weaknesses", [])),
+                json.dumps(row.get("trigger_module_results", {})),
+                json.dumps(row.get("trigger_metrics", {})),
+            ),
+        )
 
 def remove_risk_position(username, ticker):
     execute_query("DELETE FROM risk_positions WHERE username = ? AND ticker = ?", (username, ticker))

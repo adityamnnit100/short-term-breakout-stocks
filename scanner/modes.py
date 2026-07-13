@@ -8,6 +8,11 @@ from typing import Dict, List, Optional
 import pandas as pd
 from .config import ScannerConfig
 from .indicators import atr, ema
+from .formatting import build_reason_label, build_reason_text, confidence, recommendation, setup_id, trade_quality
+from quality_filter import QualityContext, QualityFilterEngine, QualityResult
+from setup_engine import SetupEngine
+from transition_engine import TransitionEngine
+from trigger_engine import TriggerEngine
 
 
 @dataclass
@@ -21,8 +26,21 @@ class FilterResult:
 class BaseScanner:
     """Shared base class for all scanner modes."""
 
-    def __init__(self, config: Optional[ScannerConfig] = None):
+    def __init__(
+        self,
+        config: Optional[ScannerConfig] = None,
+        quality_engine: Optional[QualityFilterEngine] = None,
+        setup_engine: Optional[SetupEngine] = None,
+        transition_engine: Optional[TransitionEngine] = None,
+        trigger_engine: Optional[TriggerEngine] = None,
+        scan_mode: str = "Watchlist",
+    ):
         self.config = config or ScannerConfig()
+        self.quality_engine = quality_engine or QualityFilterEngine(self.config)
+        self.setup_engine = setup_engine or SetupEngine(self.config)
+        self.transition_engine = transition_engine or TransitionEngine(self.config)
+        self.trigger_engine = trigger_engine or TriggerEngine(self.config)
+        self.scan_mode = scan_mode
 
     def evaluate(self, df: pd.DataFrame, ticker: str, sector: str = "Unknown") -> Dict[str, object]:
         raise NotImplementedError("Subclasses must implement the 'evaluate' method.")
@@ -42,6 +60,23 @@ class BaseScanner:
     def _atr(self, df: pd.DataFrame) -> pd.Series:
         return atr(df, self.config.atr_window)
 
+    def _build_quality_context(self, df: pd.DataFrame, ticker: str, sector: str = "Unknown") -> Optional[QualityContext]:
+        return self.quality_engine.build_context(df, ticker=ticker, sector=sector)
+
+    def _check_quality(self, context: QualityContext) -> QualityResult:
+        return self.quality_engine.evaluate(context)
+
+    def _check_setup(self, context: QualityContext):
+        return self.setup_engine.evaluate(context)
+
+    def _check_transition(self, context: QualityContext, setup_result):
+        transition_context = self.transition_engine.build_context(context, setup_result, scan_mode=self.scan_mode)
+        return self.transition_engine.evaluate(transition_context)
+
+    def _check_trigger(self, context: QualityContext, setup_result, transition_result):
+        trigger_context = self.trigger_engine.build_context(context, setup_result, transition_result, scan_mode=self.scan_mode)
+        return self.trigger_engine.evaluate(trigger_context)
+
     def _bb_width(self, df: pd.DataFrame) -> pd.Series:
         close = pd.to_numeric(df["Close"], errors="coerce")
         rolling_mean = close.rolling(20).mean()
@@ -49,59 +84,22 @@ class BaseScanner:
         return (rolling_std * 2.0) / rolling_mean.replace(0, pd.NA) * 100.0
 
     def _reason_label(self, reasons: List[str]) -> str:
-        return ", ".join(reasons) if reasons else "No clear signal"
+        return build_reason_label(reasons)
 
     def _build_reason_text(self, reasons: List[str], score: float) -> str:
-        lines = [f"Score: {score:.1f}"]
-        if reasons:
-            lines.append("Reasons:")
-            lines.extend(f"✔ {reason}" for reason in reasons)
-        return "\n".join(lines)
+        return build_reason_text(reasons, score)
 
     def _trade_quality(self, score: float) -> str:
-        if score >= 95:
-            return "A+"
-        if score >= 90:
-            return "A"
-        if score >= 80:
-            return "B"
-        if score >= 70:
-            return "C"
-        return "Reject"
+        return trade_quality(score)
 
     def _setup_id(self, score: float, reasons: List[str]) -> str:
-        setup_ids = []
-        if any("Price above 200 EMA" in reason or "EMA alignment" in reason for reason in reasons):
-            setup_ids.append("S1 Early Accumulation")
-        if any("Tight base range" in reason or "Consolidation building" in reason for reason in reasons):
-            setup_ids.append("S2 Tight Base")
-        if any("ATR contracting" in reason or "Bollinger width contracting" in reason for reason in reasons):
-            setup_ids.append("S3 VCP")
-        if any("Breakout confirmed" in reason for reason in reasons):
-            setup_ids.append("S5 Breakout")
-        if any("Breakout volume strong" in reason for reason in reasons):
-            setup_ids.append("S6 Breakout Retest")
-        if not setup_ids:
-            return "S9 Trend Continuation"
-        return " + ".join(setup_ids[:2])
+        return setup_id(score, reasons)
 
     def _recommendation(self, score: float, reasons: List[str]) -> str:
-        if score >= 90:
-            return "Buy"
-        if score >= 80:
-            return "Watch Closely"
-        if score >= 75:
-            return "Watch"
-        return "Reject"
+        return recommendation(score, reasons)
 
     def _confidence(self, score: float) -> str:
-        if score >= 90:
-            return "Very High"
-        if score >= 80:
-            return "High"
-        if score >= 75:
-            return "Medium"
-        return "Low"
+        return confidence(score)
 
 
 class WatchlistScanner(BaseScanner):
@@ -112,21 +110,84 @@ class WatchlistScanner(BaseScanner):
         if prepared.empty or len(prepared) < self.config.min_candles:
             return {"ticker": ticker, "passed": False, "score": 0.0, "reasons": [], "reason_label": "Insufficient data"}
 
-        close = prepared["Close"]
-        ema20 = self._ema(close, self.config.ema_fast)
-        ema200 = self._ema(close, self.config.ema_slow)
-        atr_series = self._atr(prepared)
-        bbw = self._bb_width(prepared)
-        volume = prepared["Volume"]
+        context = self._build_quality_context(prepared, ticker, sector)
+        if context is None:
+            return {"ticker": ticker, "passed": False, "score": 0.0, "reasons": [], "reason_label": "Insufficient data"}
 
-        latest_close = float(close.iloc[-1])
-        latest_ema20 = float(ema20.iloc[-1])
-        latest_ema200 = float(ema200.iloc[-1])
-        recent_high = float(close.tail(20).max())
-        base_high = float(close.tail(40).max())
-        days_in_consolidation = int((prepared["Close"].tail(40).diff().abs() < (prepared["Close"].tail(40).std() * 0.5)).sum())
-        recent_low = float(close.tail(20).min())
-        higher_lows = bool((close.iloc[-3:] - close.iloc[-3:].shift(1)).dropna().gt(0).sum() >= 2)
+        quality = self._check_quality(context)
+        if not quality.passed:
+            return {
+                "ticker": ticker,
+                "passed": False,
+                "score": 0.0,
+                "reasons": quality.failed_checks,
+                "reason_label": quality.rejection_reason or "Quality filter failed",
+            }
+
+        setup_result = self._check_setup(context)
+        setup_prefix = {
+            "setup_score": setup_result.setup_score,
+            "setup_category": setup_result.category,
+            "setup_reasons": setup_result.reasons,
+            "setup_weaknesses": setup_result.weaknesses,
+            "setup_base_score": setup_result.base_score,
+            "setup_compression_score": setup_result.compression_score,
+            "setup_volume_score": setup_result.volume_score,
+            "setup_resistance_score": setup_result.resistance_score,
+            "setup_structure_score": setup_result.structure_score,
+            "setup_risk_score": setup_result.risk_score,
+            "setup_qualifies": setup_result.qualifies,
+        }
+        transition_result = self._check_transition(context, setup_result)
+        transition_prefix = {
+            "transition_score": transition_result.transition_score,
+            "transition_category": transition_result.category,
+            "transition_setup_velocity_score": transition_result.setup_velocity_score,
+            "transition_rs_acceleration_score": transition_result.rs_acceleration_score,
+            "transition_volume_transition_score": transition_result.volume_transition_score,
+            "transition_compression_evolution_score": transition_result.compression_evolution_score,
+            "transition_resistance_pressure_score": transition_result.resistance_pressure_score,
+            "transition_price_acceptance_score": transition_result.price_acceptance_score,
+            "transition_opportunity_velocity_score": transition_result.opportunity_velocity_score,
+            "transition_reasons": transition_result.reasons,
+            "transition_weaknesses": transition_result.weaknesses,
+            "transition_qualifies": transition_result.qualifies,
+            "transition_metrics": transition_result.metrics,
+        }
+        trigger_result = self._check_trigger(context, setup_result, transition_result)
+        trigger_prefix = {
+            "trigger_decision": trigger_result.decision,
+            "trigger_confidence": trigger_result.confidence,
+            "trigger_score": trigger_result.trigger_score,
+            "trigger_priority_score": trigger_result.priority_score,
+            "trigger_rank_percentile": trigger_result.rank_percentile,
+            "trigger_qualifies": trigger_result.qualifies,
+            "trigger_hard_gate_failures": trigger_result.hard_gate_failures,
+            "trigger_reasons": trigger_result.reasons,
+            "trigger_weaknesses": trigger_result.weaknesses,
+            "trigger_passed_modules": trigger_result.passed_modules,
+            "trigger_failed_modules": trigger_result.failed_modules,
+            "trigger_module_results": trigger_result.module_results,
+            "trigger_metrics": trigger_result.metrics,
+            "quality_market_regime": context.market_regime,
+            "quality_market_regime_score": context.market_regime_score,
+        }
+
+        close = context.close
+        ema20 = context.ema20
+        ema200 = context.ema200
+        atr_series = context.atr
+        bbw = self._bb_width(prepared)
+        volume = context.volume
+
+        latest_close = context.latest_close
+        latest_ema20 = context.latest_ema20
+        latest_ema200 = context.latest_ema200
+        recent_high = context.recent_high_20d
+        base_high = context.recent_high_40d
+        days_in_consolidation = context.days_in_consolidation
+        recent_low = context.recent_low_20d
+        higher_lows = context.higher_lows
         trend_score = 0.0
         reasons: List[str] = []
 
@@ -228,6 +289,9 @@ class WatchlistScanner(BaseScanner):
             "setup_id": self._setup_id(round(score, 2), reasons),
             "recommendation": self._recommendation(round(score, 2), reasons),
             "confidence": self._confidence(round(score, 2)),
+            **setup_prefix,
+            **transition_prefix,
+            **trigger_prefix,
         }
 
 
@@ -239,21 +303,84 @@ class EntryScanner(BaseScanner):
         if prepared.empty or len(prepared) < self.config.min_candles:
             return {"ticker": ticker, "passed": False, "score": 0.0, "reasons": [], "reason_label": "Insufficient data"}
 
-        close = prepared["Close"]
-        ema20 = self._ema(close, self.config.ema_fast)
-        ema50 = self._ema(close, self.config.ema_medium)
-        ema200 = self._ema(close, self.config.ema_slow)
-        atr_series = self._atr(prepared)
-        volume = prepared["Volume"]
+        context = self._build_quality_context(prepared, ticker, sector)
+        if context is None:
+            return {"ticker": ticker, "passed": False, "score": 0.0, "reasons": [], "reason_label": "Insufficient data"}
 
-        latest_close = float(close.iloc[-1])
-        latest_ema20 = float(ema20.iloc[-1])
-        latest_ema50 = float(ema50.iloc[-1])
-        latest_ema200 = float(ema200.iloc[-1])
-        latest_atr = float(atr_series.iloc[-1]) if not atr_series.empty else 0.0
+        quality = self._check_quality(context)
+        if not quality.passed:
+            return {
+                "ticker": ticker,
+                "passed": False,
+                "score": 0.0,
+                "reasons": quality.failed_checks,
+                "reason_label": quality.rejection_reason or "Quality filter failed",
+            }
+
+        setup_result = self._check_setup(context)
+        setup_prefix = {
+            "setup_score": setup_result.setup_score,
+            "setup_category": setup_result.category,
+            "setup_reasons": setup_result.reasons,
+            "setup_weaknesses": setup_result.weaknesses,
+            "setup_base_score": setup_result.base_score,
+            "setup_compression_score": setup_result.compression_score,
+            "setup_volume_score": setup_result.volume_score,
+            "setup_resistance_score": setup_result.resistance_score,
+            "setup_structure_score": setup_result.structure_score,
+            "setup_risk_score": setup_result.risk_score,
+            "setup_qualifies": setup_result.qualifies,
+        }
+        transition_result = self._check_transition(context, setup_result)
+        transition_prefix = {
+            "transition_score": transition_result.transition_score,
+            "transition_category": transition_result.category,
+            "transition_setup_velocity_score": transition_result.setup_velocity_score,
+            "transition_rs_acceleration_score": transition_result.rs_acceleration_score,
+            "transition_volume_transition_score": transition_result.volume_transition_score,
+            "transition_compression_evolution_score": transition_result.compression_evolution_score,
+            "transition_resistance_pressure_score": transition_result.resistance_pressure_score,
+            "transition_price_acceptance_score": transition_result.price_acceptance_score,
+            "transition_opportunity_velocity_score": transition_result.opportunity_velocity_score,
+            "transition_reasons": transition_result.reasons,
+            "transition_weaknesses": transition_result.weaknesses,
+            "transition_qualifies": transition_result.qualifies,
+            "transition_metrics": transition_result.metrics,
+        }
+        trigger_result = self._check_trigger(context, setup_result, transition_result)
+        trigger_prefix = {
+            "trigger_decision": trigger_result.decision,
+            "trigger_confidence": trigger_result.confidence,
+            "trigger_score": trigger_result.trigger_score,
+            "trigger_priority_score": trigger_result.priority_score,
+            "trigger_rank_percentile": trigger_result.rank_percentile,
+            "trigger_qualifies": trigger_result.qualifies,
+            "trigger_hard_gate_failures": trigger_result.hard_gate_failures,
+            "trigger_reasons": trigger_result.reasons,
+            "trigger_weaknesses": trigger_result.weaknesses,
+            "trigger_passed_modules": trigger_result.passed_modules,
+            "trigger_failed_modules": trigger_result.failed_modules,
+            "trigger_module_results": trigger_result.module_results,
+            "trigger_metrics": trigger_result.metrics,
+            "quality_market_regime": context.market_regime,
+            "quality_market_regime_score": context.market_regime_score,
+        }
+
+        close = context.close
+        ema20 = context.ema20
+        ema50 = context.ema50
+        ema200 = context.ema200
+        atr_series = context.atr
+        volume = context.volume
+
+        latest_close = context.latest_close
+        latest_ema20 = context.latest_ema20
+        latest_ema50 = context.latest_ema50
+        latest_ema200 = context.latest_ema200
+        latest_atr = context.latest_atr
         avg_atr = float(atr_series.tail(20).mean()) if not atr_series.empty else 0.0
-        avg_volume = float(volume.rolling(self.config.volume_sma_window).mean().iloc[-1])
-        current_volume = float(volume.iloc[-1])
+        avg_volume = context.avg_volume
+        current_volume = context.current_volume
         breakout_volume_ratio = current_volume / avg_volume if avg_volume > 0 else 0.0
         rsi_rank = 90.0
 
@@ -306,7 +433,7 @@ class EntryScanner(BaseScanner):
             + sector_score * self.config.entry_sector_weight
             + risk_score * self.config.entry_risk_weight
         )
-        passed = score >= self.config.entry_min_score
+        passed = trigger_result.qualifies
         return {
             "ticker": ticker,
             "passed": passed,
@@ -327,4 +454,7 @@ class EntryScanner(BaseScanner):
             "setup_id": self._setup_id(round(score, 2), reasons),
             "recommendation": self._recommendation(round(score, 2), reasons),
             "confidence": self._confidence(round(score, 2)),
+            **setup_prefix,
+            **transition_prefix,
+            **trigger_prefix,
         }

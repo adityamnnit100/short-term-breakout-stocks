@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 import scanner_service
 from breakout_readiness import rank_breakout_readiness
+from scanner.indicators import safe_pct_change
 
 
 def test_modular_scan_normalizes_daily_interval(monkeypatch):
@@ -56,3 +58,8 @@ def test_breakout_readiness_engine_ranks_candidates():
     assert not ranked.empty
     assert ranked.iloc[0]["ticker"] == "TEST.NS"
     assert ranked.iloc[0]["breakout_readiness_score"] >= 45.0
+
+
+def test_safe_pct_change_reused_by_compression_logic():
+    assert safe_pct_change(5.0, 0.0) == 0.0
+    assert safe_pct_change(11.0, 10.0) == pytest.approx(10.0)

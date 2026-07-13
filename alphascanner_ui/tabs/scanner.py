@@ -791,6 +791,10 @@ def _render_modular_results_blotter(filtered_results: pd.DataFrame):
             "Days in Consolidation",
             "Trade Quality",
             "Setup ID",
+            "Transition Score",
+            "Transition Category",
+            "Trigger Decision",
+            "Trigger Confidence",
             "Recommendation",
         ]
     else:
@@ -808,6 +812,10 @@ def _render_modular_results_blotter(filtered_results: pd.DataFrame):
             "Breakout Volume Ratio",
             "Trade Quality",
             "Setup ID",
+            "Transition Score",
+            "Transition Category",
+            "Trigger Decision",
+            "Trigger Confidence",
             "Recommendation",
         ]
 
@@ -942,6 +950,12 @@ def _render_modular_detail_view(results, selection, load_ticker_history, chart_o
     recommendation = row.get("Recommendation", "")
     quality = row.get("Trade Quality", "")
     setup_id = row.get("Setup ID", "")
+    setup_score = row.get("Setup Score", "")
+    setup_category = row.get("Setup Category", "")
+    transition_score = row.get("Transition Score", "")
+    transition_category = row.get("Transition Category", "")
+    trigger_decision = row.get("Trigger Decision", "")
+    trigger_confidence = row.get("Trigger Confidence", "")
     reason_text = row.get("Reason Text", "")
     sector = row.get("Sector", "Unknown")
     trend = row.get("Trend", "")
@@ -949,7 +963,7 @@ def _render_modular_detail_view(results, selection, load_ticker_history, chart_o
     st.markdown(
         f'<div class="glass-card" style="margin-bottom: 12px; padding: 16px;">'
         f'<div class="panel-title" style="color: #00e5ff;">{ticker} — {score_label}</div>'
-        f'<div style="color: #94a3b8; margin-bottom: 10px;">Mode: {"Watchlist" if score_label == "Watchlist Score" else "Entry"} · Recommendation: {recommendation} · Quality: {quality} · Setup: {setup_id}</div>'
+        f'<div style="color: #94a3b8; margin-bottom: 10px;">Mode: {"Watchlist" if score_label == "Watchlist Score" else "Entry"} · Recommendation: {recommendation} · Quality: {quality} · Setup: {setup_id} · Setup Score: {setup_score} · Category: {setup_category} · Transition Score: {transition_score} · Transition Category: {transition_category} · Trigger: {trigger_decision} · Confidence: {trigger_confidence}</div>'
         f'<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">'
         f'<div><div class="metric-label">Score</div><div class="metric-value">{score_value}</div></div>'
         f'<div><div class="metric-label">Sector</div><div class="metric-value">{sector}</div></div>'
@@ -968,6 +982,25 @@ def _render_modular_detail_view(results, selection, load_ticker_history, chart_o
             f'<div><b>Relative Strength:</b> {row.get("Relative Strength", "-")}</div>'
             f'<div><b>ATR Contraction:</b> {row.get("ATR Contraction", "-")}</div>'
             f'<div><b>Days in Consolidation:</b> {row.get("Days in Consolidation", "-")}</div>'
+            f'<hr style="opacity:0.2;"/><div><b>Setup Base:</b> {row.get("Setup Base Score", "-")}</div>'
+            f'<div><b>Setup Compression:</b> {row.get("Setup Compression Score", "-")}</div>'
+            f'<div><b>Setup Volume:</b> {row.get("Setup Volume Score", "-")}</div>'
+            f'<div><b>Setup Resistance:</b> {row.get("Setup Resistance Score", "-")}</div>'
+            f'<div><b>Setup Structure:</b> {row.get("Setup Structure Score", "-")}</div>'
+            f'<div><b>Setup Risk:</b> {row.get("Setup Risk Score", "-")}</div>'
+            f'<hr style="opacity:0.2;"/><div><b>Transition Score:</b> {row.get("Transition Score", "-")}</div>'
+            f'<div><b>Transition Category:</b> {row.get("Transition Category", "-")}</div>'
+            f'<div><b>Transition Setup Velocity:</b> {row.get("Transition Setup Velocity Score", "-")}</div>'
+            f'<div><b>Transition RS Acceleration:</b> {row.get("Transition RS Acceleration Score", "-")}</div>'
+            f'<div><b>Transition Volume:</b> {row.get("Transition Volume Score", "-")}</div>'
+            f'<div><b>Transition Compression:</b> {row.get("Transition Compression Score", "-")}</div>'
+            f'<div><b>Transition Resistance:</b> {row.get("Transition Resistance Score", "-")}</div>'
+            f'<div><b>Transition Price Acceptance:</b> {row.get("Transition Price Acceptance Score", "-")}</div>'
+            f'<div><b>Transition Opportunity Velocity:</b> {row.get("Transition Opportunity Velocity Score", "-")}</div>'
+            f'<hr style="opacity:0.2;"/><div><b>Trigger Decision:</b> {row.get("Trigger Decision", "-")}</div>'
+            f'<div><b>Trigger Confidence:</b> {row.get("Trigger Confidence", "-")}</div>'
+            f'<div><b>Trigger Passed Modules:</b> {row.get("Trigger Passed Modules", "-")}</div>'
+            f'<div><b>Trigger Failed Modules:</b> {row.get("Trigger Failed Modules", "-")}</div>'
             f'</div>',
             unsafe_allow_html=True,
         )
@@ -980,12 +1013,62 @@ def _render_modular_detail_view(results, selection, load_ticker_history, chart_o
             f'<div><b>Risk %:</b> {row.get("Risk %", "-")}</div>'
             f'<div><b>Targets:</b> {row.get("Target 1", "-")} / {row.get("Target 2", "-")}</div>'
             f'<div><b>Breakout Volume Ratio:</b> {row.get("Breakout Volume Ratio", "-")}</div>'
+            f'<hr style="opacity:0.2;"/><div><b>Setup Base:</b> {row.get("Setup Base Score", "-")}</div>'
+            f'<div><b>Setup Compression:</b> {row.get("Setup Compression Score", "-")}</div>'
+            f'<div><b>Setup Volume:</b> {row.get("Setup Volume Score", "-")}</div>'
+            f'<div><b>Setup Resistance:</b> {row.get("Setup Resistance Score", "-")}</div>'
+            f'<div><b>Setup Structure:</b> {row.get("Setup Structure Score", "-")}</div>'
+            f'<div><b>Setup Risk:</b> {row.get("Setup Risk Score", "-")}</div>'
+            f'<hr style="opacity:0.2;"/><div><b>Transition Score:</b> {row.get("Transition Score", "-")}</div>'
+            f'<div><b>Transition Category:</b> {row.get("Transition Category", "-")}</div>'
+            f'<div><b>Transition Setup Velocity:</b> {row.get("Transition Setup Velocity Score", "-")}</div>'
+            f'<div><b>Transition RS Acceleration:</b> {row.get("Transition RS Acceleration Score", "-")}</div>'
+            f'<div><b>Transition Volume:</b> {row.get("Transition Volume Score", "-")}</div>'
+            f'<div><b>Transition Compression:</b> {row.get("Transition Compression Score", "-")}</div>'
+            f'<div><b>Transition Resistance:</b> {row.get("Transition Resistance Score", "-")}</div>'
+            f'<div><b>Transition Price Acceptance:</b> {row.get("Transition Price Acceptance Score", "-")}</div>'
+            f'<div><b>Transition Opportunity Velocity:</b> {row.get("Transition Opportunity Velocity Score", "-")}</div>'
+            f'<hr style="opacity:0.2;"/><div><b>Trigger Decision:</b> {row.get("Trigger Decision", "-")}</div>'
+            f'<div><b>Trigger Confidence:</b> {row.get("Trigger Confidence", "-")}</div>'
+            f'<div><b>Trigger Passed Modules:</b> {row.get("Trigger Passed Modules", "-")}</div>'
+            f'<div><b>Trigger Failed Modules:</b> {row.get("Trigger Failed Modules", "-")}</div>'
             f'</div>',
             unsafe_allow_html=True,
         )
 
     if reason_text:
         st.expander("Why this candidate passed", expanded=False).write(reason_text)
+
+    transition_reasons = row.get("Transition Reasons", [])
+    transition_weaknesses = row.get("Transition Weaknesses", [])
+    if transition_reasons or transition_weaknesses:
+        with st.expander("Transition Notes", expanded=False):
+            if transition_reasons:
+                st.markdown("**Reasons**")
+                for reason in transition_reasons if isinstance(transition_reasons, list) else [transition_reasons]:
+                    st.write(f"✔ {reason}")
+            if transition_weaknesses:
+                st.markdown("**Weaknesses**")
+                for weakness in transition_weaknesses if isinstance(transition_weaknesses, list) else [transition_weaknesses]:
+                    st.write(f"⚠ {weakness}")
+
+    trigger_reasons = row.get("Trigger Reasons", [])
+    trigger_weaknesses = row.get("Trigger Weaknesses", [])
+    trigger_modules = row.get("Trigger Passed Modules", [])
+    if trigger_reasons or trigger_weaknesses or trigger_modules:
+        with st.expander("Trigger Notes", expanded=False):
+            if trigger_reasons:
+                st.markdown("**Reasons**")
+                for reason in trigger_reasons if isinstance(trigger_reasons, list) else [trigger_reasons]:
+                    st.write(f"✔ {reason}")
+            if trigger_weaknesses:
+                st.markdown("**Weaknesses**")
+                for weakness in trigger_weaknesses if isinstance(trigger_weaknesses, list) else [trigger_weaknesses]:
+                    st.write(f"⚠ {weakness}")
+            if trigger_modules:
+                st.markdown("**Passed Modules**")
+                for module in trigger_modules if isinstance(trigger_modules, list) else [trigger_modules]:
+                    st.write(f"• {module}")
 
     return True
 

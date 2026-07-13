@@ -25,3 +25,9 @@ def pct_change(series: pd.Series, periods: int) -> float:
     if len(series) <= periods:
         return float("nan")
     return (series.iloc[-1] / series.iloc[-1 - periods] - 1.0) * 100.0
+
+
+def safe_pct_change(current: float, reference: float) -> float:
+    if reference is None or reference <= 0:
+        return 0.0
+    return ((current / reference) - 1.0) * 100.0
