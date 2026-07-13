@@ -1,6 +1,7 @@
 """Backtest tab UI."""
 
 import datetime
+import inspect
 import threading
 
 import pandas as pd
@@ -20,12 +21,10 @@ def _attach_streamlit_context_to_current_thread() -> None:
             return
 
     try:
-        ctx = get_script_run_ctx(suppress_warning=True)
-    except TypeError:
-        try:
+        if "suppress_warning" in inspect.signature(get_script_run_ctx).parameters:
+            ctx = get_script_run_ctx(suppress_warning=True)
+        else:
             ctx = get_script_run_ctx()
-        except Exception:
-            ctx = None
     except Exception:
         ctx = None
 

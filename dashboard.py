@@ -5,6 +5,7 @@
 # applications (like Streamlit) that use numpy/pandas. These libraries
 # (OpenBLAS, MKL, etc.) can otherwise cause race conditions at the C-level.
 import warnings
+import inspect
 import os
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
 os.environ['MKL_NUM_THREADS'] = '1'
@@ -33,6 +34,27 @@ from alphascanner_ui.sidebar import render_sidebar
 from alphascanner_ui.state import init_session_state
 from alphascanner_ui.tabs import backtest, journal, market, news, portfolio, risk, scanner, settings, watchlist, notes, alerts, performance
 from alphascanner_ui.theme import apply_global_styles, apply_plotly_theme, render_footer
+
+
+def _patch_streamlit_width_compatibility() -> None:
+    """Translate deprecated `use_container_width` calls for newer Streamlit builds."""
+    def _wrap(func, width_value="stretch"):
+        def _inner(*args, **kwargs):
+            sig = inspect.signature(func)
+            if "width" in sig.parameters and "use_container_width" in kwargs:
+                use_container_width = kwargs.pop("use_container_width")
+                kwargs["width"] = "stretch" if use_container_width else "content"
+            return func(*args, **kwargs)
+        return _inner
+
+    st.button = _wrap(st.button)
+    st.form_submit_button = _wrap(st.form_submit_button)
+    st.download_button = _wrap(st.download_button)
+    st.dataframe = _wrap(st.dataframe)
+    st.plotly_chart = _wrap(st.plotly_chart)
+
+
+_patch_streamlit_width_compatibility()
 
 
 st.set_page_config(

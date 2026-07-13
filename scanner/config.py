@@ -20,6 +20,10 @@ class ScannerConfig:
     watchlist_min_score: float = 60.0
     entry_min_score: float = 70.0
     scan_max_workers: int = 8
+    scan_download_chunk_size: int = 25
+    diagnostics_enabled: bool = False
+    diagnostics_persist: bool = True
+    diagnostics_top_rules: int = 3
 
     watchlist_trend_weight: float = 0.20
     watchlist_base_weight: float = 0.35

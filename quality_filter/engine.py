@@ -150,15 +150,22 @@ class QualityFilterEngine:
                 failed_checks=[],
                 passed_checks=["quality_filter_disabled"],
                 details={"quality_filter": "disabled"},
+                gate_results={"quality_filter": {"disabled": True}},
             )
 
         failed_checks: List[str] = []
         passed_checks: List[str] = []
         details = {}
+        gate_results = {}
 
         for gate in self.gates:
             result = gate.evaluate(context)
             details[gate.name] = result.detail
+            gate_results[gate.name] = {
+                "passed": result.passed,
+                "reason": result.reason,
+                "detail": dict(result.detail),
+            }
             if result.passed:
                 label = result.reason or gate.name
                 passed_checks.append(label)
@@ -179,6 +186,7 @@ class QualityFilterEngine:
                 failed_checks=failed_checks,
                 passed_checks=passed_checks,
                 details=details,
+                gate_results=gate_results,
             )
 
         return QualityResult(
@@ -187,4 +195,5 @@ class QualityFilterEngine:
             failed_checks=[],
             passed_checks=passed_checks,
             details=details,
+            gate_results=gate_results,
         )

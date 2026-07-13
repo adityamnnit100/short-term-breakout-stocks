@@ -219,6 +219,11 @@ def _render_status_banner(
         unsafe_allow_html=True,
     )
 
+    diagnostics_text = (stats or {}).get("diagnostics_summary_text")
+    if diagnostics_text:
+        with st.expander("Scanner Diagnostics", expanded=False):
+            st.text(diagnostics_text)
+
 
 def _render_metrics(results: pd.DataFrame, stats: Optional[dict], scan_time: Optional[str]) -> None:
     total_hits = len(results)

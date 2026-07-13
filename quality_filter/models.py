@@ -17,6 +17,7 @@ class QualityResult:
     failed_checks: List[str] = field(default_factory=list)
     passed_checks: List[str] = field(default_factory=list)
     details: Dict[str, Any] = field(default_factory=dict)
+    gate_results: Dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass

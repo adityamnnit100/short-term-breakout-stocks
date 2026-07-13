@@ -118,4 +118,14 @@ class SetupEngine:
             reasons=reasons,
             weaknesses=weaknesses,
             metrics={result.name: result.metrics for result in gate_results},
+            gate_results={
+                result.name: {
+                    "passed": result.passed,
+                    "score": result.score,
+                    "reasons": list(result.reasons),
+                    "weaknesses": list(result.weaknesses),
+                    "metrics": dict(result.metrics),
+                }
+                for result in gate_results
+            },
         )

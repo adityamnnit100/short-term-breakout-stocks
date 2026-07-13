@@ -84,6 +84,26 @@ class BaseScanner:
         trigger_context = self.trigger_engine.build_context(context, setup_result, transition_result, scan_mode=self.scan_mode)
         return self.trigger_engine.evaluate(trigger_context)
 
+    @staticmethod
+    def _quality_payload(quality: QualityResult) -> Dict[str, object]:
+        return {
+            "quality_passed": quality.passed,
+            "quality_failed_checks": list(quality.failed_checks),
+            "quality_passed_checks": list(quality.passed_checks),
+            "quality_details": dict(quality.details),
+            "quality_gate_results": dict(getattr(quality, "gate_results", {}) or {}),
+        }
+
+    @staticmethod
+    def _gate_payload(result, score_attr: str = "score") -> Dict[str, object]:
+        return {
+            "passed": bool(getattr(result, "passed", False)),
+            "score": float(getattr(result, score_attr, 0.0) or 0.0),
+            "reasons": list(getattr(result, "reasons", [])),
+            "weaknesses": list(getattr(result, "weaknesses", [])),
+            "metrics": dict(getattr(result, "metrics", {}) or {}),
+        }
+
     def _bb_width(self, df: pd.DataFrame) -> pd.Series:
         close = pd.to_numeric(df["Close"], errors="coerce")
         rolling_mean = close.rolling(20).mean()
@@ -136,6 +156,7 @@ class WatchlistScanner(BaseScanner):
                 "score": 0.0,
                 "reasons": quality.failed_checks,
                 "reason_label": quality.rejection_reason or "Quality filter failed",
+                **self._quality_payload(quality),
             }
 
         setup_result = self._check_setup(context)
@@ -151,6 +172,7 @@ class WatchlistScanner(BaseScanner):
             "setup_structure_score": setup_result.structure_score,
             "setup_risk_score": setup_result.risk_score,
             "setup_qualifies": setup_result.qualifies,
+            "setup_gate_results": dict(getattr(setup_result, "gate_results", {}) or {}),
         }
         transition_result = self._check_transition(context, setup_result)
         transition_prefix = {
@@ -167,6 +189,7 @@ class WatchlistScanner(BaseScanner):
             "transition_weaknesses": transition_result.weaknesses,
             "transition_qualifies": transition_result.qualifies,
             "transition_metrics": transition_result.metrics,
+            "transition_gate_results": dict(getattr(transition_result, "gate_results", {}) or {}),
         }
         trigger_result = self._check_trigger(context, setup_result, transition_result)
         trigger_prefix = {
@@ -185,6 +208,7 @@ class WatchlistScanner(BaseScanner):
             "trigger_metrics": trigger_result.metrics,
             "quality_market_regime": context.market_regime,
             "quality_market_regime_score": context.market_regime_score,
+            **self._quality_payload(quality),
         }
 
         close = context.close
@@ -336,6 +360,7 @@ class EntryScanner(BaseScanner):
                 "score": 0.0,
                 "reasons": quality.failed_checks,
                 "reason_label": quality.rejection_reason or "Quality filter failed",
+                **self._quality_payload(quality),
             }
 
         setup_result = self._check_setup(context)
@@ -351,6 +376,7 @@ class EntryScanner(BaseScanner):
             "setup_structure_score": setup_result.structure_score,
             "setup_risk_score": setup_result.risk_score,
             "setup_qualifies": setup_result.qualifies,
+            "setup_gate_results": dict(getattr(setup_result, "gate_results", {}) or {}),
         }
         transition_result = self._check_transition(context, setup_result)
         transition_prefix = {
@@ -367,6 +393,7 @@ class EntryScanner(BaseScanner):
             "transition_weaknesses": transition_result.weaknesses,
             "transition_qualifies": transition_result.qualifies,
             "transition_metrics": transition_result.metrics,
+            "transition_gate_results": dict(getattr(transition_result, "gate_results", {}) or {}),
         }
         trigger_result = self._check_trigger(context, setup_result, transition_result)
         trigger_prefix = {
@@ -385,6 +412,7 @@ class EntryScanner(BaseScanner):
             "trigger_metrics": trigger_result.metrics,
             "quality_market_regime": context.market_regime,
             "quality_market_regime_score": context.market_regime_score,
+            **self._quality_payload(quality),
         }
 
         close = context.close

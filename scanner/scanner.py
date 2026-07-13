@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import logging
 import os
+import inspect
 from typing import Dict, List, Optional
 import concurrent.futures
+import threading
 from threading import Lock
 from datetime import datetime
 
@@ -16,6 +18,7 @@ from .data import download_history_batch, get_universe
 from .modes import EntryScanner, WatchlistScanner
 from .exports import ENTRY_EXPORT_RENAMES, WATCHLIST_EXPORT_RENAMES, export_scan_results
 from .report import format_results
+from .diagnostics import DiagnosticsCollector
 from quality_filter import QualityFilterEngine
 from setup_engine import SetupEngine
 from trigger_engine import TriggerEngine
@@ -74,12 +77,10 @@ def _attach_streamlit_context_to_current_thread() -> None:
             return
 
     try:
-        ctx = get_script_run_ctx(suppress_warning=True)
-    except TypeError:
-        try:
+        if "suppress_warning" in inspect.signature(get_script_run_ctx).parameters:
+            ctx = get_script_run_ctx(suppress_warning=True)
+        else:
             ctx = get_script_run_ctx()
-        except Exception:
-            ctx = None
     except Exception:
         ctx = None
 
@@ -125,6 +126,10 @@ def run_dual_mode_scan(
     transition_rows: List[Dict[str, object]] = []
     trigger_rows: List[Dict[str, object]] = []
     rows_lock = Lock()
+    diagnostics = DiagnosticsCollector(
+        enabled=bool(getattr(config, "diagnostics_enabled", False)),
+        top_rules=int(getattr(config, "diagnostics_top_rules", 3) or 3),
+    )
     quality_engine = QualityFilterEngine(config)
     setup_engine = SetupEngine(config)
     from transition_engine import TransitionEngine
@@ -139,6 +144,7 @@ def run_dual_mode_scan(
     # Download all history in one go. The underlying cache and batching will handle efficiency.
     history_map = download_history_batch(universe, config, use_cache=use_cache)
     logger.info("Downloaded history for %d tickers.", len(history_map))
+    diagnostics.record_universe(len(history_map))
     _update_progress(progress_callback, 0.75)
 
     processed_count = 0
@@ -147,8 +153,7 @@ def run_dual_mode_scan(
     def _process_ticker(ticker: str) -> None:
         nonlocal processed_count
         try:
-            if _in_streamlit_runtime():
-                _attach_streamlit_context_to_current_thread()
+            _attach_streamlit_context_to_current_thread()
 
             df = history_map.get(ticker)
             if df is None or df.empty or len(df) < config.min_candles:
@@ -217,6 +222,7 @@ def run_dual_mode_scan(
             entry_result = entry_scanner.evaluate(df, ticker=ticker, sector=sector, prepared=prepared, context=context)
             with rows_lock:
                 entry_candidate_rows.append(entry_result)
+            diagnostics.record_result(entry_result)
 
         except Exception as exc:
             logger.exception("Scanner failed for %s: %s", ticker, exc)
@@ -302,6 +308,24 @@ def run_dual_mode_scan(
 
     export_scan_results(watch_results, entry_results, config, output_path=output_path)
 
+    diagnostics_summary = diagnostics.build_summary()
+    if diagnostics_summary:
+        logger.info("Scanner diagnostics summary:\n%s", diagnostics.format_summary())
+        if bool(getattr(config, "diagnostics_persist", True)):
+            try:
+                from alphascanner_ui.database import append_diagnostics_rejections, append_diagnostics_run
+
+                append_diagnostics_run(
+                    {
+                        "analysis_date": datetime.now().strftime("%Y-%m-%d"),
+                        "universe": config.universe,
+                        "summary": diagnostics_summary,
+                    }
+                )
+                append_diagnostics_rejections(diagnostics_summary.get("rejections", []))
+            except Exception as exc:
+                logger.warning("Failed to persist diagnostics summary: %s", exc)
+
     if setup_rows:
         try:
             from alphascanner_ui.database import append_setup_analysis_rows
@@ -328,6 +352,8 @@ def run_dual_mode_scan(
 
     _update_progress(progress_callback, 1.0)
     logger.info("Watchlist candidates: %d | Entry candidates: %d", len(watch_results), len(entry_results))
+    if diagnostics_summary:
+        return {"watchlist": watch_results, "entry": entry_results, "diagnostics": diagnostics_summary}
     return {"watchlist": watch_results, "entry": entry_results}
 
 def run_scanner(config: Optional[ScannerConfig] = None, output_path: Optional[str] = None) -> pd.DataFrame:

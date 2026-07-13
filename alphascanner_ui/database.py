@@ -105,6 +105,22 @@ def init_db():
             metrics TEXT
         )''')
 
+        conn.execute('''CREATE TABLE IF NOT EXISTS diagnostics_runs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            analysis_date TEXT,
+            universe TEXT,
+            summary TEXT
+        )''')
+
+        conn.execute('''CREATE TABLE IF NOT EXISTS diagnostics_rejections (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            analysis_date TEXT,
+            ticker TEXT,
+            stage TEXT,
+            failed_rules TEXT,
+            metrics TEXT
+        )''')
+
 def execute_query(query, params=(), is_select=False):
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -278,6 +294,48 @@ def append_trigger_analysis_rows(rows):
                 trigger_score, qualifies, reasons, weaknesses, module_results, metrics
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
             payload,
+        )
+        conn.commit()
+
+
+def append_diagnostics_run(row):
+    if not row:
+        return
+    init_db()
+    with get_connection() as conn:
+        conn.execute(
+            '''INSERT INTO diagnostics_runs (
+                analysis_date, universe, summary
+            ) VALUES (?, ?, ?)''',
+            (
+                row.get("analysis_date"),
+                row.get("universe"),
+                json.dumps(row.get("summary", {})),
+            ),
+        )
+        conn.commit()
+
+
+def append_diagnostics_rejections(rows):
+    if not rows:
+        return
+    init_db()
+    analysis_date = datetime.now().strftime("%Y-%m-%d")
+    with get_connection() as conn:
+        conn.executemany(
+            '''INSERT INTO diagnostics_rejections (
+                analysis_date, ticker, stage, failed_rules, metrics
+            ) VALUES (?, ?, ?, ?, ?)''',
+            [
+                (
+                    analysis_date,
+                    row.get("ticker"),
+                    row.get("stage"),
+                    json.dumps(row.get("failed_rules", [])),
+                    json.dumps(row.get("metrics", {})),
+                )
+                for row in rows
+            ],
         )
         conn.commit()
 

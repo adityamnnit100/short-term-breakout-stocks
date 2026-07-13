@@ -79,15 +79,22 @@ def perform_fresh_scan(
 
         dual_results = run_dual_mode_scan(config=config, progress_callback=progress_callback, use_cache=use_cache)
         results = dual_results.get("watchlist" if scan_mode == "Watchlist Scanner" else "entry", pd.DataFrame())
+        diagnostics = dual_results.get("diagnostics")
 
         if progress_callback:
             progress_callback(1.0)
 
         if results is None or results.empty:
             stats = _build_basic_stats(pd.DataFrame(), config.universe, timeframe, scan_mode)
+            if diagnostics:
+                stats["diagnostics"] = diagnostics
+                stats["diagnostics_summary_text"] = _format_diagnostics_summary(diagnostics)
             return pd.DataFrame(), stats, datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         stats = _build_basic_stats(results, config.universe, timeframe, scan_mode)
+        if diagnostics:
+            stats["diagnostics"] = diagnostics
+            stats["diagnostics_summary_text"] = _format_diagnostics_summary(diagnostics)
         scan_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return results, stats, scan_time
 
@@ -157,6 +164,27 @@ def _build_basic_stats(results: pd.DataFrame, universe: str, timeframe: str, sca
         "trending_sectors": [],
         "sector_sentiment": {},
     }
+
+
+def _format_diagnostics_summary(diagnostics: dict) -> str:
+    if not diagnostics:
+        return ""
+
+    stages = diagnostics.get("stages", {})
+    decisions = diagnostics.get("decisions", {})
+    top_rules = diagnostics.get("most_restrictive_rules", [])
+    lines = [
+        f"Universe {diagnostics.get('universe', 0)}",
+        f"Quality Filter: Passed {stages.get('quality', {}).get('passed', 0)} Rejected {stages.get('quality', {}).get('rejected', 0)}",
+        f"Setup Engine: Passed {stages.get('setup', {}).get('passed', 0)} Rejected {stages.get('setup', {}).get('rejected', 0)}",
+        f"Transition Engine: Passed {stages.get('transition', {}).get('passed', 0)} Rejected {stages.get('transition', {}).get('rejected', 0)}",
+        f"BUY NOW {decisions.get('BUY NOW', 0)} | EARLY BUY {decisions.get('EARLY BUY', 0)} | WATCH {decisions.get('WATCH', 0)} | WAIT {decisions.get('WAIT', 0)}",
+    ]
+    if top_rules:
+        lines.append("Most Restrictive Rules:")
+        for idx, item in enumerate(top_rules, start=1):
+            lines.append(f"{idx}. {item.get('rule')} rejected {item.get('rejected', 0)} stocks")
+    return "\n".join(lines)
 
 
 def _fetch_modular_cached_data(universe: str = None, scan_mode: str = None, timeframe: str = "1d"):

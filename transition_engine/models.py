@@ -69,6 +69,7 @@ class TransitionResult:
     reasons: List[str] = field(default_factory=list)
     weaknesses: List[str] = field(default_factory=list)
     metrics: Dict[str, Any] = field(default_factory=dict)
+    gate_results: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
