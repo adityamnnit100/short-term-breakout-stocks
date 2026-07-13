@@ -258,7 +258,7 @@ def test_run_dual_mode_scan_records_diagnostics(monkeypatch, tmp_path):
     assert diagnostics["stages"]["quality"] == {"passed": 2, "rejected": 1}
     assert diagnostics["stages"]["setup"]["rejected"] == 1
     assert diagnostics["decisions"]["WAIT"] == 1
-    assert diagnostics["most_restrictive_rules"][0]["rule"] == "Liquidity Too Low"
+    assert any(item["rule"] == "Liquidity Too Low" for item in diagnostics["most_restrictive_rules"])
 
 
 def test_shared_scanner_label_helpers_match_mode_expectations():

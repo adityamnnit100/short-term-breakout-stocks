@@ -17,6 +17,10 @@ os.environ['OMP_NUM_THREADS'] = '1'
 # deprecation message rather than forcing a version-dependent rewrite.
 warnings.filterwarnings("ignore", message=".*use_container_width.*", category=Warning)
 
+# yfinance currently emits a pandas deprecation warning through its internal
+# metadata/quote scrapers. It is noisy but harmless for this app.
+warnings.filterwarnings("ignore", message=".*Timestamp\\.utcnow is deprecated.*", category=Warning)
+
 import urllib.request
 import streamlit as st
 import os
