@@ -4,10 +4,17 @@
 # This is a critical step to prevent segmentation faults in multi-threaded
 # applications (like Streamlit) that use numpy/pandas. These libraries
 # (OpenBLAS, MKL, etc.) can otherwise cause race conditions at the C-level.
+import warnings
 import os
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
 os.environ['MKL_NUM_THREADS'] = '1'
 os.environ['OMP_NUM_THREADS'] = '1'
+
+# Streamlit >= 1.50 warns that `use_container_width` is deprecated in favor of
+# `width`. This codebase still needs to run against older Streamlit releases
+# where `width` is not available on every widget, so suppress only this specific
+# deprecation message rather than forcing a version-dependent rewrite.
+warnings.filterwarnings("ignore", message=".*use_container_width.*", category=Warning)
 
 import urllib.request
 import streamlit as st
