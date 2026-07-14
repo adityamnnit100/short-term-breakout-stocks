@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import dataclass, field
 from threading import Lock
-from typing import Any, Dict, List, Mapping, Optional
+from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING
 
 
 @dataclass(frozen=True)
@@ -35,11 +35,16 @@ class DiagnosticsRejection:
         }
 
 
+if TYPE_CHECKING:
+    from .config import ScannerConfig
+
+
 class DiagnosticsCollector:
     """Thread-safe collector for scan-stage pass/fail instrumentation."""
 
-    def __init__(self, enabled: bool = False, top_rules: int = 3):
+    def __init__(self, config: Optional["ScannerConfig"] = None, enabled: bool = False, top_rules: int = 3):
         self.enabled = enabled
+        self.config = config
         self.top_rules = max(1, int(top_rules or 3))
         self._lock = Lock()
         self.universe_size = 0
@@ -53,6 +58,7 @@ class DiagnosticsCollector:
         self.decision_counts: Counter[str] = Counter()
         self.rule_rejection_counts: Counter[str] = Counter()
         self.rejections: List[DiagnosticsRejection] = []
+        self.thresholds = self._build_threshold_map()
 
     def record_universe(self, size: int) -> None:
         if not self.enabled:
@@ -71,8 +77,51 @@ class DiagnosticsCollector:
         for rule in failed_rules:
             self.rule_rejection_counts[rule.rule] += 1
 
-    @staticmethod
-    def _quality_failures(result: Mapping[str, Any]) -> List[DiagnosticsRuleHit]:
+    def _build_threshold_map(self) -> Dict[str, Dict[str, Any]]:
+        if not self.config:
+            return {}
+        cfg = self.config
+        return {
+            "quality": {
+                "Liquidity Too Low": cfg.quality_min_avg_volume,
+                "Average Daily Turnover Too Low": cfg.quality_min_avg_turnover,
+                "Trend Template Failed": True,
+                "EMA Alignment Failed": True,
+                "Higher Highs Failed": True,
+                "Higher Lows Failed": True,
+                "Relative Strength Below Threshold": cfg.quality_min_relative_strength,
+                "Weak Sector": cfg.quality_min_sector_strength,
+                "Market Cap Below Minimum": cfg.quality_min_market_cap_cr,
+                "Market Cap Above Maximum": cfg.quality_max_market_cap_cr,
+            },
+            "setup": {
+                "base_quality": cfg.setup_min_base_quality_score,
+                "compression": cfg.setup_min_compression_score,
+                "volume_dryup": cfg.setup_min_volume_score,
+                "resistance": cfg.setup_min_resistance_score,
+                "structure": cfg.setup_min_structure_score,
+                "risk": cfg.setup_min_risk_score,
+            },
+            "transition": {
+                "setup_velocity": cfg.transition_min_setup_velocity_score,
+                "rs_acceleration": cfg.transition_min_rs_acceleration_score,
+                "volume_transition": cfg.transition_min_volume_transition_score,
+                "compression_evolution": cfg.transition_min_compression_evolution_score,
+                "resistance_pressure": cfg.transition_min_resistance_pressure_score,
+                "price_acceptance": cfg.transition_min_price_acceptance_score,
+                "opportunity_velocity": cfg.transition_min_opportunity_velocity_score,
+            },
+            "trigger": {
+                "breakout_confirmation": cfg.trigger_breakout_volume_ratio_min,
+                "relative_volume": cfg.trigger_relative_volume_5d_min,
+                "closing_strength": cfg.trigger_close_strength_min,
+                "rs_confirmation": cfg.trigger_rs_proxy_min,
+                "volume_confirmation": cfg.trigger_volume_transition_min,
+                "pocket_pivot": cfg.trigger_pocket_pivot_volume_ratio,
+            },
+        }
+
+    def _quality_failures(self, result: Mapping[str, Any]) -> List[DiagnosticsRuleHit]:
         details = result.get("quality_gate_results", {}) or {}
         failed = []
         for check in result.get("quality_failed_checks", []) or []:
@@ -80,101 +129,53 @@ class DiagnosticsCollector:
             if str(check) == "Liquidity Too Low":
                 detail = details.get("liquidity", {}).get("detail", {})
                 actual = detail.get("avg_volume")
-                required = detail.get("min_avg_volume")
             elif str(check) == "Average Daily Turnover Too Low":
                 detail = details.get("liquidity", {}).get("detail", {})
                 actual = detail.get("avg_turnover")
-                required = detail.get("min_avg_turnover")
             elif str(check) in {"Trend Template Failed", "EMA Alignment Failed", "Higher Highs Failed", "Higher Lows Failed"}:
                 detail = details.get("trend", {}).get("detail", {})
-                actual = detail.get("trend_template_pass")
-                if str(check) == "EMA Alignment Failed":
-                    actual = detail.get("ema_alignment")
-                elif str(check) == "Higher Highs Failed":
-                    actual = detail.get("higher_highs")
-                elif str(check) == "Higher Lows Failed":
-                    actual = detail.get("higher_lows")
-                required = True
+                actual = False
             elif str(check) == "Relative Strength Below Threshold":
                 detail = details.get("relative_strength", {}).get("detail", {})
                 actual = detail.get("relative_strength")
-                required = detail.get("min_relative_strength")
             elif str(check) == "Weak Sector":
                 detail = details.get("sector", {}).get("detail", {})
                 actual = detail.get("sector_strength")
-                required = detail.get("min_sector_strength")
             elif str(check) == "Market Cap Below Minimum":
                 detail = details.get("market_cap", {}).get("detail", {})
                 actual = detail.get("market_cap_cr")
-                required = detail.get("min_market_cap_cr")
             elif str(check) == "Market Cap Above Maximum":
                 detail = details.get("market_cap", {}).get("detail", {})
                 actual = detail.get("market_cap_cr")
-                required = detail.get("max_market_cap_cr")
             else:
                 detail = dict(details.get("market_cap", {}).get("detail", {}) or {})
                 actual = None
-                required = None
+            required = self.thresholds.get("quality", {}).get(str(check))
             failed.append(DiagnosticsRuleHit(rule=str(check), actual=actual, required=required, metrics=dict(detail)))
         return failed
 
-    @staticmethod
-    def _stage_rule_hits(stage: str, gate_results: Mapping[str, Any]) -> List[DiagnosticsRuleHit]:
+    def _stage_rule_hits(self, stage: str, gate_results: Mapping[str, Any]) -> List[DiagnosticsRuleHit]:
         hits: List[DiagnosticsRuleHit] = []
-        threshold_map = {
-            "setup": {
-                "base_quality": 60.0,
-                "compression": 40.0,
-                "volume_dryup": 35.0,
-                "resistance": 35.0,
-                "structure": 40.0,
-                "risk": 35.0,
-            },
-            "transition": {
-                "setup_velocity": 55.0,
-                "rs_acceleration": 55.0,
-                "volume_transition": 55.0,
-                "compression_evolution": 55.0,
-                "resistance_pressure": 50.0,
-                "price_acceptance": 50.0,
-                "opportunity_velocity": 60.0,
-            },
-        }
+        threshold_map = self.thresholds.get(stage, {})
         for name, payload in gate_results.items():
             if payload.get("passed", False):
                 continue
             metrics = dict(payload.get("metrics", {}) or {})
             actual = payload.get("score", 0.0)
-            required = threshold_map.get(stage, {}).get(name)
-            if stage == "setup":
-                required = required if required is not None else 0.0
-            elif stage == "transition":
-                required = required if required is not None else 0.0
+            required = threshold_map.get(name)
             hits.append(DiagnosticsRuleHit(rule=name, actual=actual, required=required, metrics=metrics))
         return hits
 
-    @staticmethod
-    def _trigger_failures(result: Mapping[str, Any]) -> List[DiagnosticsRuleHit]:
+    def _trigger_failures(self, result: Mapping[str, Any]) -> List[DiagnosticsRuleHit]:
         module_results = result.get("trigger_module_results", {}) or {}
         hits: List[DiagnosticsRuleHit] = []
+        threshold_map = self.thresholds.get("trigger", {})
         for name, payload in module_results.items():
             if payload.get("passed", False):
                 continue
             metrics = dict(payload.get("metrics", {}) or {})
             actual = payload.get("score", 0.0)
-            required = None
-            if name == "breakout_confirmation":
-                required = 1.8
-            elif name == "relative_volume":
-                required = 1.2
-            elif name == "closing_strength":
-                required = 0.75
-            elif name == "rs_confirmation":
-                required = 105.0
-            elif name == "volume_confirmation":
-                required = 60.0
-            elif name == "pocket_pivot":
-                required = 1.5
+            required = threshold_map.get(name)
             hits.append(DiagnosticsRuleHit(rule=name, actual=actual, required=required, metrics=metrics))
         for hard_fail in result.get("trigger_hard_gate_failures", []) or []:
             hits.append(DiagnosticsRuleHit(rule=str(hard_fail), actual=None, required=None, metrics={}))
@@ -192,6 +193,7 @@ class DiagnosticsCollector:
                 if not quality_passed:
                     failures = self._quality_failures(result)
                     self._add_rejection(ticker, "Quality Filter", failures, dict(result.get("quality_details", {}) or {}))
+                    return  # Stop processing if quality fails (funnel logic)
 
             if "setup_qualifies" in result or "setup_gate_results" in result:
                 setup_passed = bool(result.get("setup_qualifies", False))
@@ -199,6 +201,7 @@ class DiagnosticsCollector:
                 if not setup_passed:
                     failures = self._stage_rule_hits("setup", result.get("setup_gate_results", {}) or {})
                     self._add_rejection(ticker, "Setup Engine", failures, dict(result.get("setup_metrics", {}) or {}))
+                    # Do not return, allow other stages to be recorded for parallel analysis
 
             if "transition_qualifies" in result or "transition_gate_results" in result:
                 transition_passed = bool(result.get("transition_qualifies", False))
@@ -206,13 +209,17 @@ class DiagnosticsCollector:
                 if not transition_passed:
                     failures = self._stage_rule_hits("transition", result.get("transition_gate_results", {}) or {})
                     self._add_rejection(ticker, "Transition Engine", failures, dict(result.get("transition_metrics", {}) or {}))
+                    # Do not return
 
             if "trigger_decision" in result or "trigger_module_results" in result:
                 decision = str(result.get("trigger_decision", "WAIT") or "WAIT")
                 self.decision_counts[decision] += 1
-                trigger_passed = decision in {"BUY NOW", "EARLY BUY"}
+
+                # The 'passed' flag from the scanner result determines if it's an actionable entry
+                trigger_passed = bool(result.get("passed", False))
                 self._record_stage("trigger", trigger_passed)
 
+                # Record module-level pass/fail stats regardless of final decision
                 module_results = result.get("trigger_module_results", {}) or {}
                 for name, payload in module_results.items():
                     bucket = self.trigger_module_counts.setdefault(name, {"passed": 0, "failed": 0})
@@ -221,7 +228,8 @@ class DiagnosticsCollector:
                     else:
                         bucket["failed"] += 1
 
-                if not trigger_passed:
+                # A stock is "rejected" by the trigger engine if it's not a buy signal
+                if decision not in {"BUY NOW", "EARLY BUY"}:
                     failures = self._trigger_failures(result)
                     self._add_rejection(ticker, "Trigger Engine", failures, dict(result.get("trigger_metrics", {}) or {}))
 
@@ -254,37 +262,40 @@ class DiagnosticsCollector:
         if not summary:
             return ""
 
+        universe_size = summary.get("universe", 0)
         stages = summary["stages"]
         decisions = summary["decisions"]
         modules = summary["trigger_modules"]
         top_rules = summary["most_restrictive_rules"]
 
+        def get_counts(stage_name):
+            return stages.get(stage_name, {"passed": 0, "rejected": 0})
+
+        quality_counts = get_counts("quality")
+        setup_counts = get_counts("setup")
+        transition_counts = get_counts("transition")
+        trigger_counts = get_counts("trigger")
+
         lines = [
-            f"Universe {summary['universe']}",
+            f"--- SCANNER FUNNEL DIAGNOSTICS ---",
+            f"Universe Size: {universe_size}",
             "",
-            f"Quality Filter  Passed: {stages['quality']['passed']}  Rejected: {stages['quality']['rejected']}",
+            f"1. Quality Filter:      {quality_counts['passed']:>5} Passed | {quality_counts['rejected']:>5} Rejected",
+            f"2. Setup Engine:        {setup_counts['passed']:>5} Passed | {setup_counts['rejected']:>5} Rejected (Informational)",
+            f"3. Transition Engine:   {transition_counts['passed']:>5} Passed | {transition_counts['rejected']:>5} Rejected (Informational)",
+            f"4. Trigger Engine:      {trigger_counts['passed']:>5} Passed | {trigger_counts['rejected']:>5} Rejected",
             "",
-            f"Setup Engine    Passed: {stages['setup']['passed']}  Rejected: {stages['setup']['rejected']}",
-            "",
-            f"Transition Engine  Passed: {stages['transition']['passed']}  Rejected: {stages['transition']['rejected']}",
-            "",
-            "Trigger Engine",
+            "--- TRIGGER DECISIONS ---",
+            f"BUY NOW:   {decisions.get('BUY NOW', 0)}",
+            f"EARLY BUY: {decisions.get('EARLY BUY', 0)}",
+            f"WATCH:     {decisions.get('WATCH', 0)}",
+            f"WAIT:      {decisions.get('WAIT', 0)}",
         ]
-        for name in sorted(modules.keys()):
-            counts = modules[name]
-            label = name.replace("_", " ").title()
-            lines.append(f"{label}  Passed: {counts['passed']}  Failed: {counts['failed']}")
-        lines.extend(
-            [
-                "",
-                f"BUY NOW {decisions.get('BUY NOW', 0)}",
-                f"EARLY BUY {decisions.get('EARLY BUY', 0)}",
-                f"WATCH {decisions.get('WATCH', 0)}",
-                f"WAIT {decisions.get('WAIT', 0)}",
-            ]
-        )
+
         if top_rules:
-            lines.extend(["", "Most Restrictive Rules"])
+            lines.extend(["", "--- MOST RESTRICTIVE RULES ---"])
             for idx, item in enumerate(top_rules, start=1):
-                lines.append(f"{idx}. {item['rule']} - Rejected {item['rejected']} stocks")
+                lines.append(f"{idx}. {item['rule']:<30} | Rejected {item['rejected']} stocks")
+
+        lines.append("\n--- END OF REPORT ---")
         return "\n".join(lines)

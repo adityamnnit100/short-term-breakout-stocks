@@ -25,18 +25,14 @@ class ScannerConfig:
     diagnostics_persist: bool = True
     diagnostics_top_rules: int = 3
 
-    watchlist_trend_weight: float = 0.20
-    watchlist_base_weight: float = 0.35
-    watchlist_volume_weight: float = 0.20
-    watchlist_rs_weight: float = 0.15
-    watchlist_sector_weight: float = 0.10
+    # Watchlist score composition
+    watchlist_setup_weight: float = 0.60
+    watchlist_transition_weight: float = 0.40
 
-    entry_trend_weight: float = 0.20
-    entry_breakout_weight: float = 0.25
-    entry_volume_weight: float = 0.20
-    entry_rs_weight: float = 0.15
-    entry_sector_weight: float = 0.15
-    entry_risk_weight: float = 0.10
+    # Entry score composition
+    entry_setup_weight: float = 0.30
+    entry_transition_weight: float = 0.30
+    entry_trigger_weight: float = 0.40
 
     watchlist_price_above_ema200: bool = True
     watchlist_base_high_pct: float = 5.0
@@ -47,7 +43,7 @@ class ScannerConfig:
     watchlist_volume_dryup_pct: float = -25.0
     watchlist_rs_min: float = 60.0
     watchlist_sector_strength_min: float = 0.0
-    
+
     entry_breakout_volume_ratio: float = 2.0
     entry_rs_rank_min: float = 80.0
     entry_risk_reward_min: float = 2.0
@@ -74,6 +70,7 @@ class ScannerConfig:
     quality_market_caution_multiplier: float = 1.1
 
     setup_engine_enabled: bool = True
+    setup_min_base_quality_score: float = 60.0
     setup_min_base_weeks: int = 8
     setup_max_base_depth_pct: float = 18.0
     setup_max_base_duration_weeks: int = 24

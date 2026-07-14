@@ -54,7 +54,10 @@ def _patch_streamlit_width_compatibility() -> None:
     st.button = _wrap(st.button)
     st.form_submit_button = _wrap(st.form_submit_button)
     st.download_button = _wrap(st.download_button)
-    st.dataframe = _wrap(st.dataframe)
+    # The wrapper incorrectly handles st.dataframe, which expects an integer for width,
+    # not a string like "stretch". The use_container_width parameter is correctly
+    # used in the calling code, so we can simply avoid patching it.
+    # st.dataframe = _wrap(st.dataframe)
     st.plotly_chart = _wrap(st.plotly_chart)
 
 

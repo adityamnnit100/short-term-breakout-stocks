@@ -21,6 +21,7 @@ from .report import format_results
 from .diagnostics import DiagnosticsCollector
 from quality_filter import QualityFilterEngine
 from setup_engine import SetupEngine
+from transition_engine import TransitionEngine
 from trigger_engine import TriggerEngine
 
 logger = logging.getLogger("AlphaScanner.Scanner")
@@ -127,13 +128,12 @@ def run_dual_mode_scan(
     trigger_rows: List[Dict[str, object]] = []
     rows_lock = Lock()
     diagnostics = DiagnosticsCollector(
+        config=config,
         enabled=bool(getattr(config, "diagnostics_enabled", False)),
         top_rules=int(getattr(config, "diagnostics_top_rules", 3) or 3),
     )
     quality_engine = QualityFilterEngine(config)
     setup_engine = SetupEngine(config)
-    from transition_engine import TransitionEngine
-
     transition_engine = TransitionEngine(config)
     trigger_engine = TriggerEngine(config)
     watchlist_scanner = WatchlistScanner(config, quality_engine=quality_engine, setup_engine=setup_engine, transition_engine=transition_engine, trigger_engine=trigger_engine, scan_mode="Watchlist")
