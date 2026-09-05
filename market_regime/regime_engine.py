@@ -35,9 +35,9 @@ def _default_index_loader(period: str = "2y", interval: str = "1d") -> pd.DataFr
 
 def _default_universe_loader(config: ScannerConfig) -> Iterable[str]:
     try:
-        from breakout import get_nifty_500
+        from market_data import load_symbol_universe
 
-        return get_nifty_500()
+        return load_symbol_universe("Nifty 500")
     except Exception:
         return []
 

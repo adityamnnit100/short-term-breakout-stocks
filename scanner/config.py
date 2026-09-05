@@ -20,6 +20,7 @@ class ScannerConfig:
     watchlist_min_score: float = 60.0
     entry_min_score: float = 70.0
     scan_max_workers: int = 8
+    scan_download_threads: int = 10
     scan_download_chunk_size: int = 25
     diagnostics_enabled: bool = False
     diagnostics_persist: bool = True
@@ -225,6 +226,52 @@ class ScannerConfig:
 
     sector_blacklist: List[str] = field(default_factory=lambda: ["Financial Services", "Utilities"])
     required_columns: List[str] = field(default_factory=lambda: ["Open", "High", "Low", "Close", "Volume"])
+    # Persistence for normalized data and computed indicators
+    persist_normalized: bool = True
+    cache_ttl_days: int = 7
+    cache_dir: str = "data/cache/normalized"
+    # Use process pool for per-ticker evaluation to bypass GIL (heavy CPU workloads)
+    scan_use_process_pool: bool = False
+    # If 0, auto-select based on CPU; otherwise use explicit worker count
+    scan_process_workers: int = 0
 
     def as_dict(self) -> Dict[str, object]:
         return {k: v for k, v in self.__dict__.items()}
+
+    def apply_preset(self, preset: str) -> None:
+        """Apply a named preset to tweak configuration for common scan types.
+
+        Supported presets: 'short_intraday', 'short_hourly'
+        """
+        try:
+            p = preset.lower().strip()
+            if p == "short_intraday":
+                # aggressive short-term intraday preset
+                self.interval = "15m"
+                self.lookback_period = "30d"
+                self.min_candles = max(40, int(self.min_candles / 8))
+                self.ema_fast = 8
+                self.ema_medium = 13
+                self.ema_slow = 50
+                self.atr_window = 14
+                # enable intraday trigger checks
+                self.trigger_enable_intraday_confirmation = True
+                self.trigger_intraday_rvol_min = 1.6
+                self.trigger_intraday_high_hold_min = 0.9
+                # relax some depth checks for fast opportunity discovery
+                self.setup_max_distance_to_high_pct = min(8.0, self.setup_max_distance_to_high_pct)
+            elif p == "short_hourly":
+                # hourly short-swing preset
+                self.interval = "60m"
+                self.lookback_period = "60d"
+                self.min_candles = max(80, int(self.min_candles / 4))
+                self.ema_fast = 8
+                self.ema_medium = 21
+                self.ema_slow = 50
+                self.atr_window = 14
+                self.trigger_enable_intraday_confirmation = True
+                self.trigger_intraday_rvol_min = 1.4
+                self.trigger_intraday_high_hold_min = 0.92
+        except Exception:
+            # if preset application fails, keep defaults silently
+            pass

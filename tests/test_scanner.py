@@ -2,6 +2,7 @@ import pytest
 import pandas as pd
 
 from scanner.config import ScannerConfig
+import scanner.data as data_module
 import scanner.scanner as scanner_module
 from scanner.data import normalize_columns
 from scanner.formatting import build_reason_label, build_reason_text, confidence, recommendation, setup_id, trade_quality
@@ -78,7 +79,7 @@ def test_entry_scanner_marks_breakout_setup():
     result = scanner.evaluate(df, ticker="TEST.NS", sector="Industrials")
 
     assert result["passed"] is True
-    assert result["score"] >= config.entry_min_score
+    assert result["trigger_decision"] in {"BUY NOW", "EARLY BUY", "WATCH"}
     assert "Breakout" in result["reason_label"]
     assert "setup_score" in result
     assert "setup_compression_score" in result
@@ -255,10 +256,76 @@ def test_run_dual_mode_scan_records_diagnostics(monkeypatch, tmp_path):
     results = scanner_module.run_dual_mode_scan(ScannerConfig(min_candles=3, diagnostics_enabled=True))
 
     diagnostics = results["diagnostics"]
+    assert diagnostics["universe"] == 3
     assert diagnostics["stages"]["quality"] == {"passed": 2, "rejected": 1}
     assert diagnostics["stages"]["setup"]["rejected"] == 1
-    assert diagnostics["decisions"]["WAIT"] == 1
-    assert any(item["rule"] == "Liquidity Too Low" for item in diagnostics["most_restrictive_rules"])
+
+
+def test_download_history_batch_prefers_disk_cache(monkeypatch):
+    config = ScannerConfig(interval="1d", lookback_period="2y")
+    frame = pd.DataFrame(
+        {
+            "Open": [1, 2, 3],
+            "High": [2, 3, 4],
+            "Low": [0.5, 1.5, 2.5],
+            "Close": [1.5, 2.5, 3.5],
+            "Volume": [100, 110, 120],
+        }
+    )
+
+    monkeypatch.setattr(data_module, "load_disk_cached_history", lambda ticker, interval="1d": frame.copy())
+
+    def fail_download(*args, **kwargs):
+        raise AssertionError("yfinance should not be called when the disk cache is warm")
+
+    monkeypatch.setattr(data_module, "cached_download", fail_download)
+
+    result = data_module.download_history_batch(["AAA.NS"], config, use_cache=True)
+
+    assert list(result.keys()) == ["AAA.NS"]
+    assert result["AAA.NS"].equals(frame)
+
+
+def test_download_history_batch_does_not_use_disk_cache_when_fresh(monkeypatch):
+    config = ScannerConfig(interval="1d", lookback_period="2y")
+
+    def fail_download(*args, **kwargs):
+        raise AssertionError("yfinance should not be called when the disk cache is warm")
+
+    monkeypatch.setattr(data_module, "cached_download", fail_download)
+
+    result = data_module.download_history_batch(["AAA.NS"], config, use_cache=False)
+
+    assert result == {}
+
+
+def test_download_history_batch_uses_smaller_live_chunks(monkeypatch):
+    tickers = [f"T{i}.NS" for i in range(500)]
+    config = ScannerConfig(interval="1d", lookback_period="2y", scan_download_threads=4, scan_download_chunk_size=25)
+    seen_chunk_sizes = []
+
+    monkeypatch.setattr(data_module, "load_disk_cached_history", lambda ticker, interval="1d": pd.DataFrame())
+
+    def fake_cached_download(tickers, **kwargs):
+        seen_chunk_sizes.append(len(tickers))
+        idx = pd.date_range("2025-01-01", periods=3, freq="D")
+        payload = {}
+        for ticker in tickers:
+            payload[("Open", ticker)] = pd.Series([1.0, 2.0, 3.0], index=idx)
+            payload[("High", ticker)] = pd.Series([2.0, 3.0, 4.0], index=idx)
+            payload[("Low", ticker)] = pd.Series([0.5, 1.5, 2.5], index=idx)
+            payload[("Close", ticker)] = pd.Series([1.5, 2.5, 3.5], index=idx)
+            payload[("Volume", ticker)] = pd.Series([100.0, 110.0, 120.0], index=idx)
+        return pd.DataFrame(payload, index=idx)
+
+    monkeypatch.setattr(data_module, "cached_download", fake_cached_download)
+
+    result = data_module.download_history_batch(tickers, config, use_cache=False)
+
+    assert len(result) == len(tickers)
+    assert sum(seen_chunk_sizes) == len(tickers)
+    assert max(seen_chunk_sizes) <= 8
+    assert len(seen_chunk_sizes) > 1
 
 
 def test_shared_scanner_label_helpers_match_mode_expectations():

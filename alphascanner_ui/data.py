@@ -138,13 +138,18 @@ def get_sector_mapping(universe_type: str = "Nifty 500") -> dict:
     urls = []
     if universe_type == "Nifty 500":
         urls = [
+            "https://www1.nseindia.com/content/indices/ind_nifty500list.csv",
+            "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
             "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
             "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
         ]
     elif universe_type == "Total Market (Cap Focused)":
         urls = [
+            "https://www1.nseindia.com/content/indices/ind_nifty500list.csv",
+            "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
             "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
             "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
+            "https://www1.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
             "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
             "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
         ]

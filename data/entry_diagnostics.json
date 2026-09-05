@@ -1,0 +1,110 @@
+{
+  "total_rows": 79,
+  "decisions": {
+    "WATCH": 55,
+    "WAIT": 24
+  },
+  "trade_quality": {
+    "A": 11,
+    "B": 22,
+    "C": 46
+  },
+  "recommendation": {
+    "Buy": 11,
+    "Watch Closely": 22,
+    "Watch": 7,
+    "Reject": 39
+  },
+  "top_failed_modules": [
+    [
+      "breakout_confirmation",
+      79
+    ],
+    [
+      "rs_confirmation",
+      79
+    ],
+    [
+      "closing_strength",
+      77
+    ],
+    [
+      "pocket_pivot",
+      72
+    ],
+    [
+      "volume_confirmation",
+      51
+    ],
+    [
+      "relative_volume",
+      27
+    ]
+  ],
+  "top_failed_reasons": [
+    [
+      "Intraday confirmation disabled",
+      79
+    ],
+    [
+      "5-day relative volume strong",
+      52
+    ],
+    [
+      "10-day relative volume strong",
+      52
+    ],
+    [
+      "20-day relative volume constructive",
+      52
+    ],
+    [
+      "Volume transition confirms participation",
+      28
+    ],
+    [
+      "Volume spike quality strong",
+      28
+    ],
+    [
+      "Up-volume leading down-volume",
+      28
+    ],
+    [
+      "Current volume above average",
+      28
+    ],
+    [
+      "Volume expansion pocket pivot",
+      7
+    ],
+    [
+      "Strong close",
+      7
+    ],
+    [
+      "Pivot quality constructive",
+      7
+    ],
+    [
+      "Higher close",
+      7
+    ],
+    [
+      "Strong finish near highs",
+      2
+    ],
+    [
+      "Closed above open",
+      2
+    ],
+    [
+      "Higher closes intact",
+      2
+    ],
+    [
+      "Candle body acceptable",
+      1
+    ]
+  ]
+}

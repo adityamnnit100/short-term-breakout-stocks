@@ -11,14 +11,23 @@ from .config import ScannerConfig
 
 def combine_scores(trend_score: float, structure_score: float, volume_score: float, rs_score: float, sector_score: float, risk_score: float, config: ScannerConfig) -> Tuple[float, Dict[str, float]]:
     """Combine module scores into a final weighted score."""
+    # Use getattr with safe defaults so this helper is robust across config shapes.
+    t_w = float(getattr(config, "trend_weight", 0.0) or 0.0)
+    s_w = float(getattr(config, "structure_weight", 0.0) or 0.0)
+    v_w = float(getattr(config, "volume_weight", 0.0) or 0.0)
+    rs_w = float(getattr(config, "rs_weight", 0.0) or 0.0)
+    sec_w = float(getattr(config, "sector_weight", 0.0) or 0.0)
+    r_w = float(getattr(config, "risk_weight", 0.0) or 0.0)
+    reserved_w = float(getattr(config, "reserved_weight", 0.0) or 0.0)
+
     weighted = (
-        trend_score * config.trend_weight
-        + structure_score * config.structure_weight
-        + volume_score * config.volume_weight
-        + rs_score * config.rs_weight
-        + sector_score * config.sector_weight
-        + risk_score * config.risk_weight
-        + 0.0 * config.reserved_weight
+        trend_score * t_w
+        + structure_score * s_w
+        + volume_score * v_w
+        + rs_score * rs_w
+        + sector_score * sec_w
+        + risk_score * r_w
+        + 0.0 * reserved_w
     )
     total = round(weighted, 2)
     return total, {

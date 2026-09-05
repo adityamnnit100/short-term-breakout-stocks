@@ -1,0 +1,887 @@
+2026-07-16 17:04:30,583 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 17:04:34,620 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 17:04:42,370 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Modular Momentum, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 17:04:46,364 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Modular Momentum, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-16 17:04:47,390 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=500 max_cap=20000 sector_map_size=751
+2026-07-16 17:04:47,390 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Modular Momentum, universe=Total Market (Cap Focused), timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=0.6, rsi_min=35, rsi_max=75, dist_thresh=5.0, min_mkt_cap_cr=500, max_mkt_cap_cr=20000)
+2026-07-16 17:04:47,391 DEBUG AlphaScanner.Service Routing to modular scanner with config={'universe': 'Total Market (Cap Focused)', 'min_candles': 300, 'interval': '1d', 'lookback_period': '2y', 'max_candidates': 15, 'min_total_score': 25.0, 'watchlist_min_score': 60.0, 'entry_min_score': 70.0, 'scan_max_workers': 8, 'scan_download_chunk_size': 25, 'diagnostics_enabled': False, 'diagnostics_persist': True, 'diagnostics_top_rules': 3, 'watchlist_setup_weight': 0.6, 'watchlist_transition_weight': 0.4, 'entry_setup_weight': 0.3, 'entry_transition_weight': 0.3, 'entry_trigger_weight': 0.4, 'watchlist_price_above_ema200': True, 'watchlist_base_high_pct': 5.0, 'watchlist_base_range_pct': 10.0, 'watchlist_base_days_min': 10, 'watchlist_atr_contraction_pct': -15.0, 'watchlist_bbw_contraction_pct': -20.0, 'watchlist_volume_dryup_pct': -25.0, 'watchlist_rs_min': 60.0, 'watchlist_sector_strength_min': 0.0, 'entry_breakout_volume_ratio': 2.0, 'entry_rs_rank_min': 80.0, 'entry_risk_reward_min': 2.0, 'entry_extension_pct': 10.0, 'entry_atr_expansion_pct': 1.8, 'quality_filter_enabled': True, 'quality_min_avg_volume': 0.0, 'quality_min_avg_turnover': 0.0, 'quality_min_market_cap_cr': 0.0, 'quality_max_market_cap_cr': 0.0, 'quality_market_cap_mode': 'Custom', 'quality_market_cap_custom_symbols': [], 'quality_min_relative_strength': 0.0, 'quality_min_sector_strength': 0.0, 'quality_require_price_above_ema200': False, 'quality_require_ema_alignment': False, 'quality_require_trend_template': False, 'quality_require_higher_highs': False, 'quality_require_higher_lows': False, 'quality_market_bearish_multiplier': 1.25, 'quality_market_bullish_multiplier': 1.0, 'quality_market_neutral_multiplier': 1.0, 'quality_market_caution_multiplier': 1.1, 'setup_engine_enabled': True, 'setup_min_base_quality_score': 60.0, 'setup_min_base_weeks': 8, 'setup_max_base_depth_pct': 18.0, 'setup_max_base_duration_weeks': 24, 'setup_max_distance_to_high_pct': 8.0, 'setup_volume_long_window': 50, 'setup_volume_short_window': 20, 'setup_min_compression_score': 40.0, 'setup_min_volume_score': 35.0, 'setup_min_resistance_score': 35.0, 'setup_min_structure_score': 40.0, 'setup_min_risk_score': 35.0, 'setup_weight_base': 0.2, 'setup_weight_compression': 0.2, 'setup_weight_volume': 0.15, 'setup_weight_resistance': 0.2, 'setup_weight_structure': 0.15, 'setup_weight_risk': 0.1, 'setup_professional_threshold': 90.0, 'setup_excellent_threshold': 80.0, 'setup_good_threshold': 70.0, 'setup_average_threshold': 55.0, 'transition_engine_enabled': True, 'transition_history_window': 10, 'transition_min_setup_velocity_score': 55.0, 'transition_min_rs_acceleration_score': 55.0, 'transition_min_volume_transition_score': 55.0, 'transition_min_compression_evolution_score': 55.0, 'transition_min_resistance_pressure_score': 50.0, 'transition_min_price_acceptance_score': 50.0, 'transition_min_opportunity_velocity_score': 60.0, 'transition_weight_setup_velocity': 0.18, 'transition_weight_rs_acceleration': 0.14, 'transition_weight_volume_transition': 0.18, 'transition_weight_compression_evolution': 0.14, 'transition_weight_resistance_pressure': 0.12, 'transition_weight_price_acceptance': 0.1, 'transition_weight_opportunity_velocity': 0.14, 'transition_professional_threshold': 90.0, 'transition_strong_threshold': 80.0, 'transition_building_threshold': 70.0, 'transition_watch_threshold': 55.0, 'trigger_engine_enabled': True, 'trigger_enable_pocket_pivot': True, 'trigger_enable_relative_volume': True, 'trigger_enable_breakout_confirmation': True, 'trigger_enable_closing_strength': True, 'trigger_enable_rs_confirmation': True, 'trigger_enable_volume_confirmation': True, 'trigger_enable_intraday_confirmation': False, 'trigger_min_setup_score': 80.0, 'trigger_min_transition_score': 80.0, 'trigger_min_trigger_score': 75.0, 'trigger_pocket_pivot_volume_ratio': 1.5, 'trigger_pocket_pivot_close_location_min': 0.7, 'trigger_relative_volume_5d_min': 1.2, 'trigger_relative_volume_10d_min': 1.1, 'trigger_relative_volume_20d_min': 1.0, 'trigger_breakout_buffer_pct': 0.25, 'trigger_breakout_volume_ratio_min': 1.8, 'trigger_close_location_min': 0.8, 'trigger_close_strength_min': 0.75, 'trigger_rs_proxy_min': 105.0, 'trigger_rs_transition_min': 55.0, 'trigger_volume_transition_min': 60.0, 'trigger_intraday_vwap_hold_min': 0.0, 'trigger_intraday_rvol_min': 1.2, 'trigger_intraday_high_hold_min': 0.95, 'trigger_buy_now_top_percentile': 2.0, 'trigger_early_buy_top_percentile': 5.0, 'trigger_watch_top_percentile': 10.0, 'trigger_early_buy_soft_miss_max': 1, 'trigger_calibration_mode': False, 'market_regime_trend_weight': 0.3, 'market_regime_breadth_weight': 0.25, 'market_regime_momentum_weight': 0.2, 'market_regime_volume_weight': 0.15, 'market_regime_volatility_weight': 0.1, 'market_regime_bullish_threshold': 75.0, 'market_regime_neutral_threshold': 55.0, 'market_regime_caution_threshold': 40.0, 'market_regime_bearish_threshold': 0.0, 'market_regime_bullish_penalty': 1.0, 'market_regime_neutral_penalty': 0.95, 'market_regime_caution_penalty': 0.85, 'market_regime_bearish_penalty': 0.7, 'market_regime_buy_min_bullish': 80.0, 'market_regime_buy_min_neutral': 85.0, 'market_regime_buy_min_caution': 90.0, 'market_regime_buy_min_bearish': 95.0, 'market_regime_nifty50_period': '2y', 'market_regime_nifty500_period': '2y', 'market_regime_breadth_min_above_ema20': 45.0, 'market_regime_breadth_min_above_ema50': 40.0, 'market_regime_breadth_min_above_ema200': 25.0, 'market_regime_atr_window': 14, 'market_regime_volume_window': 20, 'market_regime_volatility_window': 20, 'market_regime_momentum_return_cap_pct': 10.0, 'market_regime_ema_buffer_pct': 0.5, 'market_regime_distribution_day_window': 20, 'market_regime_accumulation_day_window': 20, 'market_regime_volume_trend_threshold_pct': 10.0, 'market_regime_volatility_high_threshold_pct': 15.0, 'market_regime_volatility_mid_threshold_pct': 8.0, 'market_regime_accumulation_edge_days': 2, 'market_regime_distribution_edge_days': 2, 'mtf_weekly_weight': 20.0, 'mtf_daily_weight': 50.0, 'mtf_hourly_weight': 30.0, 'mtf_weekly_max_points': 20.0, 'mtf_daily_max_points': 50.0, 'mtf_hourly_max_points': 30.0, 'mtf_strong_buy_threshold': 90.0, 'mtf_buy_threshold': 80.0, 'mtf_watch_threshold': 65.0, 'mtf_wait_threshold': 50.0, 'mtf_weekly_bullish_threshold': 14.0, 'mtf_weekly_neutral_threshold': 10.0, 'mtf_weekly_bearish_threshold': 6.0, 'mtf_daily_bullish_threshold': 35.0, 'mtf_daily_neutral_threshold': 25.0, 'mtf_hourly_bullish_threshold': 20.0, 'mtf_hourly_neutral_threshold': 12.0, 'mtf_weekly_lookback_period': '2y', 'mtf_daily_lookback_period': '1y', 'mtf_hourly_lookback_period': '60d', 'mtf_hourly_ema_fast': 20, 'mtf_hourly_ema_slow': 50, 'mtf_weekly_veto_enabled': True, 'mtf_enable_confirmation': False, 'ema_fast': 20, 'ema_medium': 50, 'ema_slow': 200, 'atr_window': 20, 'contraction_window': 20, 'volume_sma_window': 20, 'volume_contraction_lookback': 20, 'volume_multiplier': 1.6, 'relative_strength_window': 90, 'relative_strength_period_1': 30, 'relative_strength_period_2': 60, 'relative_strength_period_3': 90, 'relative_strength_min_data': 30, 'sector_lookback': 60, 'risk_atr_multiplier': 2.5, 'sector_blacklist': ['Financial Services', 'Utilities'], 'required_columns': ['Open', 'High', 'Low', 'Close', 'Volume']}
+2026-07-16 17:04:47,393 INFO AlphaScanner.Scanner Starting dual-mode scanner with config {'universe': 'Total Market (Cap Focused)', 'min_candles': 300, 'interval': '1d', 'lookback_period': '2y', 'max_candidates': 15, 'min_total_score': 25.0, 'watchlist_min_score': 60.0, 'entry_min_score': 70.0, 'scan_max_workers': 8, 'scan_download_chunk_size': 25, 'diagnostics_enabled': False, 'diagnostics_persist': True, 'diagnostics_top_rules': 3, 'watchlist_setup_weight': 0.6, 'watchlist_transition_weight': 0.4, 'entry_setup_weight': 0.3, 'entry_transition_weight': 0.3, 'entry_trigger_weight': 0.4, 'watchlist_price_above_ema200': True, 'watchlist_base_high_pct': 5.0, 'watchlist_base_range_pct': 10.0, 'watchlist_base_days_min': 10, 'watchlist_atr_contraction_pct': -15.0, 'watchlist_bbw_contraction_pct': -20.0, 'watchlist_volume_dryup_pct': -25.0, 'watchlist_rs_min': 60.0, 'watchlist_sector_strength_min': 0.0, 'entry_breakout_volume_ratio': 2.0, 'entry_rs_rank_min': 80.0, 'entry_risk_reward_min': 2.0, 'entry_extension_pct': 10.0, 'entry_atr_expansion_pct': 1.8, 'quality_filter_enabled': True, 'quality_min_avg_volume': 0.0, 'quality_min_avg_turnover': 0.0, 'quality_min_market_cap_cr': 0.0, 'quality_max_market_cap_cr': 0.0, 'quality_market_cap_mode': 'Custom', 'quality_market_cap_custom_symbols': [], 'quality_min_relative_strength': 0.0, 'quality_min_sector_strength': 0.0, 'quality_require_price_above_ema200': False, 'quality_require_ema_alignment': False, 'quality_require_trend_template': False, 'quality_require_higher_highs': False, 'quality_require_higher_lows': False, 'quality_market_bearish_multiplier': 1.25, 'quality_market_bullish_multiplier': 1.0, 'quality_market_neutral_multiplier': 1.0, 'quality_market_caution_multiplier': 1.1, 'setup_engine_enabled': True, 'setup_min_base_quality_score': 60.0, 'setup_min_base_weeks': 8, 'setup_max_base_depth_pct': 18.0, 'setup_max_base_duration_weeks': 24, 'setup_max_distance_to_high_pct': 8.0, 'setup_volume_long_window': 50, 'setup_volume_short_window': 20, 'setup_min_compression_score': 40.0, 'setup_min_volume_score': 35.0, 'setup_min_resistance_score': 35.0, 'setup_min_structure_score': 40.0, 'setup_min_risk_score': 35.0, 'setup_weight_base': 0.2, 'setup_weight_compression': 0.2, 'setup_weight_volume': 0.15, 'setup_weight_resistance': 0.2, 'setup_weight_structure': 0.15, 'setup_weight_risk': 0.1, 'setup_professional_threshold': 90.0, 'setup_excellent_threshold': 80.0, 'setup_good_threshold': 70.0, 'setup_average_threshold': 55.0, 'transition_engine_enabled': True, 'transition_history_window': 10, 'transition_min_setup_velocity_score': 55.0, 'transition_min_rs_acceleration_score': 55.0, 'transition_min_volume_transition_score': 55.0, 'transition_min_compression_evolution_score': 55.0, 'transition_min_resistance_pressure_score': 50.0, 'transition_min_price_acceptance_score': 50.0, 'transition_min_opportunity_velocity_score': 60.0, 'transition_weight_setup_velocity': 0.18, 'transition_weight_rs_acceleration': 0.14, 'transition_weight_volume_transition': 0.18, 'transition_weight_compression_evolution': 0.14, 'transition_weight_resistance_pressure': 0.12, 'transition_weight_price_acceptance': 0.1, 'transition_weight_opportunity_velocity': 0.14, 'transition_professional_threshold': 90.0, 'transition_strong_threshold': 80.0, 'transition_building_threshold': 70.0, 'transition_watch_threshold': 55.0, 'trigger_engine_enabled': True, 'trigger_enable_pocket_pivot': True, 'trigger_enable_relative_volume': True, 'trigger_enable_breakout_confirmation': True, 'trigger_enable_closing_strength': True, 'trigger_enable_rs_confirmation': True, 'trigger_enable_volume_confirmation': True, 'trigger_enable_intraday_confirmation': False, 'trigger_min_setup_score': 80.0, 'trigger_min_transition_score': 80.0, 'trigger_min_trigger_score': 75.0, 'trigger_pocket_pivot_volume_ratio': 1.5, 'trigger_pocket_pivot_close_location_min': 0.7, 'trigger_relative_volume_5d_min': 1.2, 'trigger_relative_volume_10d_min': 1.1, 'trigger_relative_volume_20d_min': 1.0, 'trigger_breakout_buffer_pct': 0.25, 'trigger_breakout_volume_ratio_min': 1.8, 'trigger_close_location_min': 0.8, 'trigger_close_strength_min': 0.75, 'trigger_rs_proxy_min': 105.0, 'trigger_rs_transition_min': 55.0, 'trigger_volume_transition_min': 60.0, 'trigger_intraday_vwap_hold_min': 0.0, 'trigger_intraday_rvol_min': 1.2, 'trigger_intraday_high_hold_min': 0.95, 'trigger_buy_now_top_percentile': 2.0, 'trigger_early_buy_top_percentile': 5.0, 'trigger_watch_top_percentile': 10.0, 'trigger_early_buy_soft_miss_max': 1, 'trigger_calibration_mode': False, 'market_regime_trend_weight': 0.3, 'market_regime_breadth_weight': 0.25, 'market_regime_momentum_weight': 0.2, 'market_regime_volume_weight': 0.15, 'market_regime_volatility_weight': 0.1, 'market_regime_bullish_threshold': 75.0, 'market_regime_neutral_threshold': 55.0, 'market_regime_caution_threshold': 40.0, 'market_regime_bearish_threshold': 0.0, 'market_regime_bullish_penalty': 1.0, 'market_regime_neutral_penalty': 0.95, 'market_regime_caution_penalty': 0.85, 'market_regime_bearish_penalty': 0.7, 'market_regime_buy_min_bullish': 80.0, 'market_regime_buy_min_neutral': 85.0, 'market_regime_buy_min_caution': 90.0, 'market_regime_buy_min_bearish': 95.0, 'market_regime_nifty50_period': '2y', 'market_regime_nifty500_period': '2y', 'market_regime_breadth_min_above_ema20': 45.0, 'market_regime_breadth_min_above_ema50': 40.0, 'market_regime_breadth_min_above_ema200': 25.0, 'market_regime_atr_window': 14, 'market_regime_volume_window': 20, 'market_regime_volatility_window': 20, 'market_regime_momentum_return_cap_pct': 10.0, 'market_regime_ema_buffer_pct': 0.5, 'market_regime_distribution_day_window': 20, 'market_regime_accumulation_day_window': 20, 'market_regime_volume_trend_threshold_pct': 10.0, 'market_regime_volatility_high_threshold_pct': 15.0, 'market_regime_volatility_mid_threshold_pct': 8.0, 'market_regime_accumulation_edge_days': 2, 'market_regime_distribution_edge_days': 2, 'mtf_weekly_weight': 20.0, 'mtf_daily_weight': 50.0, 'mtf_hourly_weight': 30.0, 'mtf_weekly_max_points': 20.0, 'mtf_daily_max_points': 50.0, 'mtf_hourly_max_points': 30.0, 'mtf_strong_buy_threshold': 90.0, 'mtf_buy_threshold': 80.0, 'mtf_watch_threshold': 65.0, 'mtf_wait_threshold': 50.0, 'mtf_weekly_bullish_threshold': 14.0, 'mtf_weekly_neutral_threshold': 10.0, 'mtf_weekly_bearish_threshold': 6.0, 'mtf_daily_bullish_threshold': 35.0, 'mtf_daily_neutral_threshold': 25.0, 'mtf_hourly_bullish_threshold': 20.0, 'mtf_hourly_neutral_threshold': 12.0, 'mtf_weekly_lookback_period': '2y', 'mtf_daily_lookback_period': '1y', 'mtf_hourly_lookback_period': '60d', 'mtf_hourly_ema_fast': 20, 'mtf_hourly_ema_slow': 50, 'mtf_weekly_veto_enabled': True, 'mtf_enable_confirmation': False, 'ema_fast': 20, 'ema_medium': 50, 'ema_slow': 200, 'atr_window': 20, 'contraction_window': 20, 'volume_sma_window': 20, 'volume_contraction_lookback': 20, 'volume_multiplier': 1.6, 'relative_strength_window': 90, 'relative_strength_period_1': 30, 'relative_strength_period_2': 60, 'relative_strength_period_3': 90, 'relative_strength_min_data': 30, 'sector_lookback': 60, 'risk_atr_multiplier': 2.5, 'sector_blacklist': ['Financial Services', 'Utilities'], 'required_columns': ['Open', 'High', 'Low', 'Close', 'Volume']}
+2026-07-16 17:04:47,395 DEBUG AlphaScanner.Scanner Dual-mode scan requested with universe=Total Market (Cap Focused) interval=1d min_candles=300 use_cache=False
+2026-07-16 17:04:47,644 INFO AlphaScanner.Engine Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-07-16 17:04:48,097 INFO AlphaScanner.Engine Fetched 251 symbols for Nifty Microcap 250 from https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv
+2026-07-16 17:04:48,344 DEBUG AlphaScanner.Data get_universe(Total Market (Cap Focused)) -> 751 symbols
+2026-07-16 17:04:48,344 DEBUG AlphaScanner.Scanner Resolved universe size=751 head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIDRUGS.NS', 'AARTIIND.NS']
+2026-07-16 17:04:48,346 INFO AlphaScanner.Scanner Downloading history for 751 tickers...
+2026-07-16 17:04:48,346 DEBUG AlphaScanner.Data download_history_batch(size=751, period=2y, interval=1d, use_cache=False, head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIDRUGS.NS', 'AARTIIND.NS'])
+2026-07-16 17:07:05,926 DEBUG AlphaScanner.Data download_history_batch result count=751
+2026-07-16 17:07:05,926 INFO AlphaScanner.Scanner Downloaded history for 751 tickers.
+2026-07-16 17:07:05,928 INFO AlphaScanner.Scanner Processing 751 tickers...
+2026-07-16 17:08:23,761 DEBUG AlphaScanner.Scanner Dual-mode scan finished: watchlist_rows=68 entry_rows=0
+2026-07-16 17:08:24,853 INFO AlphaScanner.Scanner Watchlist candidates: 68 | Entry candidates: 0
+2026-07-16 17:27:09,022 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 17:27:18,201 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 17:27:24,315 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Modular Momentum, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 17:27:30,961 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Modular Momentum, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-16 17:27:32,926 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=500 max_cap=20000 sector_map_size=751
+2026-07-16 17:27:32,926 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Modular Momentum, universe=Total Market (Cap Focused), timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=0.6, rsi_min=35, rsi_max=75, dist_thresh=5.0, min_mkt_cap_cr=500, max_mkt_cap_cr=20000)
+2026-07-16 17:27:32,927 DEBUG AlphaScanner.Service Routing to modular scanner with config={'universe': 'Total Market (Cap Focused)', 'min_candles': 300, 'interval': '1d', 'lookback_period': '2y', 'max_candidates': 15, 'min_total_score': 25.0, 'watchlist_min_score': 60.0, 'entry_min_score': 70.0, 'scan_max_workers': 8, 'scan_download_chunk_size': 25, 'diagnostics_enabled': False, 'diagnostics_persist': True, 'diagnostics_top_rules': 3, 'watchlist_setup_weight': 0.6, 'watchlist_transition_weight': 0.4, 'entry_setup_weight': 0.3, 'entry_transition_weight': 0.3, 'entry_trigger_weight': 0.4, 'watchlist_price_above_ema200': True, 'watchlist_base_high_pct': 5.0, 'watchlist_base_range_pct': 10.0, 'watchlist_base_days_min': 10, 'watchlist_atr_contraction_pct': -15.0, 'watchlist_bbw_contraction_pct': -20.0, 'watchlist_volume_dryup_pct': -25.0, 'watchlist_rs_min': 60.0, 'watchlist_sector_strength_min': 0.0, 'entry_breakout_volume_ratio': 2.0, 'entry_rs_rank_min': 80.0, 'entry_risk_reward_min': 2.0, 'entry_extension_pct': 10.0, 'entry_atr_expansion_pct': 1.8, 'quality_filter_enabled': True, 'quality_min_avg_volume': 0.0, 'quality_min_avg_turnover': 0.0, 'quality_min_market_cap_cr': 500, 'quality_max_market_cap_cr': 20000, 'quality_market_cap_mode': 'Custom', 'quality_market_cap_custom_symbols': [], 'quality_min_relative_strength': 0.0, 'quality_min_sector_strength': 0.0, 'quality_require_price_above_ema200': False, 'quality_require_ema_alignment': False, 'quality_require_trend_template': False, 'quality_require_higher_highs': False, 'quality_require_higher_lows': False, 'quality_market_bearish_multiplier': 1.25, 'quality_market_bullish_multiplier': 1.0, 'quality_market_neutral_multiplier': 1.0, 'quality_market_caution_multiplier': 1.1, 'setup_engine_enabled': True, 'setup_min_base_quality_score': 60.0, 'setup_min_base_weeks': 8, 'setup_max_base_depth_pct': 18.0, 'setup_max_base_duration_weeks': 24, 'setup_max_distance_to_high_pct': 8.0, 'setup_volume_long_window': 50, 'setup_volume_short_window': 20, 'setup_min_compression_score': 40.0, 'setup_min_volume_score': 35.0, 'setup_min_resistance_score': 35.0, 'setup_min_structure_score': 40.0, 'setup_min_risk_score': 35.0, 'setup_weight_base': 0.2, 'setup_weight_compression': 0.2, 'setup_weight_volume': 0.15, 'setup_weight_resistance': 0.2, 'setup_weight_structure': 0.15, 'setup_weight_risk': 0.1, 'setup_professional_threshold': 90.0, 'setup_excellent_threshold': 80.0, 'setup_good_threshold': 70.0, 'setup_average_threshold': 55.0, 'transition_engine_enabled': True, 'transition_history_window': 10, 'transition_min_setup_velocity_score': 55.0, 'transition_min_rs_acceleration_score': 55.0, 'transition_min_volume_transition_score': 55.0, 'transition_min_compression_evolution_score': 55.0, 'transition_min_resistance_pressure_score': 50.0, 'transition_min_price_acceptance_score': 50.0, 'transition_min_opportunity_velocity_score': 60.0, 'transition_weight_setup_velocity': 0.18, 'transition_weight_rs_acceleration': 0.14, 'transition_weight_volume_transition': 0.18, 'transition_weight_compression_evolution': 0.14, 'transition_weight_resistance_pressure': 0.12, 'transition_weight_price_acceptance': 0.1, 'transition_weight_opportunity_velocity': 0.14, 'transition_professional_threshold': 90.0, 'transition_strong_threshold': 80.0, 'transition_building_threshold': 70.0, 'transition_watch_threshold': 55.0, 'trigger_engine_enabled': True, 'trigger_enable_pocket_pivot': True, 'trigger_enable_relative_volume': True, 'trigger_enable_breakout_confirmation': True, 'trigger_enable_closing_strength': True, 'trigger_enable_rs_confirmation': True, 'trigger_enable_volume_confirmation': True, 'trigger_enable_intraday_confirmation': False, 'trigger_min_setup_score': 80.0, 'trigger_min_transition_score': 80.0, 'trigger_min_trigger_score': 75.0, 'trigger_pocket_pivot_volume_ratio': 1.5, 'trigger_pocket_pivot_close_location_min': 0.7, 'trigger_relative_volume_5d_min': 1.2, 'trigger_relative_volume_10d_min': 1.1, 'trigger_relative_volume_20d_min': 1.0, 'trigger_breakout_buffer_pct': 0.25, 'trigger_breakout_volume_ratio_min': 1.8, 'trigger_close_location_min': 0.8, 'trigger_close_strength_min': 0.75, 'trigger_rs_proxy_min': 105.0, 'trigger_rs_transition_min': 55.0, 'trigger_volume_transition_min': 60.0, 'trigger_intraday_vwap_hold_min': 0.0, 'trigger_intraday_rvol_min': 1.2, 'trigger_intraday_high_hold_min': 0.95, 'trigger_buy_now_top_percentile': 2.0, 'trigger_early_buy_top_percentile': 5.0, 'trigger_watch_top_percentile': 10.0, 'trigger_early_buy_soft_miss_max': 1, 'trigger_calibration_mode': False, 'market_regime_trend_weight': 0.3, 'market_regime_breadth_weight': 0.25, 'market_regime_momentum_weight': 0.2, 'market_regime_volume_weight': 0.15, 'market_regime_volatility_weight': 0.1, 'market_regime_bullish_threshold': 75.0, 'market_regime_neutral_threshold': 55.0, 'market_regime_caution_threshold': 40.0, 'market_regime_bearish_threshold': 0.0, 'market_regime_bullish_penalty': 1.0, 'market_regime_neutral_penalty': 0.95, 'market_regime_caution_penalty': 0.85, 'market_regime_bearish_penalty': 0.7, 'market_regime_buy_min_bullish': 80.0, 'market_regime_buy_min_neutral': 85.0, 'market_regime_buy_min_caution': 90.0, 'market_regime_buy_min_bearish': 95.0, 'market_regime_nifty50_period': '2y', 'market_regime_nifty500_period': '2y', 'market_regime_breadth_min_above_ema20': 45.0, 'market_regime_breadth_min_above_ema50': 40.0, 'market_regime_breadth_min_above_ema200': 25.0, 'market_regime_atr_window': 14, 'market_regime_volume_window': 20, 'market_regime_volatility_window': 20, 'market_regime_momentum_return_cap_pct': 10.0, 'market_regime_ema_buffer_pct': 0.5, 'market_regime_distribution_day_window': 20, 'market_regime_accumulation_day_window': 20, 'market_regime_volume_trend_threshold_pct': 10.0, 'market_regime_volatility_high_threshold_pct': 15.0, 'market_regime_volatility_mid_threshold_pct': 8.0, 'market_regime_accumulation_edge_days': 2, 'market_regime_distribution_edge_days': 2, 'mtf_weekly_weight': 20.0, 'mtf_daily_weight': 50.0, 'mtf_hourly_weight': 30.0, 'mtf_weekly_max_points': 20.0, 'mtf_daily_max_points': 50.0, 'mtf_hourly_max_points': 30.0, 'mtf_strong_buy_threshold': 90.0, 'mtf_buy_threshold': 80.0, 'mtf_watch_threshold': 65.0, 'mtf_wait_threshold': 50.0, 'mtf_weekly_bullish_threshold': 14.0, 'mtf_weekly_neutral_threshold': 10.0, 'mtf_weekly_bearish_threshold': 6.0, 'mtf_daily_bullish_threshold': 35.0, 'mtf_daily_neutral_threshold': 25.0, 'mtf_hourly_bullish_threshold': 20.0, 'mtf_hourly_neutral_threshold': 12.0, 'mtf_weekly_lookback_period': '2y', 'mtf_daily_lookback_period': '1y', 'mtf_hourly_lookback_period': '60d', 'mtf_hourly_ema_fast': 20, 'mtf_hourly_ema_slow': 50, 'mtf_weekly_veto_enabled': True, 'mtf_enable_confirmation': False, 'ema_fast': 20, 'ema_medium': 50, 'ema_slow': 200, 'atr_window': 20, 'contraction_window': 20, 'volume_sma_window': 20, 'volume_contraction_lookback': 20, 'volume_multiplier': 1.6, 'relative_strength_window': 90, 'relative_strength_period_1': 30, 'relative_strength_period_2': 60, 'relative_strength_period_3': 90, 'relative_strength_min_data': 30, 'sector_lookback': 60, 'risk_atr_multiplier': 2.5, 'sector_blacklist': ['Financial Services', 'Utilities'], 'required_columns': ['Open', 'High', 'Low', 'Close', 'Volume']}
+2026-07-16 17:27:32,928 INFO AlphaScanner.Scanner Starting dual-mode scanner with config {'universe': 'Total Market (Cap Focused)', 'min_candles': 300, 'interval': '1d', 'lookback_period': '2y', 'max_candidates': 15, 'min_total_score': 25.0, 'watchlist_min_score': 60.0, 'entry_min_score': 70.0, 'scan_max_workers': 8, 'scan_download_chunk_size': 25, 'diagnostics_enabled': False, 'diagnostics_persist': True, 'diagnostics_top_rules': 3, 'watchlist_setup_weight': 0.6, 'watchlist_transition_weight': 0.4, 'entry_setup_weight': 0.3, 'entry_transition_weight': 0.3, 'entry_trigger_weight': 0.4, 'watchlist_price_above_ema200': True, 'watchlist_base_high_pct': 5.0, 'watchlist_base_range_pct': 10.0, 'watchlist_base_days_min': 10, 'watchlist_atr_contraction_pct': -15.0, 'watchlist_bbw_contraction_pct': -20.0, 'watchlist_volume_dryup_pct': -25.0, 'watchlist_rs_min': 60.0, 'watchlist_sector_strength_min': 0.0, 'entry_breakout_volume_ratio': 2.0, 'entry_rs_rank_min': 80.0, 'entry_risk_reward_min': 2.0, 'entry_extension_pct': 10.0, 'entry_atr_expansion_pct': 1.8, 'quality_filter_enabled': True, 'quality_min_avg_volume': 0.0, 'quality_min_avg_turnover': 0.0, 'quality_min_market_cap_cr': 500, 'quality_max_market_cap_cr': 20000, 'quality_market_cap_mode': 'Custom', 'quality_market_cap_custom_symbols': [], 'quality_min_relative_strength': 0.0, 'quality_min_sector_strength': 0.0, 'quality_require_price_above_ema200': False, 'quality_require_ema_alignment': False, 'quality_require_trend_template': False, 'quality_require_higher_highs': False, 'quality_require_higher_lows': False, 'quality_market_bearish_multiplier': 1.25, 'quality_market_bullish_multiplier': 1.0, 'quality_market_neutral_multiplier': 1.0, 'quality_market_caution_multiplier': 1.1, 'setup_engine_enabled': True, 'setup_min_base_quality_score': 60.0, 'setup_min_base_weeks': 8, 'setup_max_base_depth_pct': 18.0, 'setup_max_base_duration_weeks': 24, 'setup_max_distance_to_high_pct': 8.0, 'setup_volume_long_window': 50, 'setup_volume_short_window': 20, 'setup_min_compression_score': 40.0, 'setup_min_volume_score': 35.0, 'setup_min_resistance_score': 35.0, 'setup_min_structure_score': 40.0, 'setup_min_risk_score': 35.0, 'setup_weight_base': 0.2, 'setup_weight_compression': 0.2, 'setup_weight_volume': 0.15, 'setup_weight_resistance': 0.2, 'setup_weight_structure': 0.15, 'setup_weight_risk': 0.1, 'setup_professional_threshold': 90.0, 'setup_excellent_threshold': 80.0, 'setup_good_threshold': 70.0, 'setup_average_threshold': 55.0, 'transition_engine_enabled': True, 'transition_history_window': 10, 'transition_min_setup_velocity_score': 55.0, 'transition_min_rs_acceleration_score': 55.0, 'transition_min_volume_transition_score': 55.0, 'transition_min_compression_evolution_score': 55.0, 'transition_min_resistance_pressure_score': 50.0, 'transition_min_price_acceptance_score': 50.0, 'transition_min_opportunity_velocity_score': 60.0, 'transition_weight_setup_velocity': 0.18, 'transition_weight_rs_acceleration': 0.14, 'transition_weight_volume_transition': 0.18, 'transition_weight_compression_evolution': 0.14, 'transition_weight_resistance_pressure': 0.12, 'transition_weight_price_acceptance': 0.1, 'transition_weight_opportunity_velocity': 0.14, 'transition_professional_threshold': 90.0, 'transition_strong_threshold': 80.0, 'transition_building_threshold': 70.0, 'transition_watch_threshold': 55.0, 'trigger_engine_enabled': True, 'trigger_enable_pocket_pivot': True, 'trigger_enable_relative_volume': True, 'trigger_enable_breakout_confirmation': True, 'trigger_enable_closing_strength': True, 'trigger_enable_rs_confirmation': True, 'trigger_enable_volume_confirmation': True, 'trigger_enable_intraday_confirmation': False, 'trigger_min_setup_score': 80.0, 'trigger_min_transition_score': 80.0, 'trigger_min_trigger_score': 75.0, 'trigger_pocket_pivot_volume_ratio': 1.5, 'trigger_pocket_pivot_close_location_min': 0.7, 'trigger_relative_volume_5d_min': 1.2, 'trigger_relative_volume_10d_min': 1.1, 'trigger_relative_volume_20d_min': 1.0, 'trigger_breakout_buffer_pct': 0.25, 'trigger_breakout_volume_ratio_min': 1.8, 'trigger_close_location_min': 0.8, 'trigger_close_strength_min': 0.75, 'trigger_rs_proxy_min': 105.0, 'trigger_rs_transition_min': 55.0, 'trigger_volume_transition_min': 60.0, 'trigger_intraday_vwap_hold_min': 0.0, 'trigger_intraday_rvol_min': 1.2, 'trigger_intraday_high_hold_min': 0.95, 'trigger_buy_now_top_percentile': 2.0, 'trigger_early_buy_top_percentile': 5.0, 'trigger_watch_top_percentile': 10.0, 'trigger_early_buy_soft_miss_max': 1, 'trigger_calibration_mode': False, 'market_regime_trend_weight': 0.3, 'market_regime_breadth_weight': 0.25, 'market_regime_momentum_weight': 0.2, 'market_regime_volume_weight': 0.15, 'market_regime_volatility_weight': 0.1, 'market_regime_bullish_threshold': 75.0, 'market_regime_neutral_threshold': 55.0, 'market_regime_caution_threshold': 40.0, 'market_regime_bearish_threshold': 0.0, 'market_regime_bullish_penalty': 1.0, 'market_regime_neutral_penalty': 0.95, 'market_regime_caution_penalty': 0.85, 'market_regime_bearish_penalty': 0.7, 'market_regime_buy_min_bullish': 80.0, 'market_regime_buy_min_neutral': 85.0, 'market_regime_buy_min_caution': 90.0, 'market_regime_buy_min_bearish': 95.0, 'market_regime_nifty50_period': '2y', 'market_regime_nifty500_period': '2y', 'market_regime_breadth_min_above_ema20': 45.0, 'market_regime_breadth_min_above_ema50': 40.0, 'market_regime_breadth_min_above_ema200': 25.0, 'market_regime_atr_window': 14, 'market_regime_volume_window': 20, 'market_regime_volatility_window': 20, 'market_regime_momentum_return_cap_pct': 10.0, 'market_regime_ema_buffer_pct': 0.5, 'market_regime_distribution_day_window': 20, 'market_regime_accumulation_day_window': 20, 'market_regime_volume_trend_threshold_pct': 10.0, 'market_regime_volatility_high_threshold_pct': 15.0, 'market_regime_volatility_mid_threshold_pct': 8.0, 'market_regime_accumulation_edge_days': 2, 'market_regime_distribution_edge_days': 2, 'mtf_weekly_weight': 20.0, 'mtf_daily_weight': 50.0, 'mtf_hourly_weight': 30.0, 'mtf_weekly_max_points': 20.0, 'mtf_daily_max_points': 50.0, 'mtf_hourly_max_points': 30.0, 'mtf_strong_buy_threshold': 90.0, 'mtf_buy_threshold': 80.0, 'mtf_watch_threshold': 65.0, 'mtf_wait_threshold': 50.0, 'mtf_weekly_bullish_threshold': 14.0, 'mtf_weekly_neutral_threshold': 10.0, 'mtf_weekly_bearish_threshold': 6.0, 'mtf_daily_bullish_threshold': 35.0, 'mtf_daily_neutral_threshold': 25.0, 'mtf_hourly_bullish_threshold': 20.0, 'mtf_hourly_neutral_threshold': 12.0, 'mtf_weekly_lookback_period': '2y', 'mtf_daily_lookback_period': '1y', 'mtf_hourly_lookback_period': '60d', 'mtf_hourly_ema_fast': 20, 'mtf_hourly_ema_slow': 50, 'mtf_weekly_veto_enabled': True, 'mtf_enable_confirmation': False, 'ema_fast': 20, 'ema_medium': 50, 'ema_slow': 200, 'atr_window': 20, 'contraction_window': 20, 'volume_sma_window': 20, 'volume_contraction_lookback': 20, 'volume_multiplier': 1.6, 'relative_strength_window': 90, 'relative_strength_period_1': 30, 'relative_strength_period_2': 60, 'relative_strength_period_3': 90, 'relative_strength_min_data': 30, 'sector_lookback': 60, 'risk_atr_multiplier': 2.5, 'sector_blacklist': ['Financial Services', 'Utilities'], 'required_columns': ['Open', 'High', 'Low', 'Close', 'Volume']}
+2026-07-16 17:27:32,928 DEBUG AlphaScanner.Scanner Dual-mode scan requested with universe=Total Market (Cap Focused) interval=1d min_candles=300 use_cache=False
+2026-07-16 17:27:32,931 DEBUG AlphaScanner.Data get_universe(Total Market (Cap Focused)) -> 751 symbols
+2026-07-16 17:27:32,931 DEBUG AlphaScanner.Scanner Resolved universe size=751 head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIDRUGS.NS', 'AARTIIND.NS']
+2026-07-16 17:27:32,931 INFO AlphaScanner.Scanner Prefiltering universe of 751 tickers by market cap (Min: 500 Cr, Max: 20000 Cr)...
+2026-07-16 17:27:32,934 INFO AlphaScanner.Engine Prefetching missing metadata for 751 tickers...
+2026-07-16 17:29:56,189 INFO AlphaScanner.Scanner Market cap pre-filter reduced universe from 751 to 399 tickers.
+2026-07-16 17:29:56,191 INFO AlphaScanner.Scanner Downloading history for 399 tickers...
+2026-07-16 17:29:56,192 DEBUG AlphaScanner.Data download_history_batch(size=399, period=2y, interval=1d, use_cache=False, head=['AARTIDRUGS.NS', 'AARTIIND.NS', 'AARTIPHARM.NS', 'AAVAS.NS', 'ABDL.NS'])
+2026-07-16 17:31:10,625 DEBUG AlphaScanner.Data download_history_batch result count=399
+2026-07-16 17:31:10,625 INFO AlphaScanner.Scanner Downloaded history for 399 tickers.
+2026-07-16 17:31:10,626 INFO AlphaScanner.Scanner Processing 399 tickers...
+2026-07-16 17:32:05,655 DEBUG AlphaScanner.Scanner Dual-mode scan finished: watchlist_rows=12 entry_rows=0
+2026-07-16 17:32:07,721 INFO AlphaScanner.Scanner Watchlist candidates: 12 | Entry candidates: 0
+2026-07-16 18:37:48,000 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 18:37:52,220 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-16 18:37:52,223 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=500 max_cap=20000 sector_map_size=751
+2026-07-16 18:37:52,224 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Pre-Breakout, universe=Total Market (Cap Focused), timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=0.6, rsi_min=35, rsi_max=70, dist_thresh=5.0, min_mkt_cap_cr=500, max_mkt_cap_cr=20000)
+2026-07-16 18:37:52,224 DEBUG AlphaScanner.Service Routing to legacy breakout scanner with normalized timeframe=1d
+2026-07-16 18:37:52,224 DEBUG AlphaScanner.Engine run_scanner(scanner_type=Pre-Breakout, universe=Total Market (Cap Focused), timeframe=1d, use_cache=False, incremental_fetch=False, vol_thresh=0.6, rsi_range=35-70, dist_thresh=5.0, min_cap=500, max_cap=20000)
+2026-07-16 18:37:52,231 DEBUG AlphaScanner.Engine Resolved legacy universe 'Total Market (Cap Focused)' to 751 tickers
+2026-07-16 18:37:52,409 DEBUG AlphaScanner.Engine Loaded benchmark close series with 495 rows
+2026-07-16 18:37:52,416 INFO AlphaScanner.Engine Prefetching missing metadata for 2 tickers...
+2026-07-16 18:37:53,108 DEBUG AlphaScanner.Engine Metadata cache primed with 751 entries
+2026-07-16 18:37:53,109 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIDRUGS.NS', 'AARTIIND.NS'])
+2026-07-16 18:37:54,801 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:37:54,801 DEBUG AlphaScanner.Engine Batch download chunk 1/76 requested=10 resolved=10
+2026-07-16 18:37:54,813 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ABDL.NS', 'ABFRL.NS', 'ABLBL.NS', 'ABREL.NS', 'ABSLAMC.NS'])
+2026-07-16 18:37:56,415 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:37:56,416 DEBUG AlphaScanner.Engine Batch download chunk 2/76 requested=10 resolved=10
+2026-07-16 18:37:56,426 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ADANIENSOL.NS', 'ADANIENT.NS', 'ADANIGREEN.NS', 'ADANIPORTS.NS', 'ADANIPOWER.NS'])
+2026-07-16 18:37:57,914 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:37:57,915 DEBUG AlphaScanner.Engine Batch download chunk 3/76 requested=10 resolved=10
+2026-07-16 18:37:57,925 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['AFCONS.NS', 'AFFLE.NS', 'AGARWALEYE.NS', 'AGL.NS', 'AHLUCONT.NS'])
+2026-07-16 18:37:59,266 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:37:59,267 DEBUG AlphaScanner.Engine Batch download chunk 4/76 requested=10 resolved=10
+2026-07-16 18:37:59,279 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ALKEM.NS', 'ALKYLAMINE.NS', 'ALOKINDS.NS', 'AMBER.NS', 'AMBUJACEM.NS'])
+2026-07-16 18:38:00,942 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:00,942 DEBUG AlphaScanner.Engine Batch download chunk 5/76 requested=10 resolved=10
+2026-07-16 18:38:00,951 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ANURAS.NS', 'APARINDS.NS', 'APLAPOLLO.NS', 'APLLTD.NS', 'APOLLO.NS'])
+2026-07-16 18:38:02,474 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:02,475 DEBUG AlphaScanner.Engine Batch download chunk 6/76 requested=10 resolved=10
+2026-07-16 18:38:02,484 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ARVINDFASN.NS', 'ASAHIINDIA.NS', 'ASHAPURMIN.NS', 'ASHOKA.NS', 'ASHOKLEY.NS'])
+2026-07-16 18:38:04,207 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:04,208 DEBUG AlphaScanner.Engine Batch download chunk 7/76 requested=10 resolved=10
+2026-07-16 18:38:04,246 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ATGL.NS', 'ATHERENERG.NS', 'ATLANTAELE.NS', 'ATUL.NS', 'AUBANK.NS'])
+2026-07-16 18:38:05,915 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:05,915 DEBUG AlphaScanner.Engine Batch download chunk 8/76 requested=10 resolved=10
+2026-07-16 18:38:05,925 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['AWFIS.NS', 'AWL.NS', 'AXISBANK.NS', 'AXISCADES.NS', 'AZAD.NS'])
+2026-07-16 18:38:07,594 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:07,594 DEBUG AlphaScanner.Engine Batch download chunk 9/76 requested=10 resolved=10
+2026-07-16 18:38:07,605 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BAJFINANCE.NS', 'BALAMINES.NS', 'BALKRISIND.NS', 'BALRAMCHIN.NS', 'BALUFORGE.NS'])
+2026-07-16 18:38:09,243 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:09,243 DEBUG AlphaScanner.Engine Batch download chunk 10/76 requested=10 resolved=10
+2026-07-16 18:38:09,255 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BAYERCROP.NS', 'BBOX.NS', 'BBTC.NS', 'BDL.NS', 'BECTORFOOD.NS'])
+2026-07-16 18:38:11,125 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:11,125 DEBUG AlphaScanner.Engine Batch download chunk 11/76 requested=10 resolved=10
+2026-07-16 18:38:11,140 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BHARTIARTL.NS', 'BHARTIHEXA.NS', 'BHEL.NS', 'BIKAJI.NS', 'BIOCON.NS'])
+2026-07-16 18:38:13,335 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:13,335 DEBUG AlphaScanner.Engine Batch download chunk 12/76 requested=10 resolved=10
+2026-07-16 18:38:13,347 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BLUESTARCO.NS', 'BLUESTONE.NS', 'BORORENEW.NS', 'BOSCHLTD.NS', 'BPCL.NS'])
+2026-07-16 18:38:15,080 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:15,080 DEBUG AlphaScanner.Engine Batch download chunk 13/76 requested=10 resolved=10
+2026-07-16 18:38:15,091 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CAMS.NS', 'CANBK.NS', 'CANFINHOME.NS', 'CANHLIFE.NS', 'CAPILLARY.NS'])
+2026-07-16 18:38:16,506 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:16,506 DEBUG AlphaScanner.Engine Batch download chunk 14/76 requested=10 resolved=10
+2026-07-16 18:38:16,517 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CCL.NS', 'CDSL.NS', 'CEATLTD.NS', 'CELLO.NS', 'CEMPRO.NS'])
+2026-07-16 18:38:18,870 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:18,870 DEBUG AlphaScanner.Engine Batch download chunk 15/76 requested=10 resolved=10
+2026-07-16 18:38:18,878 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CGPOWER.NS', 'CHALET.NS', 'CHAMBLFERT.NS', 'CHENNPETRO.NS', 'CHOICEIN.NS'])
+2026-07-16 18:38:20,558 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:20,559 DEBUG AlphaScanner.Engine Batch download chunk 16/76 requested=10 resolved=10
+2026-07-16 18:38:20,569 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CMSINFO.NS', 'COALINDIA.NS', 'COCHINSHIP.NS', 'COFORGE.NS', 'COHANCE.NS'])
+2026-07-16 18:38:22,243 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:22,243 DEBUG AlphaScanner.Engine Batch download chunk 17/76 requested=10 resolved=10
+2026-07-16 18:38:22,253 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CPPLUS.NS', 'CRAFTSMAN.NS', 'CRAMC.NS', 'CREDITACC.NS', 'CRISIL.NS'])
+2026-07-16 18:38:23,809 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:23,809 DEBUG AlphaScanner.Engine Batch download chunk 18/76 requested=10 resolved=10
+2026-07-16 18:38:23,821 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CUPID.NS', 'CYIENT.NS', 'DABUR.NS', 'DALBHARAT.NS', 'DATAMATICS.NS'])
+2026-07-16 18:38:25,421 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:25,422 DEBUG AlphaScanner.Engine Batch download chunk 19/76 requested=10 resolved=10
+2026-07-16 18:38:25,439 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['DEEPAKFERT.NS', 'DEEPAKNTR.NS', 'DELHIVERY.NS', 'DEVYANI.NS', 'DIACABS.NS'])
+2026-07-16 18:38:26,924 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:26,924 DEBUG AlphaScanner.Engine Batch download chunk 20/76 requested=10 resolved=10
+2026-07-16 18:38:26,936 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['DRREDDY.NS', 'DYNAMATECH.NS', 'ECLERX.NS', 'EDELWEISS.NS', 'EICHERMOT.NS'])
+2026-07-16 18:38:29,227 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:29,228 DEBUG AlphaScanner.Engine Batch download chunk 21/76 requested=10 resolved=10
+2026-07-16 18:38:29,271 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ELGIEQUIP.NS', 'ELLEN.NS', 'EMAMILTD.NS', 'EMBDL.NS', 'EMCURE.NS'])
+2026-07-16 18:38:30,846 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:30,846 DEBUG AlphaScanner.Engine Batch download chunk 22/76 requested=10 resolved=10
+2026-07-16 18:38:30,854 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ENTERO.NS', 'EPL.NS', 'EQUITASBNK.NS', 'ERIS.NS', 'ESCORTS.NS'])
+2026-07-16 18:38:32,696 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:32,697 DEBUG AlphaScanner.Engine Batch download chunk 23/76 requested=10 resolved=10
+2026-07-16 18:38:32,705 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['FEDERALBNK.NS', 'FEDFINA.NS', 'FIEMIND.NS', 'FINCABLES.NS', 'FINPIPE.NS'])
+2026-07-16 18:38:34,334 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:34,334 DEBUG AlphaScanner.Engine Batch download chunk 24/76 requested=10 resolved=10
+2026-07-16 18:38:34,345 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['FSL.NS', 'GABRIEL.NS', 'GAEL.NS', 'GAIL.NS', 'GALLANTT.NS'])
+2026-07-16 18:38:35,988 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:35,988 DEBUG AlphaScanner.Engine Batch download chunk 25/76 requested=10 resolved=10
+2026-07-16 18:38:35,998 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['GLAXO.NS', 'GLENMARK.NS', 'GMDCLTD.NS', 'GMMPFAUDLR.NS', 'GMRAIRPORT.NS'])
+2026-07-16 18:38:38,269 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:38,269 DEBUG AlphaScanner.Engine Batch download chunk 26/76 requested=10 resolved=10
+2026-07-16 18:38:38,280 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['GODREJCP.NS', 'GODREJIND.NS', 'GODREJPROP.NS', 'GOKEX.NS', 'GOKULAGRO.NS'])
+2026-07-16 18:38:40,362 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:40,363 DEBUG AlphaScanner.Engine Batch download chunk 27/76 requested=10 resolved=10
+2026-07-16 18:38:40,370 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['GRAVITA.NS', 'GREAVESCOT.NS', 'GROWW.NS', 'GRSE.NS', 'GRWRHITECH.NS'])
+2026-07-16 18:38:42,042 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:42,042 DEBUG AlphaScanner.Engine Batch download chunk 28/76 requested=10 resolved=10
+2026-07-16 18:38:42,050 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['HBLENGINE.NS', 'HCC.NS', 'HCG.NS', 'HCLTECH.NS', 'HDBFS.NS'])
+2026-07-16 18:38:44,058 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:44,058 DEBUG AlphaScanner.Engine Batch download chunk 29/76 requested=10 resolved=10
+2026-07-16 18:38:44,066 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['HERITGFOOD.NS', 'HEROMOTOCO.NS', 'HEXT.NS', 'HFCL.NS', 'HGINFRA.NS'])
+2026-07-16 18:38:45,520 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:45,520 DEBUG AlphaScanner.Engine Batch download chunk 30/76 requested=10 resolved=10
+2026-07-16 18:38:45,529 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['HOMEFIRST.NS', 'HONASA.NS', 'HONAUT.NS', 'HSCL.NS', 'HUDCO.NS'])
+2026-07-16 18:38:47,739 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:47,740 DEBUG AlphaScanner.Engine Batch download chunk 31/76 requested=10 resolved=10
+2026-07-16 18:38:47,760 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ICIL.NS', 'IDBI.NS', 'IDEA.NS', 'IDFCFIRSTB.NS', 'IEX.NS'])
+2026-07-16 18:38:49,275 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:49,275 DEBUG AlphaScanner.Engine Batch download chunk 32/76 requested=10 resolved=10
+2026-07-16 18:38:49,283 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['IIFLCAPS.NS', 'IKS.NS', 'IMFA.NS', 'INDGN.NS', 'INDHOTEL.NS'])
+2026-07-16 18:38:51,089 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:51,089 DEBUG AlphaScanner.Engine Batch download chunk 33/76 requested=10 resolved=10
+2026-07-16 18:38:51,104 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['INDIGO.NS', 'INDIGOPNTS.NS', 'INDUSINDBK.NS', 'INDUSTOWER.NS', 'INFY.NS'])
+2026-07-16 18:38:52,970 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:52,971 DEBUG AlphaScanner.Engine Batch download chunk 34/76 requested=10 resolved=10
+2026-07-16 18:38:52,982 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['IOC.NS', 'IONEXCHANG.NS', 'IPCALAB.NS', 'IRB.NS', 'IRCON.NS'])
+2026-07-16 18:38:54,943 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:54,944 DEBUG AlphaScanner.Engine Batch download chunk 35/76 requested=10 resolved=10
+2026-07-16 18:38:54,957 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ITI.NS', 'IXIGO.NS', 'J&KBANK.NS', 'JAIBALAJI.NS', 'JAINREC.NS'])
+2026-07-16 18:38:56,771 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:56,771 DEBUG AlphaScanner.Engine Batch download chunk 36/76 requested=10 resolved=10
+2026-07-16 18:38:56,780 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['JINDALSTEL.NS', 'JIOFIN.NS', 'JKCEMENT.NS', 'JKLAKSHMI.NS', 'JKPAPER.NS'])
+2026-07-16 18:38:58,363 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:38:58,364 DEBUG AlphaScanner.Engine Batch download chunk 37/76 requested=10 resolved=10
+2026-07-16 18:38:58,379 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['JSL.NS', 'JSLL.NS', 'JSWCEMENT.NS', 'JSWDULUX.NS', 'JSWENERGY.NS'])
+2026-07-16 18:39:00,286 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:00,287 DEBUG AlphaScanner.Engine Batch download chunk 38/76 requested=10 resolved=10
+2026-07-16 18:39:00,297 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['JUSTDIAL.NS', 'JWL.NS', 'JYOTHYLAB.NS', 'JYOTICNC.NS', 'KAJARIACER.NS'])
+2026-07-16 18:39:01,824 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:01,824 DEBUG AlphaScanner.Engine Batch download chunk 39/76 requested=10 resolved=10
+2026-07-16 18:39:01,841 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['KEI.NS', 'KFINTECH.NS', 'KIMS.NS', 'KIRLOSBROS.NS', 'KIRLOSENG.NS'])
+2026-07-16 18:39:03,457 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:03,458 DEBUG AlphaScanner.Engine Batch download chunk 40/76 requested=10 resolved=10
+2026-07-16 18:39:03,476 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['KPIL.NS', 'KPITTECH.NS', 'KPRMILL.NS', 'KRBL.NS', 'KRN.NS'])
+2026-07-16 18:39:05,878 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:05,878 DEBUG AlphaScanner.Engine Batch download chunk 41/76 requested=10 resolved=10
+2026-07-16 18:39:05,896 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['LAURUSLABS.NS', 'LEMONTREE.NS', 'LENSKART.NS', 'LGEINDIA.NS', 'LICHSGFIN.NS'])
+2026-07-16 18:39:07,449 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:07,450 DEBUG AlphaScanner.Engine Batch download chunk 42/76 requested=10 resolved=10
+2026-07-16 18:39:07,461 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['LODHA.NS', 'LOTUSDEV.NS', 'LT.NS', 'LTF.NS', 'LTFOODS.NS'])
+2026-07-16 18:39:09,374 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:09,375 DEBUG AlphaScanner.Engine Batch download chunk 43/76 requested=10 resolved=10
+2026-07-16 18:39:09,388 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['M&M.NS', 'M&MFIN.NS', 'MAHABANK.NS', 'MAHSCOOTER.NS', 'MAHSEAMLES.NS'])
+2026-07-16 18:39:11,232 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:11,232 DEBUG AlphaScanner.Engine Batch download chunk 44/76 requested=10 resolved=10
+2026-07-16 18:39:11,242 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['MARICO.NS', 'MARKSANS.NS', 'MARUTI.NS', 'MASTEK.NS', 'MAXHEALTH.NS'])
+2026-07-16 18:39:12,792 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:12,792 DEBUG AlphaScanner.Engine Batch download chunk 45/76 requested=10 resolved=10
+2026-07-16 18:39:12,807 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['METROPOLIS.NS', 'MFSL.NS', 'MGL.NS', 'MIDHANI.NS', 'MINDACORP.NS'])
+2026-07-16 18:39:14,424 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:14,424 DEBUG AlphaScanner.Engine Batch download chunk 46/76 requested=10 resolved=10
+2026-07-16 18:39:14,436 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['MRF.NS', 'MRPL.NS', 'MSTCLTD.NS', 'MSUMI.NS', 'MTARTECH.NS'])
+2026-07-16 18:39:16,357 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:16,357 DEBUG AlphaScanner.Engine Batch download chunk 47/76 requested=10 resolved=10
+2026-07-16 18:39:16,370 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['NAVA.NS', 'NAVINFLUOR.NS', 'NAZARA.NS', 'NBCC.NS', 'NCC.NS'])
+2026-07-16 18:39:18,091 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:18,091 DEBUG AlphaScanner.Engine Batch download chunk 48/76 requested=10 resolved=10
+2026-07-16 18:39:18,106 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['NEULANDLAB.NS', 'NEWGEN.NS', 'NFL.NS', 'NH.NS', 'NHPC.NS'])
+2026-07-16 18:39:19,801 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:19,801 DEBUG AlphaScanner.Engine Batch download chunk 49/76 requested=10 resolved=10
+2026-07-16 18:39:19,815 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['NTPC.NS', 'NTPCGREEN.NS', 'NUVAMA.NS', 'NUVOCO.NS', 'NYKAA.NS'])
+2026-07-16 18:39:21,441 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:21,441 DEBUG AlphaScanner.Engine Batch download chunk 50/76 requested=10 resolved=10
+2026-07-16 18:39:21,456 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ONESOURCE.NS', 'ONGC.NS', 'OPTIEMUS.NS', 'ORIENTCEM.NS', 'ORKLAINDIA.NS'])
+2026-07-16 18:39:23,363 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:23,363 DEBUG AlphaScanner.Engine Batch download chunk 51/76 requested=10 resolved=10
+2026-07-16 18:39:23,380 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PATANJALI.NS', 'PAYTM.NS', 'PCBL.NS', 'PCJEWELLER.NS', 'PERSISTENT.NS'])
+2026-07-16 18:39:25,051 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:25,051 DEBUG AlphaScanner.Engine Batch download chunk 52/76 requested=10 resolved=10
+2026-07-16 18:39:25,067 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PGIL.NS', 'PHOENIXLTD.NS', 'PICCADIL.NS', 'PIDILITIND.NS', 'PIIND.NS'])
+2026-07-16 18:39:27,000 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:27,000 DEBUG AlphaScanner.Engine Batch download chunk 53/76 requested=10 resolved=10
+2026-07-16 18:39:27,011 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PNGJL.NS', 'POLICYBZR.NS', 'POLYCAB.NS', 'POLYMED.NS', 'POONAWALLA.NS'])
+2026-07-16 18:39:28,459 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:28,459 DEBUG AlphaScanner.Engine Batch download chunk 54/76 requested=10 resolved=10
+2026-07-16 18:39:28,468 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PREMIERENE.NS', 'PRESTIGE.NS', 'PRICOLLTD.NS', 'PRIVISCL.NS', 'PRSMJOHNSN.NS'])
+2026-07-16 18:39:30,064 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:30,065 DEBUG AlphaScanner.Engine Batch download chunk 55/76 requested=10 resolved=10
+2026-07-16 18:39:30,075 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PWL.NS', 'QPOWER.NS', 'QUESS.NS', 'RADICO.NS', 'RAILTEL.NS'])
+2026-07-16 18:39:31,709 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:31,709 DEBUG AlphaScanner.Engine Batch download chunk 56/76 requested=10 resolved=10
+2026-07-16 18:39:31,718 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['RATNAMANI.NS', 'RAYMONDLSL.NS', 'RBA.NS', 'RBLBANK.NS', 'RCF.NS'])
+2026-07-16 18:39:33,648 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:33,650 DEBUG AlphaScanner.Engine Batch download chunk 57/76 requested=10 resolved=10
+2026-07-16 18:39:33,681 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['RELIANCE.NS', 'RELIGARE.NS', 'RENUKA.NS', 'RHIM.NS', 'RITES.NS'])
+2026-07-16 18:39:35,455 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:35,456 DEBUG AlphaScanner.Engine Batch download chunk 58/76 requested=10 resolved=10
+2026-07-16 18:39:35,468 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['RTNPOWER.NS', 'RUBICON.NS', 'RVNL.NS', 'SAATVIKGL.NS', 'SAFARI.NS'])
+2026-07-16 18:39:36,835 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:36,835 DEBUG AlphaScanner.Engine Batch download chunk 59/76 requested=10 resolved=10
+2026-07-16 18:39:36,846 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SANDUMA.NS', 'SANOFICONR.NS', 'SANSERA.NS', 'SAPPHIRE.NS', 'SARDAEN.NS'])
+2026-07-16 18:39:38,384 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:38,384 DEBUG AlphaScanner.Engine Batch download chunk 60/76 requested=10 resolved=10
+2026-07-16 18:39:38,398 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SCHAEFFLER.NS', 'SCHNEIDER.NS', 'SCI.NS', 'SENCO.NS', 'SFL.NS'])
+2026-07-16 18:39:40,097 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:40,098 DEBUG AlphaScanner.Engine Batch download chunk 61/76 requested=10 resolved=10
+2026-07-16 18:39:40,119 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SHREECEM.NS', 'SHRIPISTON.NS', 'SHRIRAMFIN.NS', 'SHYAMMETL.NS', 'SIEMENS.NS'])
+2026-07-16 18:39:42,025 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:42,028 DEBUG AlphaScanner.Engine Batch download chunk 62/76 requested=10 resolved=10
+2026-07-16 18:39:42,086 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SKYGOLD.NS', 'SMARTWORKS.NS', 'SMLMAH.NS', 'SOBHA.NS', 'SOLARINDS.NS'])
+2026-07-16 18:39:44,497 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:44,497 DEBUG AlphaScanner.Engine Batch download chunk 63/76 requested=10 resolved=10
+2026-07-16 18:39:44,508 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SRF.NS', 'STAR.NS', 'STARCEMENT.NS', 'STARHEALTH.NS', 'STLTECH.NS'])
+2026-07-16 18:39:46,732 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:46,732 DEBUG AlphaScanner.Engine Batch download chunk 64/76 requested=10 resolved=10
+2026-07-16 18:39:46,745 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SUMICHEM.NS', 'SUNDARMFIN.NS', 'SUNPHARMA.NS', 'SUNTECK.NS', 'SUNTV.NS'])
+2026-07-16 18:39:48,928 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:48,928 DEBUG AlphaScanner.Engine Batch download chunk 65/76 requested=10 resolved=10
+2026-07-16 18:39:48,941 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SWIGGY.NS', 'SWSOLAR.NS', 'SYNGENE.NS', 'SYRMA.NS', 'TANLA.NS'])
+2026-07-16 18:39:50,680 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:50,681 DEBUG AlphaScanner.Engine Batch download chunk 66/76 requested=10 resolved=10
+2026-07-16 18:39:50,694 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TATACONSUM.NS', 'TATAELXSI.NS', 'TATAINVEST.NS', 'TATAPOWER.NS', 'TATASTEEL.NS'])
+2026-07-16 18:39:52,506 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:52,506 DEBUG AlphaScanner.Engine Batch download chunk 67/76 requested=10 resolved=10
+2026-07-16 18:39:52,521 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TECHNOE.NS', 'TEGA.NS', 'TEJASNET.NS', 'TENNIND.NS', 'TEXRAIL.NS'])
+2026-07-16 18:39:54,536 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:54,537 DEBUG AlphaScanner.Engine Batch download chunk 68/76 requested=10 resolved=10
+2026-07-16 18:39:54,546 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TI.NS', 'TIINDIA.NS', 'TIMETECHNO.NS', 'TIMKEN.NS', 'TIPSMUSIC.NS'])
+2026-07-16 18:39:56,157 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:56,158 DEBUG AlphaScanner.Engine Batch download chunk 69/76 requested=10 resolved=10
+2026-07-16 18:39:56,169 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TORNTPHARM.NS', 'TORNTPOWER.NS', 'TRANSRAILL.NS', 'TRAVELFOOD.NS', 'TRENT.NS'])
+2026-07-16 18:39:57,793 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:57,794 DEBUG AlphaScanner.Engine Batch download chunk 70/76 requested=10 resolved=10
+2026-07-16 18:39:57,813 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TVSMOTOR.NS', 'TVSSCS.NS', 'UBL.NS', 'UCOBANK.NS', 'UJJIVANSFB.NS'])
+2026-07-16 18:39:59,589 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:39:59,590 DEBUG AlphaScanner.Engine Batch download chunk 71/76 requested=10 resolved=10
+2026-07-16 18:39:59,604 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['URBANCO.NS', 'USHAMART.NS', 'UTIAMC.NS', 'UTLSOLAR.NS', 'V2RETAIL.NS'])
+2026-07-16 18:40:01,368 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:40:01,369 DEBUG AlphaScanner.Engine Batch download chunk 72/76 requested=10 resolved=10
+2026-07-16 18:40:01,400 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['VIJAYA.NS', 'VIKRAMSOLR.NS', 'VIPIND.NS', 'VIYASH.NS', 'VMART.NS'])
+2026-07-16 18:40:03,173 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:40:03,174 DEBUG AlphaScanner.Engine Batch download chunk 73/76 requested=10 resolved=10
+2026-07-16 18:40:03,185 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['WAAREERTL.NS', 'WABAG.NS', 'WAKEFIT.NS', 'WEBELSOLAR.NS', 'WELCORP.NS'])
+2026-07-16 18:40:04,886 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:40:04,886 DEBUG AlphaScanner.Engine Batch download chunk 74/76 requested=10 resolved=10
+2026-07-16 18:40:04,896 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['WIPRO.NS', 'WOCKPHARMA.NS', 'YATHARTH.NS', 'YESBANK.NS', 'ZAGGLE.NS'])
+2026-07-16 18:40:06,568 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:40:06,569 DEBUG AlphaScanner.Engine Batch download chunk 75/76 requested=10 resolved=10
+2026-07-16 18:40:06,578 DEBUG AlphaScanner.Data download_history_batch(size=1, period=2y, interval=1d, use_cache=False, head=['ZYDUSWELL.NS'])
+2026-07-16 18:40:06,820 DEBUG AlphaScanner.Data download_history_batch result count=1
+2026-07-16 18:40:06,820 DEBUG AlphaScanner.Engine Batch download chunk 76/76 requested=1 resolved=1
+2026-07-16 18:40:07,228 DEBUG AlphaScanner.Engine Concatenated legacy data shape=(499, 4506)
+2026-07-16 18:40:07,357 DEBUG AlphaScanner.Engine Post-align data shape=(495, 4506) benchmark_rows=495
+2026-07-16 18:40:47,902 DEBUG AlphaScanner.Engine Legacy scan completed: hits=30 scanned=721 fail_counts={'trend_fail': 329, 'momentum_fail': 70, 'volume_fail': 0, 'breakout_fail': 117, 'rs_fail': 0, 'adx_fail': 2, 'liquidity_fail': 54, 'error_fail': 30}
+2026-07-16 18:40:47,939 DEBUG AlphaScanner.Service perform_fresh_scan completed: rows=30 stats_keys=['adx_fail', 'bank_nifty_change', 'bb_fail', 'breakout_fail', 'dii_net', 'error_fail', 'fakeout_trap', 'fii_net', 'liquidity_fail', 'macd_fail', 'market_bias', 'market_bias_score', 'market_breadth_50', 'market_health', 'momentum_fail', 'nifty_change', 'rs_fail', 'scanned', 'scanner_type', 'sector_sentiment', 'timeframe', 'trend_fail', 'trending_sectors', 'universe', 'universe_size', 'volume_fail']
+2026-07-16 18:52:39,649 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 18:52:39,779 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 18:52:57,805 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 18:53:02,429 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-16 18:53:02,431 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=500 max_cap=20000 sector_map_size=751
+2026-07-16 18:53:02,431 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Breakout, universe=Total Market (Cap Focused), timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=1.0, rsi_min=50, rsi_max=85, dist_thresh=1.5, min_mkt_cap_cr=500, max_mkt_cap_cr=20000)
+2026-07-16 18:53:02,432 DEBUG AlphaScanner.Service Routing to legacy breakout scanner with normalized timeframe=1d
+2026-07-16 18:53:02,432 DEBUG AlphaScanner.Engine run_scanner(scanner_type=Breakout, universe=Total Market (Cap Focused), timeframe=1d, use_cache=False, incremental_fetch=False, vol_thresh=1.0, rsi_range=50-85, dist_thresh=1.5, min_cap=500, max_cap=20000)
+2026-07-16 18:53:02,439 DEBUG AlphaScanner.Engine Resolved legacy universe 'Total Market (Cap Focused)' to 751 tickers
+2026-07-16 18:53:02,743 DEBUG AlphaScanner.Engine Loaded benchmark close series with 495 rows
+2026-07-16 18:53:02,750 DEBUG AlphaScanner.Engine Metadata cache is up to date. Skipping prefetch.
+2026-07-16 18:53:02,754 DEBUG AlphaScanner.Engine Metadata cache primed with 751 entries
+2026-07-16 18:53:02,756 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIDRUGS.NS', 'AARTIIND.NS'])
+2026-07-16 18:53:04,581 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:04,581 DEBUG AlphaScanner.Engine Batch download chunk 1/76 requested=10 resolved=10
+2026-07-16 18:53:04,596 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ABDL.NS', 'ABFRL.NS', 'ABLBL.NS', 'ABREL.NS', 'ABSLAMC.NS'])
+2026-07-16 18:53:06,695 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:06,696 DEBUG AlphaScanner.Engine Batch download chunk 2/76 requested=10 resolved=10
+2026-07-16 18:53:06,713 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ADANIENSOL.NS', 'ADANIENT.NS', 'ADANIGREEN.NS', 'ADANIPORTS.NS', 'ADANIPOWER.NS'])
+2026-07-16 18:53:08,406 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:08,407 DEBUG AlphaScanner.Engine Batch download chunk 3/76 requested=10 resolved=10
+2026-07-16 18:53:08,415 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['AFCONS.NS', 'AFFLE.NS', 'AGARWALEYE.NS', 'AGL.NS', 'AHLUCONT.NS'])
+2026-07-16 18:53:10,287 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:10,288 DEBUG AlphaScanner.Engine Batch download chunk 4/76 requested=10 resolved=10
+2026-07-16 18:53:10,324 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ALKEM.NS', 'ALKYLAMINE.NS', 'ALOKINDS.NS', 'AMBER.NS', 'AMBUJACEM.NS'])
+2026-07-16 18:53:11,948 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:11,948 DEBUG AlphaScanner.Engine Batch download chunk 5/76 requested=10 resolved=10
+2026-07-16 18:53:11,960 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ANURAS.NS', 'APARINDS.NS', 'APLAPOLLO.NS', 'APLLTD.NS', 'APOLLO.NS'])
+2026-07-16 18:53:14,273 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:14,275 DEBUG AlphaScanner.Engine Batch download chunk 6/76 requested=10 resolved=10
+2026-07-16 18:53:14,362 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ARVINDFASN.NS', 'ASAHIINDIA.NS', 'ASHAPURMIN.NS', 'ASHOKA.NS', 'ASHOKLEY.NS'])
+2026-07-16 18:53:16,060 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:16,060 DEBUG AlphaScanner.Engine Batch download chunk 7/76 requested=10 resolved=10
+2026-07-16 18:53:16,069 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ATGL.NS', 'ATHERENERG.NS', 'ATLANTAELE.NS', 'ATUL.NS', 'AUBANK.NS'])
+2026-07-16 18:53:17,990 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:17,990 DEBUG AlphaScanner.Engine Batch download chunk 8/76 requested=10 resolved=10
+2026-07-16 18:53:18,030 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['AWFIS.NS', 'AWL.NS', 'AXISBANK.NS', 'AXISCADES.NS', 'AZAD.NS'])
+2026-07-16 18:53:19,982 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:19,982 DEBUG AlphaScanner.Engine Batch download chunk 9/76 requested=10 resolved=10
+2026-07-16 18:53:19,994 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BAJFINANCE.NS', 'BALAMINES.NS', 'BALKRISIND.NS', 'BALRAMCHIN.NS', 'BALUFORGE.NS'])
+2026-07-16 18:53:22,490 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:22,491 DEBUG AlphaScanner.Engine Batch download chunk 10/76 requested=10 resolved=10
+2026-07-16 18:53:22,514 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BAYERCROP.NS', 'BBOX.NS', 'BBTC.NS', 'BDL.NS', 'BECTORFOOD.NS'])
+2026-07-16 18:53:24,423 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:24,423 DEBUG AlphaScanner.Engine Batch download chunk 11/76 requested=10 resolved=10
+2026-07-16 18:53:24,436 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BHARTIARTL.NS', 'BHARTIHEXA.NS', 'BHEL.NS', 'BIKAJI.NS', 'BIOCON.NS'])
+2026-07-16 18:53:26,178 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:26,178 DEBUG AlphaScanner.Engine Batch download chunk 12/76 requested=10 resolved=10
+2026-07-16 18:53:26,188 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BLUESTARCO.NS', 'BLUESTONE.NS', 'BORORENEW.NS', 'BOSCHLTD.NS', 'BPCL.NS'])
+2026-07-16 18:53:28,166 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:28,167 DEBUG AlphaScanner.Engine Batch download chunk 13/76 requested=10 resolved=10
+2026-07-16 18:53:28,175 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CAMS.NS', 'CANBK.NS', 'CANFINHOME.NS', 'CANHLIFE.NS', 'CAPILLARY.NS'])
+2026-07-16 18:53:29,791 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:29,791 DEBUG AlphaScanner.Engine Batch download chunk 14/76 requested=10 resolved=10
+2026-07-16 18:53:29,800 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CCL.NS', 'CDSL.NS', 'CEATLTD.NS', 'CELLO.NS', 'CEMPRO.NS'])
+2026-07-16 18:53:31,969 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:31,969 DEBUG AlphaScanner.Engine Batch download chunk 15/76 requested=10 resolved=10
+2026-07-16 18:53:31,978 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CGPOWER.NS', 'CHALET.NS', 'CHAMBLFERT.NS', 'CHENNPETRO.NS', 'CHOICEIN.NS'])
+2026-07-16 18:53:33,809 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:33,809 DEBUG AlphaScanner.Engine Batch download chunk 16/76 requested=10 resolved=10
+2026-07-16 18:53:33,820 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CMSINFO.NS', 'COALINDIA.NS', 'COCHINSHIP.NS', 'COFORGE.NS', 'COHANCE.NS'])
+2026-07-16 18:53:35,754 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:35,754 DEBUG AlphaScanner.Engine Batch download chunk 17/76 requested=10 resolved=10
+2026-07-16 18:53:35,763 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CPPLUS.NS', 'CRAFTSMAN.NS', 'CRAMC.NS', 'CREDITACC.NS', 'CRISIL.NS'])
+2026-07-16 18:53:37,415 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:37,415 DEBUG AlphaScanner.Engine Batch download chunk 18/76 requested=10 resolved=10
+2026-07-16 18:53:37,424 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CUPID.NS', 'CYIENT.NS', 'DABUR.NS', 'DALBHARAT.NS', 'DATAMATICS.NS'])
+2026-07-16 18:53:39,572 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:39,573 DEBUG AlphaScanner.Engine Batch download chunk 19/76 requested=10 resolved=10
+2026-07-16 18:53:39,601 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['DEEPAKFERT.NS', 'DEEPAKNTR.NS', 'DELHIVERY.NS', 'DEVYANI.NS', 'DIACABS.NS'])
+2026-07-16 18:53:41,057 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:41,057 DEBUG AlphaScanner.Engine Batch download chunk 20/76 requested=10 resolved=10
+2026-07-16 18:53:41,070 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['DRREDDY.NS', 'DYNAMATECH.NS', 'ECLERX.NS', 'EDELWEISS.NS', 'EICHERMOT.NS'])
+2026-07-16 18:53:42,946 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:42,946 DEBUG AlphaScanner.Engine Batch download chunk 21/76 requested=10 resolved=10
+2026-07-16 18:53:42,954 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ELGIEQUIP.NS', 'ELLEN.NS', 'EMAMILTD.NS', 'EMBDL.NS', 'EMCURE.NS'])
+2026-07-16 18:53:44,482 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:44,482 DEBUG AlphaScanner.Engine Batch download chunk 22/76 requested=10 resolved=10
+2026-07-16 18:53:44,490 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ENTERO.NS', 'EPL.NS', 'EQUITASBNK.NS', 'ERIS.NS', 'ESCORTS.NS'])
+2026-07-16 18:53:46,372 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:46,372 DEBUG AlphaScanner.Engine Batch download chunk 23/76 requested=10 resolved=10
+2026-07-16 18:53:46,383 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['FEDERALBNK.NS', 'FEDFINA.NS', 'FIEMIND.NS', 'FINCABLES.NS', 'FINPIPE.NS'])
+2026-07-16 18:53:47,849 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:47,850 DEBUG AlphaScanner.Engine Batch download chunk 24/76 requested=10 resolved=10
+2026-07-16 18:53:47,857 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['FSL.NS', 'GABRIEL.NS', 'GAEL.NS', 'GAIL.NS', 'GALLANTT.NS'])
+2026-07-16 18:53:49,557 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:49,557 DEBUG AlphaScanner.Engine Batch download chunk 25/76 requested=10 resolved=10
+2026-07-16 18:53:49,565 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['GLAXO.NS', 'GLENMARK.NS', 'GMDCLTD.NS', 'GMMPFAUDLR.NS', 'GMRAIRPORT.NS'])
+2026-07-16 18:53:51,491 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:51,491 DEBUG AlphaScanner.Engine Batch download chunk 26/76 requested=10 resolved=10
+2026-07-16 18:53:51,499 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['GODREJCP.NS', 'GODREJIND.NS', 'GODREJPROP.NS', 'GOKEX.NS', 'GOKULAGRO.NS'])
+2026-07-16 18:53:53,165 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:53,166 DEBUG AlphaScanner.Engine Batch download chunk 27/76 requested=10 resolved=10
+2026-07-16 18:53:53,174 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['GRAVITA.NS', 'GREAVESCOT.NS', 'GROWW.NS', 'GRSE.NS', 'GRWRHITECH.NS'])
+2026-07-16 18:53:54,578 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:54,579 DEBUG AlphaScanner.Engine Batch download chunk 28/76 requested=10 resolved=10
+2026-07-16 18:53:54,586 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['HBLENGINE.NS', 'HCC.NS', 'HCG.NS', 'HCLTECH.NS', 'HDBFS.NS'])
+2026-07-16 18:53:56,478 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:56,478 DEBUG AlphaScanner.Engine Batch download chunk 29/76 requested=10 resolved=10
+2026-07-16 18:53:56,487 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['HERITGFOOD.NS', 'HEROMOTOCO.NS', 'HEXT.NS', 'HFCL.NS', 'HGINFRA.NS'])
+2026-07-16 18:53:58,691 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:53:58,692 DEBUG AlphaScanner.Engine Batch download chunk 30/76 requested=10 resolved=10
+2026-07-16 18:53:58,735 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['HOMEFIRST.NS', 'HONASA.NS', 'HONAUT.NS', 'HSCL.NS', 'HUDCO.NS'])
+2026-07-16 18:54:00,934 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:00,934 DEBUG AlphaScanner.Engine Batch download chunk 31/76 requested=10 resolved=10
+2026-07-16 18:54:00,945 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ICIL.NS', 'IDBI.NS', 'IDEA.NS', 'IDFCFIRSTB.NS', 'IEX.NS'])
+2026-07-16 18:54:02,841 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:02,842 DEBUG AlphaScanner.Engine Batch download chunk 32/76 requested=10 resolved=10
+2026-07-16 18:54:02,850 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['IIFLCAPS.NS', 'IKS.NS', 'IMFA.NS', 'INDGN.NS', 'INDHOTEL.NS'])
+2026-07-16 18:54:04,375 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:04,375 DEBUG AlphaScanner.Engine Batch download chunk 33/76 requested=10 resolved=10
+2026-07-16 18:54:04,389 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['INDIGO.NS', 'INDIGOPNTS.NS', 'INDUSINDBK.NS', 'INDUSTOWER.NS', 'INFY.NS'])
+2026-07-16 18:54:05,933 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:05,934 DEBUG AlphaScanner.Engine Batch download chunk 34/76 requested=10 resolved=10
+2026-07-16 18:54:05,944 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['IOC.NS', 'IONEXCHANG.NS', 'IPCALAB.NS', 'IRB.NS', 'IRCON.NS'])
+2026-07-16 18:54:07,694 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:07,694 DEBUG AlphaScanner.Engine Batch download chunk 35/76 requested=10 resolved=10
+2026-07-16 18:54:07,703 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ITI.NS', 'IXIGO.NS', 'J&KBANK.NS', 'JAIBALAJI.NS', 'JAINREC.NS'])
+2026-07-16 18:54:09,810 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:09,810 DEBUG AlphaScanner.Engine Batch download chunk 36/76 requested=10 resolved=10
+2026-07-16 18:54:09,820 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['JINDALSTEL.NS', 'JIOFIN.NS', 'JKCEMENT.NS', 'JKLAKSHMI.NS', 'JKPAPER.NS'])
+2026-07-16 18:54:11,354 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:11,354 DEBUG AlphaScanner.Engine Batch download chunk 37/76 requested=10 resolved=10
+2026-07-16 18:54:11,362 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['JSL.NS', 'JSLL.NS', 'JSWCEMENT.NS', 'JSWDULUX.NS', 'JSWENERGY.NS'])
+2026-07-16 18:54:13,097 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:13,097 DEBUG AlphaScanner.Engine Batch download chunk 38/76 requested=10 resolved=10
+2026-07-16 18:54:13,109 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['JUSTDIAL.NS', 'JWL.NS', 'JYOTHYLAB.NS', 'JYOTICNC.NS', 'KAJARIACER.NS'])
+2026-07-16 18:54:15,287 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:15,287 DEBUG AlphaScanner.Engine Batch download chunk 39/76 requested=10 resolved=10
+2026-07-16 18:54:15,328 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['KEI.NS', 'KFINTECH.NS', 'KIMS.NS', 'KIRLOSBROS.NS', 'KIRLOSENG.NS'])
+2026-07-16 18:54:17,196 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:17,196 DEBUG AlphaScanner.Engine Batch download chunk 40/76 requested=10 resolved=10
+2026-07-16 18:54:17,207 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['KPIL.NS', 'KPITTECH.NS', 'KPRMILL.NS', 'KRBL.NS', 'KRN.NS'])
+2026-07-16 18:54:18,686 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:18,686 DEBUG AlphaScanner.Engine Batch download chunk 41/76 requested=10 resolved=10
+2026-07-16 18:54:18,694 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['LAURUSLABS.NS', 'LEMONTREE.NS', 'LENSKART.NS', 'LGEINDIA.NS', 'LICHSGFIN.NS'])
+2026-07-16 18:54:20,238 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:20,238 DEBUG AlphaScanner.Engine Batch download chunk 42/76 requested=10 resolved=10
+2026-07-16 18:54:20,246 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['LODHA.NS', 'LOTUSDEV.NS', 'LT.NS', 'LTF.NS', 'LTFOODS.NS'])
+2026-07-16 18:54:21,775 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:21,776 DEBUG AlphaScanner.Engine Batch download chunk 43/76 requested=10 resolved=10
+2026-07-16 18:54:21,785 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['M&M.NS', 'M&MFIN.NS', 'MAHABANK.NS', 'MAHSCOOTER.NS', 'MAHSEAMLES.NS'])
+2026-07-16 18:54:23,562 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:23,563 DEBUG AlphaScanner.Engine Batch download chunk 44/76 requested=10 resolved=10
+2026-07-16 18:54:23,615 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['MARICO.NS', 'MARKSANS.NS', 'MARUTI.NS', 'MASTEK.NS', 'MAXHEALTH.NS'])
+2026-07-16 18:54:25,071 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:25,071 DEBUG AlphaScanner.Engine Batch download chunk 45/76 requested=10 resolved=10
+2026-07-16 18:54:25,079 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['METROPOLIS.NS', 'MFSL.NS', 'MGL.NS', 'MIDHANI.NS', 'MINDACORP.NS'])
+2026-07-16 18:54:26,526 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:26,526 DEBUG AlphaScanner.Engine Batch download chunk 46/76 requested=10 resolved=10
+2026-07-16 18:54:26,536 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['MRF.NS', 'MRPL.NS', 'MSTCLTD.NS', 'MSUMI.NS', 'MTARTECH.NS'])
+2026-07-16 18:54:28,996 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:28,997 DEBUG AlphaScanner.Engine Batch download chunk 47/76 requested=10 resolved=10
+2026-07-16 18:54:29,005 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['NAVA.NS', 'NAVINFLUOR.NS', 'NAZARA.NS', 'NBCC.NS', 'NCC.NS'])
+2026-07-16 18:54:30,450 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:30,450 DEBUG AlphaScanner.Engine Batch download chunk 48/76 requested=10 resolved=10
+2026-07-16 18:54:30,458 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['NEULANDLAB.NS', 'NEWGEN.NS', 'NFL.NS', 'NH.NS', 'NHPC.NS'])
+2026-07-16 18:54:32,247 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:32,248 DEBUG AlphaScanner.Engine Batch download chunk 49/76 requested=10 resolved=10
+2026-07-16 18:54:32,258 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['NTPC.NS', 'NTPCGREEN.NS', 'NUVAMA.NS', 'NUVOCO.NS', 'NYKAA.NS'])
+2026-07-16 18:54:34,989 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:34,989 DEBUG AlphaScanner.Engine Batch download chunk 50/76 requested=10 resolved=10
+2026-07-16 18:54:34,999 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ONESOURCE.NS', 'ONGC.NS', 'OPTIEMUS.NS', 'ORIENTCEM.NS', 'ORKLAINDIA.NS'])
+2026-07-16 18:54:36,640 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:36,640 DEBUG AlphaScanner.Engine Batch download chunk 51/76 requested=10 resolved=10
+2026-07-16 18:54:36,654 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PATANJALI.NS', 'PAYTM.NS', 'PCBL.NS', 'PCJEWELLER.NS', 'PERSISTENT.NS'])
+2026-07-16 18:54:38,506 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:38,506 DEBUG AlphaScanner.Engine Batch download chunk 52/76 requested=10 resolved=10
+2026-07-16 18:54:38,518 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PGIL.NS', 'PHOENIXLTD.NS', 'PICCADIL.NS', 'PIDILITIND.NS', 'PIIND.NS'])
+2026-07-16 18:54:40,013 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:40,013 DEBUG AlphaScanner.Engine Batch download chunk 53/76 requested=10 resolved=10
+2026-07-16 18:54:40,022 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PNGJL.NS', 'POLICYBZR.NS', 'POLYCAB.NS', 'POLYMED.NS', 'POONAWALLA.NS'])
+2026-07-16 18:54:41,502 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:41,502 DEBUG AlphaScanner.Engine Batch download chunk 54/76 requested=10 resolved=10
+2026-07-16 18:54:41,511 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PREMIERENE.NS', 'PRESTIGE.NS', 'PRICOLLTD.NS', 'PRIVISCL.NS', 'PRSMJOHNSN.NS'])
+2026-07-16 18:54:42,964 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:42,964 DEBUG AlphaScanner.Engine Batch download chunk 55/76 requested=10 resolved=10
+2026-07-16 18:54:42,973 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PWL.NS', 'QPOWER.NS', 'QUESS.NS', 'RADICO.NS', 'RAILTEL.NS'])
+2026-07-16 18:54:44,685 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:44,685 DEBUG AlphaScanner.Engine Batch download chunk 56/76 requested=10 resolved=10
+2026-07-16 18:54:44,695 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['RATNAMANI.NS', 'RAYMONDLSL.NS', 'RBA.NS', 'RBLBANK.NS', 'RCF.NS'])
+2026-07-16 18:54:46,632 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:46,632 DEBUG AlphaScanner.Engine Batch download chunk 57/76 requested=10 resolved=10
+2026-07-16 18:54:46,642 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['RELIANCE.NS', 'RELIGARE.NS', 'RENUKA.NS', 'RHIM.NS', 'RITES.NS'])
+2026-07-16 18:54:48,286 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:48,286 DEBUG AlphaScanner.Engine Batch download chunk 58/76 requested=10 resolved=10
+2026-07-16 18:54:48,298 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['RTNPOWER.NS', 'RUBICON.NS', 'RVNL.NS', 'SAATVIKGL.NS', 'SAFARI.NS'])
+2026-07-16 18:54:50,141 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:50,141 DEBUG AlphaScanner.Engine Batch download chunk 59/76 requested=10 resolved=10
+2026-07-16 18:54:50,149 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SANDUMA.NS', 'SANOFICONR.NS', 'SANSERA.NS', 'SAPPHIRE.NS', 'SARDAEN.NS'])
+2026-07-16 18:54:51,609 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:51,609 DEBUG AlphaScanner.Engine Batch download chunk 60/76 requested=10 resolved=10
+2026-07-16 18:54:51,620 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SCHAEFFLER.NS', 'SCHNEIDER.NS', 'SCI.NS', 'SENCO.NS', 'SFL.NS'])
+2026-07-16 18:54:53,385 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:53,385 DEBUG AlphaScanner.Engine Batch download chunk 61/76 requested=10 resolved=10
+2026-07-16 18:54:53,417 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SHREECEM.NS', 'SHRIPISTON.NS', 'SHRIRAMFIN.NS', 'SHYAMMETL.NS', 'SIEMENS.NS'])
+2026-07-16 18:54:55,560 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:55,560 DEBUG AlphaScanner.Engine Batch download chunk 62/76 requested=10 resolved=10
+2026-07-16 18:54:55,567 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SKYGOLD.NS', 'SMARTWORKS.NS', 'SMLMAH.NS', 'SOBHA.NS', 'SOLARINDS.NS'])
+2026-07-16 18:54:57,331 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:57,331 DEBUG AlphaScanner.Engine Batch download chunk 63/76 requested=10 resolved=10
+2026-07-16 18:54:57,339 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SRF.NS', 'STAR.NS', 'STARCEMENT.NS', 'STARHEALTH.NS', 'STLTECH.NS'])
+2026-07-16 18:54:58,751 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:54:58,752 DEBUG AlphaScanner.Engine Batch download chunk 64/76 requested=10 resolved=10
+2026-07-16 18:54:58,760 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SUMICHEM.NS', 'SUNDARMFIN.NS', 'SUNPHARMA.NS', 'SUNTECK.NS', 'SUNTV.NS'])
+2026-07-16 18:55:00,667 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:00,668 DEBUG AlphaScanner.Engine Batch download chunk 65/76 requested=10 resolved=10
+2026-07-16 18:55:00,676 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SWIGGY.NS', 'SWSOLAR.NS', 'SYNGENE.NS', 'SYRMA.NS', 'TANLA.NS'])
+2026-07-16 18:55:02,775 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:02,776 DEBUG AlphaScanner.Engine Batch download chunk 66/76 requested=10 resolved=10
+2026-07-16 18:55:02,816 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TATACONSUM.NS', 'TATAELXSI.NS', 'TATAINVEST.NS', 'TATAPOWER.NS', 'TATASTEEL.NS'])
+2026-07-16 18:55:04,387 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:04,388 DEBUG AlphaScanner.Engine Batch download chunk 67/76 requested=10 resolved=10
+2026-07-16 18:55:04,396 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TECHNOE.NS', 'TEGA.NS', 'TEJASNET.NS', 'TENNIND.NS', 'TEXRAIL.NS'])
+2026-07-16 18:55:05,787 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:05,787 DEBUG AlphaScanner.Engine Batch download chunk 68/76 requested=10 resolved=10
+2026-07-16 18:55:05,794 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TI.NS', 'TIINDIA.NS', 'TIMETECHNO.NS', 'TIMKEN.NS', 'TIPSMUSIC.NS'])
+2026-07-16 18:55:08,470 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:08,470 DEBUG AlphaScanner.Engine Batch download chunk 69/76 requested=10 resolved=10
+2026-07-16 18:55:08,479 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TORNTPHARM.NS', 'TORNTPOWER.NS', 'TRANSRAILL.NS', 'TRAVELFOOD.NS', 'TRENT.NS'])
+2026-07-16 18:55:10,525 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:10,525 DEBUG AlphaScanner.Engine Batch download chunk 70/76 requested=10 resolved=10
+2026-07-16 18:55:10,558 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TVSMOTOR.NS', 'TVSSCS.NS', 'UBL.NS', 'UCOBANK.NS', 'UJJIVANSFB.NS'])
+2026-07-16 18:55:12,232 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:12,233 DEBUG AlphaScanner.Engine Batch download chunk 71/76 requested=10 resolved=10
+2026-07-16 18:55:12,240 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['URBANCO.NS', 'USHAMART.NS', 'UTIAMC.NS', 'UTLSOLAR.NS', 'V2RETAIL.NS'])
+2026-07-16 18:55:13,813 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:13,813 DEBUG AlphaScanner.Engine Batch download chunk 72/76 requested=10 resolved=10
+2026-07-16 18:55:13,821 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['VIJAYA.NS', 'VIKRAMSOLR.NS', 'VIPIND.NS', 'VIYASH.NS', 'VMART.NS'])
+2026-07-16 18:55:15,574 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:15,574 DEBUG AlphaScanner.Engine Batch download chunk 73/76 requested=10 resolved=10
+2026-07-16 18:55:15,582 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['WAAREERTL.NS', 'WABAG.NS', 'WAKEFIT.NS', 'WEBELSOLAR.NS', 'WELCORP.NS'])
+2026-07-16 18:55:17,050 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:17,050 DEBUG AlphaScanner.Engine Batch download chunk 74/76 requested=10 resolved=10
+2026-07-16 18:55:17,059 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['WIPRO.NS', 'WOCKPHARMA.NS', 'YATHARTH.NS', 'YESBANK.NS', 'ZAGGLE.NS'])
+2026-07-16 18:55:19,208 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 18:55:19,209 DEBUG AlphaScanner.Engine Batch download chunk 75/76 requested=10 resolved=10
+2026-07-16 18:55:19,216 DEBUG AlphaScanner.Data download_history_batch(size=1, period=2y, interval=1d, use_cache=False, head=['ZYDUSWELL.NS'])
+2026-07-16 18:55:19,393 DEBUG AlphaScanner.Data download_history_batch result count=1
+2026-07-16 18:55:19,393 DEBUG AlphaScanner.Engine Batch download chunk 76/76 requested=1 resolved=1
+2026-07-16 18:55:19,653 DEBUG AlphaScanner.Engine Concatenated legacy data shape=(499, 4506)
+2026-07-16 18:55:19,712 DEBUG AlphaScanner.Engine Post-align data shape=(495, 4506) benchmark_rows=495
+2026-07-16 18:55:46,105 DEBUG AlphaScanner.Engine Legacy scan completed: hits=6 scanned=721 fail_counts={'trend_fail': 393, 'momentum_fail': 78, 'volume_fail': 135, 'breakout_fail': 170, 'rs_fail': 0, 'adx_fail': 12, 'liquidity_fail': 54, 'error_fail': 30}
+2026-07-16 18:55:46,132 DEBUG AlphaScanner.Service perform_fresh_scan completed: rows=6 stats_keys=['adx_fail', 'bank_nifty_change', 'bb_fail', 'breakout_fail', 'dii_net', 'error_fail', 'fakeout_trap', 'fii_net', 'liquidity_fail', 'macd_fail', 'market_bias', 'market_bias_score', 'market_breadth_50', 'market_health', 'momentum_fail', 'nifty_change', 'rs_fail', 'scanned', 'scanner_type', 'sector_sentiment', 'timeframe', 'trend_fail', 'trending_sectors', 'universe', 'universe_size', 'volume_fail']
+2026-07-16 19:07:01,929 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:07:02,054 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:08:07,703 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:08:07,795 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:08:15,567 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:08:15,691 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:08:41,504 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:08:41,583 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:08:53,461 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:08:53,577 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:09:02,757 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:09:06,537 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-16 19:09:06,541 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=500 max_cap=20000 sector_map_size=751
+2026-07-16 19:09:06,541 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Pre-Breakout, universe=Total Market (Cap Focused), timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=0.6, rsi_min=35, rsi_max=70, dist_thresh=5.0, min_mkt_cap_cr=500, max_mkt_cap_cr=20000)
+2026-07-16 19:09:06,543 DEBUG AlphaScanner.Service Routing to legacy breakout scanner with normalized timeframe=1d
+2026-07-16 19:09:06,544 DEBUG AlphaScanner.Engine run_scanner(scanner_type=Pre-Breakout, universe=Total Market (Cap Focused), timeframe=1d, use_cache=False, incremental_fetch=False, vol_thresh=0.6, rsi_range=35-70, dist_thresh=5.0, min_cap=500, max_cap=20000)
+2026-07-16 19:09:06,557 DEBUG AlphaScanner.Engine Resolved legacy universe 'Total Market (Cap Focused)' to 751 tickers
+2026-07-16 19:09:06,763 DEBUG AlphaScanner.Engine Loaded benchmark close series with 495 rows
+2026-07-16 19:09:06,769 DEBUG AlphaScanner.Engine Metadata cache is up to date. Skipping prefetch.
+2026-07-16 19:09:06,773 DEBUG AlphaScanner.Engine Metadata cache primed with 751 entries
+2026-07-16 19:09:06,774 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIDRUGS.NS', 'AARTIIND.NS'])
+2026-07-16 19:09:08,465 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:08,465 DEBUG AlphaScanner.Engine Batch download chunk 1/76 requested=10 resolved=10
+2026-07-16 19:09:08,474 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ABDL.NS', 'ABFRL.NS', 'ABLBL.NS', 'ABREL.NS', 'ABSLAMC.NS'])
+2026-07-16 19:09:09,942 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:09,942 DEBUG AlphaScanner.Engine Batch download chunk 2/76 requested=10 resolved=10
+2026-07-16 19:09:09,950 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ADANIENSOL.NS', 'ADANIENT.NS', 'ADANIGREEN.NS', 'ADANIPORTS.NS', 'ADANIPOWER.NS'])
+2026-07-16 19:09:11,528 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:11,528 DEBUG AlphaScanner.Engine Batch download chunk 3/76 requested=10 resolved=10
+2026-07-16 19:09:11,537 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['AFCONS.NS', 'AFFLE.NS', 'AGARWALEYE.NS', 'AGL.NS', 'AHLUCONT.NS'])
+2026-07-16 19:09:13,065 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:13,066 DEBUG AlphaScanner.Engine Batch download chunk 4/76 requested=10 resolved=10
+2026-07-16 19:09:13,075 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ALKEM.NS', 'ALKYLAMINE.NS', 'ALOKINDS.NS', 'AMBER.NS', 'AMBUJACEM.NS'])
+2026-07-16 19:09:14,940 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:14,940 DEBUG AlphaScanner.Engine Batch download chunk 5/76 requested=10 resolved=10
+2026-07-16 19:09:14,948 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ANURAS.NS', 'APARINDS.NS', 'APLAPOLLO.NS', 'APLLTD.NS', 'APOLLO.NS'])
+2026-07-16 19:09:16,749 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:16,750 DEBUG AlphaScanner.Engine Batch download chunk 6/76 requested=10 resolved=10
+2026-07-16 19:09:16,761 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ARVINDFASN.NS', 'ASAHIINDIA.NS', 'ASHAPURMIN.NS', 'ASHOKA.NS', 'ASHOKLEY.NS'])
+2026-07-16 19:09:18,193 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:18,194 DEBUG AlphaScanner.Engine Batch download chunk 7/76 requested=10 resolved=10
+2026-07-16 19:09:18,202 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ATGL.NS', 'ATHERENERG.NS', 'ATLANTAELE.NS', 'ATUL.NS', 'AUBANK.NS'])
+2026-07-16 19:09:19,829 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:19,829 DEBUG AlphaScanner.Engine Batch download chunk 8/76 requested=10 resolved=10
+2026-07-16 19:09:19,840 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['AWFIS.NS', 'AWL.NS', 'AXISBANK.NS', 'AXISCADES.NS', 'AZAD.NS'])
+2026-07-16 19:09:21,783 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:21,784 DEBUG AlphaScanner.Engine Batch download chunk 9/76 requested=10 resolved=10
+2026-07-16 19:09:21,796 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BAJFINANCE.NS', 'BALAMINES.NS', 'BALKRISIND.NS', 'BALRAMCHIN.NS', 'BALUFORGE.NS'])
+2026-07-16 19:09:23,645 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:23,645 DEBUG AlphaScanner.Engine Batch download chunk 10/76 requested=10 resolved=10
+2026-07-16 19:09:23,656 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BAYERCROP.NS', 'BBOX.NS', 'BBTC.NS', 'BDL.NS', 'BECTORFOOD.NS'])
+2026-07-16 19:09:25,472 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:25,472 DEBUG AlphaScanner.Engine Batch download chunk 11/76 requested=10 resolved=10
+2026-07-16 19:09:25,480 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BHARTIARTL.NS', 'BHARTIHEXA.NS', 'BHEL.NS', 'BIKAJI.NS', 'BIOCON.NS'])
+2026-07-16 19:09:26,900 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:26,900 DEBUG AlphaScanner.Engine Batch download chunk 12/76 requested=10 resolved=10
+2026-07-16 19:09:26,908 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['BLUESTARCO.NS', 'BLUESTONE.NS', 'BORORENEW.NS', 'BOSCHLTD.NS', 'BPCL.NS'])
+2026-07-16 19:09:28,917 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:28,917 DEBUG AlphaScanner.Engine Batch download chunk 13/76 requested=10 resolved=10
+2026-07-16 19:09:28,925 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CAMS.NS', 'CANBK.NS', 'CANFINHOME.NS', 'CANHLIFE.NS', 'CAPILLARY.NS'])
+2026-07-16 19:09:30,894 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:30,895 DEBUG AlphaScanner.Engine Batch download chunk 14/76 requested=10 resolved=10
+2026-07-16 19:09:30,903 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CCL.NS', 'CDSL.NS', 'CEATLTD.NS', 'CELLO.NS', 'CEMPRO.NS'])
+2026-07-16 19:09:32,720 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:32,720 DEBUG AlphaScanner.Engine Batch download chunk 15/76 requested=10 resolved=10
+2026-07-16 19:09:32,727 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CGPOWER.NS', 'CHALET.NS', 'CHAMBLFERT.NS', 'CHENNPETRO.NS', 'CHOICEIN.NS'])
+2026-07-16 19:09:34,622 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:34,622 DEBUG AlphaScanner.Engine Batch download chunk 16/76 requested=10 resolved=10
+2026-07-16 19:09:34,630 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CMSINFO.NS', 'COALINDIA.NS', 'COCHINSHIP.NS', 'COFORGE.NS', 'COHANCE.NS'])
+2026-07-16 19:09:36,416 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:36,416 DEBUG AlphaScanner.Engine Batch download chunk 17/76 requested=10 resolved=10
+2026-07-16 19:09:36,425 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CPPLUS.NS', 'CRAFTSMAN.NS', 'CRAMC.NS', 'CREDITACC.NS', 'CRISIL.NS'])
+2026-07-16 19:09:38,342 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:38,343 DEBUG AlphaScanner.Engine Batch download chunk 18/76 requested=10 resolved=10
+2026-07-16 19:09:38,358 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['CUPID.NS', 'CYIENT.NS', 'DABUR.NS', 'DALBHARAT.NS', 'DATAMATICS.NS'])
+2026-07-16 19:09:40,357 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:40,357 DEBUG AlphaScanner.Engine Batch download chunk 19/76 requested=10 resolved=10
+2026-07-16 19:09:40,365 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['DEEPAKFERT.NS', 'DEEPAKNTR.NS', 'DELHIVERY.NS', 'DEVYANI.NS', 'DIACABS.NS'])
+2026-07-16 19:09:42,138 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:42,138 DEBUG AlphaScanner.Engine Batch download chunk 20/76 requested=10 resolved=10
+2026-07-16 19:09:42,146 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['DRREDDY.NS', 'DYNAMATECH.NS', 'ECLERX.NS', 'EDELWEISS.NS', 'EICHERMOT.NS'])
+2026-07-16 19:09:44,208 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:44,208 DEBUG AlphaScanner.Engine Batch download chunk 21/76 requested=10 resolved=10
+2026-07-16 19:09:44,215 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ELGIEQUIP.NS', 'ELLEN.NS', 'EMAMILTD.NS', 'EMBDL.NS', 'EMCURE.NS'])
+2026-07-16 19:09:46,040 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:46,040 DEBUG AlphaScanner.Engine Batch download chunk 22/76 requested=10 resolved=10
+2026-07-16 19:09:46,047 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ENTERO.NS', 'EPL.NS', 'EQUITASBNK.NS', 'ERIS.NS', 'ESCORTS.NS'])
+2026-07-16 19:09:47,607 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:47,607 DEBUG AlphaScanner.Engine Batch download chunk 23/76 requested=10 resolved=10
+2026-07-16 19:09:47,615 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['FEDERALBNK.NS', 'FEDFINA.NS', 'FIEMIND.NS', 'FINCABLES.NS', 'FINPIPE.NS'])
+2026-07-16 19:09:49,416 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:49,416 DEBUG AlphaScanner.Engine Batch download chunk 24/76 requested=10 resolved=10
+2026-07-16 19:09:49,424 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['FSL.NS', 'GABRIEL.NS', 'GAEL.NS', 'GAIL.NS', 'GALLANTT.NS'])
+2026-07-16 19:09:51,271 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:51,271 DEBUG AlphaScanner.Engine Batch download chunk 25/76 requested=10 resolved=10
+2026-07-16 19:09:51,279 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['GLAXO.NS', 'GLENMARK.NS', 'GMDCLTD.NS', 'GMMPFAUDLR.NS', 'GMRAIRPORT.NS'])
+2026-07-16 19:09:52,884 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:52,884 DEBUG AlphaScanner.Engine Batch download chunk 26/76 requested=10 resolved=10
+2026-07-16 19:09:52,892 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['GODREJCP.NS', 'GODREJIND.NS', 'GODREJPROP.NS', 'GOKEX.NS', 'GOKULAGRO.NS'])
+2026-07-16 19:09:54,532 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:54,581 DEBUG AlphaScanner.Engine Batch download chunk 27/76 requested=10 resolved=10
+2026-07-16 19:09:54,590 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['GRAVITA.NS', 'GREAVESCOT.NS', 'GROWW.NS', 'GRSE.NS', 'GRWRHITECH.NS'])
+2026-07-16 19:09:56,109 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:56,109 DEBUG AlphaScanner.Engine Batch download chunk 28/76 requested=10 resolved=10
+2026-07-16 19:09:56,120 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['HBLENGINE.NS', 'HCC.NS', 'HCG.NS', 'HCLTECH.NS', 'HDBFS.NS'])
+2026-07-16 19:09:57,625 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:57,625 DEBUG AlphaScanner.Engine Batch download chunk 29/76 requested=10 resolved=10
+2026-07-16 19:09:57,633 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['HERITGFOOD.NS', 'HEROMOTOCO.NS', 'HEXT.NS', 'HFCL.NS', 'HGINFRA.NS'])
+2026-07-16 19:09:59,956 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:09:59,957 DEBUG AlphaScanner.Engine Batch download chunk 30/76 requested=10 resolved=10
+2026-07-16 19:09:59,964 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['HOMEFIRST.NS', 'HONASA.NS', 'HONAUT.NS', 'HSCL.NS', 'HUDCO.NS'])
+2026-07-16 19:10:01,576 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:01,577 DEBUG AlphaScanner.Engine Batch download chunk 31/76 requested=10 resolved=10
+2026-07-16 19:10:01,585 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ICIL.NS', 'IDBI.NS', 'IDEA.NS', 'IDFCFIRSTB.NS', 'IEX.NS'])
+2026-07-16 19:10:03,478 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:03,479 DEBUG AlphaScanner.Engine Batch download chunk 32/76 requested=10 resolved=10
+2026-07-16 19:10:03,487 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['IIFLCAPS.NS', 'IKS.NS', 'IMFA.NS', 'INDGN.NS', 'INDHOTEL.NS'])
+2026-07-16 19:10:05,222 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:05,223 DEBUG AlphaScanner.Engine Batch download chunk 33/76 requested=10 resolved=10
+2026-07-16 19:10:05,230 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['INDIGO.NS', 'INDIGOPNTS.NS', 'INDUSINDBK.NS', 'INDUSTOWER.NS', 'INFY.NS'])
+2026-07-16 19:10:06,775 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:06,776 DEBUG AlphaScanner.Engine Batch download chunk 34/76 requested=10 resolved=10
+2026-07-16 19:10:06,784 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['IOC.NS', 'IONEXCHANG.NS', 'IPCALAB.NS', 'IRB.NS', 'IRCON.NS'])
+2026-07-16 19:10:08,605 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:08,606 DEBUG AlphaScanner.Engine Batch download chunk 35/76 requested=10 resolved=10
+2026-07-16 19:10:08,614 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ITI.NS', 'IXIGO.NS', 'J&KBANK.NS', 'JAIBALAJI.NS', 'JAINREC.NS'])
+2026-07-16 19:10:10,223 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:10,223 DEBUG AlphaScanner.Engine Batch download chunk 36/76 requested=10 resolved=10
+2026-07-16 19:10:10,232 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['JINDALSTEL.NS', 'JIOFIN.NS', 'JKCEMENT.NS', 'JKLAKSHMI.NS', 'JKPAPER.NS'])
+2026-07-16 19:10:11,783 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:11,784 DEBUG AlphaScanner.Engine Batch download chunk 37/76 requested=10 resolved=10
+2026-07-16 19:10:11,793 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['JSL.NS', 'JSLL.NS', 'JSWCEMENT.NS', 'JSWDULUX.NS', 'JSWENERGY.NS'])
+2026-07-16 19:10:13,403 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:13,403 DEBUG AlphaScanner.Engine Batch download chunk 38/76 requested=10 resolved=10
+2026-07-16 19:10:13,411 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['JUSTDIAL.NS', 'JWL.NS', 'JYOTHYLAB.NS', 'JYOTICNC.NS', 'KAJARIACER.NS'])
+2026-07-16 19:10:15,178 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:15,179 DEBUG AlphaScanner.Engine Batch download chunk 39/76 requested=10 resolved=10
+2026-07-16 19:10:15,186 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['KEI.NS', 'KFINTECH.NS', 'KIMS.NS', 'KIRLOSBROS.NS', 'KIRLOSENG.NS'])
+2026-07-16 19:10:16,912 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:16,913 DEBUG AlphaScanner.Engine Batch download chunk 40/76 requested=10 resolved=10
+2026-07-16 19:10:16,920 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['KPIL.NS', 'KPITTECH.NS', 'KPRMILL.NS', 'KRBL.NS', 'KRN.NS'])
+2026-07-16 19:10:18,360 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:18,361 DEBUG AlphaScanner.Engine Batch download chunk 41/76 requested=10 resolved=10
+2026-07-16 19:10:18,368 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['LAURUSLABS.NS', 'LEMONTREE.NS', 'LENSKART.NS', 'LGEINDIA.NS', 'LICHSGFIN.NS'])
+2026-07-16 19:10:19,826 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:19,826 DEBUG AlphaScanner.Engine Batch download chunk 42/76 requested=10 resolved=10
+2026-07-16 19:10:19,834 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['LODHA.NS', 'LOTUSDEV.NS', 'LT.NS', 'LTF.NS', 'LTFOODS.NS'])
+2026-07-16 19:10:21,350 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:21,350 DEBUG AlphaScanner.Engine Batch download chunk 43/76 requested=10 resolved=10
+2026-07-16 19:10:21,358 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['M&M.NS', 'M&MFIN.NS', 'MAHABANK.NS', 'MAHSCOOTER.NS', 'MAHSEAMLES.NS'])
+2026-07-16 19:10:23,107 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:23,108 DEBUG AlphaScanner.Engine Batch download chunk 44/76 requested=10 resolved=10
+2026-07-16 19:10:23,120 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['MARICO.NS', 'MARKSANS.NS', 'MARUTI.NS', 'MASTEK.NS', 'MAXHEALTH.NS'])
+2026-07-16 19:10:24,739 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:24,739 DEBUG AlphaScanner.Engine Batch download chunk 45/76 requested=10 resolved=10
+2026-07-16 19:10:24,747 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['METROPOLIS.NS', 'MFSL.NS', 'MGL.NS', 'MIDHANI.NS', 'MINDACORP.NS'])
+2026-07-16 19:10:26,554 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:26,555 DEBUG AlphaScanner.Engine Batch download chunk 46/76 requested=10 resolved=10
+2026-07-16 19:10:26,563 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['MRF.NS', 'MRPL.NS', 'MSTCLTD.NS', 'MSUMI.NS', 'MTARTECH.NS'])
+2026-07-16 19:10:28,506 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:28,506 DEBUG AlphaScanner.Engine Batch download chunk 47/76 requested=10 resolved=10
+2026-07-16 19:10:28,518 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['NAVA.NS', 'NAVINFLUOR.NS', 'NAZARA.NS', 'NBCC.NS', 'NCC.NS'])
+2026-07-16 19:10:30,246 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:30,246 DEBUG AlphaScanner.Engine Batch download chunk 48/76 requested=10 resolved=10
+2026-07-16 19:10:30,253 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['NEULANDLAB.NS', 'NEWGEN.NS', 'NFL.NS', 'NH.NS', 'NHPC.NS'])
+2026-07-16 19:10:32,034 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:32,034 DEBUG AlphaScanner.Engine Batch download chunk 49/76 requested=10 resolved=10
+2026-07-16 19:10:32,042 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['NTPC.NS', 'NTPCGREEN.NS', 'NUVAMA.NS', 'NUVOCO.NS', 'NYKAA.NS'])
+2026-07-16 19:10:33,465 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:33,466 DEBUG AlphaScanner.Engine Batch download chunk 50/76 requested=10 resolved=10
+2026-07-16 19:10:33,474 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['ONESOURCE.NS', 'ONGC.NS', 'OPTIEMUS.NS', 'ORIENTCEM.NS', 'ORKLAINDIA.NS'])
+2026-07-16 19:10:34,739 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:34,740 DEBUG AlphaScanner.Engine Batch download chunk 51/76 requested=10 resolved=10
+2026-07-16 19:10:34,747 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PATANJALI.NS', 'PAYTM.NS', 'PCBL.NS', 'PCJEWELLER.NS', 'PERSISTENT.NS'])
+2026-07-16 19:10:36,431 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:36,431 DEBUG AlphaScanner.Engine Batch download chunk 52/76 requested=10 resolved=10
+2026-07-16 19:10:36,440 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PGIL.NS', 'PHOENIXLTD.NS', 'PICCADIL.NS', 'PIDILITIND.NS', 'PIIND.NS'])
+2026-07-16 19:10:37,848 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:37,848 DEBUG AlphaScanner.Engine Batch download chunk 53/76 requested=10 resolved=10
+2026-07-16 19:10:37,856 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PNGJL.NS', 'POLICYBZR.NS', 'POLYCAB.NS', 'POLYMED.NS', 'POONAWALLA.NS'])
+2026-07-16 19:10:39,606 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:39,606 DEBUG AlphaScanner.Engine Batch download chunk 54/76 requested=10 resolved=10
+2026-07-16 19:10:39,614 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PREMIERENE.NS', 'PRESTIGE.NS', 'PRICOLLTD.NS', 'PRIVISCL.NS', 'PRSMJOHNSN.NS'])
+2026-07-16 19:10:41,332 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:41,332 DEBUG AlphaScanner.Engine Batch download chunk 55/76 requested=10 resolved=10
+2026-07-16 19:10:41,339 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['PWL.NS', 'QPOWER.NS', 'QUESS.NS', 'RADICO.NS', 'RAILTEL.NS'])
+2026-07-16 19:10:42,949 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:42,949 DEBUG AlphaScanner.Engine Batch download chunk 56/76 requested=10 resolved=10
+2026-07-16 19:10:42,956 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['RATNAMANI.NS', 'RAYMONDLSL.NS', 'RBA.NS', 'RBLBANK.NS', 'RCF.NS'])
+2026-07-16 19:10:44,660 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:44,660 DEBUG AlphaScanner.Engine Batch download chunk 57/76 requested=10 resolved=10
+2026-07-16 19:10:44,671 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['RELIANCE.NS', 'RELIGARE.NS', 'RENUKA.NS', 'RHIM.NS', 'RITES.NS'])
+2026-07-16 19:10:46,174 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:46,174 DEBUG AlphaScanner.Engine Batch download chunk 58/76 requested=10 resolved=10
+2026-07-16 19:10:46,182 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['RTNPOWER.NS', 'RUBICON.NS', 'RVNL.NS', 'SAATVIKGL.NS', 'SAFARI.NS'])
+2026-07-16 19:10:47,820 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:47,821 DEBUG AlphaScanner.Engine Batch download chunk 59/76 requested=10 resolved=10
+2026-07-16 19:10:47,852 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SANDUMA.NS', 'SANOFICONR.NS', 'SANSERA.NS', 'SAPPHIRE.NS', 'SARDAEN.NS'])
+2026-07-16 19:10:49,629 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:49,629 DEBUG AlphaScanner.Engine Batch download chunk 60/76 requested=10 resolved=10
+2026-07-16 19:10:49,636 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SCHAEFFLER.NS', 'SCHNEIDER.NS', 'SCI.NS', 'SENCO.NS', 'SFL.NS'])
+2026-07-16 19:10:51,555 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:51,556 DEBUG AlphaScanner.Engine Batch download chunk 61/76 requested=10 resolved=10
+2026-07-16 19:10:51,566 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SHREECEM.NS', 'SHRIPISTON.NS', 'SHRIRAMFIN.NS', 'SHYAMMETL.NS', 'SIEMENS.NS'])
+2026-07-16 19:10:53,294 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:53,294 DEBUG AlphaScanner.Engine Batch download chunk 62/76 requested=10 resolved=10
+2026-07-16 19:10:53,302 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SKYGOLD.NS', 'SMARTWORKS.NS', 'SMLMAH.NS', 'SOBHA.NS', 'SOLARINDS.NS'])
+2026-07-16 19:10:54,778 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:54,778 DEBUG AlphaScanner.Engine Batch download chunk 63/76 requested=10 resolved=10
+2026-07-16 19:10:54,786 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SRF.NS', 'STAR.NS', 'STARCEMENT.NS', 'STARHEALTH.NS', 'STLTECH.NS'])
+2026-07-16 19:10:56,588 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:56,588 DEBUG AlphaScanner.Engine Batch download chunk 64/76 requested=10 resolved=10
+2026-07-16 19:10:56,596 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SUMICHEM.NS', 'SUNDARMFIN.NS', 'SUNPHARMA.NS', 'SUNTECK.NS', 'SUNTV.NS'])
+2026-07-16 19:10:58,531 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:10:58,531 DEBUG AlphaScanner.Engine Batch download chunk 65/76 requested=10 resolved=10
+2026-07-16 19:10:58,539 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['SWIGGY.NS', 'SWSOLAR.NS', 'SYNGENE.NS', 'SYRMA.NS', 'TANLA.NS'])
+2026-07-16 19:11:00,115 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:00,115 DEBUG AlphaScanner.Engine Batch download chunk 66/76 requested=10 resolved=10
+2026-07-16 19:11:00,128 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TATACONSUM.NS', 'TATAELXSI.NS', 'TATAINVEST.NS', 'TATAPOWER.NS', 'TATASTEEL.NS'])
+2026-07-16 19:11:01,981 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:01,981 DEBUG AlphaScanner.Engine Batch download chunk 67/76 requested=10 resolved=10
+2026-07-16 19:11:01,989 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TECHNOE.NS', 'TEGA.NS', 'TEJASNET.NS', 'TENNIND.NS', 'TEXRAIL.NS'])
+2026-07-16 19:11:03,770 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:03,771 DEBUG AlphaScanner.Engine Batch download chunk 68/76 requested=10 resolved=10
+2026-07-16 19:11:03,778 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TI.NS', 'TIINDIA.NS', 'TIMETECHNO.NS', 'TIMKEN.NS', 'TIPSMUSIC.NS'])
+2026-07-16 19:11:05,713 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:05,713 DEBUG AlphaScanner.Engine Batch download chunk 69/76 requested=10 resolved=10
+2026-07-16 19:11:05,724 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TORNTPHARM.NS', 'TORNTPOWER.NS', 'TRANSRAILL.NS', 'TRAVELFOOD.NS', 'TRENT.NS'])
+2026-07-16 19:11:07,584 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:07,585 DEBUG AlphaScanner.Engine Batch download chunk 70/76 requested=10 resolved=10
+2026-07-16 19:11:07,596 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['TVSMOTOR.NS', 'TVSSCS.NS', 'UBL.NS', 'UCOBANK.NS', 'UJJIVANSFB.NS'])
+2026-07-16 19:11:09,116 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:09,116 DEBUG AlphaScanner.Engine Batch download chunk 71/76 requested=10 resolved=10
+2026-07-16 19:11:09,125 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['URBANCO.NS', 'USHAMART.NS', 'UTIAMC.NS', 'UTLSOLAR.NS', 'V2RETAIL.NS'])
+2026-07-16 19:11:10,767 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:10,768 DEBUG AlphaScanner.Engine Batch download chunk 72/76 requested=10 resolved=10
+2026-07-16 19:11:10,787 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['VIJAYA.NS', 'VIKRAMSOLR.NS', 'VIPIND.NS', 'VIYASH.NS', 'VMART.NS'])
+2026-07-16 19:11:12,394 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:12,395 DEBUG AlphaScanner.Engine Batch download chunk 73/76 requested=10 resolved=10
+2026-07-16 19:11:12,404 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['WAAREERTL.NS', 'WABAG.NS', 'WAKEFIT.NS', 'WEBELSOLAR.NS', 'WELCORP.NS'])
+2026-07-16 19:11:14,399 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:14,399 DEBUG AlphaScanner.Engine Batch download chunk 74/76 requested=10 resolved=10
+2026-07-16 19:11:14,408 DEBUG AlphaScanner.Data download_history_batch(size=10, period=2y, interval=1d, use_cache=False, head=['WIPRO.NS', 'WOCKPHARMA.NS', 'YATHARTH.NS', 'YESBANK.NS', 'ZAGGLE.NS'])
+2026-07-16 19:11:16,360 DEBUG AlphaScanner.Data download_history_batch result count=10
+2026-07-16 19:11:16,360 DEBUG AlphaScanner.Engine Batch download chunk 75/76 requested=10 resolved=10
+2026-07-16 19:11:16,370 DEBUG AlphaScanner.Data download_history_batch(size=1, period=2y, interval=1d, use_cache=False, head=['ZYDUSWELL.NS'])
+2026-07-16 19:11:16,567 DEBUG AlphaScanner.Data download_history_batch result count=1
+2026-07-16 19:11:16,568 DEBUG AlphaScanner.Engine Batch download chunk 76/76 requested=1 resolved=1
+2026-07-16 19:11:16,942 DEBUG AlphaScanner.Engine Concatenated legacy data shape=(499, 4506)
+2026-07-16 19:11:17,018 DEBUG AlphaScanner.Engine Post-align data shape=(495, 4506) benchmark_rows=495
+2026-07-16 19:11:49,758 DEBUG AlphaScanner.Engine Legacy scan completed: hits=30 scanned=721 fail_counts={'trend_fail': 329, 'momentum_fail': 70, 'volume_fail': 0, 'breakout_fail': 117, 'rs_fail': 0, 'adx_fail': 2, 'liquidity_fail': 54, 'error_fail': 30}
+2026-07-16 19:11:49,785 DEBUG AlphaScanner.Service perform_fresh_scan completed: rows=30 stats_keys=['adx_fail', 'bank_nifty_change', 'bb_fail', 'breakout_fail', 'dii_net', 'error_fail', 'fakeout_trap', 'fii_net', 'liquidity_fail', 'macd_fail', 'market_bias', 'market_bias_score', 'market_breadth_50', 'market_health', 'momentum_fail', 'nifty_change', 'rs_fail', 'scanned', 'scanner_type', 'sector_sentiment', 'timeframe', 'trend_fail', 'trending_sectors', 'universe', 'universe_size', 'volume_fail']
+2026-07-16 19:13:54,273 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:13:54,387 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:14:35,962 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:14:36,051 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:15:04,381 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:15:04,505 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:15:23,637 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 19:15:23,741 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 22:57:47,416 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 22:57:51,757 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 22:57:59,033 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 22:58:02,648 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-16 22:58:03,491 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=500 max_cap=20000 sector_map_size=751
+2026-07-16 22:58:03,491 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Pre-Breakout, universe=Total Market (Cap Focused), timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=0.6, rsi_min=35, rsi_max=70, dist_thresh=5.0, min_mkt_cap_cr=500, max_mkt_cap_cr=20000)
+2026-07-16 22:58:03,492 DEBUG AlphaScanner.Service Routing to legacy breakout scanner with normalized timeframe=1d
+2026-07-16 22:58:03,492 DEBUG AlphaScanner.Engine run_scanner(scanner_type=Pre-Breakout, universe=Total Market (Cap Focused), timeframe=1d, use_cache=False, incremental_fetch=False, vol_thresh=0.6, rsi_range=35-70, dist_thresh=5.0, min_cap=500, max_cap=20000)
+2026-07-16 22:58:03,496 DEBUG AlphaScanner.Engine Resolved legacy universe 'Total Market (Cap Focused)' to 751 tickers
+2026-07-16 22:58:03,638 DEBUG AlphaScanner.Engine Loaded benchmark close series with 495 rows
+2026-07-16 22:58:03,647 DEBUG AlphaScanner.Engine Metadata cache is up to date. Skipping prefetch.
+2026-07-16 22:58:03,651 DEBUG AlphaScanner.Engine Metadata cache primed with 751 entries
+2026-07-16 22:58:03,652 DEBUG AlphaScanner.Data download_history_batch(size=751, period=2y, interval=1d, use_cache=False, head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIDRUGS.NS', 'AARTIIND.NS'])
+2026-07-16 23:00:14,766 DEBUG AlphaScanner.Data download_history_batch result count=751
+2026-07-16 23:00:15,586 DEBUG AlphaScanner.Engine Concatenated legacy data shape=(499, 4506)
+2026-07-16 23:00:15,707 DEBUG AlphaScanner.Engine Post-align data shape=(495, 4506) benchmark_rows=495
+2026-07-16 23:00:37,131 DEBUG AlphaScanner.Engine Legacy scan completed: hits=30 scanned=721 fail_counts={'trend_fail': 329, 'momentum_fail': 70, 'volume_fail': 0, 'breakout_fail': 117, 'rs_fail': 0, 'adx_fail': 2, 'liquidity_fail': 54, 'error_fail': 30}
+2026-07-16 23:00:37,195 DEBUG AlphaScanner.Service perform_fresh_scan completed: rows=30 stats_keys=['adx_fail', 'bank_nifty_change', 'bb_fail', 'breakout_fail', 'dii_net', 'error_fail', 'fakeout_trap', 'fii_net', 'liquidity_fail', 'macd_fail', 'market_bias', 'market_bias_score', 'market_breadth_50', 'market_health', 'momentum_fail', 'nifty_change', 'rs_fail', 'scanned', 'scanner_type', 'sector_sentiment', 'timeframe', 'trend_fail', 'trending_sectors', 'universe', 'universe_size', 'volume_fail']
+2026-07-16 23:01:54,930 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:01:55,058 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:02:29,806 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:02:29,904 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:06:10,865 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:06:10,990 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:06:18,814 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:06:18,898 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:07:28,887 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:07:34,888 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:07:38,697 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-16 23:07:39,060 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=0 max_cap=0 sector_map_size=500
+2026-07-16 23:07:39,060 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Pre-Breakout, universe=Nifty 500, timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=0.6, rsi_min=35, rsi_max=70, dist_thresh=5.0, min_mkt_cap_cr=0, max_mkt_cap_cr=0)
+2026-07-16 23:07:39,061 DEBUG AlphaScanner.Service Routing to legacy breakout scanner with normalized timeframe=1d
+2026-07-16 23:07:39,061 DEBUG AlphaScanner.Engine run_scanner(scanner_type=Pre-Breakout, universe=Nifty 500, timeframe=1d, use_cache=False, incremental_fetch=False, vol_thresh=0.6, rsi_range=35-70, dist_thresh=5.0, min_cap=0, max_cap=0)
+2026-07-16 23:07:39,063 DEBUG AlphaScanner.Engine Resolved legacy universe 'Nifty 500' to 500 tickers
+2026-07-16 23:07:39,182 DEBUG AlphaScanner.Engine Loaded benchmark close series with 246 rows
+2026-07-16 23:07:39,184 DEBUG AlphaScanner.Data download_history_batch(size=500, period=1y, interval=1d, use_cache=False, head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIIND.NS', 'AAVAS.NS'])
+2026-07-16 23:08:54,794 DEBUG AlphaScanner.Data download_history_batch result count=500
+2026-07-16 23:08:55,503 DEBUG AlphaScanner.Engine Concatenated legacy data shape=(250, 3000)
+2026-07-16 23:08:55,571 DEBUG AlphaScanner.Engine Post-align data shape=(246, 3000) benchmark_rows=246
+2026-07-16 23:08:57,898 ERROR AlphaScanner.Engine Error in AARTIIND.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:57,942 ERROR AlphaScanner.Engine Error in AAVAS.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:58,000 ERROR AlphaScanner.Engine Error in ABB.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:58,092 ERROR AlphaScanner.Engine Error in ABREL.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:58,156 ERROR AlphaScanner.Engine Error in ACUTAAS.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:58,335 ERROR AlphaScanner.Engine Error in ACE.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:58,357 ERROR AlphaScanner.Engine Error in ACMESOLAR.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:58,464 ERROR AlphaScanner.Engine Error in AFFLE.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:58,580 ERROR AlphaScanner.Engine Error in ALKEM.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:58,840 ERROR AlphaScanner.Engine Error in AJANTPHARM.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:58,914 ERROR AlphaScanner.Engine Error in ANANDRATHI.NS: name 'rs_rating' is not defined
+2026-07-16 23:08:59,599 ERROR AlphaScanner.Engine Error in BAJFINANCE.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:00,243 ERROR AlphaScanner.Engine Error in CAPLIPOINT.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:00,584 ERROR AlphaScanner.Engine Error in CASTROLIND.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:00,652 ERROR AlphaScanner.Engine Error in CHENNPETRO.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:00,724 ERROR AlphaScanner.Engine Error in CEATLTD.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:00,884 ERROR AlphaScanner.Engine Error in CIEINDIA.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:01,225 ERROR AlphaScanner.Engine Error in DEEPAKFERT.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:02,031 ERROR AlphaScanner.Engine Error in EICHERMOT.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:02,176 ERROR AlphaScanner.Engine Error in ERIS.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:02,392 ERROR AlphaScanner.Engine Error in GABRIEL.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:02,543 ERROR AlphaScanner.Engine Error in FLUOROCHEM.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:02,697 ERROR AlphaScanner.Engine Error in GMRAIRPORT.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:02,994 ERROR AlphaScanner.Engine Error in GLAND.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:03,069 ERROR AlphaScanner.Engine Error in GRAVITA.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:03,244 ERROR AlphaScanner.Engine Error in HAL.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:03,701 ERROR AlphaScanner.Engine Error in ICICIBANK.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:04,141 ERROR AlphaScanner.Engine Error in INDIGO.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:04,309 ERROR AlphaScanner.Engine Error in JINDALSAW.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:04,409 ERROR AlphaScanner.Engine Error in JKTYRE.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:04,634 ERROR AlphaScanner.Engine Error in JSWINFRA.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:05,037 ERROR AlphaScanner.Engine Error in LALPATHLAB.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:05,783 ERROR AlphaScanner.Engine Error in MANKIND.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:06,181 ERROR AlphaScanner.Engine Error in MINDACORP.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:06,538 ERROR AlphaScanner.Engine Error in NH.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:06,647 ERROR AlphaScanner.Engine Error in PCBL.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:07,986 ERROR AlphaScanner.Engine Error in SOLARINDS.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:08,207 ERROR AlphaScanner.Engine Error in STARHEALTH.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:08,326 ERROR AlphaScanner.Engine Error in TATATECH.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:09,292 ERROR AlphaScanner.Engine Error in UNITDSPR.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:09,471 ERROR AlphaScanner.Engine Error in USHAMART.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:09,502 ERROR AlphaScanner.Engine Error in VIJAYA.NS: name 'rs_rating' is not defined
+2026-07-16 23:09:09,700 DEBUG AlphaScanner.Engine Legacy scan completed: hits=0 scanned=486 fail_counts={'trend_fail': 234, 'momentum_fail': 44, 'volume_fail': 0, 'breakout_fail': 77, 'rs_fail': 0, 'adx_fail': 1, 'liquidity_fail': 17, 'error_fail': 56}
+2026-07-16 23:09:09,724 DEBUG AlphaScanner.Service perform_fresh_scan completed: rows=0 stats_keys=['adx_fail', 'bank_nifty_change', 'bb_fail', 'breakout_fail', 'dii_net', 'error_fail', 'fakeout_trap', 'fii_net', 'liquidity_fail', 'macd_fail', 'market_bias', 'market_bias_score', 'market_breadth_50', 'market_health', 'momentum_fail', 'nifty_change', 'rs_fail', 'scanned', 'scanner_type', 'sector_sentiment', 'timeframe', 'trend_fail', 'trending_sectors', 'universe', 'universe_size', 'volume_fail']
+2026-07-16 23:13:35,425 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:13:39,204 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:13:42,826 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-16 23:13:43,282 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=0 max_cap=0 sector_map_size=500
+2026-07-16 23:13:43,282 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Pre-Breakout, universe=Nifty 500, timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=0.6, rsi_min=35, rsi_max=70, dist_thresh=5.0, min_mkt_cap_cr=0, max_mkt_cap_cr=0)
+2026-07-16 23:13:43,283 DEBUG AlphaScanner.Service Routing to legacy breakout scanner with normalized timeframe=1d
+2026-07-16 23:13:43,283 DEBUG AlphaScanner.Engine run_scanner(scanner_type=Pre-Breakout, universe=Nifty 500, timeframe=1d, use_cache=False, incremental_fetch=False, vol_thresh=0.6, rsi_range=35-70, dist_thresh=5.0, min_cap=0, max_cap=0)
+2026-07-16 23:13:43,285 DEBUG AlphaScanner.Engine Resolved legacy universe 'Nifty 500' to 500 tickers
+2026-07-16 23:13:43,413 DEBUG AlphaScanner.Engine Loaded benchmark close series with 246 rows
+2026-07-16 23:13:43,414 DEBUG AlphaScanner.Data download_history_batch(size=500, period=1y, interval=1d, use_cache=False, head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIIND.NS', 'AAVAS.NS'])
+2026-07-16 23:15:04,735 DEBUG AlphaScanner.Data download_history_batch result count=500
+2026-07-16 23:15:05,506 DEBUG AlphaScanner.Engine Concatenated legacy data shape=(250, 3000)
+2026-07-16 23:15:05,560 DEBUG AlphaScanner.Engine Post-align data shape=(246, 3000) benchmark_rows=246
+2026-07-16 23:15:20,867 DEBUG AlphaScanner.Engine Legacy scan completed: hits=42 scanned=486 fail_counts={'trend_fail': 234, 'momentum_fail': 44, 'volume_fail': 0, 'breakout_fail': 77, 'rs_fail': 0, 'adx_fail': 1, 'liquidity_fail': 17, 'error_fail': 14}
+2026-07-16 23:15:20,906 DEBUG AlphaScanner.Service perform_fresh_scan completed: rows=42 stats_keys=['adx_fail', 'bank_nifty_change', 'bb_fail', 'breakout_fail', 'dii_net', 'error_fail', 'fakeout_trap', 'fii_net', 'liquidity_fail', 'macd_fail', 'market_bias', 'market_bias_score', 'market_breadth_50', 'market_health', 'momentum_fail', 'nifty_change', 'rs_fail', 'scanned', 'scanner_type', 'sector_sentiment', 'timeframe', 'trend_fail', 'trending_sectors', 'universe', 'universe_size', 'volume_fail']
+2026-07-16 23:15:43,250 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-16 23:15:43,369 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)

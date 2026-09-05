@@ -34,7 +34,7 @@ try:
 except ImportError:
     HAS_TEXTBLOB = False
 
-import os
+from market_data import load_institutional_flow, load_symbol_universe
 
 # Tune default max workers based on machine CPU count. This is a conservative
 # formula: allow up to 2 * cpus (capped at 32) but at least 4 workers.
@@ -74,99 +74,21 @@ def _connect_db() -> sqlite3.Connection:
 # ---------------------------------------------------------------------------
 # Universe
 # ---------------------------------------------------------------------------
-def _extract_symbols_from_index_csv(df: pd.DataFrame) -> list:
-    sym_col = next((c for c in df.columns if "symbol" in c.lower()), None)
-    if sym_col is None:
-        return []
-    return [
-        f"{str(symbol).strip()}.NS"
-        for symbol in df[sym_col].dropna()
-        if str(symbol).strip()
-    ]
-
-
-def _fetch_index_symbols(urls: List[str], label: str) -> list:
-    from alphascanner_ui.data import _fetch_nse_csv
-
-    # Try Cache First (Expiry 24 hours) for Production Stability
-    cache_key = f"symbols_{label.replace(' ', '_').lower()}"
-    cached_data = get_system_cache(cache_key, expiry_hours=24)
-    if cached_data:
-        return json.loads(cached_data)
-
-    logger = logging.getLogger("AlphaScanner.Engine")
-    for url in urls:
-        try:
-            df = _fetch_nse_csv(url)
-            if df.empty:
-                logger.debug("No rows returned for %s from %s", label, url)
-                continue
-            symbols = _extract_symbols_from_index_csv(df)
-            if symbols:
-                logger.info("Fetched %s symbols for %s from %s", len(symbols), label, url)
-                set_system_cache(cache_key, json.dumps(symbols))
-                return symbols
-            logger.debug("Symbol column not found for %s from %s", label, url)
-        except Exception as exc:
-            logger.warning("Failed to fetch %s from %s: %s", label, url, exc)
-    return []
-
-
 def get_nifty_500() -> list:
-    urls = [
-        "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
-        "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
-    ]
-    symbols = _fetch_index_symbols(urls, "Nifty 500")
-    if symbols:
-        return symbols
-
-    logging.getLogger("AlphaScanner.Engine").warning("Failed to fetch Nifty 500, using fallback.")
-    return [
-        "RELIANCE.NS", "TCS.NS", "INFY.NS", "SBIN.NS", "HDFCBANK.NS",
-        "ICICIBANK.NS", "KOTAKBANK.NS", "HINDUNILVR.NS", "ITC.NS", "AXISBANK.NS",
-    ]
+    return list(load_symbol_universe("Nifty 500"))
 
 
 def get_nifty_total_market() -> list:
-    """Fetches the Nifty Total Market list (Nifty 500 + Microcaps)."""
-    # NSE often restricts the single Total Market CSV. Combining Nifty 500 with
-    # Microcap 250 is a stable reconstruction of the broader cap-focused universe.
-    # When the microcap source is unavailable, we fall back cleanly to Nifty 500.
-    segments = {
-        "Nifty 500": [
-            "https://archives.nseindia.com/content/indices/ind_nifty500list.csv",
-            "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv",
-        ],
-        "Nifty Microcap 250": [
-            "https://nsearchives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
-            "https://archives.nseindia.com/content/indices/ind_niftymicrocap250_list.csv",
-        ],
-    }
-
-    all_tickers = set()
-    fetched_counts = {}
-    for label, urls in segments.items():
-        symbols = _fetch_index_symbols(urls, label)
-        fetched_counts[label] = len(symbols)
-        all_tickers.update(symbols)
-
-    if all_tickers:
-        return sorted(list(all_tickers))
-
-    logging.getLogger("AlphaScanner.Engine").warning(
-        "Nifty Total Market fetch returned no symbols (segment counts: %s). Falling back to Nifty 500.",
-        fetched_counts,
-    )
-    return get_nifty_500()
+    """Return the cached cap-focused total-market universe."""
+    return list(load_symbol_universe("Total Market (Cap Focused)"))
 
 
 def _build_market_context() -> dict:
     """Infer broad market bias from index moves and institutional flows."""
     try:
-        from alphascanner_ui.data import fetch_indices_performance, fetch_fii_dii_data
+        from alphascanner_ui.data import fetch_indices_performance
         indices = fetch_indices_performance()
-        fii_dii = fetch_fii_dii_data()
+        fii_dii = load_institutional_flow()
     except Exception as exc:
         logging.getLogger("AlphaScanner.Engine").warning(f"Market context fetch failed: {exc}")
         return {
@@ -783,6 +705,41 @@ def _risk_grade(stop_pct: float, risk_reward: float, strength: float, volume_rat
     return "C"
 
 
+def _legacy_prefilter_by_market_cap(
+    universe: List[str], min_cap_cr: float, max_cap_cr: float
+) -> List[str]:
+    """
+    Filters the universe based on market capitalization before downloading
+    full history, to improve performance on large universes.
+    """
+    if min_cap_cr <= 0 and max_cap_cr <= 0:
+        return universe
+
+    logger = logging.getLogger("AlphaScanner.Engine")
+    logger.info(
+        "Prefiltering universe of %d tickers by market cap (Min: %s Cr, Max: %s Cr)...",
+        len(universe), min_cap_cr, max_cap_cr if max_cap_cr > 0 else "inf"
+    )
+
+    # This function is inside breakout.py, so direct calls are fine.
+    prefetch_metadata(universe)
+    metadata_cache = get_all_metadata_cache(universe, expiry_hours=24)
+
+    if not metadata_cache:
+        logger.warning("Metadata cache is empty; cannot pre-filter by market cap.")
+        return universe
+
+    filtered_universe = []
+    for ticker in universe:
+        market_cap_cr, _ = metadata_cache.get(ticker, (None, None))
+
+        if market_cap_cr is None or ((min_cap_cr <= 0 or market_cap_cr >= min_cap_cr) and (max_cap_cr <= 0 or market_cap_cr <= max_cap_cr)):
+            filtered_universe.append(ticker)
+
+    logger.info("Market cap pre-filter reduced universe from %d to %d tickers.", len(universe), len(filtered_universe))
+    return filtered_universe
+
+
 # ---------------------------------------------------------------------------
 # Main scanner
 # ---------------------------------------------------------------------------
@@ -933,47 +890,27 @@ def _process_single_ticker(
         low = df["Low"]
         vol = df["Volume"]
 
-        # Relative Strength (Benchmark alignment now handled globally in run_scanner)
-        rs_rating = calculate_relative_strength(close, nifty_close)
-        # Use Global Vectorized Indicators passed from run_scanner (lightweight set)
-        # Heavy indicators (sma_200, adx, atr, vwap) are computed on-demand below
+        # Use the vectorized indicator cache computed in run_scanner.
         sma_50 = indicators['sma_50'][ticker].iloc[-1]
         ema_20 = indicators['ema_20'][ticker].iloc[-1]
+        sma_200 = indicators['sma_200'][ticker].iloc[-1]
         avg_vol = indicators['avg_vol'][ticker].iloc[-1]
         rsi_series = indicators['rsi'][ticker]
         rsi = rsi_series.iloc[-1]
 
         # MACD and Bollinger Bands series for specific ticker logic
-        macd, macd_sig, macd_hist = indicators['macd'][ticker], indicators['macd_sig'][ticker], indicators['macd_hist'][ticker]
-        upper_bb, mid_bb, lower_bb = indicators['bb_upper'][ticker], indicators['bb_mid'][ticker], indicators['bb_lower'][ticker]
+        macd = indicators['macd'][ticker]
+        macd_sig = indicators['macd_sig'][ticker]
+        macd_hist = indicators['macd_hist'][ticker]
+        upper_bb, mid_bb = indicators['bb_upper'][ticker], indicators['bb_mid'][ticker]
+        adx_series = indicators['adx'][ticker]
+        adx = adx_series.iloc[-1]
+        adx_prev = adx_series.iloc[-2] if len(adx_series) >= 2 else float('nan')
+        vwap = indicators['vwap'][ticker].iloc[-1]
+        atr_val = indicators['atr'][ticker].iloc[-1]
 
-        # Compute heavy indicators lazily for this ticker only (saves global cost)
-        try:
-            sma_200 = close.rolling(200).mean().iloc[-1] if len(close) >= 200 else float('nan')
-        except Exception:
-            sma_200 = float('nan')
-
-        try:
-            adx_series = calculate_adx(high, low, close)
-            adx = adx_series.iloc[-1]
-            adx_prev = adx_series.iloc[-2] if len(adx_series) >= 2 else float('nan')
-        except Exception:
-            adx_series = pd.Series(dtype=float)
-            adx = float('nan')
-            adx_prev = float('nan')
-
-        try:
-            vwap_ser = calculate_vwap(high, low, close, vol)
-            vwap = vwap_ser.iloc[-1] if hasattr(vwap_ser, 'iloc') else float('nan')
-        except Exception:
-            vwap = float('nan')
-
-        try:
-            atr_val = calculate_atr(high, low, close).iloc[-1]
-        except Exception:
-            atr_val = float('nan')
-
-        # Short-term Professional Features
+        # Short-term volume feature is cheap enough to compute early because
+        # breakout confirmation may need it.
         rvol = calculate_rvol(vol) if not vol.empty else 1.0
         is_breakaway = detect_breakaway_gap(df) if len(df) >= 2 else False
 
@@ -985,7 +922,6 @@ def _process_single_ticker(
         ltp = float(close.iloc[-1])
         open_price = float(df["Open"].iloc[-1])
         day_range = float(high.iloc[-1] - low.iloc[-1])
-        body = abs(ltp - open_price)
         relative_close = (ltp - float(low.iloc[-1])) / max(day_range, 1e-9)
         daily_pcnt = (ltp - open_price) / max(open_price, 1e-9) * 100
         
@@ -1009,8 +945,8 @@ def _process_single_ticker(
             return None
 
         # MA Slopes (Filter 11: MAs rising over last 3 days for responsiveness)
-        ema_20_prev_val = close.ewm(span=20, adjust=False).mean().iloc[-3]
-        sma_50_prev_val = close.rolling(50).mean().iloc[-3]
+        ema_20_prev_val = indicators['ema_20'][ticker].iloc[-3]
+        sma_50_prev_val = indicators['sma_50'][ticker].iloc[-3]
         ma_slope_bull = (ema_20 > ema_20_prev_val) and (sma_50 > sma_50_prev_val)
 
         ticker_sector = sector_map.get(ticker, "N/A") if sector_map else "N/A"
@@ -1120,11 +1056,6 @@ def _process_single_ticker(
             with stats_lock: stats["momentum_fail"] += 1
             return None
 
-        rs_floor = quality_profile["rs_floor"]
-        if rs_rating < rs_floor and not (rs_rating == 0 and rsi > 70):
-            with stats_lock: stats["rs_fail"] += 1
-            return None
-
         # ADX Threshold (Filter 5)
         adx_min = quality_profile["adx_min"]
         if not (adx > adx_min):
@@ -1197,10 +1128,13 @@ def _process_single_ticker(
             with stats_lock: stats["breakout_fail"] += 1
             return None
 
+        # Relative Strength is only computed once the ticker survives the
+        # cheap structural gates above.
+        rs_rating = calculate_relative_strength(close, nifty_close)
+
         # Filter 4: Candle quality. Breakouts need expansion; pre-breakouts can be quieter but must close constructively.
         if day_range == 0:
             return None
-        body_ratio = body / day_range
         if scanner_type == "Pre-Breakout" and relative_close < quality_profile["min_close_position"]:
             return None
 
@@ -1232,22 +1166,12 @@ def _process_single_ticker(
         atr = float(atr) if not pd.isna(atr) and atr > 0 else ltp * 0.015
 
         # Support levels for risk management
-        support1 = float(mid_bb.iloc[-1]) if pd.notna(mid_bb.iloc[-1]) else ltp * 0.95
-        support2 = float(sma_200) if pd.notna(sma_200) else ltp * 0.90
-
         # Position sizing: Risk 1% of capital per trade
-        risk_per_trade = 0.01  # 1% of capital
         stop_loss_distance = atr * 1.5  # 1.5 ATR stop
-        position_size = risk_per_trade / (stop_loss_distance / ltp) if stop_loss_distance > 0 else 0
 
         # Profit targets for short-term scalping
-        tp1 = ltp + (atr * 1.0)  # Quick profit at 1 ATR
         tp2 = ltp + (atr * 3.0)  # Main target at 3 ATR
-        tp3 = ltp + (atr * 5.0)  # Extended target at 5 ATR
 
-        # Stop loss levels
-        sl1 = ltp - (atr * 1.5)  # Primary stop at 1.5 ATR
-        sl2 = support1 if support1 < sl1 else sl1 * 0.98  # Support-based stop
         risk_reward = (tp2 - ltp) / stop_loss_distance if stop_loss_distance > 0 else 0.0
         stop_pct = stop_loss_distance / ltp * 100 if ltp > 0 else 0.0
         position_qty_1l = int((100_000 * 0.01) // stop_loss_distance) if stop_loss_distance > 0 else 0
@@ -1465,6 +1389,7 @@ def run_scanner(
 
     timeframe = _normalize_interval(timeframe)
     logger = logging.getLogger("AlphaScanner.Engine")
+    scan_started_at = time.perf_counter()
     logger.debug(
         "run_scanner(scanner_type=%s, universe=%s, timeframe=%s, use_cache=%s, incremental_fetch=%s, vol_thresh=%s, rsi_range=%s-%s, dist_thresh=%s, min_cap=%s, max_cap=%s)",
         scanner_type,
@@ -1486,6 +1411,16 @@ def run_scanner(
     else:
         tickers = get_nifty_500()
     logger.debug("Resolved legacy universe '%s' to %s tickers", universe, len(tickers))
+    logger.info("Universe resolution finished in %.2fs for %s", time.perf_counter() - scan_started_at, universe)
+
+    if apply_market_cap_filter:
+        cap_prefilter_started_at = time.perf_counter()
+        tickers = _legacy_prefilter_by_market_cap(tickers, min_mkt_cap_cr, max_mkt_cap_cr)
+        logger.info(
+            "Market-cap prefilter finished in %.2fs and reduced universe to %s tickers",
+            time.perf_counter() - cap_prefilter_started_at,
+            len(tickers),
+        )
 
     stats = _EMPTY_STATS.copy()
     stats["universe"] = universe
@@ -1502,16 +1437,18 @@ def run_scanner(
     stats["timeframe"] = timeframe
 
     # 1. Download benchmark first to ensure the regime filter is available
-    benchmark_period = "2y" if timeframe == "1d" else "60d"
+    benchmark_period = "1y" if (scanner_type == "Pre-Breakout" and timeframe == "1d") else ("2y" if timeframe == "1d" else "60d")
     nifty_close = pd.Series(dtype=float)
     try:
         from utils.yf_cache import cached_download
 
+        benchmark_started_at = time.perf_counter()
         nifty = cached_download("^NSEI", period=benchmark_period, interval=timeframe, use_cache=use_cache, progress=False, auto_adjust=False)
         if isinstance(nifty.columns, pd.MultiIndex):
             nifty.columns = nifty.columns.get_level_values(0)
         nifty_close = nifty["Close"].dropna()
         logger.debug("Loaded benchmark close series with %s rows", len(nifty_close))
+        logger.info("Benchmark download finished in %.2fs", time.perf_counter() - benchmark_started_at)
     except Exception as exc:
         logger.warning("Benchmark download error, continuing without benchmark: %s", exc)
 
@@ -1522,62 +1459,63 @@ def run_scanner(
         progress_callback(0.05)
     metadata_cache = {}
     if apply_market_cap_filter or scanner_type == "Long-Term":
+        metadata_started_at = time.perf_counter()
         prefetch_metadata(tickers)
         metadata_cache = get_all_metadata_cache(tickers)
         logger.debug("Metadata cache primed with %s entries", len(metadata_cache))
+        logger.info("Metadata prefetch finished in %.2fs", time.perf_counter() - metadata_started_at)
     if progress_callback:
         progress_callback(0.10)
 
-    # 2. Chunked ticker download. Reuse the same resilient batch loader that
-    # powers the modular scanner so the legacy scanners share one data path.
-    download_weight = 0.4
-    batch_size = 10 if len(tickers) > 10 else max(1, len(tickers))
-    data_frames = []
-    chunk_indices = list(range(0, len(tickers), batch_size))
-    num_chunks = len(chunk_indices)
-    chunk_period = "2y" if timeframe == "1d" else "60d"
+    # 2. Download ticker history using the shared resilient batch loader.
+    chunk_period = "1y" if (scanner_type == "Pre-Breakout" and timeframe == "1d") else ("2y" if timeframe == "1d" else "60d")
 
     from types import SimpleNamespace
+    from scanner.config import ScannerConfig
     from scanner.data import download_history as modular_download_history
     from scanner.data import download_history_batch as modular_download_history_batch
 
+    # The legacy breakout scanner uses the modular batch downloader, which now
+    # expects a full ScannerConfig object. We create a SimpleNamespace that
+    # provides the necessary downloader-related attributes.
+    default_config = ScannerConfig()
     batch_config = SimpleNamespace(
         lookback_period=chunk_period,
         interval=timeframe,
         required_columns=["Open", "High", "Low", "Close", "Volume"],
+        scan_download_chunk_size=default_config.scan_download_chunk_size,
+        scan_download_threads=default_config.scan_download_threads,
     )
 
-    for i, start_idx in enumerate(chunk_indices):
-        chunk = tickers[start_idx : start_idx + batch_size]
-        try:
-            chunk_map = modular_download_history_batch(chunk, batch_config, use_cache=use_cache)
-            if not chunk_map:
-                chunk_map = {}
-            logger.debug(
-                "Batch download chunk %s/%s requested=%s resolved=%s",
-                i + 1,
-                num_chunks,
-                len(chunk),
-                len(chunk_map),
-            )
+    try:
+        history_started_at = time.perf_counter()
+        chunk_map = modular_download_history_batch(tickers, batch_config, use_cache=use_cache)
+        logger.info(
+            "Batch history download finished in %.2fs for %s tickers",
+            time.perf_counter() - history_started_at,
+            len(tickers),
+        )
+    except Exception as exc:
+        logger.error("Batch download failed: %s", exc)
+        chunk_map = {}
 
-            for ticker in chunk:
-                df = chunk_map.get(ticker)
-                if df is None or df.empty:
-                    df = modular_download_history(ticker, batch_config, use_cache=use_cache)
-                if df is None or df.empty:
-                    continue
-                if isinstance(df.columns, pd.MultiIndex):
-                    df = df.copy()
-                    df.columns = df.columns.get_level_values(0)
-                df = df.copy()
-                df.columns = pd.MultiIndex.from_product([df.columns, [ticker]])
-                data_frames.append(df)
-        except Exception as exc:
-            first = chunk[0] if chunk else start_idx
-            logging.getLogger("AlphaScanner.Engine").warning(f"Chunk starting with {first} failed: {exc}")
-        if progress_callback:
-            progress_callback(0.10 + ((i + 1) / max(num_chunks, 1) * download_weight))
+    data_frames = []
+    for ticker in tickers:
+        df = chunk_map.get(ticker)
+        if df is None or df.empty:
+            df = modular_download_history(ticker, batch_config, use_cache=use_cache)
+        if df is None or df.empty:
+            continue
+        if isinstance(df.columns, pd.MultiIndex):
+            df = df.copy()
+            df.columns = df.columns.get_level_values(0)
+        df = df.copy()
+        df.columns = pd.MultiIndex.from_product([df.columns, [ticker]])
+        data_frames.append(df)
+
+    if progress_callback:
+        progress_callback(0.50)
+    logger.debug("Legacy scan reached evaluation phase after %.2fs", time.perf_counter() - scan_started_at)
 
     if not data_frames:
         logger.error("No ticker data could be downloaded.")
@@ -1772,6 +1710,8 @@ def run_scanner(
         set_last_scan_time(timeframe)
     except Exception:
         pass
+
+    logger.info("Legacy scan total elapsed %.2fs for universe=%s timeframe=%s", time.perf_counter() - scan_started_at, universe, timeframe)
 
     return df_out, stats
 
@@ -1987,75 +1927,8 @@ def run_daily_cache_update():
 
 
 def fetch_fii_dii_data(logger=None):
-    """Fetches Daily FII/DII activity from NSE with robust session handling and caching."""
-    if logger is None:
-        logger = logging.getLogger("AlphaScanner.Engine")
-    # 1. Try to get from cache (Expiry 4 hours)
-    cached_data = get_system_cache("fii_dii_activity", expiry_hours=4)
-    if cached_data:
-        try:
-            return json.loads(cached_data)
-        except Exception:
-            pass
-
-    # 2. If no cache or expired, fetch from NSE
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Referer": "https://www.nseindia.com/reports/fii-dii",
-        "X-Requested-With": "XMLHttpRequest"
-    }
-
-    try:
-        session = requests.Session()
-        # Visit home page first to establish session cookies
-        session.get("https://www.nseindia.com", headers=headers, timeout=10)
-
-        # Now fetch the actual data
-        api_url = "https://www.nseindia.com/api/fiidiiTradeReact"
-        response = session.get(api_url, headers=headers, timeout=10)
-
-        if response.status_code == 200:
-            data = response.json()
-            if data:
-                # Transform NSE list to summary dict expected by the UI
-                summary = {
-                    "fii_buy": 0.0, "fii_sell": 0.0, "fii_net": 0.0,
-                    "dii_buy": 0.0, "dii_sell": 0.0, "dii_net": 0.0,
-                    "date": "N/A"
-                }
-                for item in data:
-                    cat = item.get("category", "").upper()
-                    def clean_val(v):
-                        try: return float(str(v).replace(",", ""))
-                        except: return 0.0
-                    if "FII" in cat:
-                        summary["fii_buy"] = clean_val(item.get("buyValue"))
-                        summary["fii_sell"] = clean_val(item.get("sellValue"))
-                        summary["fii_net"] = clean_val(item.get("netValue"))
-                        summary["date"] = item.get("date", "N/A")
-                    elif "DII" in cat:
-                        summary["dii_buy"] = clean_val(item.get("buyValue"))
-                        summary["dii_sell"] = clean_val(item.get("sellValue"))
-                        summary["dii_net"] = clean_val(item.get("netValue"))
-
-                # Save to cache
-                set_system_cache("fii_dii_activity", json.dumps(summary))
-                return summary
-    except Exception as e:
-        logger.error(f"FII/DII fetch failed: {e}")
-
-    # 3. Fallback to older cache if fetch failed (up to 1 week old)
-    stale_data = get_system_cache("fii_dii_activity", expiry_hours=168)
-    if stale_data:
-        return json.loads(stale_data)
-
-    return {
-        "fii_buy": 0.0, "fii_sell": 0.0, "fii_net": 0.0,
-        "dii_buy": 0.0, "dii_sell": 0.0, "dii_net": 0.0,
-        "date": "N/A"
-    }
+    """Return cached institutional flow data without any NSE network access."""
+    return load_institutional_flow()
 
 # ---------------------------------------------------------------------------
 # Database helpers

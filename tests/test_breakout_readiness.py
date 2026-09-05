@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import json
+
 import pandas as pd
 import pytest
 
 import scanner_service
 import breakout
+import market_data
 from breakout_readiness import rank_breakout_readiness
 from scanner.indicators import safe_pct_change
 
@@ -67,15 +70,22 @@ def test_safe_pct_change_reused_by_compression_logic():
 
 
 def test_total_market_universe_includes_microcaps(monkeypatch):
-    def fake_fetch_index_symbols(urls, label):
-        if label == "Nifty 500":
-            return ["AAA.NS", "BBB.NS"]
-        if label == "Nifty Microcap 250":
-            return ["BBB.NS", "CCC.NS"]
-        return []
+    nifty_500 = market_data.load_symbol_universe("Nifty 500")
+    total_market = market_data.load_symbol_universe("Total Market (Cap Focused)")
 
-    monkeypatch.setattr(breakout, "_fetch_index_symbols", fake_fetch_index_symbols)
+    assert len(nifty_500) == 500
+    assert len(total_market) > len(nifty_500)
+    assert len(total_market) == len(set(total_market))
+    assert all(symbol.endswith(".NS") for symbol in total_market)
 
-    symbols = breakout.get_nifty_total_market()
 
-    assert symbols == ["AAA.NS", "BBB.NS", "CCC.NS"]
+def test_total_market_uses_cached_combined_universe_before_live_fetch(monkeypatch):
+    monkeypatch.setattr(breakout, "load_symbol_universe", lambda universe_type: ["AAA.NS", "BBB.NS", "CCC.NS"])
+
+    assert breakout.get_nifty_total_market() == ["AAA.NS", "BBB.NS", "CCC.NS"]
+
+
+def test_nifty_500_uses_shared_provider(monkeypatch):
+    monkeypatch.setattr(breakout, "load_symbol_universe", lambda universe_type: ["AAA.NS", "BBB.NS"])
+
+    assert breakout.get_nifty_500() == ["AAA.NS", "BBB.NS"]

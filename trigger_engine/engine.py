@@ -334,7 +334,9 @@ class TriggerEngine:
         total = len(ranked)
         final_rows: List[CandidateRow] = []
         for index, (priority_score, row, critical_failures, soft_failures) in enumerate(ranked):
-            rank_percentile = round(((index + 1) / total) * 100.0, 2)
+            # Use the same score->percentile mapping as per-ticker evaluation for consistency.
+            # This mirrors `evaluate()` which computes `rank_percentile = 100.0 - priority_score`.
+            rank_percentile = round(max(1.0, 100.0 - float(priority_score or 0.0)), 2)
             decision = self._category_from_rank(rank_percentile, critical_failures, soft_failures)
             confidence = self._confidence_from_category(decision, rank_percentile, soft_failures)
             final_row = dict(row)

@@ -1,0 +1,1099 @@
+2026-07-27 00:05:24,262 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-27 00:05:28,922 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-27 00:05:31,686 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Modular Momentum, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-27 00:05:35,076 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Modular Momentum, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-27 00:05:35,079 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=500 max_cap=20000 sector_map_size=751
+2026-07-27 00:05:35,079 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Modular Momentum, universe=Total Market (Cap Focused), timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=0.6, rsi_min=35, rsi_max=75, dist_thresh=5.0, min_mkt_cap_cr=500, max_mkt_cap_cr=20000)
+2026-07-27 00:05:35,080 DEBUG AlphaScanner.Service Routing to modular scanner with config={'universe': 'Total Market (Cap Focused)', 'min_candles': 300, 'interval': '1d', 'lookback_period': '2y', 'max_candidates': 15, 'min_total_score': 25.0, 'watchlist_min_score': 60.0, 'entry_min_score': 70.0, 'scan_max_workers': 8, 'scan_download_threads': 10, 'scan_download_chunk_size': 25, 'diagnostics_enabled': False, 'diagnostics_persist': True, 'diagnostics_top_rules': 3, 'watchlist_setup_weight': 0.6, 'watchlist_transition_weight': 0.4, 'entry_setup_weight': 0.3, 'entry_transition_weight': 0.3, 'entry_trigger_weight': 0.4, 'watchlist_price_above_ema200': True, 'watchlist_base_high_pct': 5.0, 'watchlist_base_range_pct': 10.0, 'watchlist_base_days_min': 10, 'watchlist_atr_contraction_pct': -15.0, 'watchlist_bbw_contraction_pct': -20.0, 'watchlist_volume_dryup_pct': -25.0, 'watchlist_rs_min': 60.0, 'watchlist_sector_strength_min': 0.0, 'entry_breakout_volume_ratio': 2.0, 'entry_rs_rank_min': 80.0, 'entry_risk_reward_min': 2.0, 'entry_extension_pct': 10.0, 'entry_atr_expansion_pct': 1.8, 'quality_filter_enabled': True, 'quality_min_avg_volume': 0.0, 'quality_min_avg_turnover': 0.0, 'quality_min_market_cap_cr': 500, 'quality_max_market_cap_cr': 20000, 'quality_market_cap_mode': 'Custom', 'quality_market_cap_custom_symbols': [], 'quality_min_relative_strength': 0.0, 'quality_min_sector_strength': 0.0, 'quality_require_price_above_ema200': False, 'quality_require_ema_alignment': False, 'quality_require_trend_template': False, 'quality_require_higher_highs': False, 'quality_require_higher_lows': False, 'quality_market_bearish_multiplier': 1.25, 'quality_market_bullish_multiplier': 1.0, 'quality_market_neutral_multiplier': 1.0, 'quality_market_caution_multiplier': 1.1, 'setup_engine_enabled': True, 'setup_min_base_quality_score': 60.0, 'setup_min_base_weeks': 8, 'setup_max_base_depth_pct': 18.0, 'setup_max_base_duration_weeks': 24, 'setup_max_distance_to_high_pct': 8.0, 'setup_volume_long_window': 50, 'setup_volume_short_window': 20, 'setup_min_compression_score': 40.0, 'setup_min_volume_score': 35.0, 'setup_min_resistance_score': 35.0, 'setup_min_structure_score': 40.0, 'setup_min_risk_score': 35.0, 'setup_weight_base': 0.2, 'setup_weight_compression': 0.2, 'setup_weight_volume': 0.15, 'setup_weight_resistance': 0.2, 'setup_weight_structure': 0.15, 'setup_weight_risk': 0.1, 'setup_professional_threshold': 90.0, 'setup_excellent_threshold': 80.0, 'setup_good_threshold': 70.0, 'setup_average_threshold': 55.0, 'transition_engine_enabled': True, 'transition_history_window': 10, 'transition_min_setup_velocity_score': 55.0, 'transition_min_rs_acceleration_score': 55.0, 'transition_min_volume_transition_score': 55.0, 'transition_min_compression_evolution_score': 55.0, 'transition_min_resistance_pressure_score': 50.0, 'transition_min_price_acceptance_score': 50.0, 'transition_min_opportunity_velocity_score': 60.0, 'transition_weight_setup_velocity': 0.18, 'transition_weight_rs_acceleration': 0.14, 'transition_weight_volume_transition': 0.18, 'transition_weight_compression_evolution': 0.14, 'transition_weight_resistance_pressure': 0.12, 'transition_weight_price_acceptance': 0.1, 'transition_weight_opportunity_velocity': 0.14, 'transition_professional_threshold': 90.0, 'transition_strong_threshold': 80.0, 'transition_building_threshold': 70.0, 'transition_watch_threshold': 55.0, 'trigger_engine_enabled': True, 'trigger_enable_pocket_pivot': True, 'trigger_enable_relative_volume': True, 'trigger_enable_breakout_confirmation': True, 'trigger_enable_closing_strength': True, 'trigger_enable_rs_confirmation': True, 'trigger_enable_volume_confirmation': True, 'trigger_enable_intraday_confirmation': False, 'trigger_min_setup_score': 80.0, 'trigger_min_transition_score': 80.0, 'trigger_min_trigger_score': 75.0, 'trigger_pocket_pivot_volume_ratio': 1.5, 'trigger_pocket_pivot_close_location_min': 0.7, 'trigger_relative_volume_5d_min': 1.2, 'trigger_relative_volume_10d_min': 1.1, 'trigger_relative_volume_20d_min': 1.0, 'trigger_breakout_buffer_pct': 0.25, 'trigger_breakout_volume_ratio_min': 1.8, 'trigger_close_location_min': 0.8, 'trigger_close_strength_min': 0.75, 'trigger_rs_proxy_min': 105.0, 'trigger_rs_transition_min': 55.0, 'trigger_volume_transition_min': 60.0, 'trigger_intraday_vwap_hold_min': 0.0, 'trigger_intraday_rvol_min': 1.2, 'trigger_intraday_high_hold_min': 0.95, 'trigger_buy_now_top_percentile': 2.0, 'trigger_early_buy_top_percentile': 5.0, 'trigger_watch_top_percentile': 10.0, 'trigger_early_buy_soft_miss_max': 1, 'trigger_calibration_mode': False, 'market_regime_trend_weight': 0.3, 'market_regime_breadth_weight': 0.25, 'market_regime_momentum_weight': 0.2, 'market_regime_volume_weight': 0.15, 'market_regime_volatility_weight': 0.1, 'market_regime_bullish_threshold': 75.0, 'market_regime_neutral_threshold': 55.0, 'market_regime_caution_threshold': 40.0, 'market_regime_bearish_threshold': 0.0, 'market_regime_bullish_penalty': 1.0, 'market_regime_neutral_penalty': 0.95, 'market_regime_caution_penalty': 0.85, 'market_regime_bearish_penalty': 0.7, 'market_regime_buy_min_bullish': 80.0, 'market_regime_buy_min_neutral': 85.0, 'market_regime_buy_min_caution': 90.0, 'market_regime_buy_min_bearish': 95.0, 'market_regime_nifty50_period': '2y', 'market_regime_nifty500_period': '2y', 'market_regime_breadth_min_above_ema20': 45.0, 'market_regime_breadth_min_above_ema50': 40.0, 'market_regime_breadth_min_above_ema200': 25.0, 'market_regime_atr_window': 14, 'market_regime_volume_window': 20, 'market_regime_volatility_window': 20, 'market_regime_momentum_return_cap_pct': 10.0, 'market_regime_ema_buffer_pct': 0.5, 'market_regime_distribution_day_window': 20, 'market_regime_accumulation_day_window': 20, 'market_regime_volume_trend_threshold_pct': 10.0, 'market_regime_volatility_high_threshold_pct': 15.0, 'market_regime_volatility_mid_threshold_pct': 8.0, 'market_regime_accumulation_edge_days': 2, 'market_regime_distribution_edge_days': 2, 'mtf_weekly_weight': 20.0, 'mtf_daily_weight': 50.0, 'mtf_hourly_weight': 30.0, 'mtf_weekly_max_points': 20.0, 'mtf_daily_max_points': 50.0, 'mtf_hourly_max_points': 30.0, 'mtf_strong_buy_threshold': 90.0, 'mtf_buy_threshold': 80.0, 'mtf_watch_threshold': 65.0, 'mtf_wait_threshold': 50.0, 'mtf_weekly_bullish_threshold': 14.0, 'mtf_weekly_neutral_threshold': 10.0, 'mtf_weekly_bearish_threshold': 6.0, 'mtf_daily_bullish_threshold': 35.0, 'mtf_daily_neutral_threshold': 25.0, 'mtf_hourly_bullish_threshold': 20.0, 'mtf_hourly_neutral_threshold': 12.0, 'mtf_weekly_lookback_period': '2y', 'mtf_daily_lookback_period': '1y', 'mtf_hourly_lookback_period': '60d', 'mtf_hourly_ema_fast': 20, 'mtf_hourly_ema_slow': 50, 'mtf_weekly_veto_enabled': True, 'mtf_enable_confirmation': False, 'ema_fast': 20, 'ema_medium': 50, 'ema_slow': 200, 'atr_window': 20, 'contraction_window': 20, 'volume_sma_window': 20, 'volume_contraction_lookback': 20, 'volume_multiplier': 1.6, 'relative_strength_window': 90, 'relative_strength_period_1': 30, 'relative_strength_period_2': 60, 'relative_strength_period_3': 90, 'relative_strength_min_data': 30, 'sector_lookback': 60, 'risk_atr_multiplier': 2.5, 'sector_blacklist': ['Financial Services', 'Utilities'], 'required_columns': ['Open', 'High', 'Low', 'Close', 'Volume']}
+2026-07-27 00:05:35,082 INFO AlphaScanner.Scanner Starting dual-mode scanner with config {'universe': 'Total Market (Cap Focused)', 'min_candles': 300, 'interval': '1d', 'lookback_period': '2y', 'max_candidates': 15, 'min_total_score': 25.0, 'watchlist_min_score': 60.0, 'entry_min_score': 70.0, 'scan_max_workers': 8, 'scan_download_threads': 10, 'scan_download_chunk_size': 25, 'diagnostics_enabled': False, 'diagnostics_persist': True, 'diagnostics_top_rules': 3, 'watchlist_setup_weight': 0.6, 'watchlist_transition_weight': 0.4, 'entry_setup_weight': 0.3, 'entry_transition_weight': 0.3, 'entry_trigger_weight': 0.4, 'watchlist_price_above_ema200': True, 'watchlist_base_high_pct': 5.0, 'watchlist_base_range_pct': 10.0, 'watchlist_base_days_min': 10, 'watchlist_atr_contraction_pct': -15.0, 'watchlist_bbw_contraction_pct': -20.0, 'watchlist_volume_dryup_pct': -25.0, 'watchlist_rs_min': 60.0, 'watchlist_sector_strength_min': 0.0, 'entry_breakout_volume_ratio': 2.0, 'entry_rs_rank_min': 80.0, 'entry_risk_reward_min': 2.0, 'entry_extension_pct': 10.0, 'entry_atr_expansion_pct': 1.8, 'quality_filter_enabled': True, 'quality_min_avg_volume': 0.0, 'quality_min_avg_turnover': 0.0, 'quality_min_market_cap_cr': 500, 'quality_max_market_cap_cr': 20000, 'quality_market_cap_mode': 'Custom', 'quality_market_cap_custom_symbols': [], 'quality_min_relative_strength': 0.0, 'quality_min_sector_strength': 0.0, 'quality_require_price_above_ema200': False, 'quality_require_ema_alignment': False, 'quality_require_trend_template': False, 'quality_require_higher_highs': False, 'quality_require_higher_lows': False, 'quality_market_bearish_multiplier': 1.25, 'quality_market_bullish_multiplier': 1.0, 'quality_market_neutral_multiplier': 1.0, 'quality_market_caution_multiplier': 1.1, 'setup_engine_enabled': True, 'setup_min_base_quality_score': 60.0, 'setup_min_base_weeks': 8, 'setup_max_base_depth_pct': 18.0, 'setup_max_base_duration_weeks': 24, 'setup_max_distance_to_high_pct': 8.0, 'setup_volume_long_window': 50, 'setup_volume_short_window': 20, 'setup_min_compression_score': 40.0, 'setup_min_volume_score': 35.0, 'setup_min_resistance_score': 35.0, 'setup_min_structure_score': 40.0, 'setup_min_risk_score': 35.0, 'setup_weight_base': 0.2, 'setup_weight_compression': 0.2, 'setup_weight_volume': 0.15, 'setup_weight_resistance': 0.2, 'setup_weight_structure': 0.15, 'setup_weight_risk': 0.1, 'setup_professional_threshold': 90.0, 'setup_excellent_threshold': 80.0, 'setup_good_threshold': 70.0, 'setup_average_threshold': 55.0, 'transition_engine_enabled': True, 'transition_history_window': 10, 'transition_min_setup_velocity_score': 55.0, 'transition_min_rs_acceleration_score': 55.0, 'transition_min_volume_transition_score': 55.0, 'transition_min_compression_evolution_score': 55.0, 'transition_min_resistance_pressure_score': 50.0, 'transition_min_price_acceptance_score': 50.0, 'transition_min_opportunity_velocity_score': 60.0, 'transition_weight_setup_velocity': 0.18, 'transition_weight_rs_acceleration': 0.14, 'transition_weight_volume_transition': 0.18, 'transition_weight_compression_evolution': 0.14, 'transition_weight_resistance_pressure': 0.12, 'transition_weight_price_acceptance': 0.1, 'transition_weight_opportunity_velocity': 0.14, 'transition_professional_threshold': 90.0, 'transition_strong_threshold': 80.0, 'transition_building_threshold': 70.0, 'transition_watch_threshold': 55.0, 'trigger_engine_enabled': True, 'trigger_enable_pocket_pivot': True, 'trigger_enable_relative_volume': True, 'trigger_enable_breakout_confirmation': True, 'trigger_enable_closing_strength': True, 'trigger_enable_rs_confirmation': True, 'trigger_enable_volume_confirmation': True, 'trigger_enable_intraday_confirmation': False, 'trigger_min_setup_score': 80.0, 'trigger_min_transition_score': 80.0, 'trigger_min_trigger_score': 75.0, 'trigger_pocket_pivot_volume_ratio': 1.5, 'trigger_pocket_pivot_close_location_min': 0.7, 'trigger_relative_volume_5d_min': 1.2, 'trigger_relative_volume_10d_min': 1.1, 'trigger_relative_volume_20d_min': 1.0, 'trigger_breakout_buffer_pct': 0.25, 'trigger_breakout_volume_ratio_min': 1.8, 'trigger_close_location_min': 0.8, 'trigger_close_strength_min': 0.75, 'trigger_rs_proxy_min': 105.0, 'trigger_rs_transition_min': 55.0, 'trigger_volume_transition_min': 60.0, 'trigger_intraday_vwap_hold_min': 0.0, 'trigger_intraday_rvol_min': 1.2, 'trigger_intraday_high_hold_min': 0.95, 'trigger_buy_now_top_percentile': 2.0, 'trigger_early_buy_top_percentile': 5.0, 'trigger_watch_top_percentile': 10.0, 'trigger_early_buy_soft_miss_max': 1, 'trigger_calibration_mode': False, 'market_regime_trend_weight': 0.3, 'market_regime_breadth_weight': 0.25, 'market_regime_momentum_weight': 0.2, 'market_regime_volume_weight': 0.15, 'market_regime_volatility_weight': 0.1, 'market_regime_bullish_threshold': 75.0, 'market_regime_neutral_threshold': 55.0, 'market_regime_caution_threshold': 40.0, 'market_regime_bearish_threshold': 0.0, 'market_regime_bullish_penalty': 1.0, 'market_regime_neutral_penalty': 0.95, 'market_regime_caution_penalty': 0.85, 'market_regime_bearish_penalty': 0.7, 'market_regime_buy_min_bullish': 80.0, 'market_regime_buy_min_neutral': 85.0, 'market_regime_buy_min_caution': 90.0, 'market_regime_buy_min_bearish': 95.0, 'market_regime_nifty50_period': '2y', 'market_regime_nifty500_period': '2y', 'market_regime_breadth_min_above_ema20': 45.0, 'market_regime_breadth_min_above_ema50': 40.0, 'market_regime_breadth_min_above_ema200': 25.0, 'market_regime_atr_window': 14, 'market_regime_volume_window': 20, 'market_regime_volatility_window': 20, 'market_regime_momentum_return_cap_pct': 10.0, 'market_regime_ema_buffer_pct': 0.5, 'market_regime_distribution_day_window': 20, 'market_regime_accumulation_day_window': 20, 'market_regime_volume_trend_threshold_pct': 10.0, 'market_regime_volatility_high_threshold_pct': 15.0, 'market_regime_volatility_mid_threshold_pct': 8.0, 'market_regime_accumulation_edge_days': 2, 'market_regime_distribution_edge_days': 2, 'mtf_weekly_weight': 20.0, 'mtf_daily_weight': 50.0, 'mtf_hourly_weight': 30.0, 'mtf_weekly_max_points': 20.0, 'mtf_daily_max_points': 50.0, 'mtf_hourly_max_points': 30.0, 'mtf_strong_buy_threshold': 90.0, 'mtf_buy_threshold': 80.0, 'mtf_watch_threshold': 65.0, 'mtf_wait_threshold': 50.0, 'mtf_weekly_bullish_threshold': 14.0, 'mtf_weekly_neutral_threshold': 10.0, 'mtf_weekly_bearish_threshold': 6.0, 'mtf_daily_bullish_threshold': 35.0, 'mtf_daily_neutral_threshold': 25.0, 'mtf_hourly_bullish_threshold': 20.0, 'mtf_hourly_neutral_threshold': 12.0, 'mtf_weekly_lookback_period': '2y', 'mtf_daily_lookback_period': '1y', 'mtf_hourly_lookback_period': '60d', 'mtf_hourly_ema_fast': 20, 'mtf_hourly_ema_slow': 50, 'mtf_weekly_veto_enabled': True, 'mtf_enable_confirmation': False, 'ema_fast': 20, 'ema_medium': 50, 'ema_slow': 200, 'atr_window': 20, 'contraction_window': 20, 'volume_sma_window': 20, 'volume_contraction_lookback': 20, 'volume_multiplier': 1.6, 'relative_strength_window': 90, 'relative_strength_period_1': 30, 'relative_strength_period_2': 60, 'relative_strength_period_3': 90, 'relative_strength_min_data': 30, 'sector_lookback': 60, 'risk_atr_multiplier': 2.5, 'sector_blacklist': ['Financial Services', 'Utilities'], 'required_columns': ['Open', 'High', 'Low', 'Close', 'Volume']}
+2026-07-27 00:05:35,083 DEBUG AlphaScanner.Scanner Dual-mode scan requested with universe=Total Market (Cap Focused) interval=1d min_candles=300 use_cache=False
+2026-07-27 00:05:35,093 DEBUG AlphaScanner.Data get_universe(Total Market (Cap Focused)) -> 755 symbols
+2026-07-27 00:05:35,094 DEBUG AlphaScanner.Scanner Resolved universe size=755 head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIDRUGS.NS', 'AARTIIND.NS']
+2026-07-27 00:05:35,094 INFO AlphaScanner.Scanner Universe resolution finished in 0.01s for Total Market (Cap Focused)
+2026-07-27 00:05:35,094 INFO AlphaScanner.Scanner Prefiltering universe of 755 tickers by market cap (Min: 500 Cr, Max: 20000 Cr)...
+2026-07-27 00:05:35,103 DEBUG AlphaScanner.Engine Metadata cache is up to date. Skipping prefetch.
+2026-07-27 00:05:35,113 INFO AlphaScanner.Scanner Market cap pre-filter reduced universe from 755 to 402 tickers.
+2026-07-27 00:05:35,113 INFO AlphaScanner.Scanner Market-cap prefilter finished in 0.02s and left 402 tickers
+2026-07-27 00:05:35,115 INFO AlphaScanner.Scanner Downloading history for 402 tickers...
+2026-07-27 00:05:35,115 DEBUG AlphaScanner.Data download_history_batch(size=402, period=2y, interval=1d, use_cache=False, head=['AARTIDRUGS.NS', 'AARTIIND.NS', 'AARTIPHARM.NS', 'AAVAS.NS', 'ABDL.NS'])
+2026-07-27 00:05:35,115 INFO AlphaScanner.Data download_history_batch fetching 51 live chunks with 10 workers (chunk_size=8).
+2026-07-27 00:05:36,911 ERROR AlphaScanner.Data Critical error during batch download chunk size=8: No objects to concatenate
+2026-07-27 00:05:36,945 DEBUG AlphaScanner.Data No data for ticker BLUEJET.NS in batch result.
+2026-07-27 00:05:36,945 DEBUG AlphaScanner.Data No data for ticker BLUESTONE.NS in batch result.
+2026-07-27 00:05:36,949 DEBUG AlphaScanner.Data No data for ticker BORORENEW.NS in batch result.
+2026-07-27 00:05:36,950 DEBUG AlphaScanner.Data No data for ticker BRIGADE.NS in batch result.
+2026-07-27 00:05:36,961 DEBUG AlphaScanner.Data No data for ticker BSOFT.NS in batch result.
+2026-07-27 00:05:36,964 DEBUG AlphaScanner.Data No data for ticker CAMPUS.NS in batch result.
+2026-07-27 00:05:36,964 DEBUG AlphaScanner.Data No data for ticker CAMS.NS in batch result.
+2026-07-27 00:05:36,965 DEBUG AlphaScanner.Data Batch download chunk returned no data for 8 tickers.
+2026-07-27 00:05:37,293 DEBUG AlphaScanner.Data No data for ticker AARTIDRUGS.NS in batch result.
+2026-07-27 00:05:37,293 DEBUG AlphaScanner.Data No data for ticker AARTIIND.NS in batch result.
+2026-07-27 00:05:37,293 DEBUG AlphaScanner.Data No data for ticker AARTIPHARM.NS in batch result.
+2026-07-27 00:05:37,293 DEBUG AlphaScanner.Data No data for ticker AAVAS.NS in batch result.
+2026-07-27 00:05:37,293 DEBUG AlphaScanner.Data No data for ticker ABDL.NS in batch result.
+2026-07-27 00:05:37,294 DEBUG AlphaScanner.Data No data for ticker ABFRL.NS in batch result.
+2026-07-27 00:05:37,300 DEBUG AlphaScanner.Data No data for ticker ABREL.NS in batch result.
+2026-07-27 00:05:38,993 DEBUG AlphaScanner.Data No data for ticker FEDFINA.NS in batch result.
+2026-07-27 00:05:39,089 DEBUG AlphaScanner.Data No data for ticker CIEINDIA.NS in batch result.
+2026-07-27 00:05:39,096 DEBUG AlphaScanner.Data No data for ticker CMSINFO.NS in batch result.
+2026-07-27 00:05:39,106 DEBUG AlphaScanner.Data No data for ticker COHANCE.NS in batch result.
+2026-07-27 00:05:39,110 DEBUG AlphaScanner.Data No data for ticker CONCORDBIO.NS in batch result.
+2026-07-27 00:05:39,113 DEBUG AlphaScanner.Data No data for ticker CRAMC.NS in batch result.
+2026-07-27 00:05:39,120 DEBUG AlphaScanner.Data No data for ticker CRIZAC.NS in batch result.
+2026-07-27 00:05:39,121 DEBUG AlphaScanner.Data No data for ticker CROMPTON.NS in batch result.
+2026-07-27 00:05:39,313 DEBUG AlphaScanner.Data No data for ticker DEEPAKFERT.NS in batch result.
+2026-07-27 00:05:39,548 DEBUG AlphaScanner.Data No data for ticker ICIL.NS in batch result.
+2026-07-27 00:05:39,549 DEBUG AlphaScanner.Data No data for ticker IEX.NS in batch result.
+2026-07-27 00:05:39,561 DEBUG AlphaScanner.Data No data for ticker IFCI.NS in batch result.
+2026-07-27 00:05:39,561 DEBUG AlphaScanner.Data No data for ticker IGIL.NS in batch result.
+2026-07-27 00:05:39,562 DEBUG AlphaScanner.Data No data for ticker IIFLCAPS.NS in batch result.
+2026-07-27 00:05:39,566 DEBUG AlphaScanner.Data No data for ticker IMFA.NS in batch result.
+2026-07-27 00:05:39,566 DEBUG AlphaScanner.Data No data for ticker INDGN.NS in batch result.
+2026-07-27 00:05:40,751 ERROR AlphaScanner.Data Critical error during batch download chunk size=8: dictionary changed size during iteration
+2026-07-27 00:05:40,768 DEBUG AlphaScanner.Data Batch download chunk returned no data for 8 tickers.
+2026-07-27 00:05:40,834 DEBUG AlphaScanner.Data No data for ticker JPPOWER.NS in batch result.
+2026-07-27 00:05:40,844 DEBUG AlphaScanner.Data No data for ticker JSLL.NS in batch result.
+2026-07-27 00:05:40,849 DEBUG AlphaScanner.Data No data for ticker JSWCEMENT.NS in batch result.
+2026-07-27 00:05:40,853 DEBUG AlphaScanner.Data No data for ticker JSWDULUX.NS in batch result.
+2026-07-27 00:05:40,863 DEBUG AlphaScanner.Data No data for ticker JUBLINGREA.NS in batch result.
+2026-07-27 00:05:40,886 DEBUG AlphaScanner.Data No data for ticker JUBLPHARMA.NS in batch result.
+2026-07-27 00:05:40,887 DEBUG AlphaScanner.Data No data for ticker JUSTDIAL.NS in batch result.
+2026-07-27 00:05:40,887 DEBUG AlphaScanner.Data No data for ticker JWL.NS in batch result.
+2026-07-27 00:05:40,887 DEBUG AlphaScanner.Data No data for ticker JYOTHYLAB.NS in batch result.
+2026-07-27 00:05:40,893 DEBUG AlphaScanner.Data No data for ticker JYOTICNC.NS in batch result.
+2026-07-27 00:05:40,893 DEBUG AlphaScanner.Data No data for ticker KAJARIACER.NS in batch result.
+2026-07-27 00:05:40,922 DEBUG AlphaScanner.Data No data for ticker KEC.NS in batch result.
+2026-07-27 00:05:40,923 DEBUG AlphaScanner.Data No data for ticker KFINTECH.NS in batch result.
+2026-07-27 00:05:40,923 DEBUG AlphaScanner.Data No data for ticker KIRLOSBROS.NS in batch result.
+2026-07-27 00:05:40,933 DEBUG AlphaScanner.Data No data for ticker INDIGOPNTS.NS in batch result.
+2026-07-27 00:05:40,941 DEBUG AlphaScanner.Data No data for ticker INOXWIND.NS in batch result.
+2026-07-27 00:05:40,941 DEBUG AlphaScanner.Data No data for ticker KIRLPNU.NS in batch result.
+2026-07-27 00:05:40,942 DEBUG AlphaScanner.Data No data for ticker KITEX.NS in batch result.
+2026-07-27 00:05:40,942 DEBUG AlphaScanner.Data No data for ticker KNRCON.NS in batch result.
+2026-07-27 00:05:40,943 DEBUG AlphaScanner.Data No data for ticker KPIGREEN.NS in batch result.
+2026-07-27 00:05:40,945 DEBUG AlphaScanner.Data No data for ticker KRBL.NS in batch result.
+2026-07-27 00:05:40,945 DEBUG AlphaScanner.Data No data for ticker KRN.NS in batch result.
+2026-07-27 00:05:40,946 DEBUG AlphaScanner.Data No data for ticker KSB.NS in batch result.
+2026-07-27 00:05:40,946 DEBUG AlphaScanner.Data No data for ticker JAYNECOIND.NS in batch result.
+2026-07-27 00:05:40,946 DEBUG AlphaScanner.Data No data for ticker JBMA.NS in batch result.
+2026-07-27 00:05:40,946 DEBUG AlphaScanner.Data No data for ticker JINDALSAW.NS in batch result.
+2026-07-27 00:05:40,946 DEBUG AlphaScanner.Data No data for ticker JKLAKSHMI.NS in batch result.
+2026-07-27 00:05:40,949 DEBUG AlphaScanner.Data No data for ticker JKTYRE.NS in batch result.
+2026-07-27 00:05:40,949 DEBUG AlphaScanner.Data No data for ticker JLHL.NS in batch result.
+2026-07-27 00:05:40,949 DEBUG AlphaScanner.Data No data for ticker JMFINANCIL.NS in batch result.
+2026-07-27 00:05:41,112 DEBUG AlphaScanner.Data No data for ticker KSCL.NS in batch result.
+2026-07-27 00:05:41,113 DEBUG AlphaScanner.Data No data for ticker KTKBANK.NS in batch result.
+2026-07-27 00:05:41,133 DEBUG AlphaScanner.Data No data for ticker LEMONTREE.NS in batch result.
+2026-07-27 00:05:41,133 DEBUG AlphaScanner.Data No data for ticker LLOYDSENGG.NS in batch result.
+2026-07-27 00:05:41,135 DEBUG AlphaScanner.Data No data for ticker LLOYDSENT.NS in batch result.
+2026-07-27 00:05:41,140 DEBUG AlphaScanner.Data No data for ticker LOTUSDEV.NS in batch result.
+2026-07-27 00:05:41,140 DEBUG AlphaScanner.Data No data for ticker LTFOODS.NS in batch result.
+2026-07-27 00:05:41,140 DEBUG AlphaScanner.Data No data for ticker MASTEK.NS in batch result.
+2026-07-27 00:05:41,154 DEBUG AlphaScanner.Data No data for ticker MEDPLUS.NS in batch result.
+2026-07-27 00:05:41,157 DEBUG AlphaScanner.Data No data for ticker METROPOLIS.NS in batch result.
+2026-07-27 00:05:41,157 DEBUG AlphaScanner.Data No data for ticker MGL.NS in batch result.
+2026-07-27 00:05:41,160 DEBUG AlphaScanner.Data No data for ticker MINDACORP.NS in batch result.
+2026-07-27 00:05:41,160 DEBUG AlphaScanner.Data No data for ticker MMTC.NS in batch result.
+2026-07-27 00:05:41,160 DEBUG AlphaScanner.Data No data for ticker MOIL.NS in batch result.
+2026-07-27 00:05:41,238 DEBUG AlphaScanner.Data No data for ticker LUMAXTECH.NS in batch result.
+2026-07-27 00:05:41,238 DEBUG AlphaScanner.Data No data for ticker LXCHEM.NS in batch result.
+2026-07-27 00:05:41,238 DEBUG AlphaScanner.Data No data for ticker MAHSCOOTER.NS in batch result.
+2026-07-27 00:05:41,240 DEBUG AlphaScanner.Data No data for ticker MANORAMA.NS in batch result.
+2026-07-27 00:05:41,241 DEBUG AlphaScanner.Data No data for ticker MANYAVAR.NS in batch result.
+2026-07-27 00:05:41,241 DEBUG AlphaScanner.Data No data for ticker MAPMYINDIA.NS in batch result.
+2026-07-27 00:05:41,241 DEBUG AlphaScanner.Data No data for ticker MARKSANS.NS in batch result.
+2026-07-27 00:05:41,316 DEBUG AlphaScanner.Data No data for ticker MSTCLTD.NS in batch result.
+2026-07-27 00:05:41,316 DEBUG AlphaScanner.Data No data for ticker MTARTECH.NS in batch result.
+2026-07-27 00:05:41,319 DEBUG AlphaScanner.Data No data for ticker NAVA.NS in batch result.
+2026-07-27 00:05:41,320 DEBUG AlphaScanner.Data No data for ticker NAZARA.NS in batch result.
+2026-07-27 00:05:41,321 DEBUG AlphaScanner.Data No data for ticker NCC.NS in batch result.
+2026-07-27 00:05:41,321 DEBUG AlphaScanner.Data No data for ticker NEOGEN.NS in batch result.
+2026-07-27 00:05:41,322 DEBUG AlphaScanner.Data No data for ticker NESCO.NS in batch result.
+2026-07-27 00:05:42,392 DEBUG AlphaScanner.Data No data for ticker PCBL.NS in batch result.
+2026-07-27 00:05:42,413 DEBUG AlphaScanner.Data No data for ticker PGIL.NS in batch result.
+2026-07-27 00:05:42,466 DEBUG AlphaScanner.Data No data for ticker OSWALPUMPS.NS in batch result.
+2026-07-27 00:05:42,473 DEBUG AlphaScanner.Data No data for ticker PARKHOSPS.NS in batch result.
+2026-07-27 00:05:42,474 DEBUG AlphaScanner.Data No data for ticker PURVA.NS in batch result.
+2026-07-27 00:05:42,475 DEBUG AlphaScanner.Data No data for ticker PVRINOX.NS in batch result.
+2026-07-27 00:05:42,476 DEBUG AlphaScanner.Data No data for ticker QPOWER.NS in batch result.
+2026-07-27 00:05:42,476 DEBUG AlphaScanner.Data No data for ticker QUESS.NS in batch result.
+2026-07-27 00:05:42,477 DEBUG AlphaScanner.Data No data for ticker RAILTEL.NS in batch result.
+2026-07-27 00:05:42,478 DEBUG AlphaScanner.Data No data for ticker RAIN.NS in batch result.
+2026-07-27 00:05:42,481 DEBUG AlphaScanner.Data No data for ticker RALLIS.NS in batch result.
+2026-07-27 00:05:42,482 DEBUG AlphaScanner.Data No data for ticker NETWORK18.NS in batch result.
+2026-07-27 00:05:42,482 DEBUG AlphaScanner.Data No data for ticker NEWGEN.NS in batch result.
+2026-07-27 00:05:42,483 DEBUG AlphaScanner.Data No data for ticker NFL.NS in batch result.
+2026-07-27 00:05:42,483 DEBUG AlphaScanner.Data No data for ticker NIVABUPA.NS in batch result.
+2026-07-27 00:05:42,489 DEBUG AlphaScanner.Data No data for ticker NUVOCO.NS in batch result.
+2026-07-27 00:05:42,489 DEBUG AlphaScanner.Data No data for ticker OLAELEC.NS in batch result.
+2026-07-27 00:05:42,489 DEBUG AlphaScanner.Data No data for ticker OLECTRA.NS in batch result.
+2026-07-27 00:05:42,554 DEBUG AlphaScanner.Data No data for ticker POLYMED.NS in batch result.
+2026-07-27 00:05:42,564 DEBUG AlphaScanner.Data No data for ticker POWERMECH.NS in batch result.
+2026-07-27 00:05:42,564 DEBUG AlphaScanner.Data No data for ticker PRAJIND.NS in batch result.
+2026-07-27 00:05:42,566 DEBUG AlphaScanner.Data No data for ticker PRICOLLTD.NS in batch result.
+2026-07-27 00:05:42,568 DEBUG AlphaScanner.Data No data for ticker PRIVISCL.NS in batch result.
+2026-07-27 00:05:42,576 DEBUG AlphaScanner.Data No data for ticker PRUDENT.NS in batch result.
+2026-07-27 00:05:42,578 DEBUG AlphaScanner.Data No data for ticker PTC.NS in batch result.
+2026-07-27 00:05:42,578 DEBUG AlphaScanner.Data No data for ticker RELIGARE.NS in batch result.
+2026-07-27 00:05:42,579 DEBUG AlphaScanner.Data No data for ticker RENUKA.NS in batch result.
+2026-07-27 00:05:42,590 DEBUG AlphaScanner.Data No data for ticker RHIM.NS in batch result.
+2026-07-27 00:05:42,590 DEBUG AlphaScanner.Data No data for ticker RITES.NS in batch result.
+2026-07-27 00:05:42,593 DEBUG AlphaScanner.Data No data for ticker ROUTE.NS in batch result.
+2026-07-27 00:05:42,593 DEBUG AlphaScanner.Data No data for ticker RPOWER.NS in batch result.
+2026-07-27 00:05:42,593 DEBUG AlphaScanner.Data No data for ticker RTNINDIA.NS in batch result.
+2026-07-27 00:05:42,598 DEBUG AlphaScanner.Data No data for ticker SANSERA.NS in batch result.
+2026-07-27 00:05:42,598 DEBUG AlphaScanner.Data No data for ticker SAPPHIRE.NS in batch result.
+2026-07-27 00:05:42,599 DEBUG AlphaScanner.Data No data for ticker SARDAEN.NS in batch result.
+2026-07-27 00:05:42,602 DEBUG AlphaScanner.Data No data for ticker SAREGAMA.NS in batch result.
+2026-07-27 00:05:42,610 DEBUG AlphaScanner.Data No data for ticker SCI.NS in batch result.
+2026-07-27 00:05:42,623 DEBUG AlphaScanner.Data No data for ticker SENCO.NS in batch result.
+2026-07-27 00:05:42,624 DEBUG AlphaScanner.Data No data for ticker SFL.NS in batch result.
+2026-07-27 00:05:42,701 DEBUG AlphaScanner.Data No data for ticker SAMMAANCAP.NS in batch result.
+2026-07-27 00:05:42,725 DEBUG AlphaScanner.Data No data for ticker RATEGAIN.NS in batch result.
+2026-07-27 00:05:42,726 DEBUG AlphaScanner.Data No data for ticker RATNAMANI.NS in batch result.
+2026-07-27 00:05:42,730 DEBUG AlphaScanner.Data No data for ticker RAYMONDLSL.NS in batch result.
+2026-07-27 00:05:42,733 DEBUG AlphaScanner.Data No data for ticker RBA.NS in batch result.
+2026-07-27 00:05:42,733 DEBUG AlphaScanner.Data No data for ticker RCF.NS in batch result.
+2026-07-27 00:05:42,767 DEBUG AlphaScanner.Data No data for ticker REFEX.NS in batch result.
+2026-07-27 00:05:42,767 DEBUG AlphaScanner.Data No data for ticker RELAXO.NS in batch result.
+2026-07-27 00:05:43,160 DEBUG AlphaScanner.Data No data for ticker SHAILY.NS in batch result.
+2026-07-27 00:05:43,168 DEBUG AlphaScanner.Data No data for ticker SHAREINDIA.NS in batch result.
+2026-07-27 00:05:43,169 DEBUG AlphaScanner.Data No data for ticker SHILPAMED.NS in batch result.
+2026-07-27 00:05:43,170 DEBUG AlphaScanner.Data No data for ticker SHRIPISTON.NS in batch result.
+2026-07-27 00:05:43,174 DEBUG AlphaScanner.Data No data for ticker SIGNATURE.NS in batch result.
+2026-07-27 00:05:43,174 DEBUG AlphaScanner.Data No data for ticker SKFINDIA.NS in batch result.
+2026-07-27 00:05:43,995 DEBUG AlphaScanner.Data No data for ticker TMB.NS in batch result.
+2026-07-27 00:05:43,999 ERROR AlphaScanner.Data Critical error during batch download chunk size=8: dictionary changed size during iteration
+2026-07-27 00:05:44,034 DEBUG AlphaScanner.Data No data for ticker TRIDENT.NS in batch result.
+2026-07-27 00:05:44,038 DEBUG AlphaScanner.Data No data for ticker TRIVENI.NS in batch result.
+2026-07-27 00:05:44,041 DEBUG AlphaScanner.Data Batch download chunk returned no data for 8 tickers.
+2026-07-27 00:05:44,059 DEBUG AlphaScanner.Data No data for ticker SPARC.NS in batch result.
+2026-07-27 00:05:44,062 DEBUG AlphaScanner.Data No data for ticker STAR.NS in batch result.
+2026-07-27 00:05:44,072 DEBUG AlphaScanner.Data No data for ticker STARCEMENT.NS in batch result.
+2026-07-27 00:05:44,083 DEBUG AlphaScanner.Data No data for ticker STYL.NS in batch result.
+2026-07-27 00:05:44,084 DEBUG AlphaScanner.Data No data for ticker STYRENIX.NS in batch result.
+2026-07-27 00:05:44,084 DEBUG AlphaScanner.Data No data for ticker SUBROS.NS in batch result.
+2026-07-27 00:05:44,084 DEBUG AlphaScanner.Data No data for ticker SUDARSCHEM.NS in batch result.
+2026-07-27 00:05:44,114 DEBUG AlphaScanner.Data No data for ticker TANLA.NS in batch result.
+2026-07-27 00:05:44,132 DEBUG AlphaScanner.Data No data for ticker TARC.NS in batch result.
+2026-07-27 00:05:44,132 DEBUG AlphaScanner.Data No data for ticker TARIL.NS in batch result.
+2026-07-27 00:05:44,135 DEBUG AlphaScanner.Data No data for ticker TBOTEK.NS in batch result.
+2026-07-27 00:05:44,148 DEBUG AlphaScanner.Data No data for ticker TDPOWERSYS.NS in batch result.
+2026-07-27 00:05:44,148 DEBUG AlphaScanner.Data No data for ticker TECHNOE.NS in batch result.
+2026-07-27 00:05:44,148 DEBUG AlphaScanner.Data No data for ticker TEGA.NS in batch result.
+2026-07-27 00:05:44,148 DEBUG AlphaScanner.Data No data for ticker TEJASNET.NS in batch result.
+2026-07-27 00:05:44,149 DEBUG AlphaScanner.Data No data for ticker TEXRAIL.NS in batch result.
+2026-07-27 00:05:44,153 DEBUG AlphaScanner.Data No data for ticker THOMASCOOK.NS in batch result.
+2026-07-27 00:05:44,153 DEBUG AlphaScanner.Data No data for ticker THYROCARE.NS in batch result.
+2026-07-27 00:05:44,154 DEBUG AlphaScanner.Data No data for ticker TI.NS in batch result.
+2026-07-27 00:05:44,154 DEBUG AlphaScanner.Data No data for ticker TIMETECHNO.NS in batch result.
+2026-07-27 00:05:44,154 DEBUG AlphaScanner.Data No data for ticker TIPSMUSIC.NS in batch result.
+2026-07-27 00:05:44,157 DEBUG AlphaScanner.Data No data for ticker SKIPPER.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker SKYGOLD.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker SMARTWORKS.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker SMLMAH.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker SOBHA.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker SONATSOFTW.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker SOUTHBANK.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker TTML.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker TVSSCS.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker UJJIVANSFB.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker URBANCO.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker USHAMART.NS in batch result.
+2026-07-27 00:05:44,158 DEBUG AlphaScanner.Data No data for ticker UTIAMC.NS in batch result.
+2026-07-27 00:05:44,159 DEBUG AlphaScanner.Data No data for ticker UTLSOLAR.NS in batch result.
+2026-07-27 00:05:44,201 DEBUG AlphaScanner.Data No data for ticker VARROC.NS in batch result.
+2026-07-27 00:05:44,201 DEBUG AlphaScanner.Data No data for ticker VGUARD.NS in batch result.
+2026-07-27 00:05:44,201 DEBUG AlphaScanner.Data No data for ticker VIJAYA.NS in batch result.
+2026-07-27 00:05:44,201 DEBUG AlphaScanner.Data No data for ticker VIKRAMSOLR.NS in batch result.
+2026-07-27 00:05:44,201 DEBUG AlphaScanner.Data No data for ticker VIPIND.NS in batch result.
+2026-07-27 00:05:44,201 DEBUG AlphaScanner.Data No data for ticker VIYASH.NS in batch result.
+2026-07-27 00:05:44,203 DEBUG AlphaScanner.Data No data for ticker VMART.NS in batch result.
+2026-07-27 00:05:44,234 DEBUG AlphaScanner.Data No data for ticker VOGL.NS in batch result.
+2026-07-27 00:05:44,234 DEBUG AlphaScanner.Data No data for ticker VOLTAMP.NS in batch result.
+2026-07-27 00:05:44,234 DEBUG AlphaScanner.Data No data for ticker VTL.NS in batch result.
+2026-07-27 00:05:44,234 DEBUG AlphaScanner.Data No data for ticker WAAREERTL.NS in batch result.
+2026-07-27 00:05:44,237 DEBUG AlphaScanner.Data No data for ticker WAKEFIT.NS in batch result.
+2026-07-27 00:05:44,239 DEBUG AlphaScanner.Data No data for ticker WELENT.NS in batch result.
+2026-07-27 00:05:44,549 DEBUG AlphaScanner.Data No data for ticker WEWORK.NS in batch result.
+2026-07-27 00:05:44,550 DEBUG AlphaScanner.Data No data for ticker YATHARTH.NS in batch result.
+2026-07-27 00:05:44,553 DEBUG AlphaScanner.Data No data for ticker ZEEL.NS in batch result.
+2026-07-27 00:05:44,553 DEBUG AlphaScanner.Data No data for ticker ZENSARTECH.NS in batch result.
+2026-07-27 00:05:44,563 DEBUG AlphaScanner.Data download_history_batch result count=182
+2026-07-27 00:05:44,566 INFO AlphaScanner.Scanner History download finished in 9.45s for 402 tickers
+2026-07-27 00:05:44,566 INFO AlphaScanner.Scanner Downloaded history for 182 tickers.
+2026-07-27 00:05:44,567 INFO AlphaScanner.Scanner Processing 182 tickers...
+2026-07-27 00:06:12,852 INFO AlphaScanner.Scanner Ticker evaluation finished in 28.28s for 182 tickers
+2026-07-27 00:06:12,858 DEBUG AlphaScanner.Scanner Dual-mode scan finished: watchlist_rows=7 entry_rows=0
+2026-07-27 00:06:13,221 INFO AlphaScanner.Scanner Watchlist candidates: 7 | Entry candidates: 0
+2026-07-27 00:06:13,221 INFO AlphaScanner.Scanner Dual-mode scan total elapsed 38.14s
+2026-07-27 00:06:13,257 INFO AlphaScanner.Service Modular scan finished in 38.18s for universe=Total Market (Cap Focused) interval=1d mode=Entry Scanner
+2026-07-27 00:06:21,242 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-27 00:06:26,090 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Pre-Breakout, universe=Total Market (Cap Focused), scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-27 00:06:26,091 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=500 max_cap=20000 sector_map_size=751
+2026-07-27 00:06:26,092 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Pre-Breakout, universe=Total Market (Cap Focused), timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=0.6, rsi_min=35, rsi_max=70, dist_thresh=5.0, min_mkt_cap_cr=500, max_mkt_cap_cr=20000)
+2026-07-27 00:06:26,092 DEBUG AlphaScanner.Service Routing to legacy breakout scanner with normalized timeframe=1d
+2026-07-27 00:06:26,092 DEBUG AlphaScanner.Engine run_scanner(scanner_type=Pre-Breakout, universe=Total Market (Cap Focused), timeframe=1d, use_cache=False, incremental_fetch=False, vol_thresh=0.6, rsi_range=35-70, dist_thresh=5.0, min_cap=500, max_cap=20000)
+2026-07-27 00:06:26,093 DEBUG AlphaScanner.Engine Resolved legacy universe 'Total Market (Cap Focused)' to 755 tickers
+2026-07-27 00:06:26,093 INFO AlphaScanner.Engine Universe resolution finished in 0.00s for Total Market (Cap Focused)
+2026-07-27 00:06:26,093 INFO AlphaScanner.Engine Prefiltering universe of 755 tickers by market cap (Min: 500 Cr, Max: 20000 Cr)...
+2026-07-27 00:06:26,102 DEBUG AlphaScanner.Engine Metadata cache is up to date. Skipping prefetch.
+2026-07-27 00:06:26,107 INFO AlphaScanner.Engine Market cap pre-filter reduced universe from 755 to 402 tickers.
+2026-07-27 00:06:26,108 INFO AlphaScanner.Engine Market-cap prefilter finished in 0.01s and reduced universe to 402 tickers
+2026-07-27 00:06:26,243 DEBUG AlphaScanner.Engine Loaded benchmark close series with 246 rows
+2026-07-27 00:06:26,243 INFO AlphaScanner.Engine Benchmark download finished in 0.14s
+2026-07-27 00:06:26,251 DEBUG AlphaScanner.Engine Metadata cache is up to date. Skipping prefetch.
+2026-07-27 00:06:26,257 DEBUG AlphaScanner.Engine Metadata cache primed with 402 entries
+2026-07-27 00:06:26,257 INFO AlphaScanner.Engine Metadata prefetch finished in 0.01s
+2026-07-27 00:06:26,258 DEBUG AlphaScanner.Data download_history_batch(size=402, period=1y, interval=1d, use_cache=False, head=['AARTIDRUGS.NS', 'AARTIIND.NS', 'AARTIPHARM.NS', 'AAVAS.NS', 'ABDL.NS'])
+2026-07-27 00:06:26,258 INFO AlphaScanner.Data download_history_batch fetching 51 live chunks with 10 workers (chunk_size=8).
+2026-07-27 00:06:27,747 DEBUG AlphaScanner.Data No data for ticker CANFINHOME.NS in batch result.
+2026-07-27 00:06:27,747 DEBUG AlphaScanner.Data No data for ticker CANHLIFE.NS in batch result.
+2026-07-27 00:06:27,747 DEBUG AlphaScanner.Data No data for ticker CAPILLARY.NS in batch result.
+2026-07-27 00:06:27,747 DEBUG AlphaScanner.Data No data for ticker CAPLIPOINT.NS in batch result.
+2026-07-27 00:06:27,747 DEBUG AlphaScanner.Data No data for ticker CARTRADE.NS in batch result.
+2026-07-27 00:06:27,750 DEBUG AlphaScanner.Data No data for ticker CCAVENUE.NS in batch result.
+2026-07-27 00:06:27,750 DEBUG AlphaScanner.Data No data for ticker CCL.NS in batch result.
+2026-07-27 00:06:27,795 DEBUG AlphaScanner.Data No data for ticker ATLANTAELE.NS in batch result.
+2026-07-27 00:06:27,795 DEBUG AlphaScanner.Data No data for ticker ATUL.NS in batch result.
+2026-07-27 00:06:27,795 DEBUG AlphaScanner.Data No data for ticker AURIONPRO.NS in batch result.
+2026-07-27 00:06:27,796 DEBUG AlphaScanner.Data No data for ticker AVALON.NS in batch result.
+2026-07-27 00:06:27,799 DEBUG AlphaScanner.Data No data for ticker AVL.NS in batch result.
+2026-07-27 00:06:27,799 DEBUG AlphaScanner.Data No data for ticker AWFIS.NS in batch result.
+2026-07-27 00:06:27,799 DEBUG AlphaScanner.Data No data for ticker AXISCADES.NS in batch result.
+2026-07-27 00:06:27,853 DEBUG AlphaScanner.Data No data for ticker BBOX.NS in batch result.
+2026-07-27 00:06:27,855 DEBUG AlphaScanner.Data No data for ticker BBTC.NS in batch result.
+2026-07-27 00:06:27,855 DEBUG AlphaScanner.Data No data for ticker BECTORFOOD.NS in batch result.
+2026-07-27 00:06:27,855 DEBUG AlphaScanner.Data No data for ticker BEML.NS in batch result.
+2026-07-27 00:06:27,856 DEBUG AlphaScanner.Data No data for ticker BIKAJI.NS in batch result.
+2026-07-27 00:06:27,860 DEBUG AlphaScanner.Data No data for ticker BLACKBUCK.NS in batch result.
+2026-07-27 00:06:27,861 DEBUG AlphaScanner.Data No data for ticker BLS.NS in batch result.
+2026-07-27 00:06:28,009 DEBUG AlphaScanner.Data No data for ticker AZAD.NS in batch result.
+2026-07-27 00:06:28,013 DEBUG AlphaScanner.Data No data for ticker BALAMINES.NS in batch result.
+2026-07-27 00:06:28,013 DEBUG AlphaScanner.Data No data for ticker BALRAMCHIN.NS in batch result.
+2026-07-27 00:06:28,015 DEBUG AlphaScanner.Data No data for ticker BALUFORGE.NS in batch result.
+2026-07-27 00:06:28,015 DEBUG AlphaScanner.Data No data for ticker BANCOINDIA.NS in batch result.
+2026-07-27 00:06:28,015 DEBUG AlphaScanner.Data No data for ticker BATAINDIA.NS in batch result.
+2026-07-27 00:06:28,016 DEBUG AlphaScanner.Data No data for ticker BAYERCROP.NS in batch result.
+2026-07-27 00:06:28,040 DEBUG AlphaScanner.Data No data for ticker CEATLTD.NS in batch result.
+2026-07-27 00:06:28,040 DEBUG AlphaScanner.Data No data for ticker CELLO.NS in batch result.
+2026-07-27 00:06:28,041 DEBUG AlphaScanner.Data No data for ticker CENTURYPLY.NS in batch result.
+2026-07-27 00:06:28,042 DEBUG AlphaScanner.Data No data for ticker CERA.NS in batch result.
+2026-07-27 00:06:28,043 DEBUG AlphaScanner.Data No data for ticker CHALET.NS in batch result.
+2026-07-27 00:06:28,059 DEBUG AlphaScanner.Data No data for ticker CHENNPETRO.NS in batch result.
+2026-07-27 00:06:28,059 DEBUG AlphaScanner.Data No data for ticker CHOICEIN.NS in batch result.
+2026-07-27 00:06:28,059 DEBUG AlphaScanner.Data No data for ticker APTUS.NS in batch result.
+2026-07-27 00:06:28,062 DEBUG AlphaScanner.Data No data for ticker ARE&M.NS in batch result.
+2026-07-27 00:06:28,063 DEBUG AlphaScanner.Data No data for ticker ARVIND.NS in batch result.
+2026-07-27 00:06:28,069 DEBUG AlphaScanner.Data No data for ticker ASHAPURMIN.NS in batch result.
+2026-07-27 00:06:28,091 DEBUG AlphaScanner.Data No data for ticker ASHOKA.NS in batch result.
+2026-07-27 00:06:28,093 DEBUG AlphaScanner.Data No data for ticker ASKAUTOLTD.NS in batch result.
+2026-07-27 00:06:28,093 DEBUG AlphaScanner.Data No data for ticker ASTRAMICRO.NS in batch result.
+2026-07-27 00:06:28,998 DEBUG AlphaScanner.Data No data for ticker COHANCE.NS in batch result.
+2026-07-27 00:06:29,166 DEBUG AlphaScanner.Data No data for ticker ICIL.NS in batch result.
+2026-07-27 00:06:29,166 DEBUG AlphaScanner.Data No data for ticker IEX.NS in batch result.
+2026-07-27 00:06:29,170 DEBUG AlphaScanner.Data No data for ticker IGIL.NS in batch result.
+2026-07-27 00:06:29,170 DEBUG AlphaScanner.Data No data for ticker IIFLCAPS.NS in batch result.
+2026-07-27 00:06:29,170 DEBUG AlphaScanner.Data No data for ticker IMFA.NS in batch result.
+2026-07-27 00:06:29,170 DEBUG AlphaScanner.Data No data for ticker INDGN.NS in batch result.
+2026-07-27 00:06:29,231 DEBUG AlphaScanner.Data No data for ticker CSBBANK.NS in batch result.
+2026-07-27 00:06:29,233 DEBUG AlphaScanner.Data No data for ticker DATAMATICS.NS in batch result.
+2026-07-27 00:06:29,234 DEBUG AlphaScanner.Data No data for ticker DBL.NS in batch result.
+2026-07-27 00:06:29,234 DEBUG AlphaScanner.Data No data for ticker DBREALTY.NS in batch result.
+2026-07-27 00:06:29,234 DEBUG AlphaScanner.Data No data for ticker DCBBANK.NS in batch result.
+2026-07-27 00:06:29,235 DEBUG AlphaScanner.Data No data for ticker DCMSHRIRAM.NS in batch result.
+2026-07-27 00:06:29,236 DEBUG AlphaScanner.Data No data for ticker DEEPAKFERT.NS in batch result.
+2026-07-27 00:06:29,294 DEBUG AlphaScanner.Data No data for ticker ENTERO.NS in batch result.
+2026-07-27 00:06:29,297 DEBUG AlphaScanner.Data No data for ticker EQUITASBNK.NS in batch result.
+2026-07-27 00:06:29,298 DEBUG AlphaScanner.Data No data for ticker ERIS.NS in batch result.
+2026-07-27 00:06:29,298 DEBUG AlphaScanner.Data No data for ticker ETHOSLTD.NS in batch result.
+2026-07-27 00:06:29,299 DEBUG AlphaScanner.Data No data for ticker EUREKAFORB.NS in batch result.
+2026-07-27 00:06:29,299 DEBUG AlphaScanner.Data No data for ticker FEDFINA.NS in batch result.
+2026-07-27 00:06:29,299 DEBUG AlphaScanner.Data No data for ticker FIEMIND.NS in batch result.
+2026-07-27 00:06:29,310 DEBUG AlphaScanner.Data No data for ticker ELECON.NS in batch result.
+2026-07-27 00:06:29,314 DEBUG AlphaScanner.Data No data for ticker ELGIEQUIP.NS in batch result.
+2026-07-27 00:06:29,314 DEBUG AlphaScanner.Data No data for ticker ELLEN.NS in batch result.
+2026-07-27 00:06:29,314 DEBUG AlphaScanner.Data No data for ticker EMAMILTD.NS in batch result.
+2026-07-27 00:06:29,314 DEBUG AlphaScanner.Data No data for ticker EMBDL.NS in batch result.
+2026-07-27 00:06:29,314 DEBUG AlphaScanner.Data No data for ticker EMIL.NS in batch result.
+2026-07-27 00:06:29,315 DEBUG AlphaScanner.Data No data for ticker ENGINERSIN.NS in batch result.
+2026-07-27 00:06:29,319 DEBUG AlphaScanner.Data No data for ticker FINCABLES.NS in batch result.
+2026-07-27 00:06:29,321 DEBUG AlphaScanner.Data No data for ticker FINPIPE.NS in batch result.
+2026-07-27 00:06:29,321 DEBUG AlphaScanner.Data No data for ticker FIRSTCRY.NS in batch result.
+2026-07-27 00:06:29,321 DEBUG AlphaScanner.Data No data for ticker FIVESTAR.NS in batch result.
+2026-07-27 00:06:29,325 DEBUG AlphaScanner.Data No data for ticker GAEL.NS in batch result.
+2026-07-27 00:06:29,327 DEBUG AlphaScanner.Data No data for ticker GALLANTT.NS in batch result.
+2026-07-27 00:06:29,354 DEBUG AlphaScanner.Data No data for ticker GHCL.NS in batch result.
+2026-07-27 00:06:29,380 DEBUG AlphaScanner.Data No data for ticker GPPL.NS in batch result.
+2026-07-27 00:06:29,382 DEBUG AlphaScanner.Data No data for ticker GRAPHITE.NS in batch result.
+2026-07-27 00:06:29,382 DEBUG AlphaScanner.Data No data for ticker GRAVITA.NS in batch result.
+2026-07-27 00:06:29,382 DEBUG AlphaScanner.Data No data for ticker GREAVESCOT.NS in batch result.
+2026-07-27 00:06:29,382 DEBUG AlphaScanner.Data No data for ticker GRWRHITECH.NS in batch result.
+2026-07-27 00:06:29,385 DEBUG AlphaScanner.Data No data for ticker HAPPSTMNDS.NS in batch result.
+2026-07-27 00:06:29,385 DEBUG AlphaScanner.Data No data for ticker HBLENGINE.NS in batch result.
+2026-07-27 00:06:29,415 DEBUG AlphaScanner.Data No data for ticker DEVYANI.NS in batch result.
+2026-07-27 00:06:29,415 DEBUG AlphaScanner.Data No data for ticker DIACABS.NS in batch result.
+2026-07-27 00:06:29,416 DEBUG AlphaScanner.Data No data for ticker DOMS.NS in batch result.
+2026-07-27 00:06:29,416 DEBUG AlphaScanner.Data No data for ticker DYNAMATECH.NS in batch result.
+2026-07-27 00:06:29,416 DEBUG AlphaScanner.Data No data for ticker ECLERX.NS in batch result.
+2026-07-27 00:06:29,416 DEBUG AlphaScanner.Data No data for ticker EDELWEISS.NS in batch result.
+2026-07-27 00:06:29,419 DEBUG AlphaScanner.Data No data for ticker EIEL.NS in batch result.
+2026-07-27 00:06:29,500 DEBUG AlphaScanner.Data No data for ticker HCC.NS in batch result.
+2026-07-27 00:06:29,500 DEBUG AlphaScanner.Data No data for ticker HCG.NS in batch result.
+2026-07-27 00:06:29,500 DEBUG AlphaScanner.Data No data for ticker HEG.NS in batch result.
+2026-07-27 00:06:29,504 DEBUG AlphaScanner.Data No data for ticker HERITGFOOD.NS in batch result.
+2026-07-27 00:06:29,504 DEBUG AlphaScanner.Data No data for ticker HGINFRA.NS in batch result.
+2026-07-27 00:06:29,505 DEBUG AlphaScanner.Data No data for ticker HOMEFIRST.NS in batch result.
+2026-07-27 00:06:29,505 DEBUG AlphaScanner.Data No data for ticker HONASA.NS in batch result.
+2026-07-27 00:06:29,563 DEBUG AlphaScanner.Data No data for ticker GMDCLTD.NS in batch result.
+2026-07-27 00:06:29,563 DEBUG AlphaScanner.Data No data for ticker GMMPFAUDLR.NS in batch result.
+2026-07-27 00:06:29,573 DEBUG AlphaScanner.Data No data for ticker GMRP&UI.NS in batch result.
+2026-07-27 00:06:29,574 DEBUG AlphaScanner.Data No data for ticker GNFC.NS in batch result.
+2026-07-27 00:06:29,575 DEBUG AlphaScanner.Data No data for ticker GODREJAGRO.NS in batch result.
+2026-07-27 00:06:29,575 DEBUG AlphaScanner.Data No data for ticker GOKEX.NS in batch result.
+2026-07-27 00:06:29,592 DEBUG AlphaScanner.Data No data for ticker GPIL.NS in batch result.
+2026-07-27 00:06:30,390 DEBUG AlphaScanner.Data No data for ticker INDIGOPNTS.NS in batch result.
+2026-07-27 00:06:30,434 DEBUG AlphaScanner.Data No data for ticker INOXWIND.NS in batch result.
+2026-07-27 00:06:30,499 DEBUG AlphaScanner.Data No data for ticker IONEXCHANG.NS in batch result.
+2026-07-27 00:06:30,517 DEBUG AlphaScanner.Data No data for ticker J&KBANK.NS in batch result.
+2026-07-27 00:06:30,608 DEBUG AlphaScanner.Data No data for ticker JAYNECOIND.NS in batch result.
+2026-07-27 00:06:30,608 DEBUG AlphaScanner.Data No data for ticker JBMA.NS in batch result.
+2026-07-27 00:06:30,608 DEBUG AlphaScanner.Data No data for ticker JINDALSAW.NS in batch result.
+2026-07-27 00:06:30,608 DEBUG AlphaScanner.Data No data for ticker JKLAKSHMI.NS in batch result.
+2026-07-27 00:06:30,611 DEBUG AlphaScanner.Data No data for ticker JKTYRE.NS in batch result.
+2026-07-27 00:06:30,611 DEBUG AlphaScanner.Data No data for ticker JLHL.NS in batch result.
+2026-07-27 00:06:30,611 DEBUG AlphaScanner.Data No data for ticker JMFINANCIL.NS in batch result.
+2026-07-27 00:06:30,631 DEBUG AlphaScanner.Data No data for ticker JPPOWER.NS in batch result.
+2026-07-27 00:06:30,633 DEBUG AlphaScanner.Data No data for ticker JSLL.NS in batch result.
+2026-07-27 00:06:30,633 DEBUG AlphaScanner.Data No data for ticker JSWCEMENT.NS in batch result.
+2026-07-27 00:06:30,634 DEBUG AlphaScanner.Data No data for ticker JSWDULUX.NS in batch result.
+2026-07-27 00:06:30,635 DEBUG AlphaScanner.Data No data for ticker JUBLINGREA.NS in batch result.
+2026-07-27 00:06:30,635 DEBUG AlphaScanner.Data No data for ticker JUBLPHARMA.NS in batch result.
+2026-07-27 00:06:30,635 DEBUG AlphaScanner.Data No data for ticker JUSTDIAL.NS in batch result.
+2026-07-27 00:06:30,722 DEBUG AlphaScanner.Data No data for ticker KIRLPNU.NS in batch result.
+2026-07-27 00:06:30,722 DEBUG AlphaScanner.Data No data for ticker KITEX.NS in batch result.
+2026-07-27 00:06:30,723 DEBUG AlphaScanner.Data No data for ticker KNRCON.NS in batch result.
+2026-07-27 00:06:30,724 DEBUG AlphaScanner.Data No data for ticker KPIGREEN.NS in batch result.
+2026-07-27 00:06:30,727 DEBUG AlphaScanner.Data No data for ticker KRBL.NS in batch result.
+2026-07-27 00:06:30,727 DEBUG AlphaScanner.Data No data for ticker KRN.NS in batch result.
+2026-07-27 00:06:30,728 DEBUG AlphaScanner.Data No data for ticker KSB.NS in batch result.
+2026-07-27 00:06:30,745 DEBUG AlphaScanner.Data No data for ticker KSCL.NS in batch result.
+2026-07-27 00:06:30,745 DEBUG AlphaScanner.Data No data for ticker KTKBANK.NS in batch result.
+2026-07-27 00:06:30,748 DEBUG AlphaScanner.Data No data for ticker LEMONTREE.NS in batch result.
+2026-07-27 00:06:30,748 DEBUG AlphaScanner.Data No data for ticker LLOYDSENGG.NS in batch result.
+2026-07-27 00:06:30,749 DEBUG AlphaScanner.Data No data for ticker LLOYDSENT.NS in batch result.
+2026-07-27 00:06:30,749 DEBUG AlphaScanner.Data No data for ticker LOTUSDEV.NS in batch result.
+2026-07-27 00:06:30,749 DEBUG AlphaScanner.Data No data for ticker LTFOODS.NS in batch result.
+2026-07-27 00:06:30,826 DEBUG AlphaScanner.Data No data for ticker MASTEK.NS in batch result.
+2026-07-27 00:06:30,826 DEBUG AlphaScanner.Data No data for ticker MEDPLUS.NS in batch result.
+2026-07-27 00:06:30,831 DEBUG AlphaScanner.Data No data for ticker METROPOLIS.NS in batch result.
+2026-07-27 00:06:30,831 DEBUG AlphaScanner.Data No data for ticker MGL.NS in batch result.
+2026-07-27 00:06:30,835 DEBUG AlphaScanner.Data No data for ticker MINDACORP.NS in batch result.
+2026-07-27 00:06:30,835 DEBUG AlphaScanner.Data No data for ticker MMTC.NS in batch result.
+2026-07-27 00:06:30,835 DEBUG AlphaScanner.Data No data for ticker MOIL.NS in batch result.
+2026-07-27 00:06:30,870 DEBUG AlphaScanner.Data No data for ticker MSTCLTD.NS in batch result.
+2026-07-27 00:06:30,870 DEBUG AlphaScanner.Data No data for ticker MTARTECH.NS in batch result.
+2026-07-27 00:06:30,873 DEBUG AlphaScanner.Data No data for ticker NAVA.NS in batch result.
+2026-07-27 00:06:30,873 DEBUG AlphaScanner.Data No data for ticker NAZARA.NS in batch result.
+2026-07-27 00:06:30,873 DEBUG AlphaScanner.Data No data for ticker NCC.NS in batch result.
+2026-07-27 00:06:30,874 DEBUG AlphaScanner.Data No data for ticker NEOGEN.NS in batch result.
+2026-07-27 00:06:30,874 DEBUG AlphaScanner.Data No data for ticker NESCO.NS in batch result.
+2026-07-27 00:06:30,988 DEBUG AlphaScanner.Data No data for ticker LUMAXTECH.NS in batch result.
+2026-07-27 00:06:30,990 DEBUG AlphaScanner.Data No data for ticker LXCHEM.NS in batch result.
+2026-07-27 00:06:31,001 DEBUG AlphaScanner.Data No data for ticker MAHSCOOTER.NS in batch result.
+2026-07-27 00:06:31,006 DEBUG AlphaScanner.Data No data for ticker MANORAMA.NS in batch result.
+2026-07-27 00:06:31,006 DEBUG AlphaScanner.Data No data for ticker MANYAVAR.NS in batch result.
+2026-07-27 00:06:31,006 DEBUG AlphaScanner.Data No data for ticker MAPMYINDIA.NS in batch result.
+2026-07-27 00:06:31,007 DEBUG AlphaScanner.Data No data for ticker MARKSANS.NS in batch result.
+2026-07-27 00:06:31,369 DEBUG AlphaScanner.Data No data for ticker JYOTHYLAB.NS in batch result.
+2026-07-27 00:06:31,370 DEBUG AlphaScanner.Data No data for ticker JYOTICNC.NS in batch result.
+2026-07-27 00:06:31,370 DEBUG AlphaScanner.Data No data for ticker KAJARIACER.NS in batch result.
+2026-07-27 00:06:31,376 DEBUG AlphaScanner.Data No data for ticker KFINTECH.NS in batch result.
+2026-07-27 00:06:31,381 DEBUG AlphaScanner.Data No data for ticker KIRLOSBROS.NS in batch result.
+2026-07-27 00:06:31,742 DEBUG AlphaScanner.Data No data for ticker NETWORK18.NS in batch result.
+2026-07-27 00:06:31,758 DEBUG AlphaScanner.Data No data for ticker NFL.NS in batch result.
+2026-07-27 00:06:31,758 DEBUG AlphaScanner.Data No data for ticker NIVABUPA.NS in batch result.
+2026-07-27 00:06:31,760 DEBUG AlphaScanner.Data No data for ticker NUVOCO.NS in batch result.
+2026-07-27 00:06:31,771 DEBUG AlphaScanner.Data No data for ticker OLAELEC.NS in batch result.
+2026-07-27 00:06:31,771 DEBUG AlphaScanner.Data No data for ticker OLECTRA.NS in batch result.
+2026-07-27 00:06:31,837 DEBUG AlphaScanner.Data No data for ticker ONESOURCE.NS in batch result.
+2026-07-27 00:06:31,837 DEBUG AlphaScanner.Data No data for ticker OPTIEMUS.NS in batch result.
+2026-07-27 00:06:31,838 DEBUG AlphaScanner.Data No data for ticker ORIENTCEM.NS in batch result.
+2026-07-27 00:06:31,855 DEBUG AlphaScanner.Data No data for ticker OSWALPUMPS.NS in batch result.
+2026-07-27 00:06:31,855 DEBUG AlphaScanner.Data No data for ticker PARADEEP.NS in batch result.
+2026-07-27 00:06:31,856 DEBUG AlphaScanner.Data No data for ticker PARAS.NS in batch result.
+2026-07-27 00:06:31,858 DEBUG AlphaScanner.Data No data for ticker PARKHOSPS.NS in batch result.
+2026-07-27 00:06:32,091 DEBUG AlphaScanner.Data No data for ticker PCBL.NS in batch result.
+2026-07-27 00:06:32,097 DEBUG AlphaScanner.Data No data for ticker PGEL.NS in batch result.
+2026-07-27 00:06:32,112 DEBUG AlphaScanner.Data No data for ticker PGIL.NS in batch result.
+2026-07-27 00:06:32,115 DEBUG AlphaScanner.Data No data for ticker PICCADIL.NS in batch result.
+2026-07-27 00:06:32,122 DEBUG AlphaScanner.Data No data for ticker PINELABS.NS in batch result.
+2026-07-27 00:06:32,122 DEBUG AlphaScanner.Data No data for ticker PNCINFRA.NS in batch result.
+2026-07-27 00:06:32,126 DEBUG AlphaScanner.Data No data for ticker POLYMED.NS in batch result.
+2026-07-27 00:06:32,169 DEBUG AlphaScanner.Data No data for ticker POWERMECH.NS in batch result.
+2026-07-27 00:06:32,177 DEBUG AlphaScanner.Data No data for ticker PRAJIND.NS in batch result.
+2026-07-27 00:06:32,198 DEBUG AlphaScanner.Data No data for ticker PRIVISCL.NS in batch result.
+2026-07-27 00:06:32,201 DEBUG AlphaScanner.Data No data for ticker PRUDENT.NS in batch result.
+2026-07-27 00:06:32,201 DEBUG AlphaScanner.Data No data for ticker PTC.NS in batch result.
+2026-07-27 00:06:32,202 DEBUG AlphaScanner.Data No data for ticker PURVA.NS in batch result.
+2026-07-27 00:06:32,202 DEBUG AlphaScanner.Data No data for ticker PVRINOX.NS in batch result.
+2026-07-27 00:06:32,202 DEBUG AlphaScanner.Data No data for ticker QPOWER.NS in batch result.
+2026-07-27 00:06:32,203 DEBUG AlphaScanner.Data No data for ticker QUESS.NS in batch result.
+2026-07-27 00:06:32,204 DEBUG AlphaScanner.Data No data for ticker RAILTEL.NS in batch result.
+2026-07-27 00:06:32,205 DEBUG AlphaScanner.Data No data for ticker RAIN.NS in batch result.
+2026-07-27 00:06:32,211 DEBUG AlphaScanner.Data No data for ticker RALLIS.NS in batch result.
+2026-07-27 00:06:32,212 DEBUG AlphaScanner.Data No data for ticker RELIGARE.NS in batch result.
+2026-07-27 00:06:32,213 DEBUG AlphaScanner.Data No data for ticker RENUKA.NS in batch result.
+2026-07-27 00:06:32,228 DEBUG AlphaScanner.Data No data for ticker RHIM.NS in batch result.
+2026-07-27 00:06:32,228 DEBUG AlphaScanner.Data No data for ticker RITES.NS in batch result.
+2026-07-27 00:06:32,232 DEBUG AlphaScanner.Data No data for ticker ROUTE.NS in batch result.
+2026-07-27 00:06:32,232 DEBUG AlphaScanner.Data No data for ticker RPOWER.NS in batch result.
+2026-07-27 00:06:32,232 DEBUG AlphaScanner.Data No data for ticker RTNINDIA.NS in batch result.
+2026-07-27 00:06:32,239 DEBUG AlphaScanner.Data No data for ticker SAATVIKGL.NS in batch result.
+2026-07-27 00:06:32,239 DEBUG AlphaScanner.Data No data for ticker SAFARI.NS in batch result.
+2026-07-27 00:06:32,264 DEBUG AlphaScanner.Data No data for ticker SAGILITY.NS in batch result.
+2026-07-27 00:06:32,264 DEBUG AlphaScanner.Data No data for ticker SAMHI.NS in batch result.
+2026-07-27 00:06:32,273 DEBUG AlphaScanner.Data No data for ticker SAMMAANCAP.NS in batch result.
+2026-07-27 00:06:32,277 DEBUG AlphaScanner.Data No data for ticker SANDUMA.NS in batch result.
+2026-07-27 00:06:32,280 DEBUG AlphaScanner.Data No data for ticker SANOFICONR.NS in batch result.
+2026-07-27 00:06:32,286 DEBUG AlphaScanner.Data No data for ticker RATEGAIN.NS in batch result.
+2026-07-27 00:06:32,287 DEBUG AlphaScanner.Data No data for ticker RATNAMANI.NS in batch result.
+2026-07-27 00:06:32,304 DEBUG AlphaScanner.Data No data for ticker RAYMONDLSL.NS in batch result.
+2026-07-27 00:06:32,306 DEBUG AlphaScanner.Data No data for ticker RBA.NS in batch result.
+2026-07-27 00:06:32,306 DEBUG AlphaScanner.Data No data for ticker RCF.NS in batch result.
+2026-07-27 00:06:32,309 DEBUG AlphaScanner.Data No data for ticker REFEX.NS in batch result.
+2026-07-27 00:06:32,309 DEBUG AlphaScanner.Data No data for ticker RELAXO.NS in batch result.
+2026-07-27 00:06:32,609 DEBUG AlphaScanner.Data No data for ticker SANSERA.NS in batch result.
+2026-07-27 00:06:32,609 DEBUG AlphaScanner.Data No data for ticker SAPPHIRE.NS in batch result.
+2026-07-27 00:06:32,609 DEBUG AlphaScanner.Data No data for ticker SARDAEN.NS in batch result.
+2026-07-27 00:06:32,610 DEBUG AlphaScanner.Data No data for ticker SAREGAMA.NS in batch result.
+2026-07-27 00:06:32,612 DEBUG AlphaScanner.Data No data for ticker SCI.NS in batch result.
+2026-07-27 00:06:32,613 DEBUG AlphaScanner.Data No data for ticker SENCO.NS in batch result.
+2026-07-27 00:06:32,762 DEBUG AlphaScanner.Data No data for ticker SHAILY.NS in batch result.
+2026-07-27 00:06:32,766 DEBUG AlphaScanner.Data No data for ticker SHARDACROP.NS in batch result.
+2026-07-27 00:06:32,766 DEBUG AlphaScanner.Data No data for ticker SHAREINDIA.NS in batch result.
+2026-07-27 00:06:32,771 DEBUG AlphaScanner.Data No data for ticker SHILPAMED.NS in batch result.
+2026-07-27 00:06:32,771 DEBUG AlphaScanner.Data No data for ticker SHRIPISTON.NS in batch result.
+2026-07-27 00:06:32,777 DEBUG AlphaScanner.Data No data for ticker SIGNATURE.NS in batch result.
+2026-07-27 00:06:32,778 DEBUG AlphaScanner.Data No data for ticker SKFINDIA.NS in batch result.
+2026-07-27 00:06:33,315 DEBUG AlphaScanner.Data No data for ticker STAR.NS in batch result.
+2026-07-27 00:06:33,316 DEBUG AlphaScanner.Data No data for ticker STARCEMENT.NS in batch result.
+2026-07-27 00:06:33,329 DEBUG AlphaScanner.Data No data for ticker STYRENIX.NS in batch result.
+2026-07-27 00:06:33,336 DEBUG AlphaScanner.Data No data for ticker SUBROS.NS in batch result.
+2026-07-27 00:06:33,336 DEBUG AlphaScanner.Data No data for ticker SUDARSCHEM.NS in batch result.
+2026-07-27 00:06:33,572 DEBUG AlphaScanner.Data No data for ticker SUNTECK.NS in batch result.
+2026-07-27 00:06:33,576 DEBUG AlphaScanner.Data No data for ticker SUPRIYA.NS in batch result.
+2026-07-27 00:06:33,576 DEBUG AlphaScanner.Data No data for ticker SURYAROSNI.NS in batch result.
+2026-07-27 00:06:33,586 DEBUG AlphaScanner.Data No data for ticker SWANCORP.NS in batch result.
+2026-07-27 00:06:33,590 DEBUG AlphaScanner.Data No data for ticker SWSOLAR.NS in batch result.
+2026-07-27 00:06:33,590 DEBUG AlphaScanner.Data No data for ticker SYNGENE.NS in batch result.
+2026-07-27 00:06:33,611 DEBUG AlphaScanner.Data No data for ticker SKIPPER.NS in batch result.
+2026-07-27 00:06:33,611 DEBUG AlphaScanner.Data No data for ticker SKYGOLD.NS in batch result.
+2026-07-27 00:06:33,611 DEBUG AlphaScanner.Data No data for ticker SMARTWORKS.NS in batch result.
+2026-07-27 00:06:33,611 DEBUG AlphaScanner.Data No data for ticker SMLMAH.NS in batch result.
+2026-07-27 00:06:33,612 DEBUG AlphaScanner.Data No data for ticker SOBHA.NS in batch result.
+2026-07-27 00:06:33,612 DEBUG AlphaScanner.Data No data for ticker SONATSOFTW.NS in batch result.
+2026-07-27 00:06:33,660 DEBUG AlphaScanner.Data No data for ticker TANLA.NS in batch result.
+2026-07-27 00:06:33,660 DEBUG AlphaScanner.Data No data for ticker TARC.NS in batch result.
+2026-07-27 00:06:33,660 DEBUG AlphaScanner.Data No data for ticker TARIL.NS in batch result.
+2026-07-27 00:06:33,663 DEBUG AlphaScanner.Data No data for ticker TBOTEK.NS in batch result.
+2026-07-27 00:06:33,663 DEBUG AlphaScanner.Data No data for ticker TDPOWERSYS.NS in batch result.
+2026-07-27 00:06:33,663 DEBUG AlphaScanner.Data No data for ticker TECHNOE.NS in batch result.
+2026-07-27 00:06:33,719 DEBUG AlphaScanner.Data No data for ticker TITAGARH.NS in batch result.
+2026-07-27 00:06:33,724 DEBUG AlphaScanner.Data No data for ticker TMB.NS in batch result.
+2026-07-27 00:06:33,729 DEBUG AlphaScanner.Data No data for ticker TRIDENT.NS in batch result.
+2026-07-27 00:06:33,729 DEBUG AlphaScanner.Data No data for ticker TRITURBINE.NS in batch result.
+2026-07-27 00:06:33,747 DEBUG AlphaScanner.Data No data for ticker TRIVENI.NS in batch result.
+2026-07-27 00:06:33,750 DEBUG AlphaScanner.Data No data for ticker TSFINV.NS in batch result.
+2026-07-27 00:06:33,785 DEBUG AlphaScanner.Data No data for ticker TTML.NS in batch result.
+2026-07-27 00:06:33,795 DEBUG AlphaScanner.Data No data for ticker UJJIVANSFB.NS in batch result.
+2026-07-27 00:06:33,795 DEBUG AlphaScanner.Data No data for ticker URBANCO.NS in batch result.
+2026-07-27 00:06:33,795 DEBUG AlphaScanner.Data No data for ticker USHAMART.NS in batch result.
+2026-07-27 00:06:33,795 DEBUG AlphaScanner.Data No data for ticker UTIAMC.NS in batch result.
+2026-07-27 00:06:33,796 DEBUG AlphaScanner.Data No data for ticker UTLSOLAR.NS in batch result.
+2026-07-27 00:06:33,812 DEBUG AlphaScanner.Data No data for ticker VARROC.NS in batch result.
+2026-07-27 00:06:33,813 DEBUG AlphaScanner.Data No data for ticker VGUARD.NS in batch result.
+2026-07-27 00:06:33,813 DEBUG AlphaScanner.Data No data for ticker VIJAYA.NS in batch result.
+2026-07-27 00:06:33,814 DEBUG AlphaScanner.Data No data for ticker VIKRAMSOLR.NS in batch result.
+2026-07-27 00:06:33,820 DEBUG AlphaScanner.Data No data for ticker VMART.NS in batch result.
+2026-07-27 00:06:33,828 DEBUG AlphaScanner.Data No data for ticker TEJASNET.NS in batch result.
+2026-07-27 00:06:33,828 DEBUG AlphaScanner.Data No data for ticker TEXRAIL.NS in batch result.
+2026-07-27 00:06:33,832 DEBUG AlphaScanner.Data No data for ticker THYROCARE.NS in batch result.
+2026-07-27 00:06:33,832 DEBUG AlphaScanner.Data No data for ticker TI.NS in batch result.
+2026-07-27 00:06:33,834 DEBUG AlphaScanner.Data No data for ticker TIPSMUSIC.NS in batch result.
+2026-07-27 00:06:34,040 DEBUG AlphaScanner.Data No data for ticker VOGL.NS in batch result.
+2026-07-27 00:06:34,042 DEBUG AlphaScanner.Data No data for ticker VTL.NS in batch result.
+2026-07-27 00:06:34,046 DEBUG AlphaScanner.Data No data for ticker WAKEFIT.NS in batch result.
+2026-07-27 00:06:34,048 DEBUG AlphaScanner.Data No data for ticker WELENT.NS in batch result.
+2026-07-27 00:06:34,183 DEBUG AlphaScanner.Data No data for ticker YATHARTH.NS in batch result.
+2026-07-27 00:06:34,186 DEBUG AlphaScanner.Data No data for ticker ZENSARTECH.NS in batch result.
+2026-07-27 00:06:34,198 DEBUG AlphaScanner.Data download_history_batch result count=122
+2026-07-27 00:06:34,200 INFO AlphaScanner.Engine Batch history download finished in 7.94s for 402 tickers
+2026-07-27 00:06:34,224 DEBUG AlphaScanner.Data download_history(ticker=APTUS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:34,273 DEBUG AlphaScanner.Data download_history success for APTUS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:34,276 DEBUG AlphaScanner.Data download_history(ticker=ARE&M.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:34,440 DEBUG AlphaScanner.Data download_history success for ARE&M.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:34,442 DEBUG AlphaScanner.Data download_history(ticker=ARVIND.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:34,489 DEBUG AlphaScanner.Data download_history success for ARVIND.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:34,491 DEBUG AlphaScanner.Data download_history(ticker=ASHAPURMIN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:34,665 DEBUG AlphaScanner.Data download_history success for ASHAPURMIN.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:34,667 DEBUG AlphaScanner.Data download_history(ticker=ASHOKA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:34,811 DEBUG AlphaScanner.Data download_history success for ASHOKA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:34,813 DEBUG AlphaScanner.Data download_history(ticker=ASKAUTOLTD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:34,952 DEBUG AlphaScanner.Data download_history success for ASKAUTOLTD.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:34,955 DEBUG AlphaScanner.Data download_history(ticker=ASTRAMICRO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:35,002 DEBUG AlphaScanner.Data download_history success for ASTRAMICRO.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:35,004 DEBUG AlphaScanner.Data download_history(ticker=ATLANTAELE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:35,245 DEBUG AlphaScanner.Data download_history success for ATLANTAELE.NS rows=204 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:35,247 DEBUG AlphaScanner.Data download_history(ticker=ATUL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:35,412 DEBUG AlphaScanner.Data download_history success for ATUL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:35,415 DEBUG AlphaScanner.Data download_history(ticker=AURIONPRO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:35,578 DEBUG AlphaScanner.Data download_history success for AURIONPRO.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:35,581 DEBUG AlphaScanner.Data download_history(ticker=AVALON.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:35,641 DEBUG AlphaScanner.Data download_history success for AVALON.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:35,644 DEBUG AlphaScanner.Data download_history(ticker=AVL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:35,784 DEBUG AlphaScanner.Data download_history success for AVL.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:35,787 DEBUG AlphaScanner.Data download_history(ticker=AWFIS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:35,849 DEBUG AlphaScanner.Data download_history success for AWFIS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:35,851 DEBUG AlphaScanner.Data download_history(ticker=AXISCADES.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:35,901 DEBUG AlphaScanner.Data download_history success for AXISCADES.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:35,903 DEBUG AlphaScanner.Data download_history(ticker=AZAD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:36,043 DEBUG AlphaScanner.Data download_history success for AZAD.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:36,046 DEBUG AlphaScanner.Data download_history(ticker=BALAMINES.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:36,096 DEBUG AlphaScanner.Data download_history success for BALAMINES.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:36,097 DEBUG AlphaScanner.Data download_history(ticker=BALRAMCHIN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:36,267 DEBUG AlphaScanner.Data download_history success for BALRAMCHIN.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:36,269 DEBUG AlphaScanner.Data download_history(ticker=BALUFORGE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:36,322 DEBUG AlphaScanner.Data download_history success for BALUFORGE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:36,324 DEBUG AlphaScanner.Data download_history(ticker=BANCOINDIA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:36,499 DEBUG AlphaScanner.Data download_history success for BANCOINDIA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:36,501 DEBUG AlphaScanner.Data download_history(ticker=BATAINDIA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:36,670 DEBUG AlphaScanner.Data download_history success for BATAINDIA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:36,672 DEBUG AlphaScanner.Data download_history(ticker=BAYERCROP.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:36,833 DEBUG AlphaScanner.Data download_history success for BAYERCROP.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:36,835 DEBUG AlphaScanner.Data download_history(ticker=BBOX.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:37,021 DEBUG AlphaScanner.Data download_history success for BBOX.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:37,025 DEBUG AlphaScanner.Data download_history(ticker=BBTC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:37,217 DEBUG AlphaScanner.Data download_history success for BBTC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:37,219 DEBUG AlphaScanner.Data download_history(ticker=BECTORFOOD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:37,375 DEBUG AlphaScanner.Data download_history success for BECTORFOOD.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:37,377 DEBUG AlphaScanner.Data download_history(ticker=BEML.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:37,553 DEBUG AlphaScanner.Data download_history success for BEML.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:37,556 DEBUG AlphaScanner.Data download_history(ticker=BIKAJI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:37,707 DEBUG AlphaScanner.Data download_history success for BIKAJI.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:37,710 DEBUG AlphaScanner.Data download_history(ticker=BLACKBUCK.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:37,848 DEBUG AlphaScanner.Data download_history success for BLACKBUCK.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:37,850 DEBUG AlphaScanner.Data download_history(ticker=BLS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:37,999 DEBUG AlphaScanner.Data download_history success for BLS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:38,008 DEBUG AlphaScanner.Data download_history(ticker=CANFINHOME.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:38,183 DEBUG AlphaScanner.Data download_history success for CANFINHOME.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:38,184 DEBUG AlphaScanner.Data download_history(ticker=CANHLIFE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:38,319 DEBUG AlphaScanner.Data download_history success for CANHLIFE.NS rows=192 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:38,322 DEBUG AlphaScanner.Data download_history(ticker=CAPILLARY.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:38,466 DEBUG AlphaScanner.Data download_history success for CAPILLARY.NS rows=169 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:38,469 DEBUG AlphaScanner.Data download_history(ticker=CAPLIPOINT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:38,621 DEBUG AlphaScanner.Data download_history success for CAPLIPOINT.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:38,624 DEBUG AlphaScanner.Data download_history(ticker=CARTRADE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:38,762 DEBUG AlphaScanner.Data download_history success for CARTRADE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:38,766 DEBUG AlphaScanner.Data download_history(ticker=CCAVENUE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:38,917 DEBUG AlphaScanner.Data download_history success for CCAVENUE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:38,920 DEBUG AlphaScanner.Data download_history(ticker=CCL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:39,104 DEBUG AlphaScanner.Data download_history success for CCL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:39,107 DEBUG AlphaScanner.Data download_history(ticker=CEATLTD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:39,275 DEBUG AlphaScanner.Data download_history success for CEATLTD.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:39,278 DEBUG AlphaScanner.Data download_history(ticker=CELLO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:39,429 DEBUG AlphaScanner.Data download_history success for CELLO.NS rows=248 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:39,431 DEBUG AlphaScanner.Data download_history(ticker=CENTURYPLY.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:39,601 DEBUG AlphaScanner.Data download_history success for CENTURYPLY.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:39,604 DEBUG AlphaScanner.Data download_history(ticker=CERA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:39,756 DEBUG AlphaScanner.Data download_history success for CERA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:39,758 DEBUG AlphaScanner.Data download_history(ticker=CHALET.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:40,051 DEBUG AlphaScanner.Data download_history success for CHALET.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:40,056 DEBUG AlphaScanner.Data download_history(ticker=CHENNPETRO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:40,223 DEBUG AlphaScanner.Data download_history success for CHENNPETRO.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:40,225 DEBUG AlphaScanner.Data download_history(ticker=CHOICEIN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:40,363 DEBUG AlphaScanner.Data download_history success for CHOICEIN.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:40,368 DEBUG AlphaScanner.Data download_history(ticker=COHANCE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:40,507 DEBUG AlphaScanner.Data download_history success for COHANCE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:40,514 DEBUG AlphaScanner.Data download_history(ticker=CSBBANK.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:40,648 DEBUG AlphaScanner.Data download_history success for CSBBANK.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:40,652 DEBUG AlphaScanner.Data download_history(ticker=DATAMATICS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:40,824 DEBUG AlphaScanner.Data download_history success for DATAMATICS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:40,826 DEBUG AlphaScanner.Data download_history(ticker=DBL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:40,977 DEBUG AlphaScanner.Data download_history success for DBL.NS rows=248 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:40,979 DEBUG AlphaScanner.Data download_history(ticker=DBREALTY.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:41,112 DEBUG AlphaScanner.Data download_history success for DBREALTY.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:41,114 DEBUG AlphaScanner.Data download_history(ticker=DCBBANK.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:41,266 DEBUG AlphaScanner.Data download_history success for DCBBANK.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:41,269 DEBUG AlphaScanner.Data download_history(ticker=DCMSHRIRAM.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:41,434 DEBUG AlphaScanner.Data download_history success for DCMSHRIRAM.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:41,439 DEBUG AlphaScanner.Data download_history(ticker=DEEPAKFERT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:41,614 DEBUG AlphaScanner.Data download_history success for DEEPAKFERT.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:41,616 DEBUG AlphaScanner.Data download_history(ticker=DEVYANI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:41,757 DEBUG AlphaScanner.Data download_history success for DEVYANI.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:41,760 DEBUG AlphaScanner.Data download_history(ticker=DIACABS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:41,896 DEBUG AlphaScanner.Data download_history success for DIACABS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:41,898 DEBUG AlphaScanner.Data download_history(ticker=DOMS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:42,046 DEBUG AlphaScanner.Data download_history success for DOMS.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:42,047 DEBUG AlphaScanner.Data download_history(ticker=DYNAMATECH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:42,199 DEBUG AlphaScanner.Data download_history success for DYNAMATECH.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:42,203 DEBUG AlphaScanner.Data download_history(ticker=ECLERX.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:42,351 DEBUG AlphaScanner.Data download_history success for ECLERX.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:42,354 DEBUG AlphaScanner.Data download_history(ticker=EDELWEISS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:42,497 DEBUG AlphaScanner.Data download_history success for EDELWEISS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:42,499 DEBUG AlphaScanner.Data download_history(ticker=EIEL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:42,647 DEBUG AlphaScanner.Data download_history success for EIEL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:42,650 DEBUG AlphaScanner.Data download_history(ticker=ELECON.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:42,865 DEBUG AlphaScanner.Data download_history success for ELECON.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:42,868 DEBUG AlphaScanner.Data download_history(ticker=ELGIEQUIP.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:43,030 DEBUG AlphaScanner.Data download_history success for ELGIEQUIP.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:43,032 DEBUG AlphaScanner.Data download_history(ticker=ELLEN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:43,167 DEBUG AlphaScanner.Data download_history success for ELLEN.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:43,171 DEBUG AlphaScanner.Data download_history(ticker=EMAMILTD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:43,343 DEBUG AlphaScanner.Data download_history success for EMAMILTD.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:43,345 DEBUG AlphaScanner.Data download_history(ticker=EMBDL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:43,484 DEBUG AlphaScanner.Data download_history success for EMBDL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:43,487 DEBUG AlphaScanner.Data download_history(ticker=EMIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:43,630 DEBUG AlphaScanner.Data download_history success for EMIL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:43,632 DEBUG AlphaScanner.Data download_history(ticker=ENGINERSIN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:43,801 DEBUG AlphaScanner.Data download_history success for ENGINERSIN.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:43,804 DEBUG AlphaScanner.Data download_history(ticker=ENTERO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:43,948 DEBUG AlphaScanner.Data download_history success for ENTERO.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:43,951 DEBUG AlphaScanner.Data download_history(ticker=EQUITASBNK.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:44,106 DEBUG AlphaScanner.Data download_history success for EQUITASBNK.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:44,109 DEBUG AlphaScanner.Data download_history(ticker=ERIS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:44,239 DEBUG AlphaScanner.Data download_history success for ERIS.NS rows=248 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:44,241 DEBUG AlphaScanner.Data download_history(ticker=ETHOSLTD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:44,360 DEBUG AlphaScanner.Data download_history success for ETHOSLTD.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:44,361 DEBUG AlphaScanner.Data download_history(ticker=EUREKAFORB.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:44,471 DEBUG AlphaScanner.Data download_history success for EUREKAFORB.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:44,473 DEBUG AlphaScanner.Data download_history(ticker=FEDFINA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:44,610 DEBUG AlphaScanner.Data download_history success for FEDFINA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:44,611 DEBUG AlphaScanner.Data download_history(ticker=FIEMIND.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:44,751 DEBUG AlphaScanner.Data download_history success for FIEMIND.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:44,755 DEBUG AlphaScanner.Data download_history(ticker=FINCABLES.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:45,047 DEBUG AlphaScanner.Data download_history success for FINCABLES.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:45,049 DEBUG AlphaScanner.Data download_history(ticker=FINPIPE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:45,201 DEBUG AlphaScanner.Data download_history success for FINPIPE.NS rows=248 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:45,204 DEBUG AlphaScanner.Data download_history(ticker=FIRSTCRY.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:45,343 DEBUG AlphaScanner.Data download_history success for FIRSTCRY.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:45,346 DEBUG AlphaScanner.Data download_history(ticker=FIVESTAR.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:45,487 DEBUG AlphaScanner.Data download_history success for FIVESTAR.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:45,491 DEBUG AlphaScanner.Data download_history(ticker=GAEL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:45,663 DEBUG AlphaScanner.Data download_history success for GAEL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:45,665 DEBUG AlphaScanner.Data download_history(ticker=GALLANTT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:45,996 DEBUG AlphaScanner.Data download_history success for GALLANTT.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:45,998 DEBUG AlphaScanner.Data download_history(ticker=GHCL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:46,176 DEBUG AlphaScanner.Data download_history success for GHCL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:46,178 DEBUG AlphaScanner.Data download_history(ticker=GMDCLTD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:46,446 DEBUG AlphaScanner.Data download_history success for GMDCLTD.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:46,448 DEBUG AlphaScanner.Data download_history(ticker=GMMPFAUDLR.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:46,595 DEBUG AlphaScanner.Data download_history success for GMMPFAUDLR.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:46,598 DEBUG AlphaScanner.Data download_history(ticker=GMRP&UI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:46,749 DEBUG AlphaScanner.Data download_history success for GMRP&UI.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:46,752 DEBUG AlphaScanner.Data download_history(ticker=GNFC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:46,905 DEBUG AlphaScanner.Data download_history success for GNFC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:46,907 DEBUG AlphaScanner.Data download_history(ticker=GODREJAGRO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:47,172 DEBUG AlphaScanner.Data download_history success for GODREJAGRO.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:47,174 DEBUG AlphaScanner.Data download_history(ticker=GOKEX.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:47,314 DEBUG AlphaScanner.Data download_history success for GOKEX.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:47,316 DEBUG AlphaScanner.Data download_history(ticker=GPIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:47,630 DEBUG AlphaScanner.Data download_history success for GPIL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:47,632 DEBUG AlphaScanner.Data download_history(ticker=GPPL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:47,797 DEBUG AlphaScanner.Data download_history success for GPPL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:47,799 DEBUG AlphaScanner.Data download_history(ticker=GRAPHITE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:47,952 DEBUG AlphaScanner.Data download_history success for GRAPHITE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:47,954 DEBUG AlphaScanner.Data download_history(ticker=GRAVITA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:48,100 DEBUG AlphaScanner.Data download_history success for GRAVITA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:48,103 DEBUG AlphaScanner.Data download_history(ticker=GREAVESCOT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:48,270 DEBUG AlphaScanner.Data download_history success for GREAVESCOT.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:48,273 DEBUG AlphaScanner.Data download_history(ticker=GRWRHITECH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:48,421 DEBUG AlphaScanner.Data download_history success for GRWRHITECH.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:48,424 DEBUG AlphaScanner.Data download_history(ticker=HAPPSTMNDS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:48,744 DEBUG AlphaScanner.Data download_history success for HAPPSTMNDS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:48,746 DEBUG AlphaScanner.Data download_history(ticker=HBLENGINE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:48,910 DEBUG AlphaScanner.Data download_history success for HBLENGINE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:48,912 DEBUG AlphaScanner.Data download_history(ticker=HCC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:49,093 DEBUG AlphaScanner.Data download_history success for HCC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:49,095 DEBUG AlphaScanner.Data download_history(ticker=HCG.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:49,257 DEBUG AlphaScanner.Data download_history success for HCG.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:49,260 DEBUG AlphaScanner.Data download_history(ticker=HEG.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:49,415 DEBUG AlphaScanner.Data download_history success for HEG.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:49,419 DEBUG AlphaScanner.Data download_history(ticker=HERITGFOOD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:49,558 DEBUG AlphaScanner.Data download_history success for HERITGFOOD.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:49,560 DEBUG AlphaScanner.Data download_history(ticker=HGINFRA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:49,679 DEBUG AlphaScanner.Data download_history success for HGINFRA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:49,681 DEBUG AlphaScanner.Data download_history(ticker=HOMEFIRST.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:49,804 DEBUG AlphaScanner.Data download_history success for HOMEFIRST.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:49,806 DEBUG AlphaScanner.Data download_history(ticker=HONASA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:49,922 DEBUG AlphaScanner.Data download_history success for HONASA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:49,924 DEBUG AlphaScanner.Data download_history(ticker=ICIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:50,047 DEBUG AlphaScanner.Data download_history success for ICIL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:50,049 DEBUG AlphaScanner.Data download_history(ticker=IEX.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:50,177 DEBUG AlphaScanner.Data download_history success for IEX.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:50,181 DEBUG AlphaScanner.Data download_history(ticker=IGIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:50,410 DEBUG AlphaScanner.Data download_history success for IGIL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:50,411 DEBUG AlphaScanner.Data download_history(ticker=IIFLCAPS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:50,538 DEBUG AlphaScanner.Data download_history success for IIFLCAPS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:50,540 DEBUG AlphaScanner.Data download_history(ticker=IMFA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:50,667 DEBUG AlphaScanner.Data download_history success for IMFA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:50,669 DEBUG AlphaScanner.Data download_history(ticker=INDGN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:50,785 DEBUG AlphaScanner.Data download_history success for INDGN.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:50,791 DEBUG AlphaScanner.Data download_history(ticker=INDIGOPNTS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:50,918 DEBUG AlphaScanner.Data download_history success for INDIGOPNTS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:50,922 DEBUG AlphaScanner.Data download_history(ticker=INOXWIND.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:51,040 DEBUG AlphaScanner.Data download_history success for INOXWIND.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:51,042 DEBUG AlphaScanner.Data download_history(ticker=IONEXCHANG.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:51,161 DEBUG AlphaScanner.Data download_history success for IONEXCHANG.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:51,164 DEBUG AlphaScanner.Data download_history(ticker=J&KBANK.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:51,304 DEBUG AlphaScanner.Data download_history success for J&KBANK.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:51,308 DEBUG AlphaScanner.Data download_history(ticker=JAYNECOIND.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:51,417 DEBUG AlphaScanner.Data download_history success for JAYNECOIND.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:51,419 DEBUG AlphaScanner.Data download_history(ticker=JBMA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:51,560 DEBUG AlphaScanner.Data download_history success for JBMA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:51,562 DEBUG AlphaScanner.Data download_history(ticker=JINDALSAW.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:51,721 DEBUG AlphaScanner.Data download_history success for JINDALSAW.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:51,723 DEBUG AlphaScanner.Data download_history(ticker=JKLAKSHMI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:51,992 DEBUG AlphaScanner.Data download_history success for JKLAKSHMI.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:51,995 DEBUG AlphaScanner.Data download_history(ticker=JKTYRE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:52,140 DEBUG AlphaScanner.Data download_history success for JKTYRE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:52,142 DEBUG AlphaScanner.Data download_history(ticker=JLHL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:52,293 DEBUG AlphaScanner.Data download_history success for JLHL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:52,295 DEBUG AlphaScanner.Data download_history(ticker=JMFINANCIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:52,465 DEBUG AlphaScanner.Data download_history success for JMFINANCIL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:52,467 DEBUG AlphaScanner.Data download_history(ticker=JPPOWER.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:52,607 DEBUG AlphaScanner.Data download_history success for JPPOWER.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:52,611 DEBUG AlphaScanner.Data download_history(ticker=JSLL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:52,785 DEBUG AlphaScanner.Data download_history success for JSLL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:52,787 DEBUG AlphaScanner.Data download_history(ticker=JSWCEMENT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:52,936 DEBUG AlphaScanner.Data download_history success for JSWCEMENT.NS rows=235 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:52,939 DEBUG AlphaScanner.Data download_history(ticker=JSWDULUX.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:53,111 DEBUG AlphaScanner.Data download_history success for JSWDULUX.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:53,113 DEBUG AlphaScanner.Data download_history(ticker=JUBLINGREA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:53,270 DEBUG AlphaScanner.Data download_history success for JUBLINGREA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:53,272 DEBUG AlphaScanner.Data download_history(ticker=JUBLPHARMA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:53,433 DEBUG AlphaScanner.Data download_history success for JUBLPHARMA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:53,436 DEBUG AlphaScanner.Data download_history(ticker=JUSTDIAL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:53,577 DEBUG AlphaScanner.Data download_history success for JUSTDIAL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:53,582 DEBUG AlphaScanner.Data download_history(ticker=JYOTHYLAB.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:53,745 DEBUG AlphaScanner.Data download_history success for JYOTHYLAB.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:53,747 DEBUG AlphaScanner.Data download_history(ticker=JYOTICNC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:53,879 DEBUG AlphaScanner.Data download_history success for JYOTICNC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:53,881 DEBUG AlphaScanner.Data download_history(ticker=KAJARIACER.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:54,041 DEBUG AlphaScanner.Data download_history success for KAJARIACER.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:54,046 DEBUG AlphaScanner.Data download_history(ticker=KFINTECH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:54,194 DEBUG AlphaScanner.Data download_history success for KFINTECH.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:54,196 DEBUG AlphaScanner.Data download_history(ticker=KIRLOSBROS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:54,369 DEBUG AlphaScanner.Data download_history success for KIRLOSBROS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:54,371 DEBUG AlphaScanner.Data download_history(ticker=KIRLPNU.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:54,520 DEBUG AlphaScanner.Data download_history success for KIRLPNU.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:54,523 DEBUG AlphaScanner.Data download_history(ticker=KITEX.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:54,679 DEBUG AlphaScanner.Data download_history success for KITEX.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:54,681 DEBUG AlphaScanner.Data download_history(ticker=KNRCON.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:54,836 DEBUG AlphaScanner.Data download_history success for KNRCON.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:54,838 DEBUG AlphaScanner.Data download_history(ticker=KPIGREEN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:54,986 DEBUG AlphaScanner.Data download_history success for KPIGREEN.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:54,989 DEBUG AlphaScanner.Data download_history(ticker=KRBL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:55,152 DEBUG AlphaScanner.Data download_history success for KRBL.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:55,154 DEBUG AlphaScanner.Data download_history(ticker=KRN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:55,294 DEBUG AlphaScanner.Data download_history success for KRN.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:55,296 DEBUG AlphaScanner.Data download_history(ticker=KSB.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:55,479 DEBUG AlphaScanner.Data download_history success for KSB.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:55,481 DEBUG AlphaScanner.Data download_history(ticker=KSCL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:55,632 DEBUG AlphaScanner.Data download_history success for KSCL.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:55,634 DEBUG AlphaScanner.Data download_history(ticker=KTKBANK.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:55,791 DEBUG AlphaScanner.Data download_history success for KTKBANK.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:55,794 DEBUG AlphaScanner.Data download_history(ticker=LEMONTREE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:55,915 DEBUG AlphaScanner.Data download_history success for LEMONTREE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:55,919 DEBUG AlphaScanner.Data download_history(ticker=LLOYDSENGG.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:56,073 DEBUG AlphaScanner.Data download_history success for LLOYDSENGG.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:56,076 DEBUG AlphaScanner.Data download_history(ticker=LLOYDSENT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:56,248 DEBUG AlphaScanner.Data download_history success for LLOYDSENT.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:56,252 DEBUG AlphaScanner.Data download_history(ticker=LOTUSDEV.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:56,577 DEBUG AlphaScanner.Data download_history success for LOTUSDEV.NS rows=241 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:56,584 DEBUG AlphaScanner.Data download_history(ticker=LTFOODS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:56,750 DEBUG AlphaScanner.Data download_history success for LTFOODS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:56,754 DEBUG AlphaScanner.Data download_history(ticker=LUMAXTECH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:56,907 DEBUG AlphaScanner.Data download_history success for LUMAXTECH.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:56,909 DEBUG AlphaScanner.Data download_history(ticker=LXCHEM.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:57,047 DEBUG AlphaScanner.Data download_history success for LXCHEM.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:57,051 DEBUG AlphaScanner.Data download_history(ticker=MAHSCOOTER.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:57,269 DEBUG AlphaScanner.Data download_history success for MAHSCOOTER.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:57,282 DEBUG AlphaScanner.Data download_history(ticker=MANORAMA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:57,551 DEBUG AlphaScanner.Data download_history success for MANORAMA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:57,555 DEBUG AlphaScanner.Data download_history(ticker=MANYAVAR.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:57,701 DEBUG AlphaScanner.Data download_history success for MANYAVAR.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:57,703 DEBUG AlphaScanner.Data download_history(ticker=MAPMYINDIA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:57,849 DEBUG AlphaScanner.Data download_history success for MAPMYINDIA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:57,853 DEBUG AlphaScanner.Data download_history(ticker=MARKSANS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:58,012 DEBUG AlphaScanner.Data download_history success for MARKSANS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:58,014 DEBUG AlphaScanner.Data download_history(ticker=MASTEK.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:58,191 DEBUG AlphaScanner.Data download_history success for MASTEK.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:58,193 DEBUG AlphaScanner.Data download_history(ticker=MEDPLUS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:58,328 DEBUG AlphaScanner.Data download_history success for MEDPLUS.NS rows=248 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:58,331 DEBUG AlphaScanner.Data download_history(ticker=METROPOLIS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:58,496 DEBUG AlphaScanner.Data download_history success for METROPOLIS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:58,499 DEBUG AlphaScanner.Data download_history(ticker=MGL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:58,661 DEBUG AlphaScanner.Data download_history success for MGL.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:58,664 DEBUG AlphaScanner.Data download_history(ticker=MINDACORP.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:59,019 DEBUG AlphaScanner.Data download_history success for MINDACORP.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:59,023 DEBUG AlphaScanner.Data download_history(ticker=MMTC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:59,162 DEBUG AlphaScanner.Data download_history success for MMTC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:59,167 DEBUG AlphaScanner.Data download_history(ticker=MOIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:59,311 DEBUG AlphaScanner.Data download_history success for MOIL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:59,312 DEBUG AlphaScanner.Data download_history(ticker=MSTCLTD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:59,464 DEBUG AlphaScanner.Data download_history success for MSTCLTD.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:59,467 DEBUG AlphaScanner.Data download_history(ticker=MTARTECH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:59,607 DEBUG AlphaScanner.Data download_history success for MTARTECH.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:59,611 DEBUG AlphaScanner.Data download_history(ticker=NAVA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:59,783 DEBUG AlphaScanner.Data download_history success for NAVA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:59,786 DEBUG AlphaScanner.Data download_history(ticker=NAZARA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:06:59,928 DEBUG AlphaScanner.Data download_history success for NAZARA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:06:59,930 DEBUG AlphaScanner.Data download_history(ticker=NCC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:00,094 DEBUG AlphaScanner.Data download_history success for NCC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:00,096 DEBUG AlphaScanner.Data download_history(ticker=NEOGEN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:00,232 DEBUG AlphaScanner.Data download_history success for NEOGEN.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:00,235 DEBUG AlphaScanner.Data download_history(ticker=NESCO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:00,397 DEBUG AlphaScanner.Data download_history success for NESCO.NS rows=248 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:00,400 DEBUG AlphaScanner.Data download_history(ticker=NETWORK18.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:00,543 DEBUG AlphaScanner.Data download_history success for NETWORK18.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:00,547 DEBUG AlphaScanner.Data download_history(ticker=NFL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:00,719 DEBUG AlphaScanner.Data download_history success for NFL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:00,721 DEBUG AlphaScanner.Data download_history(ticker=NIVABUPA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:00,867 DEBUG AlphaScanner.Data download_history success for NIVABUPA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:00,871 DEBUG AlphaScanner.Data download_history(ticker=NUVOCO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:01,012 DEBUG AlphaScanner.Data download_history success for NUVOCO.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:01,017 DEBUG AlphaScanner.Data download_history(ticker=OLAELEC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:01,262 DEBUG AlphaScanner.Data download_history success for OLAELEC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:01,265 DEBUG AlphaScanner.Data download_history(ticker=OLECTRA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:01,461 DEBUG AlphaScanner.Data download_history success for OLECTRA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:01,464 DEBUG AlphaScanner.Data download_history(ticker=ONESOURCE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:01,606 DEBUG AlphaScanner.Data download_history success for ONESOURCE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:01,608 DEBUG AlphaScanner.Data download_history(ticker=OPTIEMUS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:01,747 DEBUG AlphaScanner.Data download_history success for OPTIEMUS.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:01,749 DEBUG AlphaScanner.Data download_history(ticker=ORIENTCEM.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:01,904 DEBUG AlphaScanner.Data download_history success for ORIENTCEM.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:01,907 DEBUG AlphaScanner.Data download_history(ticker=OSWALPUMPS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:02,045 DEBUG AlphaScanner.Data download_history success for OSWALPUMPS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:02,048 DEBUG AlphaScanner.Data download_history(ticker=PARADEEP.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:02,200 DEBUG AlphaScanner.Data download_history success for PARADEEP.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:02,202 DEBUG AlphaScanner.Data download_history(ticker=PARAS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:02,351 DEBUG AlphaScanner.Data download_history success for PARAS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:02,353 DEBUG AlphaScanner.Data download_history(ticker=PARKHOSPS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:02,493 DEBUG AlphaScanner.Data download_history success for PARKHOSPS.NS rows=151 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:02,495 DEBUG AlphaScanner.Data download_history(ticker=PCBL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:02,659 DEBUG AlphaScanner.Data download_history success for PCBL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:02,662 DEBUG AlphaScanner.Data download_history(ticker=PGEL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:02,827 DEBUG AlphaScanner.Data download_history success for PGEL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:02,830 DEBUG AlphaScanner.Data download_history(ticker=PGIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:02,992 DEBUG AlphaScanner.Data download_history success for PGIL.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:02,994 DEBUG AlphaScanner.Data download_history(ticker=PICCADIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:03,125 DEBUG AlphaScanner.Data download_history success for PICCADIL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:03,129 DEBUG AlphaScanner.Data download_history(ticker=PINELABS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:03,266 DEBUG AlphaScanner.Data download_history success for PINELABS.NS rows=174 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:03,269 DEBUG AlphaScanner.Data download_history(ticker=PNCINFRA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:03,428 DEBUG AlphaScanner.Data download_history success for PNCINFRA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:03,431 DEBUG AlphaScanner.Data download_history(ticker=POLYMED.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:03,591 DEBUG AlphaScanner.Data download_history success for POLYMED.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:03,594 DEBUG AlphaScanner.Data download_history(ticker=POWERMECH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:03,746 DEBUG AlphaScanner.Data download_history success for POWERMECH.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:03,748 DEBUG AlphaScanner.Data download_history(ticker=PRAJIND.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:03,925 DEBUG AlphaScanner.Data download_history success for PRAJIND.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:03,928 DEBUG AlphaScanner.Data download_history(ticker=PRIVISCL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:04,140 DEBUG AlphaScanner.Data download_history success for PRIVISCL.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:04,143 DEBUG AlphaScanner.Data download_history(ticker=PRUDENT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:04,292 DEBUG AlphaScanner.Data download_history success for PRUDENT.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:04,294 DEBUG AlphaScanner.Data download_history(ticker=PTC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:04,458 DEBUG AlphaScanner.Data download_history success for PTC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:04,460 DEBUG AlphaScanner.Data download_history(ticker=PURVA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:04,613 DEBUG AlphaScanner.Data download_history success for PURVA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:04,616 DEBUG AlphaScanner.Data download_history(ticker=PVRINOX.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:04,771 DEBUG AlphaScanner.Data download_history success for PVRINOX.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:04,774 DEBUG AlphaScanner.Data download_history(ticker=QPOWER.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:04,931 DEBUG AlphaScanner.Data download_history success for QPOWER.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:04,934 DEBUG AlphaScanner.Data download_history(ticker=QUESS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:05,084 DEBUG AlphaScanner.Data download_history success for QUESS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:05,087 DEBUG AlphaScanner.Data download_history(ticker=RAILTEL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:05,234 DEBUG AlphaScanner.Data download_history success for RAILTEL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:05,236 DEBUG AlphaScanner.Data download_history(ticker=RAIN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:05,402 DEBUG AlphaScanner.Data download_history success for RAIN.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:05,405 DEBUG AlphaScanner.Data download_history(ticker=RALLIS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:05,581 DEBUG AlphaScanner.Data download_history success for RALLIS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:05,584 DEBUG AlphaScanner.Data download_history(ticker=RATEGAIN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:05,707 DEBUG AlphaScanner.Data download_history success for RATEGAIN.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:05,708 DEBUG AlphaScanner.Data download_history(ticker=RATNAMANI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:05,856 DEBUG AlphaScanner.Data download_history success for RATNAMANI.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:05,858 DEBUG AlphaScanner.Data download_history(ticker=RAYMONDLSL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:05,974 DEBUG AlphaScanner.Data download_history success for RAYMONDLSL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:05,975 DEBUG AlphaScanner.Data download_history(ticker=RBA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:06,088 DEBUG AlphaScanner.Data download_history success for RBA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:06,090 DEBUG AlphaScanner.Data download_history(ticker=RCF.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:06,240 DEBUG AlphaScanner.Data download_history success for RCF.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:06,242 DEBUG AlphaScanner.Data download_history(ticker=REFEX.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:06,395 DEBUG AlphaScanner.Data download_history success for REFEX.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:06,399 DEBUG AlphaScanner.Data download_history(ticker=RELAXO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:06,543 DEBUG AlphaScanner.Data download_history success for RELAXO.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:06,546 DEBUG AlphaScanner.Data download_history(ticker=RELIGARE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:06,661 DEBUG AlphaScanner.Data download_history success for RELIGARE.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:06,664 DEBUG AlphaScanner.Data download_history(ticker=RENUKA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:06,956 DEBUG AlphaScanner.Data download_history success for RENUKA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:06,957 DEBUG AlphaScanner.Data download_history(ticker=RHIM.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:07,090 DEBUG AlphaScanner.Data download_history success for RHIM.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:07,092 DEBUG AlphaScanner.Data download_history(ticker=RITES.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:07,218 DEBUG AlphaScanner.Data download_history success for RITES.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:07,221 DEBUG AlphaScanner.Data download_history(ticker=ROUTE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:07,340 DEBUG AlphaScanner.Data download_history success for ROUTE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:07,341 DEBUG AlphaScanner.Data download_history(ticker=RPOWER.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:07,455 DEBUG AlphaScanner.Data download_history success for RPOWER.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:07,457 DEBUG AlphaScanner.Data download_history(ticker=RTNINDIA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:07,567 DEBUG AlphaScanner.Data download_history success for RTNINDIA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:07,570 DEBUG AlphaScanner.Data download_history(ticker=SAATVIKGL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:07,688 DEBUG AlphaScanner.Data download_history success for SAATVIKGL.NS rows=206 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:07,691 DEBUG AlphaScanner.Data download_history(ticker=SAFARI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:07,814 DEBUG AlphaScanner.Data download_history success for SAFARI.NS rows=248 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:07,816 DEBUG AlphaScanner.Data download_history(ticker=SAGILITY.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:07,936 DEBUG AlphaScanner.Data download_history success for SAGILITY.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:07,938 DEBUG AlphaScanner.Data download_history(ticker=SAMHI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:08,051 DEBUG AlphaScanner.Data download_history success for SAMHI.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:08,053 DEBUG AlphaScanner.Data download_history(ticker=SAMMAANCAP.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:08,198 DEBUG AlphaScanner.Data download_history success for SAMMAANCAP.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:08,201 DEBUG AlphaScanner.Data download_history(ticker=SANDUMA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:08,366 DEBUG AlphaScanner.Data download_history success for SANDUMA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:08,369 DEBUG AlphaScanner.Data download_history(ticker=SANOFICONR.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:08,725 DEBUG AlphaScanner.Data download_history success for SANOFICONR.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:08,727 DEBUG AlphaScanner.Data download_history(ticker=SANSERA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:08,872 DEBUG AlphaScanner.Data download_history success for SANSERA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:08,875 DEBUG AlphaScanner.Data download_history(ticker=SAPPHIRE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:09,008 DEBUG AlphaScanner.Data download_history success for SAPPHIRE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:09,011 DEBUG AlphaScanner.Data download_history(ticker=SARDAEN.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:09,180 DEBUG AlphaScanner.Data download_history success for SARDAEN.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:09,182 DEBUG AlphaScanner.Data download_history(ticker=SAREGAMA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:09,347 DEBUG AlphaScanner.Data download_history success for SAREGAMA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:09,351 DEBUG AlphaScanner.Data download_history(ticker=SCI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:09,501 DEBUG AlphaScanner.Data download_history success for SCI.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:09,503 DEBUG AlphaScanner.Data download_history(ticker=SENCO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:09,672 DEBUG AlphaScanner.Data download_history success for SENCO.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:09,675 DEBUG AlphaScanner.Data download_history(ticker=SHAILY.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:09,820 DEBUG AlphaScanner.Data download_history success for SHAILY.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:09,823 DEBUG AlphaScanner.Data download_history(ticker=SHARDACROP.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:09,983 DEBUG AlphaScanner.Data download_history success for SHARDACROP.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:09,985 DEBUG AlphaScanner.Data download_history(ticker=SHAREINDIA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:10,133 DEBUG AlphaScanner.Data download_history success for SHAREINDIA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:10,135 DEBUG AlphaScanner.Data download_history(ticker=SHILPAMED.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:10,308 DEBUG AlphaScanner.Data download_history success for SHILPAMED.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:10,310 DEBUG AlphaScanner.Data download_history(ticker=SHRIPISTON.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:10,465 DEBUG AlphaScanner.Data download_history success for SHRIPISTON.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:10,468 DEBUG AlphaScanner.Data download_history(ticker=SIGNATURE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:10,617 DEBUG AlphaScanner.Data download_history success for SIGNATURE.NS rows=248 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:10,619 DEBUG AlphaScanner.Data download_history(ticker=SKFINDIA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:10,750 DEBUG AlphaScanner.Data download_history success for SKFINDIA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:10,752 DEBUG AlphaScanner.Data download_history(ticker=SKIPPER.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:10,882 DEBUG AlphaScanner.Data download_history success for SKIPPER.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:10,884 DEBUG AlphaScanner.Data download_history(ticker=SKYGOLD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:11,001 DEBUG AlphaScanner.Data download_history success for SKYGOLD.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:11,002 DEBUG AlphaScanner.Data download_history(ticker=SMARTWORKS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:11,149 DEBUG AlphaScanner.Data download_history success for SMARTWORKS.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:11,152 DEBUG AlphaScanner.Data download_history(ticker=SMLMAH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:11,324 DEBUG AlphaScanner.Data download_history success for SMLMAH.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:11,326 DEBUG AlphaScanner.Data download_history(ticker=SOBHA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:11,471 DEBUG AlphaScanner.Data download_history success for SOBHA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:11,472 DEBUG AlphaScanner.Data download_history(ticker=SONATSOFTW.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:11,637 DEBUG AlphaScanner.Data download_history success for SONATSOFTW.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:11,642 DEBUG AlphaScanner.Data download_history(ticker=STAR.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:11,788 DEBUG AlphaScanner.Data download_history success for STAR.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:11,790 DEBUG AlphaScanner.Data download_history(ticker=STARCEMENT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:11,956 DEBUG AlphaScanner.Data download_history success for STARCEMENT.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:11,958 DEBUG AlphaScanner.Data download_history(ticker=STYRENIX.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:12,130 DEBUG AlphaScanner.Data download_history success for STYRENIX.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:12,133 DEBUG AlphaScanner.Data download_history(ticker=SUBROS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:12,268 DEBUG AlphaScanner.Data download_history success for SUBROS.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:12,269 DEBUG AlphaScanner.Data download_history(ticker=SUDARSCHEM.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:12,431 DEBUG AlphaScanner.Data download_history success for SUDARSCHEM.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:12,434 DEBUG AlphaScanner.Data download_history(ticker=SUNTECK.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:12,593 DEBUG AlphaScanner.Data download_history success for SUNTECK.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:12,598 DEBUG AlphaScanner.Data download_history(ticker=SUPRIYA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:12,745 DEBUG AlphaScanner.Data download_history success for SUPRIYA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:12,748 DEBUG AlphaScanner.Data download_history(ticker=SURYAROSNI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:12,916 DEBUG AlphaScanner.Data download_history success for SURYAROSNI.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:12,918 DEBUG AlphaScanner.Data download_history(ticker=SWANCORP.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:13,075 DEBUG AlphaScanner.Data download_history success for SWANCORP.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:13,078 DEBUG AlphaScanner.Data download_history(ticker=SWSOLAR.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:13,221 DEBUG AlphaScanner.Data download_history success for SWSOLAR.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:13,224 DEBUG AlphaScanner.Data download_history(ticker=SYNGENE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:13,371 DEBUG AlphaScanner.Data download_history success for SYNGENE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:13,373 DEBUG AlphaScanner.Data download_history(ticker=TANLA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:13,535 DEBUG AlphaScanner.Data download_history success for TANLA.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:13,538 DEBUG AlphaScanner.Data download_history(ticker=TARC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:13,680 DEBUG AlphaScanner.Data download_history success for TARC.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:13,683 DEBUG AlphaScanner.Data download_history(ticker=TARIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:13,839 DEBUG AlphaScanner.Data download_history success for TARIL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:13,843 DEBUG AlphaScanner.Data download_history(ticker=TBOTEK.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:13,983 DEBUG AlphaScanner.Data download_history success for TBOTEK.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:13,986 DEBUG AlphaScanner.Data download_history(ticker=TDPOWERSYS.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:14,144 DEBUG AlphaScanner.Data download_history success for TDPOWERSYS.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:14,147 DEBUG AlphaScanner.Data download_history(ticker=TECHNOE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:14,309 DEBUG AlphaScanner.Data download_history success for TECHNOE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:14,313 DEBUG AlphaScanner.Data download_history(ticker=TEJASNET.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:14,473 DEBUG AlphaScanner.Data download_history success for TEJASNET.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:14,475 DEBUG AlphaScanner.Data download_history(ticker=TEXRAIL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:14,641 DEBUG AlphaScanner.Data download_history success for TEXRAIL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:14,647 DEBUG AlphaScanner.Data download_history(ticker=THYROCARE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:14,802 DEBUG AlphaScanner.Data download_history success for THYROCARE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:14,803 DEBUG AlphaScanner.Data download_history(ticker=TI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:14,960 DEBUG AlphaScanner.Data download_history success for TI.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:14,964 DEBUG AlphaScanner.Data download_history(ticker=TIPSMUSIC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:15,135 DEBUG AlphaScanner.Data download_history success for TIPSMUSIC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:15,137 DEBUG AlphaScanner.Data download_history(ticker=TITAGARH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:15,301 DEBUG AlphaScanner.Data download_history success for TITAGARH.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:15,303 DEBUG AlphaScanner.Data download_history(ticker=TMB.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:15,477 DEBUG AlphaScanner.Data download_history success for TMB.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:15,482 DEBUG AlphaScanner.Data download_history(ticker=TRIDENT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:15,653 DEBUG AlphaScanner.Data download_history success for TRIDENT.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:15,655 DEBUG AlphaScanner.Data download_history(ticker=TRITURBINE.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:15,818 DEBUG AlphaScanner.Data download_history success for TRITURBINE.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:15,820 DEBUG AlphaScanner.Data download_history(ticker=TRIVENI.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:15,987 DEBUG AlphaScanner.Data download_history success for TRIVENI.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:15,989 DEBUG AlphaScanner.Data download_history(ticker=TSFINV.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:16,141 DEBUG AlphaScanner.Data download_history success for TSFINV.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:16,144 DEBUG AlphaScanner.Data download_history(ticker=TTML.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:16,404 DEBUG AlphaScanner.Data download_history success for TTML.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:16,408 DEBUG AlphaScanner.Data download_history(ticker=UJJIVANSFB.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:16,553 DEBUG AlphaScanner.Data download_history success for UJJIVANSFB.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:16,555 DEBUG AlphaScanner.Data download_history(ticker=URBANCO.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:16,695 DEBUG AlphaScanner.Data download_history success for URBANCO.NS rows=213 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:16,698 DEBUG AlphaScanner.Data download_history(ticker=USHAMART.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:16,869 DEBUG AlphaScanner.Data download_history success for USHAMART.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:16,872 DEBUG AlphaScanner.Data download_history(ticker=UTIAMC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:17,022 DEBUG AlphaScanner.Data download_history success for UTIAMC.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:17,024 DEBUG AlphaScanner.Data download_history(ticker=UTLSOLAR.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:17,162 DEBUG AlphaScanner.Data download_history success for UTLSOLAR.NS rows=170 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:17,167 DEBUG AlphaScanner.Data download_history(ticker=VARROC.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:17,329 DEBUG AlphaScanner.Data download_history success for VARROC.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:17,332 DEBUG AlphaScanner.Data download_history(ticker=VGUARD.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:17,634 DEBUG AlphaScanner.Data download_history success for VGUARD.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:17,636 DEBUG AlphaScanner.Data download_history(ticker=VIJAYA.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:17,793 DEBUG AlphaScanner.Data download_history success for VIJAYA.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:17,796 DEBUG AlphaScanner.Data download_history(ticker=VIKRAMSOLR.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:17,931 DEBUG AlphaScanner.Data download_history success for VIKRAMSOLR.NS rows=228 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:17,936 DEBUG AlphaScanner.Data download_history(ticker=VMART.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:18,095 DEBUG AlphaScanner.Data download_history success for VMART.NS rows=249 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:18,097 DEBUG AlphaScanner.Data download_history(ticker=VOGL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:18,234 DEBUG AlphaScanner.Data download_history success for VOGL.NS rows=30 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:18,238 DEBUG AlphaScanner.Data download_history(ticker=VTL.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:18,421 DEBUG AlphaScanner.Data download_history success for VTL.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:18,425 DEBUG AlphaScanner.Data download_history(ticker=WAKEFIT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:18,542 DEBUG AlphaScanner.Data download_history success for WAKEFIT.NS rows=152 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:18,548 DEBUG AlphaScanner.Data download_history(ticker=WELENT.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:18,837 DEBUG AlphaScanner.Data download_history success for WELENT.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:18,844 DEBUG AlphaScanner.Data download_history(ticker=YATHARTH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:18,962 DEBUG AlphaScanner.Data download_history success for YATHARTH.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:18,968 DEBUG AlphaScanner.Data download_history(ticker=ZENSARTECH.NS, period=1y, interval=1d, use_cache=False)
+2026-07-27 00:07:19,131 DEBUG AlphaScanner.Data download_history success for ZENSARTECH.NS rows=250 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-27 00:07:19,135 DEBUG AlphaScanner.Engine Legacy scan reached evaluation phase after 53.04s
+2026-07-27 00:07:19,257 DEBUG AlphaScanner.Engine Concatenated legacy data shape=(250, 2412)
+2026-07-27 00:07:19,298 DEBUG AlphaScanner.Engine Post-align data shape=(246, 2412) benchmark_rows=246
+2026-07-27 00:07:29,747 DEBUG AlphaScanner.Engine Legacy scan completed: hits=19 scanned=388 fail_counts={'trend_fail': 224, 'momentum_fail': 21, 'volume_fail': 0, 'breakout_fail': 80, 'rs_fail': 0, 'adx_fail': 2, 'liquidity_fail': 32, 'error_fail': 14}
+2026-07-27 00:07:29,747 INFO AlphaScanner.Engine Legacy scan total elapsed 63.65s for universe=Total Market (Cap Focused) timeframe=1d
+2026-07-27 00:07:29,768 INFO AlphaScanner.Service Legacy scan finished in 63.68s for universe=Total Market (Cap Focused) interval=1d scanner_type=Pre-Breakout
+2026-07-27 00:07:29,769 DEBUG AlphaScanner.Service perform_fresh_scan completed: rows=19 stats_keys=['adx_fail', 'bank_nifty_change', 'bb_fail', 'breakout_fail', 'dii_net', 'error_fail', 'fakeout_trap', 'fii_net', 'liquidity_fail', 'macd_fail', 'market_bias', 'market_bias_score', 'market_breadth_50', 'market_health', 'momentum_fail', 'nifty_change', 'rs_fail', 'scanned', 'scanner_type', 'sector_sentiment', 'timeframe', 'trend_fail', 'trending_sectors', 'universe', 'universe_size', 'volume_fail']
+2026-07-27 00:07:29,769 DEBUG AlphaScanner.Service perform_fresh_scan total elapsed=63.68s

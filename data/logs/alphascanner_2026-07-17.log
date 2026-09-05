@@ -1,0 +1,1065 @@
+2026-07-17 23:18:59,889 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-17 23:19:04,884 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-17 23:19:05,336 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=0 max_cap=0 sector_map_size=500
+2026-07-17 23:19:05,336 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Breakout, universe=Nifty 500, timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=1.0, rsi_min=50, rsi_max=85, dist_thresh=1.5, min_mkt_cap_cr=0, max_mkt_cap_cr=0)
+2026-07-17 23:19:05,337 DEBUG AlphaScanner.Service Routing to legacy breakout scanner with normalized timeframe=1d
+2026-07-17 23:19:05,337 DEBUG AlphaScanner.Engine run_scanner(scanner_type=Breakout, universe=Nifty 500, timeframe=1d, use_cache=False, incremental_fetch=False, vol_thresh=1.0, rsi_range=50-85, dist_thresh=1.5, min_cap=0, max_cap=0)
+2026-07-17 23:19:05,482 INFO AlphaScanner.Engine Fetched 500 symbols for Nifty 500 from https://archives.nseindia.com/content/indices/ind_nifty500list.csv
+2026-07-17 23:19:07,236 DEBUG AlphaScanner.Engine Resolved legacy universe 'Nifty 500' to 500 tickers
+2026-07-17 23:19:07,374 DEBUG AlphaScanner.Engine Loaded benchmark close series with 495 rows
+2026-07-17 23:19:07,375 DEBUG AlphaScanner.Data download_history_batch(size=500, period=2y, interval=1d, use_cache=False, head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIIND.NS', 'AAVAS.NS'])
+2026-07-17 23:20:32,228 DEBUG AlphaScanner.Data download_history_batch result count=500
+2026-07-17 23:20:33,039 DEBUG AlphaScanner.Engine Concatenated legacy data shape=(499, 3000)
+2026-07-17 23:20:33,088 DEBUG AlphaScanner.Engine Post-align data shape=(495, 3000) benchmark_rows=495
+2026-07-17 23:20:46,502 DEBUG AlphaScanner.Engine Legacy scan completed: hits=8 scanned=486 fail_counts={'trend_fail': 291, 'momentum_fail': 40, 'volume_fail': 91, 'breakout_fail': 119, 'rs_fail': 0, 'adx_fail': 8, 'liquidity_fail': 17, 'error_fail': 14}
+2026-07-17 23:20:46,523 DEBUG AlphaScanner.Service perform_fresh_scan completed: rows=8 stats_keys=['adx_fail', 'bank_nifty_change', 'bb_fail', 'breakout_fail', 'dii_net', 'error_fail', 'fakeout_trap', 'fii_net', 'liquidity_fail', 'macd_fail', 'market_bias', 'market_bias_score', 'market_breadth_50', 'market_health', 'momentum_fail', 'nifty_change', 'rs_fail', 'scanned', 'scanner_type', 'sector_sentiment', 'timeframe', 'trend_fail', 'trending_sectors', 'universe', 'universe_size', 'volume_fail']
+2026-07-17 23:49:08,491 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=False)
+2026-07-17 23:49:11,928 DEBUG AlphaScanner.UI.Scanner render_tab(scan_type=Breakout, universe=Nifty 500, scan_mode=Entry Scanner, timeframe=1d, use_cache=False, run_scan=True)
+2026-07-17 23:49:12,647 DEBUG AlphaScanner.UI.Scanner Starting fresh scan with min_cap=0 max_cap=0 sector_map_size=500
+2026-07-17 23:49:12,647 DEBUG AlphaScanner.Service perform_fresh_scan(scanner_type=Breakout, universe=Nifty 500, timeframe=1d, scan_mode=Entry Scanner, use_cache=False, vol_thresh=1.0, rsi_min=50, rsi_max=85, dist_thresh=1.5, min_mkt_cap_cr=0, max_mkt_cap_cr=0)
+2026-07-17 23:49:12,648 DEBUG AlphaScanner.Service Routing to legacy breakout scanner with normalized timeframe=1d
+2026-07-17 23:49:12,648 DEBUG AlphaScanner.Engine run_scanner(scanner_type=Breakout, universe=Nifty 500, timeframe=1d, use_cache=False, incremental_fetch=False, vol_thresh=1.0, rsi_range=50-85, dist_thresh=1.5, min_cap=0, max_cap=0)
+2026-07-17 23:49:12,650 DEBUG AlphaScanner.Engine Resolved legacy universe 'Nifty 500' to 500 tickers
+2026-07-17 23:49:12,954 DEBUG AlphaScanner.Engine Loaded benchmark close series with 495 rows
+2026-07-17 23:49:12,954 DEBUG AlphaScanner.Data download_history_batch(size=500, period=2y, interval=1d, use_cache=False, head=['360ONE.NS', '3MINDIA.NS', 'AADHARHFC.NS', 'AARTIIND.NS', 'AAVAS.NS'])
+2026-07-17 23:49:12,955 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,956 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,956 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,956 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,957 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,957 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,957 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,957 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,957 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,958 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,958 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,958 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,959 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,959 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,959 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,960 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,960 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,960 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,960 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,961 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,961 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,962 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,962 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,962 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,962 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,963 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,963 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,964 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,964 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,965 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,965 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,965 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,966 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,967 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,967 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,967 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,967 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,968 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,968 ERROR AlphaScanner.Data Critical error during batch download chunk size=25: 'types.SimpleNamespace' object has no attribute 'scan_download_threads'
+2026-07-17 23:49:12,969 DEBUG AlphaScanner.Data Batch download chunk returned no data for 25 tickers.
+2026-07-17 23:49:12,969 DEBUG AlphaScanner.Data download_history_batch result count=0
+2026-07-17 23:49:12,969 DEBUG AlphaScanner.Data download_history(ticker=360ONE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:13,118 DEBUG AlphaScanner.Data download_history success for 360ONE.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:13,120 DEBUG AlphaScanner.Data download_history(ticker=3MINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:13,249 DEBUG AlphaScanner.Data download_history success for 3MINDIA.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:13,251 DEBUG AlphaScanner.Data download_history(ticker=ABB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:13,415 DEBUG AlphaScanner.Data download_history success for ABB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:13,417 DEBUG AlphaScanner.Data download_history(ticker=ACC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:13,575 DEBUG AlphaScanner.Data download_history success for ACC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:13,578 DEBUG AlphaScanner.Data download_history(ticker=ACMESOLAR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:13,756 DEBUG AlphaScanner.Data download_history success for ACMESOLAR.NS rows=417 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:13,757 DEBUG AlphaScanner.Data download_history(ticker=AIAENG.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:13,902 DEBUG AlphaScanner.Data download_history success for AIAENG.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:13,904 DEBUG AlphaScanner.Data download_history(ticker=APLAPOLLO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:14,052 DEBUG AlphaScanner.Data download_history success for APLAPOLLO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:14,054 DEBUG AlphaScanner.Data download_history(ticker=AUBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:14,196 DEBUG AlphaScanner.Data download_history success for AUBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:14,198 DEBUG AlphaScanner.Data download_history(ticker=AWL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:14,336 DEBUG AlphaScanner.Data download_history success for AWL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:14,339 DEBUG AlphaScanner.Data download_history(ticker=AADHARHFC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:14,641 DEBUG AlphaScanner.Data download_history success for AADHARHFC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:14,644 DEBUG AlphaScanner.Data download_history(ticker=AARTIIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:14,841 DEBUG AlphaScanner.Data download_history success for AARTIIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:14,843 DEBUG AlphaScanner.Data download_history(ticker=AAVAS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:15,021 DEBUG AlphaScanner.Data download_history success for AAVAS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:15,022 DEBUG AlphaScanner.Data download_history(ticker=ABBOTINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:15,161 DEBUG AlphaScanner.Data download_history success for ABBOTINDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:15,164 DEBUG AlphaScanner.Data download_history(ticker=ACE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:15,359 DEBUG AlphaScanner.Data download_history success for ACE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:15,362 DEBUG AlphaScanner.Data download_history(ticker=ACUTAAS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:15,542 DEBUG AlphaScanner.Data download_history success for ACUTAAS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:15,548 DEBUG AlphaScanner.Data download_history(ticker=ADANIENSOL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:15,768 DEBUG AlphaScanner.Data download_history success for ADANIENSOL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:15,770 DEBUG AlphaScanner.Data download_history(ticker=ADANIENT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:16,019 DEBUG AlphaScanner.Data download_history success for ADANIENT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:16,021 DEBUG AlphaScanner.Data download_history(ticker=ADANIGREEN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:16,181 DEBUG AlphaScanner.Data download_history success for ADANIGREEN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:16,183 DEBUG AlphaScanner.Data download_history(ticker=ADANIPORTS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:16,409 DEBUG AlphaScanner.Data download_history success for ADANIPORTS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:16,411 DEBUG AlphaScanner.Data download_history(ticker=ADANIPOWER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:16,729 DEBUG AlphaScanner.Data download_history success for ADANIPOWER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:16,731 DEBUG AlphaScanner.Data download_history(ticker=ATGL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:16,950 DEBUG AlphaScanner.Data download_history success for ATGL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:16,952 DEBUG AlphaScanner.Data download_history(ticker=ABCAPITAL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:17,166 DEBUG AlphaScanner.Data download_history success for ABCAPITAL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:17,168 DEBUG AlphaScanner.Data download_history(ticker=ABFRL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:17,315 DEBUG AlphaScanner.Data download_history success for ABFRL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:17,317 DEBUG AlphaScanner.Data download_history(ticker=ABLBL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:17,454 DEBUG AlphaScanner.Data download_history success for ABLBL.NS rows=267 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:17,456 DEBUG AlphaScanner.Data download_history(ticker=ABREL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:17,656 DEBUG AlphaScanner.Data download_history success for ABREL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:17,658 DEBUG AlphaScanner.Data download_history(ticker=ABSLAMC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:17,890 DEBUG AlphaScanner.Data download_history success for ABSLAMC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:17,892 DEBUG AlphaScanner.Data download_history(ticker=CPPLUS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:18,034 DEBUG AlphaScanner.Data download_history success for CPPLUS.NS rows=237 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:18,036 DEBUG AlphaScanner.Data download_history(ticker=AEGISLOG.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:18,228 DEBUG AlphaScanner.Data download_history success for AEGISLOG.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:18,230 DEBUG AlphaScanner.Data download_history(ticker=AEGISVOPAK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:18,378 DEBUG AlphaScanner.Data download_history success for AEGISVOPAK.NS rows=283 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:18,380 DEBUG AlphaScanner.Data download_history(ticker=AFCONS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:18,528 DEBUG AlphaScanner.Data download_history success for AFCONS.NS rows=424 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:18,530 DEBUG AlphaScanner.Data download_history(ticker=AFFLE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:18,681 DEBUG AlphaScanner.Data download_history success for AFFLE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:18,684 DEBUG AlphaScanner.Data download_history(ticker=AJANTPHARM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:18,862 DEBUG AlphaScanner.Data download_history success for AJANTPHARM.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:18,864 DEBUG AlphaScanner.Data download_history(ticker=ALKEM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:19,023 DEBUG AlphaScanner.Data download_history success for ALKEM.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:19,025 DEBUG AlphaScanner.Data download_history(ticker=ABDL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:19,405 DEBUG AlphaScanner.Data download_history success for ABDL.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:19,407 DEBUG AlphaScanner.Data download_history(ticker=ARE&M.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:19,662 DEBUG AlphaScanner.Data download_history success for ARE&M.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:19,664 DEBUG AlphaScanner.Data download_history(ticker=AMBER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:20,016 DEBUG AlphaScanner.Data download_history success for AMBER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:20,018 DEBUG AlphaScanner.Data download_history(ticker=AMBUJACEM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:20,223 DEBUG AlphaScanner.Data download_history success for AMBUJACEM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:20,226 DEBUG AlphaScanner.Data download_history(ticker=ANANDRATHI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:20,638 DEBUG AlphaScanner.Data download_history success for ANANDRATHI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:20,640 DEBUG AlphaScanner.Data download_history(ticker=ANANTRAJ.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:20,837 DEBUG AlphaScanner.Data download_history success for ANANTRAJ.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:20,838 DEBUG AlphaScanner.Data download_history(ticker=ANGELONE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:21,272 DEBUG AlphaScanner.Data download_history success for ANGELONE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:21,274 DEBUG AlphaScanner.Data download_history(ticker=ANTHEM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:21,433 DEBUG AlphaScanner.Data download_history success for ANTHEM.NS rows=248 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:21,435 DEBUG AlphaScanner.Data download_history(ticker=ANURAS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:21,644 DEBUG AlphaScanner.Data download_history success for ANURAS.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:21,647 DEBUG AlphaScanner.Data download_history(ticker=APARINDS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:21,822 DEBUG AlphaScanner.Data download_history success for APARINDS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:21,823 DEBUG AlphaScanner.Data download_history(ticker=APOLLOHOSP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:22,003 DEBUG AlphaScanner.Data download_history success for APOLLOHOSP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:22,005 DEBUG AlphaScanner.Data download_history(ticker=APOLLOTYRE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:22,260 DEBUG AlphaScanner.Data download_history success for APOLLOTYRE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:22,262 DEBUG AlphaScanner.Data download_history(ticker=APTUS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:22,437 DEBUG AlphaScanner.Data download_history success for APTUS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:22,439 DEBUG AlphaScanner.Data download_history(ticker=ASAHIINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:22,589 DEBUG AlphaScanner.Data download_history success for ASAHIINDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:22,592 DEBUG AlphaScanner.Data download_history(ticker=ASHOKLEY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:22,813 DEBUG AlphaScanner.Data download_history success for ASHOKLEY.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:22,815 DEBUG AlphaScanner.Data download_history(ticker=ASIANPAINT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:23,031 DEBUG AlphaScanner.Data download_history success for ASIANPAINT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:23,033 DEBUG AlphaScanner.Data download_history(ticker=ASTERDM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:23,241 DEBUG AlphaScanner.Data download_history success for ASTERDM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:23,245 DEBUG AlphaScanner.Data download_history(ticker=ASTRAL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:23,450 DEBUG AlphaScanner.Data download_history success for ASTRAL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:23,451 DEBUG AlphaScanner.Data download_history(ticker=ATHERENERG.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:23,595 DEBUG AlphaScanner.Data download_history success for ATHERENERG.NS rows=302 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:23,596 DEBUG AlphaScanner.Data download_history(ticker=ATUL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:23,772 DEBUG AlphaScanner.Data download_history success for ATUL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:23,775 DEBUG AlphaScanner.Data download_history(ticker=AUROPHARMA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:23,969 DEBUG AlphaScanner.Data download_history success for AUROPHARMA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:23,971 DEBUG AlphaScanner.Data download_history(ticker=AIIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:24,174 DEBUG AlphaScanner.Data download_history success for AIIL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:24,177 DEBUG AlphaScanner.Data download_history(ticker=DMART.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:24,325 DEBUG AlphaScanner.Data download_history success for DMART.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:24,327 DEBUG AlphaScanner.Data download_history(ticker=AXISBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:24,555 DEBUG AlphaScanner.Data download_history success for AXISBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:24,557 DEBUG AlphaScanner.Data download_history(ticker=BEML.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:24,752 DEBUG AlphaScanner.Data download_history success for BEML.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:24,753 DEBUG AlphaScanner.Data download_history(ticker=BLS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:24,958 DEBUG AlphaScanner.Data download_history success for BLS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:24,960 DEBUG AlphaScanner.Data download_history(ticker=BSE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:25,189 DEBUG AlphaScanner.Data download_history success for BSE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:25,196 DEBUG AlphaScanner.Data download_history(ticker=BAJAJ-AUTO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:25,448 DEBUG AlphaScanner.Data download_history success for BAJAJ-AUTO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:25,449 DEBUG AlphaScanner.Data download_history(ticker=BAJFINANCE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:25,688 DEBUG AlphaScanner.Data download_history success for BAJFINANCE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:25,689 DEBUG AlphaScanner.Data download_history(ticker=BAJAJFINSV.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:25,900 DEBUG AlphaScanner.Data download_history success for BAJAJFINSV.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:25,902 DEBUG AlphaScanner.Data download_history(ticker=BAJAJHLDNG.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:26,128 DEBUG AlphaScanner.Data download_history success for BAJAJHLDNG.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:26,130 DEBUG AlphaScanner.Data download_history(ticker=BAJAJHFL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:26,271 DEBUG AlphaScanner.Data download_history success for BAJAJHFL.NS rows=458 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:26,275 DEBUG AlphaScanner.Data download_history(ticker=BALKRISIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:26,681 DEBUG AlphaScanner.Data download_history success for BALKRISIND.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:26,685 DEBUG AlphaScanner.Data download_history(ticker=BALRAMCHIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:26,865 DEBUG AlphaScanner.Data download_history success for BALRAMCHIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:26,867 DEBUG AlphaScanner.Data download_history(ticker=BANDHANBNK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:27,024 DEBUG AlphaScanner.Data download_history success for BANDHANBNK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:27,027 DEBUG AlphaScanner.Data download_history(ticker=BANKBARODA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:27,212 DEBUG AlphaScanner.Data download_history success for BANKBARODA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:27,214 DEBUG AlphaScanner.Data download_history(ticker=BANKINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:27,457 DEBUG AlphaScanner.Data download_history success for BANKINDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:27,460 DEBUG AlphaScanner.Data download_history(ticker=MAHABANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:27,704 DEBUG AlphaScanner.Data download_history success for MAHABANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:27,706 DEBUG AlphaScanner.Data download_history(ticker=BATAINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:27,871 DEBUG AlphaScanner.Data download_history success for BATAINDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:27,873 DEBUG AlphaScanner.Data download_history(ticker=BAYERCROP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:28,062 DEBUG AlphaScanner.Data download_history success for BAYERCROP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:28,063 DEBUG AlphaScanner.Data download_history(ticker=BELRISE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:28,235 DEBUG AlphaScanner.Data download_history success for BELRISE.NS rows=286 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:28,237 DEBUG AlphaScanner.Data download_history(ticker=BERGEPAINT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:28,461 DEBUG AlphaScanner.Data download_history success for BERGEPAINT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:28,463 DEBUG AlphaScanner.Data download_history(ticker=BDL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:28,623 DEBUG AlphaScanner.Data download_history success for BDL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:28,626 DEBUG AlphaScanner.Data download_history(ticker=BEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:28,847 DEBUG AlphaScanner.Data download_history success for BEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:28,848 DEBUG AlphaScanner.Data download_history(ticker=BHARATFORG.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:29,026 DEBUG AlphaScanner.Data download_history success for BHARATFORG.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:29,028 DEBUG AlphaScanner.Data download_history(ticker=BHEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:29,371 DEBUG AlphaScanner.Data download_history success for BHEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:29,376 DEBUG AlphaScanner.Data download_history(ticker=BPCL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:29,582 DEBUG AlphaScanner.Data download_history success for BPCL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:29,584 DEBUG AlphaScanner.Data download_history(ticker=BHARTIARTL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:29,775 DEBUG AlphaScanner.Data download_history success for BHARTIARTL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:29,777 DEBUG AlphaScanner.Data download_history(ticker=BHARTIHEXA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:29,959 DEBUG AlphaScanner.Data download_history success for BHARTIHEXA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:29,961 DEBUG AlphaScanner.Data download_history(ticker=BIKAJI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:30,174 DEBUG AlphaScanner.Data download_history success for BIKAJI.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:30,176 DEBUG AlphaScanner.Data download_history(ticker=GROWW.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:30,320 DEBUG AlphaScanner.Data download_history success for GROWW.NS rows=171 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:30,323 DEBUG AlphaScanner.Data download_history(ticker=BIOCON.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:30,522 DEBUG AlphaScanner.Data download_history success for BIOCON.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:30,524 DEBUG AlphaScanner.Data download_history(ticker=BSOFT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:30,694 DEBUG AlphaScanner.Data download_history success for BSOFT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:30,696 DEBUG AlphaScanner.Data download_history(ticker=BLUEDART.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:30,862 DEBUG AlphaScanner.Data download_history success for BLUEDART.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:30,864 DEBUG AlphaScanner.Data download_history(ticker=BLUEJET.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:31,002 DEBUG AlphaScanner.Data download_history success for BLUEJET.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:31,003 DEBUG AlphaScanner.Data download_history(ticker=BLUESTARCO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:31,179 DEBUG AlphaScanner.Data download_history success for BLUESTARCO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:31,180 DEBUG AlphaScanner.Data download_history(ticker=BBTC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:31,377 DEBUG AlphaScanner.Data download_history success for BBTC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:31,379 DEBUG AlphaScanner.Data download_history(ticker=BOSCHLTD.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:31,530 DEBUG AlphaScanner.Data download_history success for BOSCHLTD.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:31,531 DEBUG AlphaScanner.Data download_history(ticker=FIRSTCRY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:31,710 DEBUG AlphaScanner.Data download_history success for FIRSTCRY.NS rows=481 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:31,713 DEBUG AlphaScanner.Data download_history(ticker=BRIGADE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:31,945 DEBUG AlphaScanner.Data download_history success for BRIGADE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:31,947 DEBUG AlphaScanner.Data download_history(ticker=BRITANNIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:32,110 DEBUG AlphaScanner.Data download_history success for BRITANNIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:32,113 DEBUG AlphaScanner.Data download_history(ticker=MAPMYINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:32,301 DEBUG AlphaScanner.Data download_history success for MAPMYINDIA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:32,302 DEBUG AlphaScanner.Data download_history(ticker=CCL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:32,582 DEBUG AlphaScanner.Data download_history success for CCL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:32,584 DEBUG AlphaScanner.Data download_history(ticker=CESC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:32,731 DEBUG AlphaScanner.Data download_history success for CESC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:32,732 DEBUG AlphaScanner.Data download_history(ticker=CGPOWER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:32,881 DEBUG AlphaScanner.Data download_history success for CGPOWER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:32,883 DEBUG AlphaScanner.Data download_history(ticker=CIEINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:33,144 DEBUG AlphaScanner.Data download_history success for CIEINDIA.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:33,145 DEBUG AlphaScanner.Data download_history(ticker=CRISIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:33,311 DEBUG AlphaScanner.Data download_history success for CRISIL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:33,313 DEBUG AlphaScanner.Data download_history(ticker=CANFINHOME.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:33,481 DEBUG AlphaScanner.Data download_history success for CANFINHOME.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:33,482 DEBUG AlphaScanner.Data download_history(ticker=CANBK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:33,643 DEBUG AlphaScanner.Data download_history success for CANBK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:33,645 DEBUG AlphaScanner.Data download_history(ticker=CANHLIFE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:33,764 DEBUG AlphaScanner.Data download_history success for CANHLIFE.NS rows=187 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:33,766 DEBUG AlphaScanner.Data download_history(ticker=CAPLIPOINT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:33,956 DEBUG AlphaScanner.Data download_history success for CAPLIPOINT.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:33,958 DEBUG AlphaScanner.Data download_history(ticker=CGCL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:34,109 DEBUG AlphaScanner.Data download_history success for CGCL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:34,111 DEBUG AlphaScanner.Data download_history(ticker=CARBORUNIV.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:34,281 DEBUG AlphaScanner.Data download_history success for CARBORUNIV.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:34,283 DEBUG AlphaScanner.Data download_history(ticker=CARTRADE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:34,410 DEBUG AlphaScanner.Data download_history success for CARTRADE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:34,412 DEBUG AlphaScanner.Data download_history(ticker=CASTROLIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:34,631 DEBUG AlphaScanner.Data download_history success for CASTROLIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:34,633 DEBUG AlphaScanner.Data download_history(ticker=CEATLTD.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:34,932 DEBUG AlphaScanner.Data download_history success for CEATLTD.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:34,934 DEBUG AlphaScanner.Data download_history(ticker=CEMPRO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:35,103 DEBUG AlphaScanner.Data download_history success for CEMPRO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:35,106 DEBUG AlphaScanner.Data download_history(ticker=CENTRALBK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:35,257 DEBUG AlphaScanner.Data download_history success for CENTRALBK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:35,259 DEBUG AlphaScanner.Data download_history(ticker=CDSL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:35,395 DEBUG AlphaScanner.Data download_history success for CDSL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:35,397 DEBUG AlphaScanner.Data download_history(ticker=CHALET.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:35,527 DEBUG AlphaScanner.Data download_history success for CHALET.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:35,529 DEBUG AlphaScanner.Data download_history(ticker=CHAMBLFERT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:35,730 DEBUG AlphaScanner.Data download_history success for CHAMBLFERT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:35,731 DEBUG AlphaScanner.Data download_history(ticker=CHENNPETRO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:35,898 DEBUG AlphaScanner.Data download_history success for CHENNPETRO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:35,899 DEBUG AlphaScanner.Data download_history(ticker=CHOICEIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:36,065 DEBUG AlphaScanner.Data download_history success for CHOICEIN.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:36,067 DEBUG AlphaScanner.Data download_history(ticker=CHOLAHLDNG.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:36,381 DEBUG AlphaScanner.Data download_history success for CHOLAHLDNG.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:36,383 DEBUG AlphaScanner.Data download_history(ticker=CHOLAFIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:36,566 DEBUG AlphaScanner.Data download_history success for CHOLAFIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:36,568 DEBUG AlphaScanner.Data download_history(ticker=CIPLA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:36,837 DEBUG AlphaScanner.Data download_history success for CIPLA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:36,839 DEBUG AlphaScanner.Data download_history(ticker=CUB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:36,998 DEBUG AlphaScanner.Data download_history success for CUB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:37,000 DEBUG AlphaScanner.Data download_history(ticker=CLEAN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:37,132 DEBUG AlphaScanner.Data download_history success for CLEAN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:37,135 DEBUG AlphaScanner.Data download_history(ticker=COALINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:37,283 DEBUG AlphaScanner.Data download_history success for COALINDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:37,285 DEBUG AlphaScanner.Data download_history(ticker=COCHINSHIP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:37,426 DEBUG AlphaScanner.Data download_history success for COCHINSHIP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:37,427 DEBUG AlphaScanner.Data download_history(ticker=COFORGE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:37,584 DEBUG AlphaScanner.Data download_history success for COFORGE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:37,587 DEBUG AlphaScanner.Data download_history(ticker=COHANCE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:37,717 DEBUG AlphaScanner.Data download_history success for COHANCE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:37,718 DEBUG AlphaScanner.Data download_history(ticker=COLPAL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:37,943 DEBUG AlphaScanner.Data download_history success for COLPAL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:37,945 DEBUG AlphaScanner.Data download_history(ticker=CAMS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:38,157 DEBUG AlphaScanner.Data download_history success for CAMS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:38,159 DEBUG AlphaScanner.Data download_history(ticker=CONCORDBIO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:38,290 DEBUG AlphaScanner.Data download_history success for CONCORDBIO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:38,292 DEBUG AlphaScanner.Data download_history(ticker=CONCOR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:38,514 DEBUG AlphaScanner.Data download_history success for CONCOR.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:38,516 DEBUG AlphaScanner.Data download_history(ticker=COROMANDEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:38,830 DEBUG AlphaScanner.Data download_history success for COROMANDEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:38,832 DEBUG AlphaScanner.Data download_history(ticker=CRAFTSMAN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:39,010 DEBUG AlphaScanner.Data download_history success for CRAFTSMAN.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:39,012 DEBUG AlphaScanner.Data download_history(ticker=CREDITACC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:39,192 DEBUG AlphaScanner.Data download_history success for CREDITACC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:39,193 DEBUG AlphaScanner.Data download_history(ticker=CROMPTON.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:39,403 DEBUG AlphaScanner.Data download_history success for CROMPTON.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:39,405 DEBUG AlphaScanner.Data download_history(ticker=CUMMINSIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:39,562 DEBUG AlphaScanner.Data download_history success for CUMMINSIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:39,563 DEBUG AlphaScanner.Data download_history(ticker=CYIENT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:39,704 DEBUG AlphaScanner.Data download_history success for CYIENT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:39,706 DEBUG AlphaScanner.Data download_history(ticker=DCMSHRIRAM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:39,907 DEBUG AlphaScanner.Data download_history success for DCMSHRIRAM.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:39,909 DEBUG AlphaScanner.Data download_history(ticker=DLF.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:40,059 DEBUG AlphaScanner.Data download_history success for DLF.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:40,060 DEBUG AlphaScanner.Data download_history(ticker=DOMS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:40,242 DEBUG AlphaScanner.Data download_history success for DOMS.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:40,244 DEBUG AlphaScanner.Data download_history(ticker=DABUR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:40,448 DEBUG AlphaScanner.Data download_history success for DABUR.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:40,450 DEBUG AlphaScanner.Data download_history(ticker=DALBHARAT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:40,754 DEBUG AlphaScanner.Data download_history success for DALBHARAT.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:40,756 DEBUG AlphaScanner.Data download_history(ticker=DATAPATTNS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:40,937 DEBUG AlphaScanner.Data download_history success for DATAPATTNS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:40,939 DEBUG AlphaScanner.Data download_history(ticker=DEEPAKFERT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:41,090 DEBUG AlphaScanner.Data download_history success for DEEPAKFERT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:41,092 DEBUG AlphaScanner.Data download_history(ticker=DEEPAKNTR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:41,229 DEBUG AlphaScanner.Data download_history success for DEEPAKNTR.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:41,232 DEBUG AlphaScanner.Data download_history(ticker=DELHIVERY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:41,351 DEBUG AlphaScanner.Data download_history success for DELHIVERY.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:41,353 DEBUG AlphaScanner.Data download_history(ticker=DEVYANI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:41,520 DEBUG AlphaScanner.Data download_history success for DEVYANI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:41,522 DEBUG AlphaScanner.Data download_history(ticker=DIVISLAB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:41,679 DEBUG AlphaScanner.Data download_history success for DIVISLAB.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:41,681 DEBUG AlphaScanner.Data download_history(ticker=DIXON.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:41,826 DEBUG AlphaScanner.Data download_history success for DIXON.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:41,828 DEBUG AlphaScanner.Data download_history(ticker=LALPATHLAB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:42,017 DEBUG AlphaScanner.Data download_history success for LALPATHLAB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:42,019 DEBUG AlphaScanner.Data download_history(ticker=DRREDDY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:42,217 DEBUG AlphaScanner.Data download_history success for DRREDDY.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:42,220 DEBUG AlphaScanner.Data download_history(ticker=EIDPARRY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:42,377 DEBUG AlphaScanner.Data download_history success for EIDPARRY.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:42,378 DEBUG AlphaScanner.Data download_history(ticker=EIHOTEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:42,608 DEBUG AlphaScanner.Data download_history success for EIHOTEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:42,609 DEBUG AlphaScanner.Data download_history(ticker=EICHERMOT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:42,778 DEBUG AlphaScanner.Data download_history success for EICHERMOT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:42,781 DEBUG AlphaScanner.Data download_history(ticker=ELECON.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:42,953 DEBUG AlphaScanner.Data download_history success for ELECON.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:42,955 DEBUG AlphaScanner.Data download_history(ticker=ELGIEQUIP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:43,115 DEBUG AlphaScanner.Data download_history success for ELGIEQUIP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:43,117 DEBUG AlphaScanner.Data download_history(ticker=EMAMILTD.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:43,283 DEBUG AlphaScanner.Data download_history success for EMAMILTD.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:43,285 DEBUG AlphaScanner.Data download_history(ticker=EMCURE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:43,446 DEBUG AlphaScanner.Data download_history success for EMCURE.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:43,448 DEBUG AlphaScanner.Data download_history(ticker=EMMVEE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:43,730 DEBUG AlphaScanner.Data download_history success for EMMVEE.NS rows=167 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:43,732 DEBUG AlphaScanner.Data download_history(ticker=ENDURANCE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:43,885 DEBUG AlphaScanner.Data download_history success for ENDURANCE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:43,887 DEBUG AlphaScanner.Data download_history(ticker=ENGINERSIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:44,254 DEBUG AlphaScanner.Data download_history success for ENGINERSIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:44,255 DEBUG AlphaScanner.Data download_history(ticker=ERIS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:44,396 DEBUG AlphaScanner.Data download_history success for ERIS.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:44,398 DEBUG AlphaScanner.Data download_history(ticker=ESCORTS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:44,554 DEBUG AlphaScanner.Data download_history success for ESCORTS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:44,556 DEBUG AlphaScanner.Data download_history(ticker=ETERNAL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:44,671 DEBUG AlphaScanner.Data download_history success for ETERNAL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:44,673 DEBUG AlphaScanner.Data download_history(ticker=EXIDEIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:44,822 DEBUG AlphaScanner.Data download_history success for EXIDEIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:44,824 DEBUG AlphaScanner.Data download_history(ticker=NYKAA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:44,954 DEBUG AlphaScanner.Data download_history success for NYKAA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:44,955 DEBUG AlphaScanner.Data download_history(ticker=FEDERALBNK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:45,120 DEBUG AlphaScanner.Data download_history success for FEDERALBNK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:45,121 DEBUG AlphaScanner.Data download_history(ticker=FACT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:45,283 DEBUG AlphaScanner.Data download_history success for FACT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:45,286 DEBUG AlphaScanner.Data download_history(ticker=FINCABLES.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:45,428 DEBUG AlphaScanner.Data download_history success for FINCABLES.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:45,429 DEBUG AlphaScanner.Data download_history(ticker=FSL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:45,575 DEBUG AlphaScanner.Data download_history success for FSL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:45,577 DEBUG AlphaScanner.Data download_history(ticker=FIVESTAR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:45,766 DEBUG AlphaScanner.Data download_history success for FIVESTAR.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:45,768 DEBUG AlphaScanner.Data download_history(ticker=FORCEMOT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:45,900 DEBUG AlphaScanner.Data download_history success for FORCEMOT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:45,903 DEBUG AlphaScanner.Data download_history(ticker=FORTIS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:46,165 DEBUG AlphaScanner.Data download_history success for FORTIS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:46,167 DEBUG AlphaScanner.Data download_history(ticker=GAIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:46,324 DEBUG AlphaScanner.Data download_history success for GAIL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:46,326 DEBUG AlphaScanner.Data download_history(ticker=GVT&D.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:46,473 DEBUG AlphaScanner.Data download_history success for GVT&D.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:46,475 DEBUG AlphaScanner.Data download_history(ticker=GMRAIRPORT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:46,603 DEBUG AlphaScanner.Data download_history success for GMRAIRPORT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:46,604 DEBUG AlphaScanner.Data download_history(ticker=GABRIEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:46,754 DEBUG AlphaScanner.Data download_history success for GABRIEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:46,755 DEBUG AlphaScanner.Data download_history(ticker=GALLANTT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:46,944 DEBUG AlphaScanner.Data download_history success for GALLANTT.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:46,945 DEBUG AlphaScanner.Data download_history(ticker=GRSE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:47,129 DEBUG AlphaScanner.Data download_history success for GRSE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:47,131 DEBUG AlphaScanner.Data download_history(ticker=GICRE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:47,319 DEBUG AlphaScanner.Data download_history success for GICRE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:47,321 DEBUG AlphaScanner.Data download_history(ticker=GILLETTE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:47,625 DEBUG AlphaScanner.Data download_history success for GILLETTE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:47,627 DEBUG AlphaScanner.Data download_history(ticker=GLAND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:47,756 DEBUG AlphaScanner.Data download_history success for GLAND.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:47,758 DEBUG AlphaScanner.Data download_history(ticker=GLAXO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:47,918 DEBUG AlphaScanner.Data download_history success for GLAXO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:47,921 DEBUG AlphaScanner.Data download_history(ticker=GLENMARK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:48,248 DEBUG AlphaScanner.Data download_history success for GLENMARK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:48,252 DEBUG AlphaScanner.Data download_history(ticker=MEDANTA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:48,442 DEBUG AlphaScanner.Data download_history success for MEDANTA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:48,443 DEBUG AlphaScanner.Data download_history(ticker=GODIGIT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:48,577 DEBUG AlphaScanner.Data download_history success for GODIGIT.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:48,579 DEBUG AlphaScanner.Data download_history(ticker=GPIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:48,801 DEBUG AlphaScanner.Data download_history success for GPIL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:48,803 DEBUG AlphaScanner.Data download_history(ticker=GODFRYPHLP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:49,024 DEBUG AlphaScanner.Data download_history success for GODFRYPHLP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:49,026 DEBUG AlphaScanner.Data download_history(ticker=GODREJCP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:49,177 DEBUG AlphaScanner.Data download_history success for GODREJCP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:49,179 DEBUG AlphaScanner.Data download_history(ticker=GODREJIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:49,339 DEBUG AlphaScanner.Data download_history success for GODREJIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:49,342 DEBUG AlphaScanner.Data download_history(ticker=GODREJPROP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:49,525 DEBUG AlphaScanner.Data download_history success for GODREJPROP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:49,528 DEBUG AlphaScanner.Data download_history(ticker=GRANULES.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:49,731 DEBUG AlphaScanner.Data download_history success for GRANULES.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:49,735 DEBUG AlphaScanner.Data download_history(ticker=GRAPHITE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:49,960 DEBUG AlphaScanner.Data download_history success for GRAPHITE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:49,961 DEBUG AlphaScanner.Data download_history(ticker=GRASIM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:50,126 DEBUG AlphaScanner.Data download_history success for GRASIM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:50,128 DEBUG AlphaScanner.Data download_history(ticker=GRAVITA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:50,269 DEBUG AlphaScanner.Data download_history success for GRAVITA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:50,271 DEBUG AlphaScanner.Data download_history(ticker=GESHIP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:50,435 DEBUG AlphaScanner.Data download_history success for GESHIP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:50,438 DEBUG AlphaScanner.Data download_history(ticker=FLUOROCHEM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:50,740 DEBUG AlphaScanner.Data download_history success for FLUOROCHEM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:50,742 DEBUG AlphaScanner.Data download_history(ticker=GMDCLTD.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:50,901 DEBUG AlphaScanner.Data download_history success for GMDCLTD.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:50,903 DEBUG AlphaScanner.Data download_history(ticker=HEG.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:51,075 DEBUG AlphaScanner.Data download_history success for HEG.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:51,077 DEBUG AlphaScanner.Data download_history(ticker=HBLENGINE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:51,232 DEBUG AlphaScanner.Data download_history success for HBLENGINE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:51,236 DEBUG AlphaScanner.Data download_history(ticker=HCLTECH.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:51,540 DEBUG AlphaScanner.Data download_history success for HCLTECH.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:51,542 DEBUG AlphaScanner.Data download_history(ticker=HDBFS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:51,821 DEBUG AlphaScanner.Data download_history success for HDBFS.NS rows=261 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:51,823 DEBUG AlphaScanner.Data download_history(ticker=HDFCAMC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:52,157 DEBUG AlphaScanner.Data download_history success for HDFCAMC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:52,159 DEBUG AlphaScanner.Data download_history(ticker=HDFCBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:52,358 DEBUG AlphaScanner.Data download_history success for HDFCBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:52,359 DEBUG AlphaScanner.Data download_history(ticker=HDFCLIFE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:52,573 DEBUG AlphaScanner.Data download_history success for HDFCLIFE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:52,574 DEBUG AlphaScanner.Data download_history(ticker=HFCL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:52,788 DEBUG AlphaScanner.Data download_history success for HFCL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:52,790 DEBUG AlphaScanner.Data download_history(ticker=HAVELLS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:52,981 DEBUG AlphaScanner.Data download_history success for HAVELLS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:52,986 DEBUG AlphaScanner.Data download_history(ticker=HEROMOTOCO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:53,186 DEBUG AlphaScanner.Data download_history success for HEROMOTOCO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:53,188 DEBUG AlphaScanner.Data download_history(ticker=HEXT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:53,319 DEBUG AlphaScanner.Data download_history success for HEXT.NS rows=348 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:53,321 DEBUG AlphaScanner.Data download_history(ticker=HSCL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:53,479 DEBUG AlphaScanner.Data download_history success for HSCL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:53,482 DEBUG AlphaScanner.Data download_history(ticker=HINDALCO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:53,651 DEBUG AlphaScanner.Data download_history success for HINDALCO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:53,653 DEBUG AlphaScanner.Data download_history(ticker=HAL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:53,854 DEBUG AlphaScanner.Data download_history success for HAL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:53,856 DEBUG AlphaScanner.Data download_history(ticker=HINDCOPPER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:54,005 DEBUG AlphaScanner.Data download_history success for HINDCOPPER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:54,006 DEBUG AlphaScanner.Data download_history(ticker=HINDPETRO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:54,155 DEBUG AlphaScanner.Data download_history success for HINDPETRO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:54,157 DEBUG AlphaScanner.Data download_history(ticker=HINDUNILVR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:54,336 DEBUG AlphaScanner.Data download_history success for HINDUNILVR.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:54,338 DEBUG AlphaScanner.Data download_history(ticker=HINDZINC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:54,491 DEBUG AlphaScanner.Data download_history success for HINDZINC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:54,493 DEBUG AlphaScanner.Data download_history(ticker=POWERINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:54,640 DEBUG AlphaScanner.Data download_history success for POWERINDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:54,641 DEBUG AlphaScanner.Data download_history(ticker=HOMEFIRST.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:54,779 DEBUG AlphaScanner.Data download_history success for HOMEFIRST.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:54,783 DEBUG AlphaScanner.Data download_history(ticker=HONASA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:54,934 DEBUG AlphaScanner.Data download_history success for HONASA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:54,936 DEBUG AlphaScanner.Data download_history(ticker=HONAUT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:55,146 DEBUG AlphaScanner.Data download_history success for HONAUT.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:55,151 DEBUG AlphaScanner.Data download_history(ticker=HUDCO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:55,312 DEBUG AlphaScanner.Data download_history success for HUDCO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:55,315 DEBUG AlphaScanner.Data download_history(ticker=HYUNDAI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:55,470 DEBUG AlphaScanner.Data download_history success for HYUNDAI.NS rows=433 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:55,474 DEBUG AlphaScanner.Data download_history(ticker=ICICIBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:55,657 DEBUG AlphaScanner.Data download_history success for ICICIBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:55,659 DEBUG AlphaScanner.Data download_history(ticker=ICICIGI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:55,804 DEBUG AlphaScanner.Data download_history success for ICICIGI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:55,807 DEBUG AlphaScanner.Data download_history(ticker=ICICIAMC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:55,936 DEBUG AlphaScanner.Data download_history success for ICICIAMC.NS rows=144 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:55,939 DEBUG AlphaScanner.Data download_history(ticker=ICICIPRULI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:56,128 DEBUG AlphaScanner.Data download_history success for ICICIPRULI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:56,133 DEBUG AlphaScanner.Data download_history(ticker=IDBI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:56,345 DEBUG AlphaScanner.Data download_history success for IDBI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:56,348 DEBUG AlphaScanner.Data download_history(ticker=IDFCFIRSTB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:56,533 DEBUG AlphaScanner.Data download_history success for IDFCFIRSTB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:56,535 DEBUG AlphaScanner.Data download_history(ticker=IFCI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:56,673 DEBUG AlphaScanner.Data download_history success for IFCI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:56,675 DEBUG AlphaScanner.Data download_history(ticker=IIFL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:56,838 DEBUG AlphaScanner.Data download_history success for IIFL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:56,839 DEBUG AlphaScanner.Data download_history(ticker=IRB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:57,012 DEBUG AlphaScanner.Data download_history success for IRB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:57,016 DEBUG AlphaScanner.Data download_history(ticker=IRCON.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:57,206 DEBUG AlphaScanner.Data download_history success for IRCON.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:57,208 DEBUG AlphaScanner.Data download_history(ticker=ITCHOTELS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:57,342 DEBUG AlphaScanner.Data download_history success for ITCHOTELS.NS rows=364 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:57,344 DEBUG AlphaScanner.Data download_history(ticker=ITC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:57,566 DEBUG AlphaScanner.Data download_history success for ITC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:57,568 DEBUG AlphaScanner.Data download_history(ticker=ITI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:57,700 DEBUG AlphaScanner.Data download_history success for ITI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:57,701 DEBUG AlphaScanner.Data download_history(ticker=INDGN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:57,832 DEBUG AlphaScanner.Data download_history success for INDGN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:57,833 DEBUG AlphaScanner.Data download_history(ticker=INDIACEM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:57,972 DEBUG AlphaScanner.Data download_history success for INDIACEM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:57,974 DEBUG AlphaScanner.Data download_history(ticker=INDIAMART.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:58,159 DEBUG AlphaScanner.Data download_history success for INDIAMART.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:58,161 DEBUG AlphaScanner.Data download_history(ticker=INDIANB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:58,325 DEBUG AlphaScanner.Data download_history success for INDIANB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:58,327 DEBUG AlphaScanner.Data download_history(ticker=IEX.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:58,480 DEBUG AlphaScanner.Data download_history success for IEX.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:58,483 DEBUG AlphaScanner.Data download_history(ticker=INDHOTEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:58,674 DEBUG AlphaScanner.Data download_history success for INDHOTEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:58,676 DEBUG AlphaScanner.Data download_history(ticker=IOC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:58,894 DEBUG AlphaScanner.Data download_history success for IOC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:58,895 DEBUG AlphaScanner.Data download_history(ticker=IOB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:59,086 DEBUG AlphaScanner.Data download_history success for IOB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:59,088 DEBUG AlphaScanner.Data download_history(ticker=IRCTC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:59,240 DEBUG AlphaScanner.Data download_history success for IRCTC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:59,242 DEBUG AlphaScanner.Data download_history(ticker=IRFC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:59,389 DEBUG AlphaScanner.Data download_history success for IRFC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:59,391 DEBUG AlphaScanner.Data download_history(ticker=IREDA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:59,537 DEBUG AlphaScanner.Data download_history success for IREDA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:59,539 DEBUG AlphaScanner.Data download_history(ticker=IGL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:59,752 DEBUG AlphaScanner.Data download_history success for IGL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:59,754 DEBUG AlphaScanner.Data download_history(ticker=INDUSTOWER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:49:59,882 DEBUG AlphaScanner.Data download_history success for INDUSTOWER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:49:59,885 DEBUG AlphaScanner.Data download_history(ticker=INDUSINDBK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:00,043 DEBUG AlphaScanner.Data download_history success for INDUSINDBK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:00,045 DEBUG AlphaScanner.Data download_history(ticker=NAUKRI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:00,264 DEBUG AlphaScanner.Data download_history success for NAUKRI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:00,266 DEBUG AlphaScanner.Data download_history(ticker=INFY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:00,436 DEBUG AlphaScanner.Data download_history success for INFY.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:00,438 DEBUG AlphaScanner.Data download_history(ticker=INOXWIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:00,628 DEBUG AlphaScanner.Data download_history success for INOXWIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:00,633 DEBUG AlphaScanner.Data download_history(ticker=INTELLECT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:00,824 DEBUG AlphaScanner.Data download_history success for INTELLECT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:00,826 DEBUG AlphaScanner.Data download_history(ticker=INDIGO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:01,016 DEBUG AlphaScanner.Data download_history success for INDIGO.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:01,018 DEBUG AlphaScanner.Data download_history(ticker=IGIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:01,157 DEBUG AlphaScanner.Data download_history success for IGIL.NS rows=386 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:01,159 DEBUG AlphaScanner.Data download_history(ticker=IKS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:01,287 DEBUG AlphaScanner.Data download_history success for IKS.NS rows=392 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:01,289 DEBUG AlphaScanner.Data download_history(ticker=IPCALAB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:01,475 DEBUG AlphaScanner.Data download_history success for IPCALAB.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:01,477 DEBUG AlphaScanner.Data download_history(ticker=JKCEMENT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:01,674 DEBUG AlphaScanner.Data download_history success for JKCEMENT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:01,676 DEBUG AlphaScanner.Data download_history(ticker=JBMA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:01,888 DEBUG AlphaScanner.Data download_history success for JBMA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:01,890 DEBUG AlphaScanner.Data download_history(ticker=JKTYRE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:02,183 DEBUG AlphaScanner.Data download_history success for JKTYRE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:02,186 DEBUG AlphaScanner.Data download_history(ticker=JMFINANCIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:02,350 DEBUG AlphaScanner.Data download_history success for JMFINANCIL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:02,352 DEBUG AlphaScanner.Data download_history(ticker=JSWCEMENT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:02,485 DEBUG AlphaScanner.Data download_history success for JSWCEMENT.NS rows=230 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:02,487 DEBUG AlphaScanner.Data download_history(ticker=JSWDULUX.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:02,697 DEBUG AlphaScanner.Data download_history success for JSWDULUX.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:02,699 DEBUG AlphaScanner.Data download_history(ticker=JSWENERGY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:03,021 DEBUG AlphaScanner.Data download_history success for JSWENERGY.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:03,023 DEBUG AlphaScanner.Data download_history(ticker=JSWINFRA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:03,160 DEBUG AlphaScanner.Data download_history success for JSWINFRA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:03,164 DEBUG AlphaScanner.Data download_history(ticker=JSWSTEEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:03,373 DEBUG AlphaScanner.Data download_history success for JSWSTEEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:03,375 DEBUG AlphaScanner.Data download_history(ticker=JAINREC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:03,502 DEBUG AlphaScanner.Data download_history success for JAINREC.NS rows=196 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:03,504 DEBUG AlphaScanner.Data download_history(ticker=JPPOWER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:03,635 DEBUG AlphaScanner.Data download_history success for JPPOWER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:03,643 DEBUG AlphaScanner.Data download_history(ticker=J&KBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:03,918 DEBUG AlphaScanner.Data download_history success for J&KBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:03,920 DEBUG AlphaScanner.Data download_history(ticker=JINDALSAW.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:04,152 DEBUG AlphaScanner.Data download_history success for JINDALSAW.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:04,155 DEBUG AlphaScanner.Data download_history(ticker=JSL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:04,427 DEBUG AlphaScanner.Data download_history success for JSL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:04,431 DEBUG AlphaScanner.Data download_history(ticker=JINDALSTEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:04,617 DEBUG AlphaScanner.Data download_history success for JINDALSTEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:04,619 DEBUG AlphaScanner.Data download_history(ticker=JIOFIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:04,780 DEBUG AlphaScanner.Data download_history success for JIOFIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:04,783 DEBUG AlphaScanner.Data download_history(ticker=JUBLFOOD.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:04,943 DEBUG AlphaScanner.Data download_history success for JUBLFOOD.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:04,946 DEBUG AlphaScanner.Data download_history(ticker=JUBLINGREA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:05,087 DEBUG AlphaScanner.Data download_history success for JUBLINGREA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:05,089 DEBUG AlphaScanner.Data download_history(ticker=JUBLPHARMA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:05,307 DEBUG AlphaScanner.Data download_history success for JUBLPHARMA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:05,308 DEBUG AlphaScanner.Data download_history(ticker=JWL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:05,444 DEBUG AlphaScanner.Data download_history success for JWL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:05,447 DEBUG AlphaScanner.Data download_history(ticker=JYOTICNC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:05,566 DEBUG AlphaScanner.Data download_history success for JYOTICNC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:05,569 DEBUG AlphaScanner.Data download_history(ticker=KPRMILL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:05,744 DEBUG AlphaScanner.Data download_history success for KPRMILL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:05,748 DEBUG AlphaScanner.Data download_history(ticker=KEI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:05,948 DEBUG AlphaScanner.Data download_history success for KEI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:05,952 DEBUG AlphaScanner.Data download_history(ticker=KPITTECH.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:06,105 DEBUG AlphaScanner.Data download_history success for KPITTECH.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:06,108 DEBUG AlphaScanner.Data download_history(ticker=KAJARIACER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:06,269 DEBUG AlphaScanner.Data download_history success for KAJARIACER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:06,271 DEBUG AlphaScanner.Data download_history(ticker=KPIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:06,611 DEBUG AlphaScanner.Data download_history success for KPIL.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:06,615 DEBUG AlphaScanner.Data download_history(ticker=KALYANKJIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:06,772 DEBUG AlphaScanner.Data download_history success for KALYANKJIL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:06,775 DEBUG AlphaScanner.Data download_history(ticker=KARURVYSYA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:06,947 DEBUG AlphaScanner.Data download_history success for KARURVYSYA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:06,949 DEBUG AlphaScanner.Data download_history(ticker=KAYNES.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:07,078 DEBUG AlphaScanner.Data download_history success for KAYNES.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:07,082 DEBUG AlphaScanner.Data download_history(ticker=KEC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:07,252 DEBUG AlphaScanner.Data download_history success for KEC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:07,255 DEBUG AlphaScanner.Data download_history(ticker=KFINTECH.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:07,404 DEBUG AlphaScanner.Data download_history success for KFINTECH.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:07,406 DEBUG AlphaScanner.Data download_history(ticker=KIRLOSENG.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:07,621 DEBUG AlphaScanner.Data download_history success for KIRLOSENG.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:07,623 DEBUG AlphaScanner.Data download_history(ticker=KOTAKBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:07,866 DEBUG AlphaScanner.Data download_history success for KOTAKBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:07,869 DEBUG AlphaScanner.Data download_history(ticker=KIMS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:08,049 DEBUG AlphaScanner.Data download_history success for KIMS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:08,052 DEBUG AlphaScanner.Data download_history(ticker=LTF.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:08,252 DEBUG AlphaScanner.Data download_history success for LTF.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:08,258 DEBUG AlphaScanner.Data download_history(ticker=LTTS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:08,453 DEBUG AlphaScanner.Data download_history success for LTTS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:08,456 DEBUG AlphaScanner.Data download_history(ticker=LGEINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:08,590 DEBUG AlphaScanner.Data download_history success for LGEINDIA.NS rows=190 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:08,594 DEBUG AlphaScanner.Data download_history(ticker=LICHSGFIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:08,786 DEBUG AlphaScanner.Data download_history success for LICHSGFIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:08,789 DEBUG AlphaScanner.Data download_history(ticker=LTFOODS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:08,971 DEBUG AlphaScanner.Data download_history success for LTFOODS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:08,973 DEBUG AlphaScanner.Data download_history(ticker=LTM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:09,134 DEBUG AlphaScanner.Data download_history success for LTM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:09,137 DEBUG AlphaScanner.Data download_history(ticker=LT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:09,298 DEBUG AlphaScanner.Data download_history success for LT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:09,301 DEBUG AlphaScanner.Data download_history(ticker=LATENTVIEW.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:09,449 DEBUG AlphaScanner.Data download_history success for LATENTVIEW.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:09,451 DEBUG AlphaScanner.Data download_history(ticker=LAURUSLABS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:09,601 DEBUG AlphaScanner.Data download_history success for LAURUSLABS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:09,602 DEBUG AlphaScanner.Data download_history(ticker=THELEELA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:09,731 DEBUG AlphaScanner.Data download_history success for THELEELA.NS rows=282 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:09,733 DEBUG AlphaScanner.Data download_history(ticker=LEMONTREE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:09,910 DEBUG AlphaScanner.Data download_history success for LEMONTREE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:09,913 DEBUG AlphaScanner.Data download_history(ticker=LENSKART.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:10,131 DEBUG AlphaScanner.Data download_history success for LENSKART.NS rows=173 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:10,133 DEBUG AlphaScanner.Data download_history(ticker=LICI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:10,336 DEBUG AlphaScanner.Data download_history success for LICI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:10,338 DEBUG AlphaScanner.Data download_history(ticker=LINDEINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:10,717 DEBUG AlphaScanner.Data download_history success for LINDEINDIA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:10,719 DEBUG AlphaScanner.Data download_history(ticker=LLOYDSME.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:11,014 DEBUG AlphaScanner.Data download_history success for LLOYDSME.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:11,016 DEBUG AlphaScanner.Data download_history(ticker=LODHA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:11,200 DEBUG AlphaScanner.Data download_history success for LODHA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:11,202 DEBUG AlphaScanner.Data download_history(ticker=LUPIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:11,366 DEBUG AlphaScanner.Data download_history success for LUPIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:11,368 DEBUG AlphaScanner.Data download_history(ticker=MMTC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:11,698 DEBUG AlphaScanner.Data download_history success for MMTC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:11,700 DEBUG AlphaScanner.Data download_history(ticker=MRF.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:11,882 DEBUG AlphaScanner.Data download_history success for MRF.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:11,884 DEBUG AlphaScanner.Data download_history(ticker=MGL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:12,033 DEBUG AlphaScanner.Data download_history success for MGL.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:12,035 DEBUG AlphaScanner.Data download_history(ticker=M&MFIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:12,194 DEBUG AlphaScanner.Data download_history success for M&MFIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:12,199 DEBUG AlphaScanner.Data download_history(ticker=M&M.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:12,366 DEBUG AlphaScanner.Data download_history success for M&M.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:12,367 DEBUG AlphaScanner.Data download_history(ticker=MANAPPURAM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:12,535 DEBUG AlphaScanner.Data download_history success for MANAPPURAM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:12,536 DEBUG AlphaScanner.Data download_history(ticker=MRPL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:12,736 DEBUG AlphaScanner.Data download_history success for MRPL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:12,737 DEBUG AlphaScanner.Data download_history(ticker=MANKIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:12,921 DEBUG AlphaScanner.Data download_history success for MANKIND.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:12,922 DEBUG AlphaScanner.Data download_history(ticker=MARICO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:13,097 DEBUG AlphaScanner.Data download_history success for MARICO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:13,099 DEBUG AlphaScanner.Data download_history(ticker=MARUTI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:13,303 DEBUG AlphaScanner.Data download_history success for MARUTI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:13,305 DEBUG AlphaScanner.Data download_history(ticker=MFSL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:13,441 DEBUG AlphaScanner.Data download_history success for MFSL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:13,445 DEBUG AlphaScanner.Data download_history(ticker=MAXHEALTH.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:13,594 DEBUG AlphaScanner.Data download_history success for MAXHEALTH.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:13,595 DEBUG AlphaScanner.Data download_history(ticker=MAZDOCK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:13,737 DEBUG AlphaScanner.Data download_history success for MAZDOCK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:13,739 DEBUG AlphaScanner.Data download_history(ticker=MEESHO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:13,864 DEBUG AlphaScanner.Data download_history success for MEESHO.NS rows=151 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:13,866 DEBUG AlphaScanner.Data download_history(ticker=MINDACORP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:14,066 DEBUG AlphaScanner.Data download_history success for MINDACORP.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:14,068 DEBUG AlphaScanner.Data download_history(ticker=MSUMI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:14,232 DEBUG AlphaScanner.Data download_history success for MSUMI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:14,234 DEBUG AlphaScanner.Data download_history(ticker=MOTILALOFS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:14,534 DEBUG AlphaScanner.Data download_history success for MOTILALOFS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:14,537 DEBUG AlphaScanner.Data download_history(ticker=MPHASIS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:14,747 DEBUG AlphaScanner.Data download_history success for MPHASIS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:14,748 DEBUG AlphaScanner.Data download_history(ticker=MCX.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:14,913 DEBUG AlphaScanner.Data download_history success for MCX.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:14,915 DEBUG AlphaScanner.Data download_history(ticker=MUTHOOTFIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:15,117 DEBUG AlphaScanner.Data download_history success for MUTHOOTFIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:15,119 DEBUG AlphaScanner.Data download_history(ticker=NATCOPHARM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:15,291 DEBUG AlphaScanner.Data download_history success for NATCOPHARM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:15,294 DEBUG AlphaScanner.Data download_history(ticker=NBCC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:15,459 DEBUG AlphaScanner.Data download_history success for NBCC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:15,462 DEBUG AlphaScanner.Data download_history(ticker=NCC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:15,665 DEBUG AlphaScanner.Data download_history success for NCC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:15,667 DEBUG AlphaScanner.Data download_history(ticker=NHPC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:15,820 DEBUG AlphaScanner.Data download_history success for NHPC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:15,823 DEBUG AlphaScanner.Data download_history(ticker=NLCINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:16,038 DEBUG AlphaScanner.Data download_history success for NLCINDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:16,039 DEBUG AlphaScanner.Data download_history(ticker=NMDC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:16,345 DEBUG AlphaScanner.Data download_history success for NMDC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:16,347 DEBUG AlphaScanner.Data download_history(ticker=NSLNISP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:16,464 DEBUG AlphaScanner.Data download_history success for NSLNISP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:16,466 DEBUG AlphaScanner.Data download_history(ticker=NTPCGREEN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:16,585 DEBUG AlphaScanner.Data download_history success for NTPCGREEN.NS rows=409 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:16,587 DEBUG AlphaScanner.Data download_history(ticker=NTPC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:16,745 DEBUG AlphaScanner.Data download_history success for NTPC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:16,747 DEBUG AlphaScanner.Data download_history(ticker=NH.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:16,897 DEBUG AlphaScanner.Data download_history success for NH.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:16,898 DEBUG AlphaScanner.Data download_history(ticker=NATIONALUM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:17,229 DEBUG AlphaScanner.Data download_history success for NATIONALUM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:17,231 DEBUG AlphaScanner.Data download_history(ticker=NAVA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:17,394 DEBUG AlphaScanner.Data download_history success for NAVA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:17,395 DEBUG AlphaScanner.Data download_history(ticker=NAVINFLUOR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:17,736 DEBUG AlphaScanner.Data download_history success for NAVINFLUOR.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:17,738 DEBUG AlphaScanner.Data download_history(ticker=NESTLEIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:17,905 DEBUG AlphaScanner.Data download_history success for NESTLEIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:17,908 DEBUG AlphaScanner.Data download_history(ticker=NETWEB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:18,045 DEBUG AlphaScanner.Data download_history success for NETWEB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:18,046 DEBUG AlphaScanner.Data download_history(ticker=NEULANDLAB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:18,245 DEBUG AlphaScanner.Data download_history success for NEULANDLAB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:18,247 DEBUG AlphaScanner.Data download_history(ticker=NEWGEN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:18,389 DEBUG AlphaScanner.Data download_history success for NEWGEN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:18,392 DEBUG AlphaScanner.Data download_history(ticker=NAM-INDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:18,579 DEBUG AlphaScanner.Data download_history success for NAM-INDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:18,581 DEBUG AlphaScanner.Data download_history(ticker=NIVABUPA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:18,698 DEBUG AlphaScanner.Data download_history success for NIVABUPA.NS rows=415 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:18,700 DEBUG AlphaScanner.Data download_history(ticker=NUVAMA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:18,845 DEBUG AlphaScanner.Data download_history success for NUVAMA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:18,847 DEBUG AlphaScanner.Data download_history(ticker=NUVOCO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:18,974 DEBUG AlphaScanner.Data download_history success for NUVOCO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:18,976 DEBUG AlphaScanner.Data download_history(ticker=OBEROIRLTY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:19,118 DEBUG AlphaScanner.Data download_history success for OBEROIRLTY.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:19,119 DEBUG AlphaScanner.Data download_history(ticker=ONGC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:19,299 DEBUG AlphaScanner.Data download_history success for ONGC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:19,300 DEBUG AlphaScanner.Data download_history(ticker=OIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:19,611 DEBUG AlphaScanner.Data download_history success for OIL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:19,613 DEBUG AlphaScanner.Data download_history(ticker=OLAELEC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:19,742 DEBUG AlphaScanner.Data download_history success for OLAELEC.NS rows=483 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:19,744 DEBUG AlphaScanner.Data download_history(ticker=OLECTRA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:20,038 DEBUG AlphaScanner.Data download_history success for OLECTRA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:20,040 DEBUG AlphaScanner.Data download_history(ticker=PAYTM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:20,160 DEBUG AlphaScanner.Data download_history success for PAYTM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:20,162 DEBUG AlphaScanner.Data download_history(ticker=ONESOURCE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:20,493 DEBUG AlphaScanner.Data download_history success for ONESOURCE.NS rows=368 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:20,494 DEBUG AlphaScanner.Data download_history(ticker=OFSS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:20,725 DEBUG AlphaScanner.Data download_history success for OFSS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:20,727 DEBUG AlphaScanner.Data download_history(ticker=POLICYBZR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:20,850 DEBUG AlphaScanner.Data download_history success for POLICYBZR.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:20,851 DEBUG AlphaScanner.Data download_history(ticker=PCBL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:21,101 DEBUG AlphaScanner.Data download_history success for PCBL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:21,103 DEBUG AlphaScanner.Data download_history(ticker=PGEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:21,279 DEBUG AlphaScanner.Data download_history success for PGEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:21,281 DEBUG AlphaScanner.Data download_history(ticker=PIIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:21,474 DEBUG AlphaScanner.Data download_history success for PIIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:21,476 DEBUG AlphaScanner.Data download_history(ticker=PNBHOUSING.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:21,611 DEBUG AlphaScanner.Data download_history success for PNBHOUSING.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:21,612 DEBUG AlphaScanner.Data download_history(ticker=PTCIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:21,729 DEBUG AlphaScanner.Data download_history success for PTCIL.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:21,730 DEBUG AlphaScanner.Data download_history(ticker=PVRINOX.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:21,878 DEBUG AlphaScanner.Data download_history success for PVRINOX.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:21,880 DEBUG AlphaScanner.Data download_history(ticker=PAGEIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:22,080 DEBUG AlphaScanner.Data download_history success for PAGEIND.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:22,082 DEBUG AlphaScanner.Data download_history(ticker=PARADEEP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:22,219 DEBUG AlphaScanner.Data download_history success for PARADEEP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:22,221 DEBUG AlphaScanner.Data download_history(ticker=PATANJALI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:22,429 DEBUG AlphaScanner.Data download_history success for PATANJALI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:22,431 DEBUG AlphaScanner.Data download_history(ticker=PERSISTENT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:22,567 DEBUG AlphaScanner.Data download_history success for PERSISTENT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:22,569 DEBUG AlphaScanner.Data download_history(ticker=PETRONET.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:22,728 DEBUG AlphaScanner.Data download_history success for PETRONET.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:22,730 DEBUG AlphaScanner.Data download_history(ticker=PFIZER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:23,283 DEBUG AlphaScanner.Data download_history success for PFIZER.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:23,285 DEBUG AlphaScanner.Data download_history(ticker=PHOENIXLTD.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:23,575 DEBUG AlphaScanner.Data download_history success for PHOENIXLTD.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:23,576 DEBUG AlphaScanner.Data download_history(ticker=PWL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:23,894 DEBUG AlphaScanner.Data download_history success for PWL.NS rows=167 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:23,896 DEBUG AlphaScanner.Data download_history(ticker=PIDILITIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:24,107 DEBUG AlphaScanner.Data download_history success for PIDILITIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:24,109 DEBUG AlphaScanner.Data download_history(ticker=PINELABS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:24,308 DEBUG AlphaScanner.Data download_history success for PINELABS.NS rows=169 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:24,310 DEBUG AlphaScanner.Data download_history(ticker=PIRAMALFIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:24,516 DEBUG AlphaScanner.Data download_history success for PIRAMALFIN.NS rows=174 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:24,518 DEBUG AlphaScanner.Data download_history(ticker=PPLPHARMA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:24,706 DEBUG AlphaScanner.Data download_history success for PPLPHARMA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:24,708 DEBUG AlphaScanner.Data download_history(ticker=POLYMED.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:24,926 DEBUG AlphaScanner.Data download_history success for POLYMED.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:24,928 DEBUG AlphaScanner.Data download_history(ticker=POLYCAB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:25,126 DEBUG AlphaScanner.Data download_history success for POLYCAB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:25,128 DEBUG AlphaScanner.Data download_history(ticker=POONAWALLA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:25,396 DEBUG AlphaScanner.Data download_history success for POONAWALLA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:25,398 DEBUG AlphaScanner.Data download_history(ticker=PFC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:25,608 DEBUG AlphaScanner.Data download_history success for PFC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:25,610 DEBUG AlphaScanner.Data download_history(ticker=POWERGRID.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:25,828 DEBUG AlphaScanner.Data download_history success for POWERGRID.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:25,830 DEBUG AlphaScanner.Data download_history(ticker=PREMIERENE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:25,960 DEBUG AlphaScanner.Data download_history success for PREMIERENE.NS rows=467 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:25,961 DEBUG AlphaScanner.Data download_history(ticker=PRESTIGE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:26,113 DEBUG AlphaScanner.Data download_history success for PRESTIGE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:26,115 DEBUG AlphaScanner.Data download_history(ticker=PFOCUS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:26,245 DEBUG AlphaScanner.Data download_history success for PFOCUS.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:26,247 DEBUG AlphaScanner.Data download_history(ticker=PNB.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:26,434 DEBUG AlphaScanner.Data download_history success for PNB.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:26,436 DEBUG AlphaScanner.Data download_history(ticker=RRKABEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:26,583 DEBUG AlphaScanner.Data download_history success for RRKABEL.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:26,585 DEBUG AlphaScanner.Data download_history(ticker=RBLBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:26,747 DEBUG AlphaScanner.Data download_history success for RBLBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:26,749 DEBUG AlphaScanner.Data download_history(ticker=RECLTD.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:26,901 DEBUG AlphaScanner.Data download_history success for RECLTD.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:26,905 DEBUG AlphaScanner.Data download_history(ticker=RHIM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:27,061 DEBUG AlphaScanner.Data download_history success for RHIM.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:27,063 DEBUG AlphaScanner.Data download_history(ticker=RITES.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:27,222 DEBUG AlphaScanner.Data download_history success for RITES.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:27,225 DEBUG AlphaScanner.Data download_history(ticker=RADICO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:27,373 DEBUG AlphaScanner.Data download_history success for RADICO.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:27,375 DEBUG AlphaScanner.Data download_history(ticker=RVNL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:27,575 DEBUG AlphaScanner.Data download_history success for RVNL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:27,576 DEBUG AlphaScanner.Data download_history(ticker=RAILTEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:27,720 DEBUG AlphaScanner.Data download_history success for RAILTEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:27,723 DEBUG AlphaScanner.Data download_history(ticker=RAINBOW.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:27,874 DEBUG AlphaScanner.Data download_history success for RAINBOW.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:27,876 DEBUG AlphaScanner.Data download_history(ticker=RKFORGE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:28,028 DEBUG AlphaScanner.Data download_history success for RKFORGE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:28,030 DEBUG AlphaScanner.Data download_history(ticker=REDINGTON.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:28,187 DEBUG AlphaScanner.Data download_history success for REDINGTON.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:28,190 DEBUG AlphaScanner.Data download_history(ticker=RELIANCE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:28,501 DEBUG AlphaScanner.Data download_history success for RELIANCE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:28,504 DEBUG AlphaScanner.Data download_history(ticker=RPOWER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:28,621 DEBUG AlphaScanner.Data download_history success for RPOWER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:28,623 DEBUG AlphaScanner.Data download_history(ticker=SBFC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:28,743 DEBUG AlphaScanner.Data download_history success for SBFC.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:28,745 DEBUG AlphaScanner.Data download_history(ticker=SBICARD.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:28,892 DEBUG AlphaScanner.Data download_history success for SBICARD.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:28,894 DEBUG AlphaScanner.Data download_history(ticker=SBILIFE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:29,042 DEBUG AlphaScanner.Data download_history success for SBILIFE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:29,044 DEBUG AlphaScanner.Data download_history(ticker=SJVN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:29,248 DEBUG AlphaScanner.Data download_history success for SJVN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:29,249 DEBUG AlphaScanner.Data download_history(ticker=SRF.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:29,419 DEBUG AlphaScanner.Data download_history success for SRF.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:29,424 DEBUG AlphaScanner.Data download_history(ticker=SAGILITY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:29,576 DEBUG AlphaScanner.Data download_history success for SAGILITY.NS rows=418 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:29,579 DEBUG AlphaScanner.Data download_history(ticker=SAILIFE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:29,711 DEBUG AlphaScanner.Data download_history success for SAILIFE.NS rows=394 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:29,714 DEBUG AlphaScanner.Data download_history(ticker=SAMMAANCAP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:29,865 DEBUG AlphaScanner.Data download_history success for SAMMAANCAP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:29,867 DEBUG AlphaScanner.Data download_history(ticker=MOTHERSON.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:30,085 DEBUG AlphaScanner.Data download_history success for MOTHERSON.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:30,089 DEBUG AlphaScanner.Data download_history(ticker=SAPPHIRE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:30,228 DEBUG AlphaScanner.Data download_history success for SAPPHIRE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:30,230 DEBUG AlphaScanner.Data download_history(ticker=SARDAEN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:30,426 DEBUG AlphaScanner.Data download_history success for SARDAEN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:30,428 DEBUG AlphaScanner.Data download_history(ticker=SAREGAMA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:30,592 DEBUG AlphaScanner.Data download_history success for SAREGAMA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:30,594 DEBUG AlphaScanner.Data download_history(ticker=SCHAEFFLER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:30,760 DEBUG AlphaScanner.Data download_history success for SCHAEFFLER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:30,763 DEBUG AlphaScanner.Data download_history(ticker=SCHNEIDER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:30,892 DEBUG AlphaScanner.Data download_history success for SCHNEIDER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:30,895 DEBUG AlphaScanner.Data download_history(ticker=SCI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:31,063 DEBUG AlphaScanner.Data download_history success for SCI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:31,064 DEBUG AlphaScanner.Data download_history(ticker=SHREECEM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:31,225 DEBUG AlphaScanner.Data download_history success for SHREECEM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:31,227 DEBUG AlphaScanner.Data download_history(ticker=SHRIRAMFIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:31,398 DEBUG AlphaScanner.Data download_history success for SHRIRAMFIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:31,399 DEBUG AlphaScanner.Data download_history(ticker=SHYAMMETL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:31,557 DEBUG AlphaScanner.Data download_history success for SHYAMMETL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:31,559 DEBUG AlphaScanner.Data download_history(ticker=ENRIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:31,690 DEBUG AlphaScanner.Data download_history success for ENRIN.NS rows=270 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:31,693 DEBUG AlphaScanner.Data download_history(ticker=SIEMENS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:31,879 DEBUG AlphaScanner.Data download_history success for SIEMENS.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:31,883 DEBUG AlphaScanner.Data download_history(ticker=SIGNATURE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:32,026 DEBUG AlphaScanner.Data download_history success for SIGNATURE.NS rows=497 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:32,029 DEBUG AlphaScanner.Data download_history(ticker=SOBHA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:32,261 DEBUG AlphaScanner.Data download_history success for SOBHA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:32,263 DEBUG AlphaScanner.Data download_history(ticker=SOLARINDS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:32,463 DEBUG AlphaScanner.Data download_history success for SOLARINDS.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:32,465 DEBUG AlphaScanner.Data download_history(ticker=SONACOMS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:32,623 DEBUG AlphaScanner.Data download_history success for SONACOMS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:32,625 DEBUG AlphaScanner.Data download_history(ticker=SONATSOFTW.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:32,929 DEBUG AlphaScanner.Data download_history success for SONATSOFTW.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:32,931 DEBUG AlphaScanner.Data download_history(ticker=STARHEALTH.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:33,199 DEBUG AlphaScanner.Data download_history success for STARHEALTH.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:33,200 DEBUG AlphaScanner.Data download_history(ticker=SBIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:33,449 DEBUG AlphaScanner.Data download_history success for SBIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:33,451 DEBUG AlphaScanner.Data download_history(ticker=SAIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:33,707 DEBUG AlphaScanner.Data download_history success for SAIL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:33,709 DEBUG AlphaScanner.Data download_history(ticker=SUMICHEM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:33,860 DEBUG AlphaScanner.Data download_history success for SUMICHEM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:33,862 DEBUG AlphaScanner.Data download_history(ticker=SUNPHARMA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:34,126 DEBUG AlphaScanner.Data download_history success for SUNPHARMA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:34,128 DEBUG AlphaScanner.Data download_history(ticker=SUNTV.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:34,281 DEBUG AlphaScanner.Data download_history success for SUNTV.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:34,282 DEBUG AlphaScanner.Data download_history(ticker=SUNDARMFIN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:34,493 DEBUG AlphaScanner.Data download_history success for SUNDARMFIN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:34,495 DEBUG AlphaScanner.Data download_history(ticker=SUPREMEIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:34,705 DEBUG AlphaScanner.Data download_history success for SUPREMEIND.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:34,707 DEBUG AlphaScanner.Data download_history(ticker=SPLPETRO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:34,877 DEBUG AlphaScanner.Data download_history success for SPLPETRO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:34,879 DEBUG AlphaScanner.Data download_history(ticker=SUZLON.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:35,022 DEBUG AlphaScanner.Data download_history success for SUZLON.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:35,024 DEBUG AlphaScanner.Data download_history(ticker=SWANCORP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:35,249 DEBUG AlphaScanner.Data download_history success for SWANCORP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:35,253 DEBUG AlphaScanner.Data download_history(ticker=SWIGGY.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:35,450 DEBUG AlphaScanner.Data download_history success for SWIGGY.NS rows=417 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:35,455 DEBUG AlphaScanner.Data download_history(ticker=SYNGENE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:35,602 DEBUG AlphaScanner.Data download_history success for SYNGENE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:35,605 DEBUG AlphaScanner.Data download_history(ticker=SYRMA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:35,738 DEBUG AlphaScanner.Data download_history success for SYRMA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:35,740 DEBUG AlphaScanner.Data download_history(ticker=TBOTEK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:35,857 DEBUG AlphaScanner.Data download_history success for TBOTEK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:35,859 DEBUG AlphaScanner.Data download_history(ticker=TVSMOTOR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:36,078 DEBUG AlphaScanner.Data download_history success for TVSMOTOR.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:36,079 DEBUG AlphaScanner.Data download_history(ticker=TATACAP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:36,211 DEBUG AlphaScanner.Data download_history success for TATACAP.NS rows=191 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:36,214 DEBUG AlphaScanner.Data download_history(ticker=TATACHEM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:36,375 DEBUG AlphaScanner.Data download_history success for TATACHEM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:36,377 DEBUG AlphaScanner.Data download_history(ticker=TATACOMM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:36,556 DEBUG AlphaScanner.Data download_history success for TATACOMM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:36,558 DEBUG AlphaScanner.Data download_history(ticker=TCS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:36,731 DEBUG AlphaScanner.Data download_history success for TCS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:36,732 DEBUG AlphaScanner.Data download_history(ticker=TATACONSUM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:36,930 DEBUG AlphaScanner.Data download_history success for TATACONSUM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:36,932 DEBUG AlphaScanner.Data download_history(ticker=TATAELXSI.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:37,091 DEBUG AlphaScanner.Data download_history success for TATAELXSI.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:37,093 DEBUG AlphaScanner.Data download_history(ticker=TATAINVEST.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:37,314 DEBUG AlphaScanner.Data download_history success for TATAINVEST.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:37,316 DEBUG AlphaScanner.Data download_history(ticker=TMCV.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:37,455 DEBUG AlphaScanner.Data download_history success for TMCV.NS rows=171 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:37,458 DEBUG AlphaScanner.Data download_history(ticker=TMPV.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:37,624 DEBUG AlphaScanner.Data download_history success for TMPV.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:37,626 DEBUG AlphaScanner.Data download_history(ticker=TATAPOWER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:37,844 DEBUG AlphaScanner.Data download_history success for TATAPOWER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:37,845 DEBUG AlphaScanner.Data download_history(ticker=TATASTEEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:38,012 DEBUG AlphaScanner.Data download_history success for TATASTEEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:38,014 DEBUG AlphaScanner.Data download_history(ticker=TATATECH.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:38,194 DEBUG AlphaScanner.Data download_history success for TATATECH.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:38,197 DEBUG AlphaScanner.Data download_history(ticker=TTML.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:38,627 DEBUG AlphaScanner.Data download_history success for TTML.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:38,629 DEBUG AlphaScanner.Data download_history(ticker=TECHM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:38,791 DEBUG AlphaScanner.Data download_history success for TECHM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:38,792 DEBUG AlphaScanner.Data download_history(ticker=TECHNOE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:38,954 DEBUG AlphaScanner.Data download_history success for TECHNOE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:38,956 DEBUG AlphaScanner.Data download_history(ticker=TEGA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:39,099 DEBUG AlphaScanner.Data download_history success for TEGA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:39,102 DEBUG AlphaScanner.Data download_history(ticker=TEJASNET.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:39,440 DEBUG AlphaScanner.Data download_history success for TEJASNET.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:39,442 DEBUG AlphaScanner.Data download_history(ticker=TENNIND.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:39,565 DEBUG AlphaScanner.Data download_history success for TENNIND.NS rows=166 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:39,568 DEBUG AlphaScanner.Data download_history(ticker=NIACL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:39,725 DEBUG AlphaScanner.Data download_history success for NIACL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:39,728 DEBUG AlphaScanner.Data download_history(ticker=RAMCOCEM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:39,889 DEBUG AlphaScanner.Data download_history success for RAMCOCEM.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:39,891 DEBUG AlphaScanner.Data download_history(ticker=THERMAX.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:40,061 DEBUG AlphaScanner.Data download_history success for THERMAX.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:40,063 DEBUG AlphaScanner.Data download_history(ticker=TIMKEN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:40,255 DEBUG AlphaScanner.Data download_history success for TIMKEN.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:40,258 DEBUG AlphaScanner.Data download_history(ticker=TITAGARH.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:40,426 DEBUG AlphaScanner.Data download_history success for TITAGARH.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:40,428 DEBUG AlphaScanner.Data download_history(ticker=TITAN.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:40,590 DEBUG AlphaScanner.Data download_history success for TITAN.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:40,592 DEBUG AlphaScanner.Data download_history(ticker=TORNTPHARM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:40,753 DEBUG AlphaScanner.Data download_history success for TORNTPHARM.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:40,755 DEBUG AlphaScanner.Data download_history(ticker=TORNTPOWER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:40,957 DEBUG AlphaScanner.Data download_history success for TORNTPOWER.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:40,959 DEBUG AlphaScanner.Data download_history(ticker=TARIL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:41,123 DEBUG AlphaScanner.Data download_history success for TARIL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:41,126 DEBUG AlphaScanner.Data download_history(ticker=TRAVELFOOD.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:41,322 DEBUG AlphaScanner.Data download_history success for TRAVELFOOD.NS rows=253 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:41,324 DEBUG AlphaScanner.Data download_history(ticker=TRENT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:41,595 DEBUG AlphaScanner.Data download_history success for TRENT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:41,596 DEBUG AlphaScanner.Data download_history(ticker=TRIDENT.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:41,757 DEBUG AlphaScanner.Data download_history success for TRIDENT.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:41,760 DEBUG AlphaScanner.Data download_history(ticker=TRITURBINE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:41,960 DEBUG AlphaScanner.Data download_history success for TRITURBINE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:41,963 DEBUG AlphaScanner.Data download_history(ticker=TIINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:42,111 DEBUG AlphaScanner.Data download_history success for TIINDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:42,113 DEBUG AlphaScanner.Data download_history(ticker=UCOBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:42,278 DEBUG AlphaScanner.Data download_history success for UCOBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:42,279 DEBUG AlphaScanner.Data download_history(ticker=UNOMINDA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:42,439 DEBUG AlphaScanner.Data download_history success for UNOMINDA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:42,442 DEBUG AlphaScanner.Data download_history(ticker=UPL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:42,612 DEBUG AlphaScanner.Data download_history success for UPL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:42,614 DEBUG AlphaScanner.Data download_history(ticker=UTIAMC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:42,819 DEBUG AlphaScanner.Data download_history success for UTIAMC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:42,823 DEBUG AlphaScanner.Data download_history(ticker=ULTRACEMCO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:43,057 DEBUG AlphaScanner.Data download_history success for ULTRACEMCO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:43,060 DEBUG AlphaScanner.Data download_history(ticker=UNIONBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:43,352 DEBUG AlphaScanner.Data download_history success for UNIONBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:43,356 DEBUG AlphaScanner.Data download_history(ticker=UBL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:43,556 DEBUG AlphaScanner.Data download_history success for UBL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:43,558 DEBUG AlphaScanner.Data download_history(ticker=UNITDSPR.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:43,765 DEBUG AlphaScanner.Data download_history success for UNITDSPR.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:43,769 DEBUG AlphaScanner.Data download_history(ticker=URBANCO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:43,905 DEBUG AlphaScanner.Data download_history success for URBANCO.NS rows=208 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:43,907 DEBUG AlphaScanner.Data download_history(ticker=USHAMART.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:44,074 DEBUG AlphaScanner.Data download_history success for USHAMART.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:44,077 DEBUG AlphaScanner.Data download_history(ticker=VTL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:44,291 DEBUG AlphaScanner.Data download_history success for VTL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:44,294 DEBUG AlphaScanner.Data download_history(ticker=VBL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:44,523 DEBUG AlphaScanner.Data download_history success for VBL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:44,526 DEBUG AlphaScanner.Data download_history(ticker=VEDL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:44,757 DEBUG AlphaScanner.Data download_history success for VEDL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:44,759 DEBUG AlphaScanner.Data download_history(ticker=VIJAYA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:44,923 DEBUG AlphaScanner.Data download_history success for VIJAYA.NS rows=498 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:44,925 DEBUG AlphaScanner.Data download_history(ticker=VMM.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:45,072 DEBUG AlphaScanner.Data download_history success for VMM.NS rows=394 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:45,075 DEBUG AlphaScanner.Data download_history(ticker=IDEA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:45,215 DEBUG AlphaScanner.Data download_history success for IDEA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:45,220 DEBUG AlphaScanner.Data download_history(ticker=VOLTAS.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:45,377 DEBUG AlphaScanner.Data download_history success for VOLTAS.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:45,379 DEBUG AlphaScanner.Data download_history(ticker=WAAREEENER.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:45,508 DEBUG AlphaScanner.Data download_history success for WAAREEENER.NS rows=429 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:45,510 DEBUG AlphaScanner.Data download_history(ticker=WELCORP.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:45,709 DEBUG AlphaScanner.Data download_history success for WELCORP.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:45,710 DEBUG AlphaScanner.Data download_history(ticker=WELSPUNLIV.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:45,911 DEBUG AlphaScanner.Data download_history success for WELSPUNLIV.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:45,912 DEBUG AlphaScanner.Data download_history(ticker=WHIRLPOOL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:46,055 DEBUG AlphaScanner.Data download_history success for WHIRLPOOL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:46,056 DEBUG AlphaScanner.Data download_history(ticker=WIPRO.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:46,271 DEBUG AlphaScanner.Data download_history success for WIPRO.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:46,272 DEBUG AlphaScanner.Data download_history(ticker=WOCKPHARMA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:46,429 DEBUG AlphaScanner.Data download_history success for WOCKPHARMA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:46,433 DEBUG AlphaScanner.Data download_history(ticker=YESBANK.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:46,561 DEBUG AlphaScanner.Data download_history success for YESBANK.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:46,562 DEBUG AlphaScanner.Data download_history(ticker=ZFCVINDIA.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:46,786 DEBUG AlphaScanner.Data download_history success for ZFCVINDIA.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:46,788 DEBUG AlphaScanner.Data download_history(ticker=ZEEL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:46,951 DEBUG AlphaScanner.Data download_history success for ZEEL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:46,953 DEBUG AlphaScanner.Data download_history(ticker=ZENTEC.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:47,141 DEBUG AlphaScanner.Data download_history success for ZENTEC.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:47,143 DEBUG AlphaScanner.Data download_history(ticker=ZENSARTECH.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:47,303 DEBUG AlphaScanner.Data download_history success for ZENSARTECH.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:47,305 DEBUG AlphaScanner.Data download_history(ticker=ZYDUSLIFE.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:47,472 DEBUG AlphaScanner.Data download_history success for ZYDUSLIFE.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:47,475 DEBUG AlphaScanner.Data download_history(ticker=ZYDUSWELL.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:47,625 DEBUG AlphaScanner.Data download_history success for ZYDUSWELL.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']
+2026-07-17 23:50:47,627 DEBUG AlphaScanner.Data download_history(ticker=ECLERX.NS, period=2y, interval=1d, use_cache=False)
+2026-07-17 23:50:47,827 DEBUG AlphaScanner.Data download_history success for ECLERX.NS rows=499 cols=['adj close', 'Close', 'High', 'Low', 'Open', 'Volume']

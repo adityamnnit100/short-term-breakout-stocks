@@ -94,6 +94,24 @@ def _cache_path_for_ticker(ticker: str, interval: str) -> Path:
     return p / f"yf_{safe}_{interval}.pkl"
 
 
+def load_disk_cached_history(ticker: str, interval: str = "1d") -> pd.DataFrame:
+    """Load a per-ticker disk cache if one exists."""
+    path = _cache_path_for_ticker(ticker, interval)
+    if not path.exists():
+        return pd.DataFrame()
+    try:
+        cached = pd.read_pickle(path)
+    except Exception:
+        return pd.DataFrame()
+
+    if isinstance(cached, pd.DataFrame) and not cached.empty:
+        if isinstance(cached.columns, pd.MultiIndex):
+            cached = cached.copy()
+            cached.columns = cached.columns.get_level_values(0)
+        return cached
+    return pd.DataFrame()
+
+
 def _period_to_days(period: str) -> int:
     s = str(period).lower()
     if s.endswith('y'):
@@ -150,7 +168,7 @@ def incremental_cached_download(tickers: Iterable[str], period: str = '1y', inte
 
     if not use_cache:
         try:
-            bulk = yf.download(tickers_list, period=period, interval=interval, progress=False, auto_adjust=False, threads=True, **yf_kwargs)
+            bulk = yf.download(tickers_list, period=period, interval=interval, progress=False, auto_adjust=False, threads=False, **yf_kwargs)
         except Exception:
             bulk = pd.DataFrame()
 
@@ -160,7 +178,7 @@ def incremental_cached_download(tickers: Iterable[str], period: str = '1y', inte
         results = []
         for ticker in tickers_list:
             try:
-                combined = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False, **yf_kwargs)
+                combined = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False, threads=False, **yf_kwargs)
                 if isinstance(combined.columns, pd.MultiIndex):
                     combined.columns = combined.columns.get_level_values(0)
                 if combined is not None and not combined.empty:
@@ -243,7 +261,7 @@ def incremental_cached_download(tickers: Iterable[str], period: str = '1y', inte
                 else:
                     # Cached does not go back enough; fetch full period
                     try:
-                        combined = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False, **yf_kwargs)
+                        combined = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False, threads=False, **yf_kwargs)
                         if isinstance(combined.columns, pd.MultiIndex):
                             combined.columns = combined.columns.get_level_values(0)
                     except Exception:
@@ -251,7 +269,7 @@ def incremental_cached_download(tickers: Iterable[str], period: str = '1y', inte
             else:
                 # No cache available; fetch full period
                 try:
-                    combined = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False, **yf_kwargs)
+                    combined = yf.download(ticker, period=period, interval=interval, progress=False, auto_adjust=False, threads=False, **yf_kwargs)
                     if isinstance(combined.columns, pd.MultiIndex):
                         combined.columns = combined.columns.get_level_values(0)
                 except Exception:
