@@ -17,8 +17,8 @@ class ScannerConfig:
     max_candidates: int = 15
     min_total_score: float = 25.0
 
-    watchlist_min_score: float = 60.0
-    entry_min_score: float = 70.0
+    watchlist_min_score: float = 62.0
+    entry_min_score: float = 73.0
     scan_max_workers: int = 8
     scan_download_threads: int = 10
     scan_download_chunk_size: int = 25
@@ -123,12 +123,12 @@ class ScannerConfig:
     trigger_enable_rs_confirmation: bool = True
     trigger_enable_volume_confirmation: bool = True
     trigger_enable_intraday_confirmation: bool = False
-    trigger_min_setup_score: float = 80.0
+    trigger_min_setup_score: float = 82.0
     trigger_min_transition_score: float = 80.0
     trigger_min_trigger_score: float = 75.0
     trigger_pocket_pivot_volume_ratio: float = 1.5
     trigger_pocket_pivot_close_location_min: float = 0.7
-    trigger_relative_volume_5d_min: float = 1.2
+    trigger_relative_volume_5d_min: float = 1.3
     trigger_relative_volume_10d_min: float = 1.1
     trigger_relative_volume_20d_min: float = 1.0
     trigger_breakout_buffer_pct: float = 0.25
