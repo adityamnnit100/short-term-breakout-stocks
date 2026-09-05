@@ -10,6 +10,7 @@ import time
 import pandas as pd
 
 from scanner.config import ScannerConfig
+from scanner.data import get_universe
 from scanner.scanner import run_dual_mode_scan
 from utils.yf_cache import _normalize_interval
 
@@ -175,6 +176,7 @@ def perform_fresh_scan(
 
         if results is None or results.empty:
             stats = _build_basic_stats(pd.DataFrame(), config.universe, timeframe, scan_mode)
+            stats["universe_size"] = len(get_universe(config)) if get_universe(config) is not None else 0
             if diagnostics:
                 stats["diagnostics"] = diagnostics
                 stats["diagnostics_summary_text"] = _format_diagnostics_summary(diagnostics)
@@ -251,9 +253,12 @@ def perform_fresh_scan(
 
 
 def _build_basic_stats(results: pd.DataFrame, universe: str, timeframe: str, scan_mode: str) -> dict:
+    universe_size = len(results)
+    if not results.empty and hasattr(results, "__len__"):
+        universe_size = len(results)
     return {
         "scanned": len(results),
-        "universe_size": len(results),
+        "universe_size": universe_size,
         "universe": universe,
         "timeframe": timeframe,
         "scan_mode": scan_mode,

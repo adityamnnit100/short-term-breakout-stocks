@@ -162,12 +162,22 @@ class TriggerEngine:
         setup_ok = context.setup.setup_score >= self.config.trigger_min_setup_score
         transition_ok = context.transition.transition_score >= self.config.trigger_min_transition_score
         market_regime = str(context.quality.market_regime or "UNKNOWN").upper()
-        market_ok = market_regime not in {"BEARISH", "STRONG BEAR"}
+        sector_strength = float(getattr(context.quality, "sector_strength", 0.0) or 0.0)
+        market_regime_score = float(getattr(context.quality, "market_regime_score", 0.0) or 0.0)
+
+        if market_regime in {"BEARISH", "STRONG BEAR"}:
+            market_tape_ok = False
+        elif market_regime == "CAUTION" and (sector_strength < 5.0 or market_regime_score < 0.0):
+            market_tape_ok = False
+        elif market_regime == "NEUTRAL" and sector_strength < 4.0 and market_regime_score < 0.2:
+            market_tape_ok = False
+        else:
+            market_tape_ok = True
 
         critical_checks = [
             ("setup_score", setup_ok, f"Setup score below {self.config.trigger_min_setup_score:.0f}"),
             ("transition_score", transition_ok, f"Transition score below {self.config.trigger_min_transition_score:.0f}"),
-            ("market_regime", market_ok, f"Market regime is {market_regime.lower()}"),
+            ("market_tape", market_tape_ok, f"Weak market tape: {market_regime.lower()}"),
             ("breakout_confirmation", module_map.get("breakout_confirmation").passed if module_map.get("breakout_confirmation") else False, "Breakout confirmation failed"),
             ("relative_volume", module_map.get("relative_volume").passed if module_map.get("relative_volume") else False, "Relative volume confirmation failed"),
             ("closing_strength", module_map.get("closing_strength").passed if module_map.get("closing_strength") else False, "Closing strength failed"),

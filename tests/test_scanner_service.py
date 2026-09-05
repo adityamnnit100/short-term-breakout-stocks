@@ -108,6 +108,29 @@ def test_fii_scan_keeps_quarterly_timeframe(monkeypatch):
     assert scan_time
 
 
+def test_empty_modular_scan_reports_true_universe_size(monkeypatch):
+    monkeypatch.setattr(scanner_service, "run_dual_mode_scan", lambda config=None, progress_callback=None, use_cache=False: {"entry": pd.DataFrame(), "watchlist": pd.DataFrame()})
+    monkeypatch.setattr(scanner_service, "get_universe", lambda config: ["AAA.NS", "BBB.NS", "CCC.NS"])
+
+    results, stats, scan_time = scanner_service.perform_fresh_scan(
+        universe="Nifty 500",
+        vol_thresh=1.0,
+        rsi_min=50,
+        rsi_max=85,
+        dist_thresh=1.5,
+        min_mkt_cap_cr=0,
+        max_mkt_cap_cr=0,
+        scanner_type="Modular Momentum",
+        scan_mode="Entry Scanner",
+        timeframe="1d",
+    )
+
+    assert results.empty
+    assert stats["universe_size"] == 3
+    assert stats["scanned"] == 0
+    assert scan_time
+
+
 def test_modular_cached_scan_reads_csv(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     data_dir = Path("data")

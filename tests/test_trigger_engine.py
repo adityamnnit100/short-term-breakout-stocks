@@ -53,6 +53,36 @@ def test_trigger_engine_returns_decision_and_breakdown():
     assert 0.0 <= result.rank_percentile <= 100.0
 
 
+def test_trigger_engine_rejects_weak_market_tape_even_with_strong_setup():
+    config = ScannerConfig(min_candles=20, trigger_min_setup_score=50.0, trigger_min_transition_score=50.0)
+    quality_engine = QualityFilterEngine(config)
+    setup_engine = SetupEngine(config)
+    transition_engine = TransitionEngine(config)
+    trigger_engine = TriggerEngine(config)
+
+    frame = _trigger_frame()
+    quality_context = quality_engine.build_context(frame, ticker="TAPE.NS", sector="Industrials")
+    quality_context.market_regime = "CAUTION"
+    quality_context.market_regime_score = -0.1
+    quality_context.sector_strength = 4.0
+
+    setup_result = setup_engine.evaluate(quality_context)
+    transition_result = transition_engine.evaluate(transition_engine.build_context(quality_context, setup_result, scan_mode="Entry"))
+    context = trigger_engine.build_context(quality_context, setup_result, transition_result, scan_mode="Entry")
+    module_map = {
+        "breakout_confirmation": type("Dummy", (), {"passed": True, "score": 90.0})(),
+        "relative_volume": type("Dummy", (), {"passed": True, "score": 90.0})(),
+        "closing_strength": type("Dummy", (), {"passed": True, "score": 90.0})(),
+        "pocket_pivot": type("Dummy", (), {"passed": True, "score": 90.0})(),
+        "rs_confirmation": type("Dummy", (), {"passed": True, "score": 90.0})(),
+        "volume_confirmation": type("Dummy", (), {"passed": True, "score": 90.0})(),
+    }
+
+    _, critical_failures, _ = trigger_engine._hard_gate_status(context, module_map)
+
+    assert any("market tape" in item.lower() for item in critical_failures)
+
+
 def test_trigger_analysis_rows_are_append_only(tmp_path, monkeypatch):
     db_path = tmp_path / "trigger_history.db"
     monkeypatch.setenv("ALPHASCANNER_USER_DB", str(db_path))

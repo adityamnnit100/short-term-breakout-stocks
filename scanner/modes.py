@@ -80,6 +80,21 @@ class BaseScanner:
                 **self._quality_payload(quality),
             }
 
+        market_tape_ok, market_tape_reason = self._market_tape_check(context)
+        if not market_tape_ok:
+            return {
+                "ticker": ticker,
+                "passed": False,
+                "score": 0.0,
+                "reasons": [market_tape_reason],
+                "reason_label": market_tape_reason,
+                "quality_passed": True,
+                "quality_failed_checks": [],
+                "quality_passed_checks": ["market_tape_checked"],
+                "quality_details": {"market_tape": {"passed": False, "reason": market_tape_reason}},
+                "quality_gate_results": {"market_tape": {"passed": False, "reason": market_tape_reason}},
+            }
+
         setup_result = self._check_setup(context)
         transition_result = self._check_transition(context, setup_result)
         trigger_result = self._check_trigger(context, setup_result, transition_result)
@@ -106,6 +121,19 @@ class BaseScanner:
             if column in prepared.columns:
                 prepared[column] = pd.to_numeric(prepared[column], errors="coerce")
         return prepared.dropna(subset=["Open", "High", "Low", "Close", "Volume"])
+
+    def _market_tape_check(self, context: QualityContext) -> tuple[bool, str]:
+        regime = str(context.market_regime or "UNKNOWN").upper()
+        sector_strength = float(getattr(context, "sector_strength", 0.0) or 0.0)
+        market_regime_score = float(getattr(context, "market_regime_score", 0.0) or 0.0)
+
+        if regime in {"BEARISH", "STRONG BEAR"}:
+            return False, "Weak market tape"
+        if regime == "CAUTION" and (sector_strength < 5.0 or market_regime_score < 0.0):
+            return False, "Weak market tape"
+        if regime == "NEUTRAL" and sector_strength < 4.0 and market_regime_score < 0.2:
+            return False, "Weak market tape"
+        return True, ""
 
     def _ema(self, series: pd.Series, length: int) -> pd.Series:
         return ema(series, length)

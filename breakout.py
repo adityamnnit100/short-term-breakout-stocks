@@ -694,6 +694,42 @@ def _market_breadth_health(breadth_50: float) -> Tuple[str, float]:
     return "Risk-Off", -1.0
 
 
+def _market_tape_gate_ok(
+    scanner_type: str,
+    *,
+    sector_score: float = 0.0,
+    market_health: str = "Unknown",
+    market_breadth_score: float = 0.0,
+    market_bias_score: float = 0.0,
+) -> bool:
+    """Reject weak-sector / weak-tape setups when the broader market is fragile."""
+    market_health_norm = str(market_health or "Unknown").strip().title()
+    if market_health_norm == "Risk-Off":
+        return False
+    if scanner_type == "Breakout":
+        if sector_score < 6.0:
+            return False
+        if market_breadth_score < 0.15 or market_bias_score < 0.25:
+            return False
+        return True
+    if scanner_type == "Pre-Breakout":
+        if sector_score < 5.0:
+            return False
+        if market_breadth_score < 0.0 or market_bias_score < 0.1:
+            return False
+        return True
+    return True
+
+
+def _pre_breakout_accumulation_signal_count(signal_count: int, *, rsi: float, adx: float) -> int:
+    """Require stronger confirmation for marginal pre-breakout setups."""
+    if signal_count >= 2:
+        return int(signal_count)
+    if signal_count == 1 and 55 <= rsi <= 65 and adx >= 20:
+        return 1
+    return 0
+
+
 def _risk_grade(stop_pct: float, risk_reward: float, strength: float, volume_ratio: float, breadth_health: str) -> str:
     """Simple execution risk label for short-term cash equity trades."""
     if stop_pct > 8 or risk_reward < 1.95 or breadth_health == "Risk-Off":
@@ -1107,14 +1143,15 @@ def _process_single_ticker(
             is_consolidating_near_20d = near_20d and not broke_20d
             is_consolidating_near_52w = near_52w and not broke_52w
             is_breaking_out = broke_20d or broke_52w
-            # Pre-breakout: Need at least 1 accumulation signal (tight base, vol dry-up, inside bar, NR7, base weeks, or consol days)
-            # OR if RSI + ADX are both strong, relax requirement
-            has_strong_momentum = (rsi >= 70) and (adx > 20)
-            has_strong_setup = (rsi <= 55) and (adx > 15)  # Accumulation zone  + momentum
-            accumulation_signal = (accum_signals_count >= 1) or has_strong_momentum or has_strong_setup
+            # Pre-breakout needs real constructive accumulation, not just one loose pattern.
+            accumulation_signal_count = _pre_breakout_accumulation_signal_count(
+                accum_signals_count,
+                rsi=float(rsi),
+                adx=float(adx),
+            )
             actual_breakout_condition_met = (
                 (is_consolidating_near_20d or is_consolidating_near_52w)
-                and accumulation_signal
+                and accumulation_signal_count >= 1
             )
 
         # Fakeout detection: price breaks resistance but volume is below threshold
@@ -1303,6 +1340,19 @@ def _process_single_ticker(
         breadth_score = float(market_context.get("market_breadth_score", 0.0) or 0.0)
         if scanner_type == "Pre-Breakout":
             breadth_score *= 0.5
+
+        tape_ok = _market_tape_gate_ok(
+            scanner_type,
+            sector_score=float(sector_score or 0.0),
+            market_health=str(breadth_health or "Unknown"),
+            market_breadth_score=float(breadth_score or 0.0),
+            market_bias_score=float(market_score or 0.0),
+        )
+        if not tape_ok:
+            with stats_lock:
+                stats["market_tape_fail"] = stats.get("market_tape_fail", 0) + 1
+            return None
+
         strength += market_score
         strength += breadth_score
         strength = min(10.0, max(0.0, round(strength, 1)))

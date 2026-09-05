@@ -69,6 +69,18 @@ def test_safe_pct_change_reused_by_compression_logic():
     assert safe_pct_change(11.0, 10.0) == pytest.approx(10.0)
 
 
+def test_market_tape_gate_blocks_weak_tape_and_risk_off():
+    assert breakout._market_tape_gate_ok("Breakout", sector_score=4.5, market_health="Risk-Off", market_breadth_score=-0.8, market_bias_score=0.2) is False
+    assert breakout._market_tape_gate_ok("Pre-Breakout", sector_score=5.2, market_health="Constructive", market_breadth_score=0.3, market_bias_score=0.2) is True
+    assert breakout._market_tape_gate_ok("Breakout", sector_score=8.0, market_health="Constructive", market_breadth_score=0.7, market_bias_score=0.8) is True
+
+
+def test_pre_breakout_requires_multiple_confirmation_signals():
+    assert breakout._pre_breakout_accumulation_signal_count(1, rsi=72, adx=22) == 0
+    assert breakout._pre_breakout_accumulation_signal_count(2, rsi=53, adx=17) == 2
+    assert breakout._pre_breakout_accumulation_signal_count(1, rsi=58, adx=20) == 1
+
+
 def test_total_market_universe_includes_microcaps(monkeypatch):
     nifty_500 = market_data.load_symbol_universe("Nifty 500")
     total_market = market_data.load_symbol_universe("Total Market (Cap Focused)")

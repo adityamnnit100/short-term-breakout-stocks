@@ -87,6 +87,15 @@ def test_entry_scanner_marks_breakout_setup():
     assert "trigger_decision" in result
 
 
+def test_default_scanner_thresholds_remain_selective_for_high_probability():
+    config = ScannerConfig()
+
+    assert config.watchlist_min_score >= 62.0
+    assert config.entry_min_score >= 73.0
+    assert config.trigger_min_setup_score >= 82.0
+    assert config.trigger_relative_volume_5d_min >= 1.3
+
+
 def test_run_dual_mode_scan_uses_batch_download(monkeypatch):
     monkeypatch.setattr(scanner_module, "get_universe", lambda config: ["AAA.NS", "BBB.NS"])
 
@@ -259,6 +268,51 @@ def test_run_dual_mode_scan_records_diagnostics(monkeypatch, tmp_path):
     assert diagnostics["universe"] == 3
     assert diagnostics["stages"]["quality"] == {"passed": 2, "rejected": 1}
     assert diagnostics["stages"]["setup"]["rejected"] == 1
+
+
+def test_run_dual_mode_scan_handles_default_process_worker_fallback(monkeypatch):
+    tickers = ["AAA.NS", "BBB.NS"]
+    monkeypatch.setattr(scanner_module, "get_universe", lambda config: tickers)
+
+    frame = pd.DataFrame(
+        {
+            "Open": [1, 2, 3],
+            "High": [2, 3, 4],
+            "Low": [0.5, 1.5, 2.5],
+            "Close": [1.5, 2.5, 3.5],
+            "Volume": [100, 110, 120],
+        }
+    )
+    monkeypatch.setattr(scanner_module, "download_history_batch", lambda chunk, config, use_cache=True: {ticker: frame for ticker in chunk})
+    monkeypatch.setattr(scanner_module.WatchlistScanner, "evaluate", lambda self, df, ticker, sector="Unknown", **kwargs: {"passed": False, "score": 0.0})
+    monkeypatch.setattr(scanner_module.EntryScanner, "evaluate", lambda self, df, ticker, sector="Unknown", **kwargs: {"passed": False, "score": 0.0})
+
+    results = scanner_module.run_dual_mode_scan(ScannerConfig(min_candles=3, scan_use_process_pool=True, scan_process_workers=0))
+
+    assert results["watchlist"].empty
+    assert results["entry"].empty
+
+
+def test_modular_entry_rejects_weak_market_tape():
+    config = ScannerConfig(min_candles=20)
+    frame = pd.DataFrame(
+        {
+            "Open": [100.0 + i * 0.4 for i in range(60)],
+            "High": [100.0 + i * 0.4 + 0.7 for i in range(60)],
+            "Low": [100.0 + i * 0.4 - 0.7 for i in range(60)],
+            "Close": [100.0 + i * 0.4 for i in range(60)],
+            "Volume": [1200 + i * 25 for i in range(60)],
+        }
+    )
+    scanner = scanner_module.EntryScanner(config)
+    quality_context = scanner.quality_engine.build_context(frame, ticker="WEAK.NS", sector="Industrials")
+    quality_context.market_regime = "CAUTION"
+    quality_context.sector_strength = 4.0
+
+    result = scanner.evaluate(frame, ticker="WEAK.NS", sector="Industrials", context=quality_context)
+
+    assert result["passed"] is False
+    assert "Weak market tape" in result["reason_label"]
 
 
 def test_download_history_batch_prefers_disk_cache(monkeypatch):
